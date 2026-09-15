@@ -2,7 +2,7 @@
 // الملف الرئيسي ونقطة التوصيل (main.js)
 // ==========================================
 
-import { checkAdminPermission, initAdminShortcut, handleMobileAdminTap, toggleStockStatus, deleteCarpet, handleAddProduct, openAddModal, closeAddModal } from './admin.js';
+import { checkAdminPermission, initAdminShortcut, handleMobileAdminTap, toggleStockStatus, deleteCarpet, handleAddProduct, openAddModal, closeAddModal, openAdminAuthModal } from './admin.js';
 import { initTheme, openThemeModal, closeThemeModal, selectThemeOption, applyTheme } from './theme.js';
 import { 
     openModal, closeModal, handleModalScroll, 
@@ -17,6 +17,7 @@ let currentSearchQuery = '';
 let currentSortOption = 'default';
 
 // ربط الدوال بالـ window لتعمل عبر الأحداث المباشرة في ملفات الـ HTML
+window.openAdminAuthModal = openAdminAuthModal;
 window.openModal = (id) => openModal(id, allCarpets);
 window.closeModal = closeModal;
 window.handleModalScroll = handleModalScroll;
