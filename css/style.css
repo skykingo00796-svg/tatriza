@@ -298,3 +298,19 @@ input[type="file"]::file-selector-button:hover {
 .tatr-shake {
     animation: tatrShake 0.4s ease-in-out;
 }
+
+/* أزرار الإدارة فوق الصورة - تمدد منفصل لكل زر على حدة */
+.admin-action-btn .btn-text {
+    max-width: 0;
+    opacity: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    transition: max-width 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease-in-out, margin-right 0.3s ease-in-out;
+    margin-right: 0;
+}
+
+.admin-action-btn:hover .btn-text {
+    max-width: 140px;
+    opacity: 1;
+    margin-right: 6px;
+}

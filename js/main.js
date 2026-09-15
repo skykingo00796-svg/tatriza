@@ -144,21 +144,21 @@ function displayCarpets(carpetsToDisplay) {
                     ${carpet.dimensions}
                 </span>
 
-                <!-- أزرار تحكم الأدمين في أعلى اليسار مقابل الأبعاد مع توسع النص عند التمرير -->
+                <!-- أزرار تحكم الأدمين في أعلى اليسار مقابل الأبعاد مع توسع النص المنفصل لكل زر -->
                 ${isAdmin ? `
-                    <div class="absolute top-3 left-3 flex items-center gap-2 z-20" onclick="event.stopPropagation()">
-                        <!-- زر تبديل حالة توفر المنتج -->
-                        <button onclick="toggleStockStatus('${carpet.id}')" class="group flex items-center h-8 px-2.5 bg-white/90 hover:bg-white text-stone-800 shadow-xs backdrop-blur-md rounded-full border border-stone-200/80 transition-all duration-300 overflow-hidden cursor-pointer" title="${isOutOfStock ? 'توفر المنتج' : 'عدم توفر المنتج'}">
+                    <div class="absolute top-3 left-3 flex items-center gap-1.5 z-20" onclick="event.stopPropagation()">
+                        <!-- زر تبديل حالة توفر المنتج (يتمدد فقط عند مرور المؤشر عليه وحده) -->
+                        <button onclick="toggleStockStatus('${carpet.id}')" class="admin-action-btn flex items-center h-8 px-2.5 bg-white/90 hover:bg-white text-stone-800 shadow-xs backdrop-blur-md rounded-full border border-stone-200/80 cursor-pointer" title="${isOutOfStock ? 'توفر المنتج' : 'عدم توفر المنتج'}">
                             <span class="text-xs shrink-0">${isOutOfStock ? '🟢' : '🔄'}</span>
-                            <span class="max-w-0 overflow-hidden whitespace-nowrap group-hover:max-w-xs group-hover:mr-1.5 transition-all duration-300 ease-in-out text-[11px] font-bold text-stone-800">
+                            <span class="btn-text text-[11px] font-bold text-stone-800">
                                 ${isOutOfStock ? 'توفر المنتج' : 'عدم توفر المنتج'}
                             </span>
                         </button>
 
-                        <!-- زر حذف القطعة -->
-                        <button onclick="deleteCarpet('${carpet.id}')" class="group flex items-center h-8 px-2.5 bg-white/90 hover:bg-white text-stone-700 hover:text-red-600 shadow-xs backdrop-blur-md rounded-full border border-stone-200/80 hover:border-red-200 transition-all duration-300 overflow-hidden cursor-pointer" title="حذف القطعة">
+                        <!-- زر حذف القطعة (يتمدد فقط عند مرور المؤشر عليه وحده) -->
+                        <button onclick="deleteCarpet('${carpet.id}')" class="admin-action-btn flex items-center h-8 px-2.5 bg-white/90 hover:bg-white text-stone-700 hover:text-red-600 shadow-xs backdrop-blur-md rounded-full border border-stone-200/80 hover:border-red-200 cursor-pointer" title="حذف القطعة">
                             <span class="text-xs shrink-0">🗑️</span>
-                            <span class="max-w-0 overflow-hidden whitespace-nowrap group-hover:max-w-xs group-hover:mr-1.5 transition-all duration-300 ease-in-out text-[11px] font-bold text-red-600">
+                            <span class="btn-text text-[11px] font-bold text-red-600">
                                 حذف القطعة
                             </span>
                         </button>
