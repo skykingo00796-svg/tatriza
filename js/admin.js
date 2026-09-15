@@ -208,14 +208,70 @@ export function toggleStockStatus(carpetId, allCarpets, callback) {
 }
 
 export function deleteCarpet(carpetId, allCarpets, callback) {
-    if (!confirm("هل أنت متأكد من حذف هذه القطعة نهائياً من المعرض؟")) return;
-
     const carpet = allCarpets.find(c => c.id === carpetId);
-    const updatedCarpets = allCarpets.filter(c => c.id !== carpetId);
-    localStorage.setItem('tatr_carpets', JSON.stringify(updatedCarpets));
-    
-    if (callback) callback(updatedCarpets);
-    showToast(carpet ? `تم حذف "${carpet.title}" من المعرض` : "تم حذف القطعة من المعرض", 'info', 'إدارة المعرض');
+    if (!carpet) return;
+
+    let modal = document.getElementById('delete-confirm-modal');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'delete-confirm-modal';
+        modal.className = "fixed inset-0 z-[160] bg-stone-950/70 backdrop-blur-md flex items-center justify-center p-4 transition-all duration-300";
+        document.body.appendChild(modal);
+    }
+
+    modal.innerHTML = `
+        <div class="bg-[#fffbf7] w-full max-w-md rounded-3xl p-6 md:p-8 shadow-2xl border border-stone-300 relative text-center" dir="rtl">
+            <button id="cancel-delete-x" class="absolute top-4 left-4 text-stone-400 hover:text-stone-800 text-xl font-bold w-8 h-8 rounded-full flex items-center justify-center transition cursor-pointer">✕</button>
+            
+            <div class="w-16 h-16 rounded-2xl bg-red-100 border border-red-200 flex items-center justify-center mx-auto mb-4 text-2xl shadow-xs text-red-600">
+                🗑️
+            </div>
+
+            <h3 class="text-xl font-extrabold text-stone-900 mb-2">تأكيد حذف القطعة</h3>
+            <p class="text-xs md:text-sm text-stone-600 mb-2 leading-relaxed">
+                هل أنت متأكد من حذف سجادة <span class="font-bold text-stone-900">"${carpet.title}"</span> نهائياً من المعرض؟
+            </p>
+            <p class="text-[11px] text-red-600 font-semibold mb-6">
+                ⚠️ تنبيه: لا يمكن التراجع عن هذه العملية بعد إتمام الحذف.
+            </p>
+
+            <div class="flex flex-col sm:flex-row gap-3">
+                <button id="confirm-delete-btn" class="flex-1 bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-xl transition shadow-md text-sm cursor-pointer">
+                    نعم، احذف القطعة
+                </button>
+                <button id="cancel-delete-btn" class="flex-1 bg-stone-200/80 hover:bg-stone-300 text-stone-800 font-bold py-3 px-4 rounded-xl transition text-sm cursor-pointer">
+                    إلغاء والتراجع
+                </button>
+            </div>
+        </div>
+    `;
+
+    modal.classList.remove('hidden');
+
+    const closeModal = () => {
+        modal.classList.add('hidden');
+    };
+
+    modal.onclick = (e) => {
+        if (e.target === modal) closeModal();
+    };
+
+    const cancelX = modal.querySelector('#cancel-delete-x');
+    const cancelBtn = modal.querySelector('#cancel-delete-btn');
+    const confirmBtn = modal.querySelector('#confirm-delete-btn');
+
+    if (cancelX) cancelX.onclick = closeModal;
+    if (cancelBtn) cancelBtn.onclick = closeModal;
+
+    if (confirmBtn) {
+        confirmBtn.onclick = () => {
+            closeModal();
+            const updatedCarpets = allCarpets.filter(c => c.id !== carpetId);
+            localStorage.setItem('tatr_carpets', JSON.stringify(updatedCarpets));
+            if (callback) callback(updatedCarpets);
+            showToast(`تم حذف "${carpet.title}" من المعرض نهائياً`, 'info', 'إدارة المعرض');
+        };
+    }
 }
 
 export async function handleAddProduct(event, allCarpets, callback) {
