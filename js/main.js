@@ -144,14 +144,23 @@ function displayCarpets(carpetsToDisplay) {
                     ${carpet.dimensions}
                 </span>
 
-                <!-- أزرار تحكم الأدمين في أعلى اليسار مقابل الأبعاد -->
+                <!-- أزرار تحكم الأدمين في أعلى اليسار مقابل الأبعاد مع توسع النص عند التمرير -->
                 ${isAdmin ? `
-                    <div class="absolute top-3 left-3 flex items-center gap-1.5 z-20" onclick="event.stopPropagation()">
-                        <button onclick="toggleStockStatus('${carpet.id}')" class="w-8 h-8 rounded-full bg-white/90 hover:bg-white text-stone-800 shadow-xs backdrop-blur-md flex items-center justify-center text-xs transition transform hover:scale-110 border border-stone-200/80 cursor-pointer" title="${isOutOfStock ? 'إعادة توفير المنتج' : 'تعليم كـ نفدت الكمية'}">
-                            ${isOutOfStock ? '🟢' : '🔄'}
+                    <div class="absolute top-3 left-3 flex items-center gap-2 z-20" onclick="event.stopPropagation()">
+                        <!-- زر تبديل حالة توفر المنتج -->
+                        <button onclick="toggleStockStatus('${carpet.id}')" class="group flex items-center h-8 px-2.5 bg-white/90 hover:bg-white text-stone-800 shadow-xs backdrop-blur-md rounded-full border border-stone-200/80 transition-all duration-300 overflow-hidden cursor-pointer" title="${isOutOfStock ? 'توفر المنتج' : 'عدم توفر المنتج'}">
+                            <span class="text-xs shrink-0">${isOutOfStock ? '🟢' : '🔄'}</span>
+                            <span class="max-w-0 overflow-hidden whitespace-nowrap group-hover:max-w-xs group-hover:mr-1.5 transition-all duration-300 ease-in-out text-[11px] font-bold text-stone-800">
+                                ${isOutOfStock ? 'توفر المنتج' : 'عدم توفر المنتج'}
+                            </span>
                         </button>
-                        <button onclick="deleteCarpet('${carpet.id}')" class="w-8 h-8 rounded-full bg-white/90 hover:bg-white text-stone-700 hover:text-red-600 shadow-xs backdrop-blur-md flex items-center justify-center text-xs transition transform hover:scale-110 border border-stone-200/80 hover:border-red-200 cursor-pointer" title="حذف نهائي من المعرض">
-                            🗑️
+
+                        <!-- زر حذف القطعة -->
+                        <button onclick="deleteCarpet('${carpet.id}')" class="group flex items-center h-8 px-2.5 bg-white/90 hover:bg-white text-stone-700 hover:text-red-600 shadow-xs backdrop-blur-md rounded-full border border-stone-200/80 hover:border-red-200 transition-all duration-300 overflow-hidden cursor-pointer" title="حذف القطعة">
+                            <span class="text-xs shrink-0">🗑️</span>
+                            <span class="max-w-0 overflow-hidden whitespace-nowrap group-hover:max-w-xs group-hover:mr-1.5 transition-all duration-300 ease-in-out text-[11px] font-bold text-red-600">
+                                حذف القطعة
+                            </span>
                         </button>
                     </div>
                 ` : ''}
