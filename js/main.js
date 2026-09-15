@@ -147,10 +147,10 @@ function displayCarpets(carpetsToDisplay) {
                 <!-- أزرار تحكم الأدمين في أعلى اليسار مقابل الأبعاد -->
                 ${isAdmin ? `
                     <div class="absolute top-3 left-3 flex items-center gap-1.5 z-20" onclick="event.stopPropagation()">
-                        <button onclick="toggleStockStatus('${carpet.id}')" class="w-8 h-8 rounded-full bg-white/90 hover:bg-white text-stone-800 shadow-md backdrop-blur-md flex items-center justify-center text-xs transition transform hover:scale-110 border border-stone-200/80 cursor-pointer" title="${isOutOfStock ? 'إعادة توفير المنتج' : 'تعليم كـ نفدت الكمية'}">
+                        <button onclick="toggleStockStatus('${carpet.id}')" class="w-8 h-8 rounded-full bg-white/90 hover:bg-white text-stone-800 shadow-xs backdrop-blur-md flex items-center justify-center text-xs transition transform hover:scale-110 border border-stone-200/80 cursor-pointer" title="${isOutOfStock ? 'إعادة توفير المنتج' : 'تعليم كـ نفدت الكمية'}">
                             ${isOutOfStock ? '🟢' : '🔄'}
                         </button>
-                        <button onclick="deleteCarpet('${carpet.id}')" class="w-8 h-8 rounded-full bg-red-500/90 hover:bg-red-600 text-white shadow-md backdrop-blur-md flex items-center justify-center text-xs transition transform hover:scale-110 cursor-pointer" title="حذف نهائي من المعرض">
+                        <button onclick="deleteCarpet('${carpet.id}')" class="w-8 h-8 rounded-full bg-white/90 hover:bg-white text-stone-700 hover:text-red-600 shadow-xs backdrop-blur-md flex items-center justify-center text-xs transition transform hover:scale-110 border border-stone-200/80 hover:border-red-200 cursor-pointer" title="حذف نهائي من المعرض">
                             🗑️
                         </button>
                     </div>
