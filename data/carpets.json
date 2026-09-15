@@ -1,0 +1,46 @@
+[
+    {
+        "id": "carp-1",
+        "title": "سجادة أجمية ملكية فاخرة",
+        "category": "ajami",
+        "dimensions": "200 × 300 سم",
+        "material": "صوف طبيعي 100% مع خيوط حرير",
+        "price": 180,
+        "currency": "ر.ع.",
+        "images": [
+            "https://placehold.co/800x600/7c1d3c/ffffff?text=Tatriza+1",
+            "https://placehold.co/800x600/631730/ffffff?text=Tatriza+2",
+            "https://placehold.co/800x600/4a1124/ffffff?text=Tatriza+3"
+        ],
+        "description": "تحفة فنية يدوية الصنع بتصميم عجمي عريق، استغرقت حياكتها شهوراً من العمل الدقيق لتضفي لمسة من الفخامة والأصالة على منزلك."
+    },
+    {
+        "id": "carp-2",
+        "title": "سجادة حريرية بتطريز هندسي",
+        "category": "silk",
+        "dimensions": "150 × 220 سم",
+        "material": "حرير طبيعي خالص",
+        "price": 250,
+        "currency": "ر.ع.",
+        "images": [
+            "https://placehold.co/800x600/3b0d1c/ffffff?text=Silk+1",
+            "https://placehold.co/800x600/7c1d3c/ffffff?text=Silk+2"
+        ],
+        "description": "سجادة حريرية ناعمة تتميز ببريقها الفريد ونقشاتها الهندسية المتناسقة التي تناسب المجالس العصرية."
+    },
+    {
+        "id": "carp-3",
+        "title": "سجادة تراثية أصيلة",
+        "category": "traditional",
+        "dimensions": "200 × 250 سم",
+        "material": "صوف مغزول يدعياً",
+        "price": 140,
+        "currency": "ر.ع.",
+        "images": [
+            "https://placehold.co/800x600/541229/ffffff?text=Traditional+1",
+            "https://placehold.co/800x600/7c1d3c/ffffff?text=Traditional+2",
+            "https://placehold.co/800x600/2c0a14/ffffff?text=Traditional+3"
+        ],
+        "description": "مستوحاة من التراث الأصيل، صُممت بعناية فائقة لتلائم عشاق القطع الكلاسيكية الدافئة."
+    }
+]

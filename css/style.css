@@ -1,0 +1,108 @@
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap');
+
+:root {
+    --brand-burgundy: #7c1d3c;
+    --brand-dark: #1e1e1e;
+    --bg-cream: #d1c5b6; /* اللون الجديد للخلفية */
+    --brand-color: #7c1d3c;
+    --brand-hover: #631730;
+    --brand-border: #96264a;
+}
+
+/* 1. اللون الأساسي (العنابي الملكي) */
+body.theme-burgundy {
+    --brand-color: #7c1d3c;
+    --brand-hover: #631730;
+    --brand-border: #96264a;
+}
+
+/* 2. الأخضر التراثي */
+body.theme-green {
+    --brand-color: #435838;
+    --brand-hover: #33432a;
+    --brand-border: #56714a;
+}
+
+/* 3. الأزرق الفاخر */
+body.theme-blue {
+    --brand-color: #2d5f75;
+    --brand-hover: #204557;
+    --brand-border: #3d7a96;
+}
+
+/* 4. الذهبي الأصيل */
+body.theme-gold {
+    --brand-color: #c59b27;
+    --brand-hover: #9e771c;
+    --brand-border: #d6af3d;
+}
+
+/* فئات مساعدة لربط العناصر والأزرار ديناميكياً مع الثيم المختَار */
+.bg-brand { background-color: var(--brand-color) !important; }
+.text-brand { color: var(--brand-color) !important; }
+.border-brand { border-color: var(--brand-color) !important; }
+.hover\:bg-brand-hover:hover { background-color: var(--brand-hover) !important; }
+
+body {
+    font-family: 'Cairo', sans-serif;
+    background-color: var(--bg-cream);
+    color: #2c2c2c;
+    scroll-behavior: smooth;
+}
+
+/* ربط زر اختيار الملفات بمتغيرات الهوية النشطة */
+input[type="file"]::file-selector-button {
+    background-color: var(--brand-color);
+    color: white;
+    border: 0;
+    padding: 10px 16px;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-inline-end: 16px;
+}
+
+input[type="file"]::file-selector-button:hover {
+    background-color: var(--brand-hover);
+}
+
+/* تخصيص السكرول بار */
+::-webkit-scrollbar {
+    width: 8px;
+}
+::-webkit-scrollbar-track {
+    background: #c2b5a5;
+}
+::-webkit-scrollbar-thumb {
+    background: #a89a8b;
+    border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: var(--brand-color); /* أصبح يتغير ديناميكياً مع لون الثيم المختار! */
+}
+
+/* إخفاء أشرطة التمرير للسكرول الأفقي للصور */
+.scrollbar-none::-webkit-scrollbar {
+    display: none;
+}
+.scrollbar-none {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+/* تأثيرات تفاعلية للبطاقات */
+.carpet-card {
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.carpet-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.08), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.card-img-zoom {
+    transition: transform 0.6s ease;
+}
+.carpet-card:hover .card-img-zoom {
+    transform: scale(1.05);
+}

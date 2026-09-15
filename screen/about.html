@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>من نحن - TATRIZA</title>
+    <!-- مكتبة التنسيقات Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- ملف الأنماط والتصميم العام -->
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+
+<body class="text-stone-800" style="background-color: #d1c5b6;">
+    
+    <!-- شريط التنقل العلوي -->
+    <header class="bg-[#fffbf7]/90 backdrop-blur-md sticky top-0 z-40 border-b border-stone-200 shadow-xs w-full">
+        <div class="w-full px-6 md:px-12 h-20 flex justify-between items-center">
+            
+            <!-- اللوجو واسم الدار -->
+            <div class="flex items-center gap-3">
+                <img src="../images/logo.jpg" alt="Tatriza Logo" class="w-10 h-10 md:w-12 md:h-12 rounded-2xl object-cover shadow-sm border border-stone-200 cursor-pointer hover:opacity-90 transition shrink-0" onclick="openCurrentLogoLightbox(event)">
+                <div>
+                    <h1 class="font-bold text-lg md:text-xl text-stone-900 tracking-wider">TATRIZA</h1>
+                    <!-- انقر هنا 5 مرات متتالية من الجوال لفتح نافذة الأدمين -->
+                    <p class="text-[10px] md:text-xs font-semibold cursor-pointer select-none" style="color: var(--brand-color);" onclick="handleMobileAdminTap()">دار تطريز وسجاد يدوية</p>
+                </div>
+            </div>
+            
+            <!-- أزرار الهوية والعودة للمعرض -->
+            <div class="flex items-center gap-2 md:gap-3 shrink-0">
+                <button onclick="openThemeModal()" class="group flex items-center bg-stone-100 hover:bg-stone-200 text-stone-800 p-2.5 rounded-xl border border-stone-200 transition-all duration-300 overflow-hidden shadow-xs" title="تغيير النمط والهوية">
+                    <div class="w-5 h-5 grid grid-cols-2 rounded-lg overflow-hidden shrink-0 border border-stone-300/60 shadow-xs">
+                        <div class="bg-[#7c1d3c]"></div>
+                        <div class="bg-[#435838]"></div>
+                        <div class="bg-[#c59b27]"></div>
+                        <div class="bg-[#2d5f75]"></div>
+                    </div>
+                    <span class="max-w-0 overflow-hidden whitespace-nowrap group-hover:max-w-xs group-hover:mr-2 transition-all duration-300 ease-in-out text-sm font-semibold">تغيير النمط</span>
+                </button>
+
+                <a href="index.html" class="group flex items-center bg-stone-100 hover:bg-stone-200 text-stone-800 p-2.5 rounded-xl border border-stone-200 transition-all duration-300 overflow-hidden shadow-xs" title="العودة للمعرض">
+                    <svg class="w-5 h-5 shrink-0" style="color: var(--brand-color);" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+                    <span class="max-w-0 overflow-hidden whitespace-nowrap group-hover:max-w-xs group-hover:mr-2 transition-all duration-300 ease-in-out text-sm font-semibold">العودة للمعرض</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- المحتوى الرئيسي -->
+    <main class="w-full px-6 md:px-12 py-10 md:py-14">
+        <div class="w-full rounded-3xl p-8 md:p-16 shadow-2xl relative overflow-hidden text-white border border-white/20" style="background-color: var(--brand-color);">
+            
+            <!-- خلفية اللوجو المتغيرة ديناميكياً -->
+            <div class="absolute inset-0 bg-cover bg-center opacity-30 filter blur-[0.5px] pointer-events-none theme-bg-logo" style="background-image: url('../images/logo.jpg');"></div>
+            <div class="absolute inset-0 opacity-90" style="background: linear-gradient(to bottom right, var(--brand-color), var(--brand-hover));"></div>
+
+            <div class="relative z-10 text-center w-full max-w-5xl mx-auto">
+                <div class="flex justify-center mb-6 md:mb-8">
+                    <img src="../images/logo.jpg" alt="Tatriza Logo" class="w-24 h-24 md:w-32 md:h-32 rounded-3xl object-cover shadow-xl border-4 border-white/20 cursor-pointer" onclick="openThemeModal()">
+                </div>
+
+                <h2 class="text-2xl md:text-4xl font-extrabold text-white mb-4 md:mb-6 tracking-tight">من نحن؟</h2>
+                
+                <div class="text-stone-200 text-sm md:text-lg leading-relaxed space-y-4 md:space-y-6 text-right">
+                    <p class="font-bold text-amber-300 text-base md:text-xl text-center md:text-right">
+                        شاب عماني طموح وموهوب في المجال الفني والحرفي، أسعى لتحويل الشغف بالجمال والأصالة إلى قطع فنية فريدة تنبض بالحياة.
+                    </p>
+                    <p>
+                        "Tatriza" لم تولد كعلامة تجارية عادية، بل هي ثمرة رؤية وهوس بالتفاصيل؛ حيث ندمج فن صناعة السجاد اليدوي العريق مع دقة التطريز والذوق الراقي. كل قطعة نختارها أو نصنعها تمر عبر رحلة من الصبر، الإتقان، وحب الحرفة لتكون تحفة فنية حقيقية تضفي على مساحتك دفئاً وهويّة لا تُنسى.
+                    </p>
+                    <p>
+                        نؤمن بأن الاستمرارية، الجودة، والتفرد هي أساس كل عمل ناجح. لذلك، نحرص في "Tatriza" على أن تكون كل سجادة قطعة فريدة من نوعها (One-of-a-kind)، لتعكس شخصيتك وتمنح منزلك طابعاً استثنائياً يجمع بين أصالة التراث وروح الفن المعاصر.
+                    </p>
+                </div>
+                
+                <!-- أزرار التواصل -->
+                <div class="mt-10 md:mt-12 pt-6 md:pt-8 border-t border-white/10">
+                    <h3 class="text-base md:text-lg font-bold text-white mb-4 md:mb-6">قنوات التواصل والدعم المستمر</h3>
+                    <div class="flex flex-wrap justify-center gap-3 md:gap-4">
+                        <a href="https://wa.me/" target="_blank" class="group flex items-center bg-emerald-600 hover:bg-emerald-700 text-white p-3 md:px-5 md:py-3 rounded-2xl transition-all duration-300 overflow-hidden shadow-sm">
+                            <svg class="w-5 h-5 fill-current shrink-0" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.198-.198.347-.764.966-.937 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
+                            <span class="max-w-0 overflow-hidden whitespace-nowrap group-hover:max-w-xs group-hover:mr-2 transition-all duration-300 ease-in-out text-xs md:text-sm font-semibold">واتساب</span>
+                        </a>
+                        
+                        <a href="https://instagram.com/" target="_blank" class="group flex items-center bg-gradient-to-r from-purple-600 to-pink-600 hover:opacity-90 text-white p-3 md:px-5 md:py-3 rounded-2xl transition-all duration-300 overflow-hidden shadow-sm">
+                            <svg class="w-5 h-5 fill-current shrink-0" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.79-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+                            <span class="max-w-0 overflow-hidden whitespace-nowrap group-hover:max-w-xs group-hover:mr-2 transition-all duration-300 ease-in-out text-xs md:text-sm font-semibold">إنستجرام</span>
+                        </a>
+                        
+                        <a href="mailto:info@tatriza.com" class="group flex items-center bg-stone-900 hover:bg-stone-800 text-white p-3 md:px-5 md:py-3 rounded-2xl transition-all duration-300 overflow-hidden shadow-sm">
+                            <svg class="w-5 h-5 fill-current shrink-0" viewBox="0 0 24 24"><path d="M12 12.713l-11.985-9.713h23.97l-11.985 9.713zm0 2.574l-12-9.713v15.426h24v-15.426l-12 9.713z"/></svg>
+                            <span class="max-w-0 overflow-hidden whitespace-nowrap group-hover:max-w-xs group-hover:mr-2 transition-all duration-300 ease-in-out text-xs md:text-sm font-semibold">البريد الإلكتروني</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- نافذة تخصيص الهوية والألوان -->
+    <div id="theme-modal" class="hidden fixed inset-0 z-[120] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-[#fffbf7] w-full max-w-md rounded-3xl p-6 md:p-8 shadow-2xl border border-stone-300 relative text-center">
+            <button onclick="closeThemeModal()" class="absolute top-4 left-4 text-stone-500 hover:text-stone-900 text-xl font-bold">✕</button>
+            
+            <h3 class="text-xl font-bold text-stone-900 mb-2">تخصيص هوية وألوان الدار</h3>
+            <p class="text-xs text-stone-600 mb-6">اختر لون وشعار الدار المفضل لديك لتغيير هوية الموقع بالكامل</p>
+            
+            <div class="grid grid-cols-2 gap-4 mb-6">
+                <div onclick="selectThemeOption('burgundy', '../images/logo.jpg')" class="theme-box cursor-pointer p-4 rounded-2xl border-2 border-stone-300 bg-stone-50 transition flex flex-col items-center gap-2" data-theme="burgundy">
+                    <div class="w-10 h-10 rounded-xl bg-[#7c1d3c] shadow-md"></div>
+                    <span class="text-xs font-bold text-stone-800">العنابي الملكي</span>
+                </div>
+                
+                <div onclick="selectThemeOption('gold', '../images/logoY.jpg')" class="theme-box cursor-pointer p-4 rounded-2xl border-2 border-transparent hover:border-stone-300 bg-stone-50 transition flex flex-col items-center gap-2" data-theme="gold">
+                     <div class="w-10 h-10 rounded-xl bg-[#c59b27] shadow-md"></div>
+                    <span class="text-xs font-bold text-stone-800">الذهبي الأصيل</span>
+                </div>
+
+                <div onclick="selectThemeOption('green', '../images/logoG.jpg')" class="theme-box cursor-pointer p-4 rounded-2xl border-2 border-transparent hover:border-stone-300 bg-stone-50 transition flex flex-col items-center gap-2" data-theme="green">
+                    <div class="w-10 h-10 rounded-xl bg-[#435838] shadow-md"></div>
+                    <span class="text-xs font-bold text-stone-800">الأخضر التراثي</span>
+                </div>
+
+                <div onclick="selectThemeOption('blue', '../images/logoB.jpg')" class="theme-box cursor-pointer p-4 rounded-2xl border-2 border-transparent hover:border-stone-300 bg-stone-50 transition flex flex-col items-center gap-2" data-theme="blue">
+                    <div class="w-10 h-10 rounded-xl bg-[#2d5f75] shadow-md"></div>
+                    <span class="text-xs font-bold text-stone-800">الأزرق الفاخر</span>
+                </div>
+            </div>
+
+            <button onclick="applyTheme()" class="w-full text-white font-bold py-3 rounded-xl transition shadow-md text-sm md:text-base" style="background-color: var(--brand-color);">
+                تطبيق الهوية الجديدة
+            </button>
+        </div>
+    </div>
+
+    <!-- ربط ملف الـ JavaScript الرئيسي بنظام الوحدات -->
+    <script type="module" src="../js/main.js"></script>
+</body>
+</html>
