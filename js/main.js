@@ -12,6 +12,9 @@ import {
 } from './modals.js';
 
 let allCarpets = [];
+let currentFilter = 'all';
+let currentSearchQuery = '';
+let currentSortOption = 'default';
 
 // ربط الدوال بالـ window لتعمل عبر الأحداث المباشرة في ملفات الـ HTML
 window.openModal = (id) => openModal(id, allCarpets);
@@ -35,17 +38,21 @@ window.openAddModal = openAddModal;
 window.closeAddModal = closeAddModal;
 window.handleAddProduct = (e) => handleAddProduct(e, allCarpets, (updated) => {
     allCarpets = updated;
-    displayCarpets(allCarpets);
+    updateCategoryCounts();
+    filterAndDisplayCarpets();
 });
 window.toggleStockStatus = (id) => toggleStockStatus(id, allCarpets, (updated) => {
     allCarpets = updated;
-    displayCarpets(allCarpets);
+    updateCategoryCounts();
+    filterAndDisplayCarpets();
 });
 window.deleteCarpet = (id) => deleteCarpet(id, allCarpets, (updated) => {
     allCarpets = updated;
-    displayCarpets(allCarpets);
+    updateCategoryCounts();
+    filterAndDisplayCarpets();
 });
 window.openLightboxFromModalExternal = (id, idx) => openLightboxFromModal(id, idx, allCarpets);
+window.resetSearchAndFilters = resetSearchAndFilters;
 window.handleImageScroll = handleImageScrollForGrid;
 window.handleMobileAdminTap = handleMobileAdminTap;
 
@@ -74,8 +81,10 @@ async function loadCarpets() {
         });
 
         localStorage.setItem('tatr_carpets', JSON.stringify(allCarpets));
-        displayCarpets(allCarpets);
+        updateCategoryCounts();
+        filterAndDisplayCarpets();
         setupFilters();
+        setupSearchAndSort();
     } catch (error) {
         console.error('خطأ في تحميل بيانات السجاد:', error);
     }
@@ -91,8 +100,19 @@ function displayCarpets(carpetsToDisplay) {
 
     if (carpetsToDisplay.length === 0) {
         grid.innerHTML = `
-            <div class="col-span-full text-center py-16 text-stone-600 bg-stone-50/50 rounded-3xl border border-stone-200">
-                <p class="text-lg font-semibold">لا توجد قطع مطابقة للبحث أو التصنيف الحالي</p>
+            <div class="col-span-full text-center py-16 px-6 bg-[#fffbf7]/80 backdrop-blur-md rounded-3xl border border-stone-300/80 shadow-xs space-y-4">
+                <div class="w-16 h-16 rounded-2xl bg-stone-100 flex items-center justify-center mx-auto text-2xl text-stone-400 border border-stone-200">
+                    🔍
+                </div>
+                <div>
+                    <h4 class="text-lg font-bold text-stone-900">لم يتم العثور على قطع مطابقة</h4>
+                    <p class="text-xs md:text-sm text-stone-600 mt-1 max-w-md mx-auto">
+                        ${currentSearchQuery ? `لا توجد نتائج تطابق بحثك عن "${currentSearchQuery}".` : 'لا توجد قطع متوفرة في هذا القسم حالياً.'}
+                    </p>
+                </div>
+                <button onclick="window.resetSearchAndFilters()" class="inline-flex items-center gap-2 bg-brand hover:bg-brand-hover text-white font-bold text-xs md:text-sm px-5 py-2.5 rounded-xl shadow-xs transition duration-200 cursor-pointer">
+                    <span>إعادة تعيين البحث والتصنيفات</span>
+                </button>
             </div>
         `;
         return;
@@ -184,29 +204,172 @@ function handleImageScrollForGrid(container, carpetId) {
     }
 }
 
-// فلاتر التصنيفات مع تصحيح الألوان الديناميكية للثيمات وحالة الأزرار النشطة
+// ==========================================
+// منطق البحث، التصفية، والفرز الذكي
+// ==========================================
+
+function updateCategoryCounts() {
+    const counts = {
+        all: allCarpets.length,
+        ajami: allCarpets.filter(c => c.category === 'ajami').length,
+        silk: allCarpets.filter(c => c.category === 'silk').length,
+        traditional: allCarpets.filter(c => c.category === 'traditional').length
+    };
+
+    const setBadge = (id, count) => {
+        const el = document.getElementById(id);
+        if (el) el.innerText = count;
+    };
+
+    setBadge('count-all', counts.all);
+    setBadge('count-ajami', counts.ajami);
+    setBadge('count-silk', counts.silk);
+    setBadge('count-traditional', counts.traditional);
+}
+
+function filterAndDisplayCarpets() {
+    let result = [...allCarpets];
+
+    // 1. تصفية حسب التصنيف
+    if (currentFilter !== 'all') {
+        result = result.filter(c => c.category === currentFilter);
+    }
+
+    // 2. تصفية حسب البحث الدقيق
+    if (currentSearchQuery.trim() !== '') {
+        const q = currentSearchQuery.trim().toLowerCase();
+        result = result.filter(c => {
+            const titleMatch = (c.title || '').toLowerCase().includes(q);
+            const descMatch = (c.description || '').toLowerCase().includes(q);
+            const matMatch = (c.material || '').toLowerCase().includes(q);
+            const dimMatch = (c.dimensions || '').toLowerCase().includes(q);
+
+            const catMap = {
+                ajami: 'نقشات عجمية عجمي كلاسيك',
+                silk: 'سجاد حريري حرير ناعم',
+                traditional: 'تراثي أصيل تراث صوف'
+            };
+            const catMatch = (catMap[c.category] || '').toLowerCase().includes(q);
+
+            return titleMatch || descMatch || matMatch || dimMatch || catMatch;
+        });
+    }
+
+    // 3. الفرز والترتيب
+    if (currentSortOption === 'price-asc') {
+        result.sort((a, b) => Number(a.price) - Number(b.price));
+    } else if (currentSortOption === 'price-desc') {
+        result.sort((a, b) => Number(b.price) - Number(a.price));
+    } else if (currentSortOption === 'title-asc') {
+        result.sort((a, b) => a.title.localeCompare(b.title, 'ar'));
+    }
+
+    displayCarpets(result);
+}
+
+function setupSearchAndSort() {
+    const searchInput = document.getElementById('search-input');
+    const clearBtn = document.getElementById('search-clear-btn');
+    const sortSelect = document.getElementById('sort-select');
+
+    if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+            currentSearchQuery = e.target.value;
+            if (clearBtn) {
+                if (currentSearchQuery.length > 0) {
+                    clearBtn.classList.remove('hidden');
+                } else {
+                    clearBtn.classList.add('hidden');
+                }
+            }
+            filterAndDisplayCarpets();
+        });
+    }
+
+    if (clearBtn && searchInput) {
+        clearBtn.addEventListener('click', () => {
+            searchInput.value = '';
+            currentSearchQuery = '';
+            clearBtn.classList.add('hidden');
+            searchInput.focus();
+            filterAndDisplayCarpets();
+        });
+    }
+
+    if (sortSelect) {
+        sortSelect.addEventListener('change', (e) => {
+            currentSortOption = e.target.value;
+            filterAndDisplayCarpets();
+        });
+    }
+}
+
 function setupFilters() {
     const buttons = document.querySelectorAll('.filter-btn');
     buttons.forEach(button => {
         button.addEventListener('click', (e) => {
             buttons.forEach(btn => {
-                btn.classList.remove('bg-brand', 'text-white', 'shadow-xs');
-                btn.classList.add('bg-[#fffbf7]', 'text-stone-700', 'border', 'border-stone-300', 'hover:bg-[#ebe1d3]');
+                btn.classList.remove('bg-brand', 'text-white', 'shadow-xs', 'font-bold');
+                btn.classList.add('bg-[#fffbf7]', 'text-stone-700', 'border', 'border-stone-300', 'hover:bg-[#ebe1d3]', 'font-semibold');
+                const badge = btn.querySelector('.cat-badge');
+                if (badge) {
+                    badge.classList.remove('bg-white/20', 'text-white');
+                    badge.classList.add('bg-stone-200/80', 'text-stone-700');
+                }
             });
             
             const activeBtn = e.currentTarget;
-            activeBtn.classList.remove('bg-[#fffbf7]', 'text-stone-700', 'border', 'border-stone-300', 'hover:bg-[#ebe1d3]');
-            activeBtn.classList.add('bg-brand', 'text-white', 'shadow-xs');
-
-            const filter = activeBtn.getAttribute('data-filter');
-            if (filter === 'all') {
-                displayCarpets(allCarpets);
-            } else {
-                const filtered = allCarpets.filter(c => c.category === filter);
-                displayCarpets(filtered);
+            activeBtn.classList.remove('bg-[#fffbf7]', 'text-stone-700', 'border', 'border-stone-300', 'hover:bg-[#ebe1d3]', 'font-semibold');
+            activeBtn.classList.add('bg-brand', 'text-white', 'shadow-xs', 'font-bold');
+            
+            const activeBadge = activeBtn.querySelector('.cat-badge');
+            if (activeBadge) {
+                activeBadge.classList.remove('bg-stone-200/80', 'text-stone-700');
+                activeBadge.classList.add('bg-white/20', 'text-white');
             }
+
+            currentFilter = activeBtn.getAttribute('data-filter') || 'all';
+            filterAndDisplayCarpets();
         });
     });
+}
+
+function resetSearchAndFilters() {
+    currentFilter = 'all';
+    currentSearchQuery = '';
+    currentSortOption = 'default';
+
+    const searchInput = document.getElementById('search-input');
+    if (searchInput) searchInput.value = '';
+
+    const clearBtn = document.getElementById('search-clear-btn');
+    if (clearBtn) clearBtn.classList.add('hidden');
+
+    const sortSelect = document.getElementById('sort-select');
+    if (sortSelect) sortSelect.value = 'default';
+
+    const buttons = document.querySelectorAll('.filter-btn');
+    buttons.forEach(btn => {
+        const filter = btn.getAttribute('data-filter');
+        const badge = btn.querySelector('.cat-badge');
+        if (filter === 'all') {
+            btn.classList.remove('bg-[#fffbf7]', 'text-stone-700', 'border', 'border-stone-300', 'hover:bg-[#ebe1d3]', 'font-semibold');
+            btn.classList.add('bg-brand', 'text-white', 'shadow-xs', 'font-bold');
+            if (badge) {
+                badge.classList.remove('bg-stone-200/80', 'text-stone-700');
+                badge.classList.add('bg-white/20', 'text-white');
+            }
+        } else {
+            btn.classList.remove('bg-brand', 'text-white', 'shadow-xs', 'font-bold');
+            btn.classList.add('bg-[#fffbf7]', 'text-stone-700', 'border', 'border-stone-300', 'hover:bg-[#ebe1d3]', 'font-semibold');
+            if (badge) {
+                badge.classList.remove('bg-white/20', 'text-white');
+                badge.classList.add('bg-stone-200/80', 'text-stone-700');
+            }
+        }
+    });
+
+    filterAndDisplayCarpets();
 }
 
 window.addEventListener('DOMContentLoaded', () => {

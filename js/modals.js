@@ -4,6 +4,72 @@
 
 export let cart = [];
 
+// ==========================================
+// نظام الإشعارات الفاخرة (Luxury Toast Notifications)
+// ==========================================
+export function showToast(message, type = 'success', title = '', duration = 3500) {
+    let container = document.getElementById('toast-container');
+    if (!container) {
+        container = document.createElement('div');
+        container.id = 'toast-container';
+        document.body.appendChild(container);
+    }
+
+    const toast = document.createElement('div');
+    toast.className = `tatr-toast toast-${type}`;
+
+    let iconSvg = '';
+    let defaultTitle = title;
+
+    if (type === 'success') {
+        defaultTitle = defaultTitle || 'تمت العملية بنجاح';
+        iconSvg = `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>`;
+    } else if (type === 'warning') {
+        defaultTitle = defaultTitle || 'تنبيه';
+        iconSvg = `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>`;
+    } else if (type === 'error') {
+        defaultTitle = defaultTitle || 'خطأ';
+        iconSvg = `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>`;
+    } else {
+        defaultTitle = defaultTitle || 'معلومة';
+        iconSvg = `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`;
+    }
+
+    toast.innerHTML = `
+        <div class="tatr-toast-icon-wrapper">
+            ${iconSvg}
+        </div>
+        <div class="tatr-toast-body">
+            <span class="tatr-toast-title">${defaultTitle}</span>
+            <span class="tatr-toast-msg">${message}</span>
+        </div>
+        <button class="tatr-toast-close" title="إغلاق">✕</button>
+        <div class="tatr-toast-progress" style="animation-duration: ${duration}ms;"></div>
+    `;
+
+    const closeBtn = toast.querySelector('.tatr-toast-close');
+    let isRemoved = false;
+    const removeToast = () => {
+        if (isRemoved) return;
+        isRemoved = true;
+        toast.classList.add('toast-hiding');
+        setTimeout(() => {
+            if (toast.parentNode) {
+                toast.parentNode.removeChild(toast);
+            }
+        }, 300);
+    };
+
+    closeBtn.addEventListener('click', removeToast);
+    container.appendChild(toast);
+
+    setTimeout(removeToast, duration);
+}
+
+if (typeof window !== 'undefined') {
+    window.showToast = showToast;
+}
+
 export function openModal(carpetId, allCarpets) {
     const carpet = allCarpets.find(c => c.id === carpetId);
     if (!carpet) return;
@@ -88,7 +154,7 @@ export function addToCart(id, title, price, dimensions) {
     const cartCountEl = document.getElementById('cart-count');
     if (cartCountEl) cartCountEl.innerText = cart.length;
     
-    alert(`تمت إضافة "${title}" إلى السلة بنجاح!`);
+    showToast(`تمت إضافة "${title}" إلى السلة بنجاح!`, 'success', 'سلة المشتريات');
 }
 
 export function openCartModal() {
@@ -143,15 +209,19 @@ export function updateCartDisplay() {
 }
 
 export function removeFromCart(index) {
+    const removedItem = cart[index];
     cart.splice(index, 1);
     const cartCountEl = document.getElementById('cart-count');
     if (cartCountEl) cartCountEl.innerText = cart.length;
     updateCartDisplay();
+    if (removedItem) {
+        showToast(`تم حذف "${removedItem.title}" من السلة`, 'info', 'سلة المشتريات', 2500);
+    }
 }
 
 export function sendCartToWhatsApp() {
     if (cart.length === 0) {
-        alert("سلتك فارغة، أضف بعض القطع أولاً.");
+        showToast("سلتك فارغة حالياً، تفضل بإضافة بعض القطع أولاً للمتابعة.", "warning", "السلة فارغة");
         return;
     }
 

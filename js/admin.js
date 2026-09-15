@@ -2,6 +2,8 @@
 // ملف إدارة الأمان وصلاحيات الأدمين والمنتجات (admin.js)
 // ==========================================
 
+import { showToast } from './modals.js';
+
 export function checkAdminPermission() {
     const isAdmin = localStorage.getItem('tatr_is_admin') === 'true';
     const loginTime = localStorage.getItem('tatr_login_time');
@@ -35,18 +37,18 @@ function triggerAdminLogin() {
         if (confirm("أنت مسجل كأدمين بالفعل. هل تريد تسجيل الخروج؟")) {
             localStorage.setItem('tatr_is_admin', 'false');
             localStorage.removeItem('tatr_login_time');
-            alert("تم تسجيل الخروج من وضع المسؤول.");
-            location.reload();
+            showToast("تم تسجيل الخروج من وضع المسؤول بنجاح.", "info", "تسجيل الخروج", 2000);
+            setTimeout(() => location.reload(), 600);
         }
     } else {
         const pass = prompt("أدخل كلمة مرور المسؤول السرية:");
         if (pass === "Tatriza@Admin2026") {
             localStorage.setItem('tatr_is_admin', 'true');
             localStorage.setItem('tatr_login_time', Date.now().toString());
-            alert("مرحباً بك أدمين! تم تفعيل صلاحيات الإدارة بنجاح.");
-            location.reload();
+            showToast("مرحباً بك! تم تفعيل صلاحيات الإدارة بنجاح.", "success", "وضع المسؤول", 2500);
+            setTimeout(() => location.reload(), 700);
         } else if (pass !== null) {
-            alert("كلمة المرور غير صحيحة!");
+            showToast("كلمة المرور السرية غير صحيحة!", "error", "خطأ في تسجيل الدخول");
         }
     }
 }
@@ -76,15 +78,18 @@ export function toggleStockStatus(carpetId, allCarpets, callback) {
     localStorage.setItem('tatr_carpets', JSON.stringify(allCarpets));
     
     if (callback) callback(allCarpets);
+    showToast(carpet.status === 'out_of_stock' ? `تم تعليم "${carpet.title}" كـ غير متوفرة` : `تمت إعادة توفير "${carpet.title}" في المعرض`, 'info', 'المخزون');
 }
 
 export function deleteCarpet(carpetId, allCarpets, callback) {
     if (!confirm("هل أنت متأكد من حذف هذه القطعة نهائياً من المعرض؟")) return;
 
+    const carpet = allCarpets.find(c => c.id === carpetId);
     const updatedCarpets = allCarpets.filter(c => c.id !== carpetId);
     localStorage.setItem('tatr_carpets', JSON.stringify(updatedCarpets));
     
     if (callback) callback(updatedCarpets);
+    showToast(carpet ? `تم حذف "${carpet.title}" من المعرض` : "تم حذف القطعة من المعرض", 'info', 'إدارة المعرض');
 }
 
 export async function handleAddProduct(event, allCarpets, callback) {
@@ -137,6 +142,7 @@ export async function handleAddProduct(event, allCarpets, callback) {
     if (callback) callback(allCarpets);
     closeAddModal();
     document.getElementById('add-product-form').reset();
+    showToast(`تم نشر "${newCarpet.title}" في المعرض بنجاح!`, 'success', 'إضافة سجادة');
 }
 
 export function openAddModal() {
