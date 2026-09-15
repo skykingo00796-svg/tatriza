@@ -139,9 +139,22 @@ function displayCarpets(carpetsToDisplay) {
                     ${imagesHtml}
                 </div>
                 
-                <span class="absolute top-3 right-3 bg-white/90 backdrop-blur-md text-stone-900 text-xs font-bold px-3 py-1.5 rounded-full shadow-xs z-10 pointer-events-none">
+                <!-- أبعاد السجادة في أعلى اليمين -->
+                <span class="absolute top-3 right-3 bg-white/90 backdrop-blur-md text-stone-900 text-xs font-bold px-3 py-1.5 rounded-full shadow-xs z-10 pointer-events-none border border-stone-200/50">
                     ${carpet.dimensions}
                 </span>
+
+                <!-- أزرار تحكم الأدمين في أعلى اليسار مقابل الأبعاد -->
+                ${isAdmin ? `
+                    <div class="absolute top-3 left-3 flex items-center gap-1.5 z-20" onclick="event.stopPropagation()">
+                        <button onclick="toggleStockStatus('${carpet.id}')" class="w-8 h-8 rounded-full bg-white/90 hover:bg-white text-stone-800 shadow-md backdrop-blur-md flex items-center justify-center text-xs transition transform hover:scale-110 border border-stone-200/80 cursor-pointer" title="${isOutOfStock ? 'إعادة توفير المنتج' : 'تعليم كـ نفدت الكمية'}">
+                            ${isOutOfStock ? '🟢' : '🔄'}
+                        </button>
+                        <button onclick="deleteCarpet('${carpet.id}')" class="w-8 h-8 rounded-full bg-red-500/90 hover:bg-red-600 text-white shadow-md backdrop-blur-md flex items-center justify-center text-xs transition transform hover:scale-110 cursor-pointer" title="حذف نهائي من المعرض">
+                            🗑️
+                        </button>
+                    </div>
+                ` : ''}
 
                 ${isOutOfStock ? `
                     <div class="absolute inset-0 bg-stone-950/40 backdrop-blur-[2px] flex items-center justify-center z-10 pointer-events-none">
@@ -157,19 +170,8 @@ function displayCarpets(carpetsToDisplay) {
             </div>
 
             <div class="p-4 md:p-5 flex flex-col justify-between bg-stone-50/60 border-t border-stone-200/50">
-                <div class="flex justify-between items-start mb-3">
-                    <h4 class="font-bold text-stone-900 text-sm md:text-base truncate group-hover:text-brand transition flex-1">${carpet.title}</h4>
-                    
-                    ${isAdmin ? `
-                        <div class="flex items-center gap-1 mr-2" onclick="event.stopPropagation()">
-                            <button onclick="toggleStockStatus('${carpet.id}')" class="p-1.5 rounded-lg bg-stone-200/80 hover:bg-stone-300 text-stone-700 text-xs transition" title="${isOutOfStock ? 'إعادة توفير المنتج' : 'تعليم كـ نفدت الكمية'}">
-                                🔄
-                            </button>
-                            <button onclick="deleteCarpet('${carpet.id}')" class="p-1.5 rounded-lg bg-red-100 hover:bg-red-200 text-red-600 text-xs transition" title="حذف نهائي">
-                                🗑️
-                            </button>
-                        </div>
-                    ` : ''}
+                <div class="mb-3">
+                    <h4 class="font-bold text-stone-900 text-sm md:text-base truncate group-hover:text-brand transition">${carpet.title}</h4>
                 </div>
 
                 <div class="flex items-center justify-between">
@@ -181,7 +183,6 @@ function displayCarpets(carpetsToDisplay) {
                     ${isOutOfStock && !isAdmin ? `
                         <span class="bg-stone-200 text-stone-700 text-xs font-bold px-3.5 py-2 rounded-xl">غير متوفر</span>
                     ` : `
-                        <!-- تم تصحيح استدعاء زر التفاصيل ليعمل بكفاءة عبر window.openModal -->
                         <button onclick="event.stopPropagation(); openModal('${carpet.id}')" class="bg-brand hover:bg-brand-hover text-white text-xs font-bold px-4 py-2 rounded-xl transition shadow-sm">
                             التفاصيل
                         </button>
