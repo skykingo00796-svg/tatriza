@@ -1264,59 +1264,78 @@ button[type="submit"]:active {
 }
 
 /* 2. جناح عرض الكاتلوج وفلاتر البحث (Exhibition Pavilion & Filters) */
-.catalog-pavilion-box {
-    background: linear-gradient(180deg, rgba(255, 251, 247, 0.95) 0%, rgba(249, 244, 237, 0.9) 100%);
-    border: 1px solid rgba(214, 202, 188, 0.75);
-    border-radius: 1.75rem;
-    box-shadow: 0 12px 32px -8px rgba(44, 30, 20, 0.07),
-                inset 0 1px 1px rgba(255, 255, 255, 0.9);
-    position: relative;
+/* ===================================================
+   قسم المعرض الفني (Exhibition Section - Seamless Layout)
+   =================================================== */
+
+/* العنوان الملكي: سطر واحد دائم في جميع الشاشات */
+.catalog-main-title {
+    font-size: clamp(1.05rem, 2.5vw, 1.85rem);
+    line-height: 1.2;
+    white-space: nowrap !important;
 }
 
-.catalog-pavilion-box::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 20%;
-    right: 20%;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, rgba(197, 155, 39, 0.4), transparent);
+.catalog-tag-badge {
+    font-size: clamp(0.65rem, 1.2vw, 0.8rem);
+    white-space: nowrap !important;
 }
 
-.catalog-search-pill {
+/* أيقونة البحث بلون الثيم المختار */
+.search-icon-orb {
+    color: var(--brand-color, #7c1d3c);
+    transition: color 0.3s ease;
+}
+
+/* خانات البحث والترتيب: نفس الحجم والمواصفات بالمليمتر */
+.catalog-control-input {
     background: #ffffff !important;
     border: 1.5px solid rgba(214, 202, 188, 0.85) !important;
-    box-shadow: 0 4px 12px -2px rgba(44, 30, 20, 0.05), inset 0 2px 4px rgba(0,0,0,0.02) !important;
+    border-radius: 0.85rem !important;
+    height: 2.35rem !important;
+    font-size: 0.75rem !important;
+    font-weight: 600 !important;
+    color: #1c1917 !important;
+    box-shadow: 0 2px 8px -2px rgba(44, 30, 20, 0.04) !important;
     transition: all 0.25s ease !important;
 }
 
-.catalog-search-pill:focus {
+@media (min-width: 640px) {
+    .catalog-control-input {
+        height: 2.75rem !important;
+        font-size: 0.85rem !important;
+        border-radius: 1rem !important;
+    }
+}
+
+.catalog-control-input:focus {
     border-color: var(--brand-color, #7c1d3c) !important;
-    box-shadow: 0 0 0 4px rgba(124, 29, 60, 0.12), 0 6px 16px -2px rgba(44, 30, 20, 0.08) !important;
+    box-shadow: 0 0 0 3.5px rgba(var(--brand-rgb, 124, 29, 60), 0.15), 0 4px 12px -2px rgba(44, 30, 20, 0.06) !important;
 }
 
-.catalog-sort-pill {
-    background: #ffffff !important;
-    border: 1.5px solid rgba(214, 202, 188, 0.85) !important;
-    box-shadow: 0 4px 12px -2px rgba(44, 30, 20, 0.05) !important;
-    transition: all 0.25s ease !important;
+/* سلكت الترتيب: إلغاء سهم المتصفح الافتراضي واستخدام سهم متباعد ببادينج مريح من اليسار */
+.catalog-control-select {
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
 }
 
-.catalog-sort-pill:hover {
-    border-color: rgba(197, 155, 39, 0.6) !important;
+.catalog-control-select:hover {
+    border-color: rgba(var(--brand-rgb, 124, 29, 60), 0.5) !important;
 }
 
+/* شريط التبويبات الفاخر بحجم أصغر وملموم في جميع الشاشات وخاصة الجوال */
 .catalog-filter-track {
-    background: rgba(240, 232, 222, 0.65);
-    border-radius: 1.25rem;
-    padding: 0.35rem;
+    background: rgba(240, 232, 222, 0.6);
+    border-radius: 1rem;
+    padding: 0.25rem;
     border: 1px solid rgba(214, 202, 188, 0.6);
-    box-shadow: inset 0 2px 4px rgba(44, 30, 20, 0.04);
+    box-shadow: inset 0 1px 3px rgba(44, 30, 20, 0.03);
 }
 
 .catalog-tab-btn {
-    border-radius: 1rem !important;
-    padding: 0.65rem 1.25rem !important;
+    border-radius: 0.7rem !important;
+    padding: 0.35rem 0.65rem !important;
+    font-size: 0.68rem !important;
     font-weight: 800 !important;
     transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
     border: 1px solid transparent !important;
@@ -1325,15 +1344,41 @@ button[type="submit"]:active {
     cursor: pointer !important;
 }
 
+.catalog-tab-btn .tab-icon {
+    font-size: 0.75rem !important;
+}
+
+.catalog-tab-btn .cat-badge {
+    font-size: 0.62rem !important;
+    padding: 0.12rem 0.42rem !important;
+}
+
+@media (min-width: 640px) {
+    .catalog-tab-btn {
+        border-radius: 0.85rem !important;
+        padding: 0.45rem 0.95rem !important;
+        font-size: 0.78rem !important;
+    }
+
+    .catalog-tab-btn .tab-icon {
+        font-size: 0.875rem !important;
+    }
+
+    .catalog-tab-btn .cat-badge {
+        font-size: 0.68rem !important;
+        padding: 0.15rem 0.52rem !important;
+    }
+}
+
 .catalog-tab-btn:hover {
     color: #1c1917 !important;
-    background: rgba(255, 255, 255, 0.7) !important;
+    background: rgba(255, 255, 255, 0.75) !important;
 }
 
 .catalog-tab-btn.active {
     background: var(--brand-color, #7c1d3c) !important;
     color: #ffffff !important;
-    box-shadow: 0 6px 18px -3px rgba(124, 29, 60, 0.4),
+    box-shadow: 0 4px 14px -2px rgba(var(--brand-rgb, 124, 29, 60), 0.4),
                 inset 0 1px 1px rgba(255, 255, 255, 0.4) !important;
     border-color: rgba(255, 255, 255, 0.2) !important;
     transform: translateY(-1px) scale(1.02);
