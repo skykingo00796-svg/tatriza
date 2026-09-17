@@ -238,6 +238,17 @@ function displayCarpets(carpetsToDisplay) {
     if (!grid) return;
 
     const isAdmin = checkAdminPermission();
+    renderCustomCategoriesInUI();
+    const addCatBtn = document.getElementById('admin-add-cat-btn');
+    if (addCatBtn) {
+        if (isAdmin) {
+            addCatBtn.classList.remove('hidden');
+            addCatBtn.classList.add('flex');
+        } else {
+            addCatBtn.classList.add('hidden');
+            addCatBtn.classList.remove('flex');
+        }
+    }
     grid.innerHTML = '';
 
     if (carpetsToDisplay.length === 0) {
@@ -636,6 +647,14 @@ function updateCategoryCounts() {
     setBadge('count-ajami', counts.ajami);
     setBadge('count-silk', counts.silk);
     setBadge('count-traditional', counts.traditional);
+
+    // تحديث عدادات التصنيفات المخصصة للأدمن
+    try {
+        getCustomCategories().forEach(cat => {
+            const cCount = allCarpets.filter(c => c.category === cat.id).length;
+            setBadge(`count-${cat.id}`, cCount);
+        });
+    } catch(e) {}
 }
 
 function filterAndDisplayCarpets() {
@@ -839,6 +858,154 @@ export function initHeroParallax() {
     });
 }
 
+
+// ==========================================
+// نظام إدارة التصنيفات المخصصة للأدمن (Custom Categories Management)
+// ==========================================
+export function getCustomCategories() {
+    try {
+        const stored = localStorage.getItem('tatr_custom_categories');
+        return stored ? JSON.parse(stored) : [];
+    } catch(e) {
+        return [];
+    }
+}
+
+export function saveCustomCategories(cats) {
+    localStorage.setItem('tatr_custom_categories', JSON.stringify(cats));
+    renderCustomCategoriesInUI();
+}
+
+export function renderCustomCategoriesInUI() {
+    const customCats = getCustomCategories();
+    const filterTrack = document.getElementById('filter-buttons');
+    const adminBtn = document.getElementById('admin-add-cat-btn');
+    
+    // 1. إزالة أي تبويبات مخصصة سابقة في شريط الكاتلوج
+    if (filterTrack) {
+        document.querySelectorAll('.custom-cat-tab').forEach(el => el.remove());
+        
+        // حقن التبويبات الجديدة قبل زر الأدمن
+        customCats.forEach(cat => {
+            const btn = document.createElement('button');
+            btn.setAttribute('data-filter', cat.id);
+            const isActive = currentFilter === cat.id;
+            btn.className = `filter-btn catalog-tab-btn custom-cat-tab group flex items-center gap-1.5 sm:gap-2 ${isActive ? 'active bg-brand text-white shadow-xs font-bold' : ''}`;
+            btn.innerHTML = `
+                <span class="tab-icon">${cat.icon || '✨'}</span>
+                <span class="font-display">${cat.name}</span>
+                <span id="count-${cat.id}" class="cat-badge px-1.5 sm:px-2 py-0.2 rounded-full font-black ${isActive ? 'bg-white/20 text-white' : 'bg-stone-200/80 text-stone-700'} transition">0</span>
+            `;
+            if (adminBtn) {
+                filterTrack.insertBefore(btn, adminBtn);
+            } else {
+                filterTrack.appendChild(btn);
+            }
+        });
+    }
+
+    // 2. تحديث قوائم التصنيفات في نوافذ إضافة وتعديل السجاد
+    ['new-category', 'edit-category'].forEach(selectId => {
+        const selectEl = document.getElementById(selectId);
+        if (selectEl) {
+            selectEl.querySelectorAll('.custom-cat-opt').forEach(opt => opt.remove());
+            customCats.forEach(cat => {
+                const opt = document.createElement('option');
+                opt.className = 'custom-cat-opt';
+                opt.value = cat.id;
+                opt.innerText = `${cat.icon || ''} ${cat.name}`;
+                selectEl.appendChild(opt);
+            });
+        }
+    });
+
+    // 3. إعادة تفعيل أحداث النقر للتبويبات
+    setupFilters();
+    updateCategoryCounts();
+}
+
+export function openAddCategoryModal() {
+    if (!checkAdminPermission()) {
+        alert('هذه الميزة مخصصة لمشرف الدار فقط.');
+        return;
+    }
+    const modal = document.getElementById('add-category-modal');
+    if (!modal) return;
+    
+    // عرض قائمة التصنيفات المخصصة الموجودة مع إمكانية حذفها
+    const listEl = document.getElementById('existing-custom-categories');
+    if (listEl) {
+        const customCats = getCustomCategories();
+        if (customCats.length === 0) {
+            listEl.innerHTML = '';
+        } else {
+            listEl.innerHTML = `
+                <div class="text-[11px] font-bold text-stone-600 mb-1 border-t border-stone-200/80 pt-2">التصنيفات المضافة حالياً:</div>
+                <div class="space-y-1 max-h-36 overflow-y-auto">
+                    ${customCats.map(c => `
+                        <div class="flex items-center justify-between bg-stone-100/90 rounded-lg px-2.5 py-1.5 text-xs">
+                            <span class="font-bold text-stone-800">${c.icon} ${c.name}</span>
+                            <button type="button" onclick="deleteCustomCategory('${c.id}')" class="text-rose-600 hover:text-rose-800 text-[11px] font-bold px-1.5 py-0.5 rounded hover:bg-rose-50 transition" title="حذف التصنيف">✕ حذف</button>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+    }
+    
+    modal.classList.remove('hidden');
+    const input = document.getElementById('new-cat-name');
+    if (input) {
+        input.value = '';
+        input.focus();
+    }
+}
+window.openAddCategoryModal = openAddCategoryModal;
+
+export function closeAddCategoryModal() {
+    const modal = document.getElementById('add-category-modal');
+    if (modal) modal.classList.add('hidden');
+}
+window.closeAddCategoryModal = closeAddCategoryModal;
+
+export function setNewCatIcon(icon) {
+    const input = document.getElementById('new-cat-icon');
+    if (input) input.value = icon;
+}
+window.setNewCatIcon = setNewCatIcon;
+
+export function submitNewCategory(e) {
+    e.preventDefault();
+    if (!checkAdminPermission()) return;
+
+    const nameInput = document.getElementById('new-cat-name');
+    const iconInput = document.getElementById('new-cat-icon');
+    if (!nameInput || !nameInput.value.trim()) return;
+
+    const catName = nameInput.value.trim();
+    const catIcon = iconInput && iconInput.value.trim() ? iconInput.value.trim() : '✨';
+    const catId = 'cat_' + Date.now().toString(36);
+
+    const customCats = getCustomCategories();
+    customCats.push({ id: catId, name: catName, icon: catIcon });
+    saveCustomCategories(customCats);
+
+    closeAddCategoryModal();
+}
+window.submitNewCategory = submitNewCategory;
+
+export function deleteCustomCategory(id) {
+    if (!checkAdminPermission()) return;
+    if (!confirm('هل أنت متأكد من رغبتك في حذف هذا التصنيف؟')) return;
+
+    const customCats = getCustomCategories().filter(c => c.id !== id);
+    if (currentFilter === id) currentFilter = 'all';
+    saveCustomCategories(customCats);
+    openAddCategoryModal(); // تحديث القائمة
+    filterAndDisplayCarpets();
+}
+window.deleteCustomCategory = deleteCustomCategory;
+
 window.addEventListener('DOMContentLoaded', () => {
     initTheme();
     try {
@@ -851,6 +1018,17 @@ window.addEventListener('DOMContentLoaded', () => {
     initVideoUploadHandlers();
 
     const isAdmin = checkAdminPermission();
+    renderCustomCategoriesInUI();
+    const addCatBtn = document.getElementById('admin-add-cat-btn');
+    if (addCatBtn) {
+        if (isAdmin) {
+            addCatBtn.classList.remove('hidden');
+            addCatBtn.classList.add('flex');
+        } else {
+            addCatBtn.classList.add('hidden');
+            addCatBtn.classList.remove('flex');
+        }
+    }
     const addCarpetBtn = document.querySelector('button[onclick="openAddModal()"]');
     if (addCarpetBtn) {
         addCarpetBtn.style.display = isAdmin ? 'flex' : 'none';

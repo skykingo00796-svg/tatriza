@@ -161,8 +161,8 @@
                     </div>
                 </div>
 
-                <!-- خانات البحث والترتيب: تحت بعضهما في كل الشاشات وبعرض ثابت متطابق على جهة اليسار -->
-                <div class="flex flex-col gap-2 sm:gap-2.5 w-[280px] sm:w-72 max-w-full shrink-0 self-start lg:self-center">
+                <!-- خانات البحث والترتيب: عرض كامل في الجوال وثابتة في الشاشات الأكبر على جهة اليسار -->
+                <div class="flex flex-col gap-2 sm:gap-2.5 w-full sm:w-72 shrink-0 self-start lg:self-center">
                     <!-- حقل البحث بالاسم مع أيقونة ملونة بلون الثيم النشط -->
                     <div class="relative w-full">
                         <div class="absolute inset-y-0 right-0 pr-3 sm:pr-3.5 flex items-center pointer-events-none search-icon-orb">
@@ -214,6 +214,12 @@
                     <span class="tab-icon">🏛️</span>
                     <span class="font-display">تراثي أصيل</span>
                     <span id="count-traditional" class="cat-badge px-1.5 sm:px-2 py-0.2 rounded-full font-black bg-stone-200/80 text-stone-700 transition">0</span>
+                </button>
+                
+                <!-- زر إضافة تصنيف جديد خاص بالأدمن فقط بنمط احترافي فاخر -->
+                <button id="admin-add-cat-btn" onclick="openAddCategoryModal()" class="admin-only hidden catalog-tab-btn border-dashed border-emerald-600/70 bg-emerald-50/80 hover:bg-emerald-100 text-emerald-900 transition flex items-center gap-1.5 shrink-0" title="إضافة تصنيف جديد للمعرض">
+                    <span class="tab-icon font-black text-emerald-700">＋</span>
+                    <span class="font-display font-black text-emerald-950">تصنيف جديد</span>
                 </button>
             </div>
         </section>
