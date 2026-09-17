@@ -1608,15 +1608,19 @@ button[type="submit"]:active {
 
 /* ===================================================
    العنوان الملكي الفاخر في البطاقة الترحيبية
-   (Hero Brand Headline: Golden TATRIZA | with scalable motivational text)
+   (Hero Brand Headline: Golden TATRIZA | on the exact same horizontal level across all screen sizes)
    =================================================== */
 .hero-brand-headline {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    align-items: center;
     line-height: 1.05;
+    width: 100%;
 }
 
 /* لمسة ذهبية ملكية ناعمة ممتدة للأسفل وبحجم كبير يكبر في الشاشات الكبيرة ويصغر بمرونة */
 .hero-brand-title {
-    font-size: clamp(1.85rem, 6.2vw, 4.85rem);
+    font-size: clamp(1.4rem, 5.5vw, 4.85rem);
     line-height: 0.95;
     letter-spacing: -0.01em;
     background: linear-gradient(135deg, #fffbeb 0%, #fef08a 35%, #eab308 70%, #ca8a04 100%);
@@ -1628,27 +1632,26 @@ button[type="submit"]:active {
 
 /* الخط الفاصل الذهبي الملكي الممتد بارتفاع الكلمة */
 .hero-brand-divider {
-    font-size: clamp(2.1rem, 6.8vw, 5.25rem);
-    line-height: 0.8;
+    font-size: clamp(1.6rem, 6.2vw, 5.25rem);
+    line-height: 0.85;
     font-weight: 200;
     color: #eab308;
     text-shadow: 0 0 16px rgba(234, 179, 8, 0.5);
     display: inline-flex;
-    align-items: baseline;
+    align-items: center;
 }
 
-/* الكلام التحفيزي: كبير وعلى سطر واحد في الشاشات الكبيرة أصغر بقليل من تطريزة، ويصغر أكثر مع صغر الشاشة */
+/* الكلام التحفيزي: دائماً بجانب كلمة تطريزة والفاصل على نفس المستوى في كل الأحجام */
+/* يتوزع على سطر واحد في الشاشات الكبيرة وعلى سطرين أو ثلاثة في الشاشات الأصغر حسب المساحة */
 .hero-motivational-text {
-    font-size: clamp(0.85rem, 2.35vw, 2.15rem);
+    font-size: clamp(0.72rem, 2.15vw, 2.15rem);
     line-height: 1.25;
     letter-spacing: -0.01em;
     text-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
     color: #ffffff;
     align-self: center;
-}
-
-@media (min-width: 1024px) {
-    .hero-motivational-text {
-        white-space: nowrap;
-    }
+    min-width: 0;
+    flex: 1;
+    word-break: normal;
+    overflow-wrap: break-word;
 }
