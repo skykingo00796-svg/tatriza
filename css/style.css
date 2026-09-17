@@ -1221,13 +1221,13 @@ button[type="submit"]:active {
     box-shadow: 0 3px 8px -2px rgba(0, 0, 0, 0.12), inset 0 1px 1px rgba(255, 255, 255, 0.8);
     border: 1px solid rgba(255, 255, 255, 0.6);
     position: relative;
-    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
 }
 
-/* حركة لمس هادئة وأنيقة داخل حدود البطاقة بدون تمدد خارجي مفرط */
+/* حركة التكبير الناعمة مع الميلان لليمين المحبوبة لدى المستخدم */
 .drawer-lux-card:hover .drawer-icon-orb {
-    transform: translateY(-1px);
-    box-shadow: 0 5px 12px -2px rgba(197, 155, 39, 0.25), inset 0 1px 1px rgba(255, 255, 255, 1);
+    transform: scale(1.08) rotate(4deg);
+    box-shadow: 0 6px 14px -2px rgba(197, 155, 39, 0.3), inset 0 1px 1px rgba(255, 255, 255, 1);
 }
 
 .drawer-action-arrow {
