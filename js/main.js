@@ -13,6 +13,7 @@ import {
 } from './modals.js';
 
 import { isFirebaseConfigured, subscribeToCarpets, formatReadableDate, getVideoFromIndexedDB } from './firebase.js';
+import { initAmbient3D } from './ambient-3d.js';
 
 // مدة ظهور وسم "جديد وحصري" للمنتجات الجديدة (7 أيام)
 export const EXCLUSIVE_DURATION_DAYS = 7;
@@ -311,14 +312,36 @@ function displayCarpets(carpetsToDisplay) {
         const remainingDays = isNew ? getProductRemainingDays(carpet) : 0;
 
         const card = document.createElement('div');
-        card.className = `carpet-card bg-[#fffbf7] rounded-3xl overflow-hidden border ${isNew ? 'card-exclusive-border' : 'border-stone-200/80'} shadow-sm flex flex-col h-full cursor-pointer group relative`;
+        card.className = `carpet-card carpet-card-reveal bg-[#fffbf7] rounded-3xl overflow-hidden border ${isNew ? 'card-exclusive-border' : 'border-stone-200/80'} shadow-sm flex flex-col h-full cursor-pointer group relative`;
+        card.style.animationDelay = `${Math.min(index * 0.05, 0.35)}s`;
         card.onclick = () => openModal(carpet.id, allCarpets);
 
+        // إضافة مستمعات الـ 3D Tilt والانعكاس الضوئي التفاعلي للبطاقة
+        card.addEventListener('mousemove', (e) => {
+            const rect = card.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            const centerX = rect.width / 2;
+            const centerY = rect.height / 2;
+            const rotateX = ((y - centerY) / centerY) * -6;
+            const rotateY = ((x - centerX) / centerX) * 6;
+            card.style.transform = `perspective(1000px) rotateX(${rotateX.toFixed(1)}deg) rotateY(${rotateY.toFixed(1)}deg) translateY(-4px)`;
+            card.style.setProperty('--glare-x', `${((x / rect.width) * 100).toFixed(1)}%`);
+            card.style.setProperty('--glare-y', `${((y / rect.height) * 100).toFixed(1)}%`);
+        });
+
+        card.addEventListener('mouseleave', () => {
+            card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0)';
+        });
+
         card.innerHTML = `
+            <!-- طبقة الانعكاس الضوئي ثلاثي الأبعاد -->
+            <div class="card-light-glare"></div>
+
             <!-- الكتلة العلوية: الشريط الملاصق للصورة يمنع ظهور أي فراغ أبيض نهائياً -->
-            <div class="w-full shrink-0 flex flex-col bg-stone-100">
+            <div class="w-full shrink-0 flex flex-col bg-stone-100 relative z-10">
                 ${isNew ? `
-                    <div class="exclusive-top-crown-ribbon ${isOutOfStock ? 'ribbon-static' : ''} rounded-t-3xl" title="${isOutOfStock ? 'المنتج جديد وحصري (نفدت الكمية)' : 'المنتج جديد وحصري'}">
+                    <div class="exclusive-top-crown-ribbon ${isOutOfStock ? 'ribbon-static' : 'spark-badge-crystal'} rounded-t-3xl" title="${isOutOfStock ? 'المنتج جديد وحصري (نفدت الكمية)' : 'المنتج جديد وحصري'}">
                         <div class="flex items-center justify-center gap-1.5 text-xs font-black text-white whitespace-nowrap">
                             <span class="text-xs shrink-0">✨</span>
                             <span class="tracking-wide whitespace-nowrap">${isOutOfStock ? 'المنتج جديد وحصري (نفدت الكمية)' : 'المنتج جديد وحصري'}</span>
@@ -394,24 +417,24 @@ function displayCarpets(carpetsToDisplay) {
             </div>
 
             <!-- الكتلة السفلية: تتمدد لامتصاص أي فرق في ارتفاع البطاقات وتثبيت السعر والزر في الأسفل -->
-            <div class="p-4 md:p-5 flex-1 flex flex-col justify-between bg-stone-50/60 border-t border-stone-200/50">
+            <div class="p-4 md:p-5 flex-1 flex flex-col justify-between bg-stone-50/60 border-t border-stone-200/50 relative z-10">
                 <div class="mb-3">
-                    <h4 class="font-bold text-stone-900 text-sm md:text-base truncate group-hover:text-brand transition">${carpet.title}</h4>
+                    <h4 class="font-display font-black text-stone-900 text-sm md:text-base truncate group-hover:text-brand transition">${carpet.title}</h4>
                 </div>
 
                 <div class="flex items-center justify-between gap-2 mt-auto">
                     <div class="flex items-center gap-1 shrink-0">
-                        <span class="text-base md:text-lg font-black text-brand">${carpet.price}</span>
-                        <span class="text-brand text-xs font-bold">ر.ع.</span>
+                        <span class="font-display text-base md:text-lg font-black text-brand">${carpet.price}</span>
+                        <span class="font-display text-brand text-xs font-bold">ر.ع.</span>
                     </div>
                     
                     ${isOutOfStock ? `
-                        <button onclick="event.stopPropagation(); openModal('${carpet.id}')" class="bg-brand hover:bg-brand-hover text-white text-[10px] sm:text-[11px] font-bold px-2.5 sm:px-3.5 py-2 rounded-xl transition shadow-sm flex items-center gap-1.5 cursor-pointer whitespace-nowrap shrink-0" title="التفاصيل وإعادة طلب المنتج">
-                            <span class="whitespace-nowrap">التفاصيل وإعادة طلب المنتج</span>
+                        <button onclick="event.stopPropagation(); openModal('${carpet.id}')" class="btn-liquid-metal font-display text-white text-[10px] sm:text-[11px] font-bold px-3 sm:px-3.5 py-2 rounded-xl transition shadow-sm flex items-center gap-1.5 cursor-pointer whitespace-nowrap shrink-0" title="التفاصيل وإعادة طلب المنتج">
+                            <span class="whitespace-nowrap">إعادة طلب المنتج</span>
                             <span class="text-xs shrink-0">🔄</span>
                         </button>
                     ` : `
-                        <button onclick="event.stopPropagation(); openModal('${carpet.id}')" class="bg-brand hover:bg-brand-hover text-white text-xs font-bold px-4 py-2 rounded-xl transition shadow-sm cursor-pointer whitespace-nowrap shrink-0">
+                        <button onclick="event.stopPropagation(); openModal('${carpet.id}')" class="btn-liquid-metal font-display text-white text-xs font-bold px-4 sm:px-5 py-2 rounded-xl transition shadow-sm cursor-pointer whitespace-nowrap shrink-0">
                             التفاصيل
                         </button>
                     `}
@@ -762,6 +785,9 @@ function resetSearchAndFilters() {
 
 window.addEventListener('DOMContentLoaded', () => {
     initTheme();
+    try {
+        initAmbient3D('ambient-3d-canvas');
+    } catch(e) {}
     initAdminShortcut();
     initImageUploadPreview();
     initEditImageManager();

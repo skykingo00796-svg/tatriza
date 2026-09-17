@@ -1,3 +1,4 @@
+import { updateAmbient3DColor } from './ambient-3d.js';
 // ==========================================
 // ملف إدارة الثيمات والهوية البصرية (theme.js)
 // ==========================================
@@ -65,6 +66,11 @@ export function applyTheme() {
         injected.textContent = `:root, html, body { --brand-color: ${active.color} !important; --brand-hover: ${active.hover} !important; --brand-border: ${active.border} !important; }`;
     }
 
+    // تحديث لون الجزيئات ثلاثية الأبعاد في الخلفية ليتطابق مع الثيم
+    try {
+        updateAmbient3DColor(active.color);
+    } catch(e) {}
+
     document.querySelectorAll('img[alt="Tatriza Logo"]').forEach(img => {
         img.src = pendingLogo;
     });
@@ -90,4 +96,14 @@ export function initTheme() {
     document.querySelectorAll('.theme-bg-logo').forEach(el => {
         el.style.backgroundImage = `url('${savedLogo}')`;
     });
+
+    const palette = {
+        burgundy: '#7c1d3c',
+        green: '#435838',
+        blue: '#2d5f75',
+        gold: '#c59b27'
+    };
+    try {
+        updateAmbient3DColor(palette[savedTheme] || '#c59b27');
+    } catch(e) {}
 }

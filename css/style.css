@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Alexandria:wght@300;400;600;700;800;900&family=Amiri:ital,wght@0,400;0,700;1,400&family=Cairo:wght@300;400;600;700;900&family=Tajawal:wght@400;500;700;800&display=swap');
 
 :root {
     --brand-burgundy: #7c1d3c;
@@ -888,4 +888,244 @@ button[type="submit"]:active {
 #modal-video-audio-btn:hover {
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+/* ==========================================================================
+   دار تطريز TATRIZA - نظام التصميم ثلاثي الأبعاد المطور (3D Luxury Design System)
+   مستوحى من ThreeUI و UI/UX Pro Max
+   ========================================================================== */
+
+/* فئات الخطوط الفاخرة */
+.font-display {
+    font-family: 'Alexandria', 'Cairo', sans-serif !important;
+}
+.font-heritage {
+    font-family: 'Amiri', serif !important;
+}
+.font-interface {
+    font-family: 'Tajawal', 'Cairo', sans-serif !important;
+}
+
+/* حاوية الـ 3D Canvas للجزيئات الذهبية */
+#ambient-3d-canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* ==========================================================================
+   الشريط العلوي العائم الفاخر (Floating Island Dock Navbar)
+   ========================================================================== */
+.floating-luxury-dock {
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    background: rgba(255, 251, 247, 0.82);
+    border: 1px solid rgba(255, 255, 255, 0.85);
+    box-shadow: 0 16px 36px -10px rgba(44, 30, 20, 0.12),
+                0 0 0 1px rgba(214, 200, 185, 0.4),
+                inset 0 1px 1px rgba(255, 255, 255, 0.9);
+    transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.floating-luxury-dock:hover {
+    box-shadow: 0 20px 42px -8px rgba(44, 30, 20, 0.16),
+                0 0 0 1px rgba(197, 155, 39, 0.45),
+                inset 0 1px 1px rgba(255, 255, 255, 1);
+}
+
+/* ==========================================================================
+   بطاقات السجاد ثلاثية الأبعاد (3D Interactive Tilt & Parallax Cards)
+   ========================================================================== */
+.carpet-card {
+    perspective: 1200px;
+    transform-style: preserve-3d;
+    transition: transform 0.28s cubic-bezier(0.2, 0.8, 0.2, 1),
+                box-shadow 0.3s ease,
+                border-color 0.3s ease;
+    will-change: transform, box-shadow;
+}
+
+/* تأثير الإمالة ثلاثية الأبعاد مع ظل واقعي متعدد الطبقات */
+.carpet-card:hover {
+    box-shadow: 0 24px 48px -12px rgba(44, 30, 20, 0.18),
+                0 8px 20px -6px rgba(0, 0, 0, 0.08),
+                0 0 0 1px rgba(197, 155, 39, 0.35);
+}
+
+/* لمعة الانعكاس الضوئي التفاعلية على البطاقة (Interactive Light Glare) */
+.card-light-glare {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    border-radius: inherit;
+    background: radial-gradient(
+        circle 280px at var(--glare-x, 50%) var(--glare-y, 50%),
+        rgba(255, 255, 255, 0.35) 0%,
+        rgba(255, 248, 230, 0.12) 40%,
+        transparent 75%
+    );
+    opacity: 0;
+    transition: opacity 0.25s ease;
+    z-index: 15;
+    mix-blend-mode: overlay;
+}
+
+.carpet-card:hover .card-light-glare {
+    opacity: 1;
+}
+
+/* لمعة الذهب الهولندغرامية للمنتجات الحصرية */
+.card-exclusive-border {
+    position: relative;
+    border-color: rgba(217, 119, 6, 0.6) !important;
+    box-shadow: 0 12px 32px -8px rgba(197, 155, 39, 0.3),
+                0 0 0 1px rgba(245, 158, 11, 0.5);
+}
+
+.card-exclusive-border:hover {
+    box-shadow: 0 24px 52px -10px rgba(197, 155, 39, 0.45),
+                0 0 20px rgba(245, 158, 11, 0.3),
+                0 0 0 1.5px rgba(245, 158, 11, 0.8) !important;
+}
+
+/* شارة الكرستال البراقة لجديد وحصري (ThreeUI Spark Badge Effect) */
+.spark-badge-crystal {
+    background: linear-gradient(135deg, rgba(254, 240, 138, 0.95) 0%, rgba(217, 119, 6, 0.9) 50%, rgba(180, 83, 9, 0.95) 100%);
+    box-shadow: 0 4px 14px rgba(217, 119, 6, 0.45), inset 0 1px 1px rgba(255, 255, 255, 0.8);
+    position: relative;
+    overflow: hidden;
+}
+
+.spark-badge-crystal::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -60%;
+    width: 220%;
+    height: 200%;
+    background: linear-gradient(
+        60deg,
+        transparent 35%,
+        rgba(255, 255, 255, 0.75) 50%,
+        transparent 65%
+    );
+    animation: sparkBadgeShimmer 3s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+@keyframes sparkBadgeShimmer {
+    0% { transform: translateX(-100%); }
+    25%, 100% { transform: translateX(100%); }
+}
+
+/* ==========================================================================
+   أزرار الذهب والمعدن السائل الفاخرة (Liquid Metal Button System)
+   مستوحى من ThreeUI LiquidMetalButton
+   ========================================================================== */
+.btn-liquid-metal {
+    background: linear-gradient(135deg, var(--brand-color, #7c1d3c) 0%, var(--brand-hover, #631730) 100%);
+    position: relative;
+    overflow: hidden;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 8px 20px -4px rgba(124, 29, 60, 0.35),
+                inset 0 1px 1px rgba(255, 255, 255, 0.35);
+}
+
+.btn-liquid-metal::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.25) 50%,
+        transparent 100%
+    );
+    transform: translateX(-100%);
+    transition: transform 0.65s ease;
+}
+
+.btn-liquid-metal:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 14px 28px -6px rgba(124, 29, 60, 0.45),
+                inset 0 1px 1px rgba(255, 255, 255, 0.5);
+}
+
+.btn-liquid-metal:hover::before {
+    transform: translateX(100%);
+}
+
+.btn-liquid-metal:active {
+    transform: translateY(0) scale(0.98);
+}
+
+/* ==========================================================================
+   فلاتر الكبسولات التفاعلية ثلاثية الأبعاد (Interactive 3D Pill Filters)
+   ========================================================================== */
+.filter-pill-btn {
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+.filter-pill-btn:hover {
+    transform: translateY(-1.5px);
+    box-shadow: 0 6px 14px -2px rgba(44, 30, 20, 0.1), inset 0 1px 0 rgba(255, 255, 255, 1);
+}
+
+.filter-pill-btn:active {
+    transform: translateY(0) scale(0.97);
+}
+
+.filter-pill-btn.active {
+    background: var(--brand-color, #7c1d3c) !important;
+    color: #ffffff !important;
+    box-shadow: 0 8px 20px -4px rgba(124, 29, 60, 0.45),
+                inset 0 1px 1px rgba(255, 255, 255, 0.4) !important;
+}
+
+/* ==========================================================================
+   أنيميشن ظهور عناصر المعرض المتتابع (Stagger Fade-In Reveal)
+   ========================================================================== */
+@keyframes luxuryCardReveal {
+    from {
+        opacity: 0;
+        transform: translateY(24px) scale(0.96);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.carpet-card-reveal {
+    animation: luxuryCardReveal 0.5s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+}
+
+/* ==========================================================================
+   نوافذ الزجاج الفاخرة المحسنة (Ultra Glassmorphism Modals)
+   ========================================================================== */
+.modal-glass-backdrop {
+    backdrop-filter: blur(20px) saturate(160%);
+    -webkit-backdrop-filter: blur(20px) saturate(160%);
+    background: rgba(18, 15, 13, 0.62);
+}
+
+.modal-glass-content {
+    animation: luxuryModalSpring 0.38s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    box-shadow: 0 32px 64px -16px rgba(0, 0, 0, 0.45),
+                0 0 0 1px rgba(255, 255, 255, 0.2),
+                inset 0 1px 2px rgba(255, 255, 255, 0.6);
+}
+
+@keyframes luxuryModalSpring {
+    0% {
+        opacity: 0;
+        transform: scale(0.93) translateY(16px);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
 }

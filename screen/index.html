@@ -5,6 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>معرض السجاد الفاخر - تصميم حصري</title>
+    <!-- خطوط Google الفاخرة: Alexandria للعناوين المعاصرة، Amiri للتراث، و Tajawal لواجهة المتجر -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@300;400;500;600;700;800;900&family=Amiri:ital,wght@0,400;0,700;1,400&family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
     <!-- مكتبة التنسيقات Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- ملف الأنماط والتصميم العام (مع تعديل المسار للخروج من مجلد screen) -->
@@ -41,14 +45,14 @@
     </script>
 </head>
 
-<body class="text-stone-800" style="background-color: #d1c5b6;">   
+<body class="text-stone-800 font-interface" style="background-color: #d1c5b6;">   
 
     <!-- حاوية الإشعارات الفاخرة (Toast Container) -->
     <div id="toast-container"></div>
 
-    <!-- شريط التنقل العلوي -->
-    <header class="bg-[#fffbf7]/90 backdrop-blur-md sticky top-0 z-40 border-b border-stone-200 shadow-xs w-full">
-        <div class="w-full px-6 md:px-12 h-20 flex justify-between items-center">
+    <!-- شريط التنقل العلوي الفاخر بنمط الجزيرة العائمة (Floating Luxury Dock) -->
+    <header class="sticky top-2 sm:top-3.5 z-40 w-full px-3 sm:px-6 md:px-12 pointer-events-none transition-all duration-300">
+        <div class="floating-luxury-dock pointer-events-auto rounded-2xl sm:rounded-3xl w-full px-4 sm:px-6 md:px-8 h-16 sm:h-20 flex justify-between items-center transition-all duration-300">
             
             <!-- اللوجو واسم الدار -->
             <div class="flex items-center gap-3">
@@ -88,15 +92,23 @@
     <!-- المحتوى الرئيسي -->
     <main class="w-full px-6 md:px-12 pb-20 pt-8">
         
-        <!-- البانر الترحيبي -->
-        <section class="w-full py-6">
-            <a href="about.html" class="block rounded-3xl p-8 md:p-14 text-white relative overflow-hidden shadow-xl bg-stone-950 group cursor-pointer transition transform hover:-translate-y-1">
-                <div class="absolute inset-0 bg-cover bg-center opacity-35 filter blur-[0.5px] pointer-events-none group-hover:scale-105 transition duration-700 theme-bg-logo" style="background-image: url('../images/logo.jpg');"></div>
-                <div class="absolute inset-0 opacity-90" style="background: linear-gradient(to bottom right, var(--brand-color), #1a1a1a);"></div>
+        <!-- البانر الترحيبي ثلاثي الأبعاد مع خيوط وجزيئات الذهب التفاعلية (ThreeUI Ambient) -->
+        <section class="w-full py-4 sm:py-6 relative">
+            <!-- محرك الجزيئات وخيوط الذهب ثلاثية الأبعاد -->
+            <canvas id="ambient-3d-canvas" class="rounded-3xl"></canvas>
+
+            <a href="about.html" class="block rounded-3xl p-7 sm:p-10 md:p-14 text-white relative overflow-hidden shadow-2xl bg-stone-950 group cursor-pointer transition-all duration-500 transform hover:-translate-y-1.5 border border-white/10 hover:border-amber-400/40">
+                <div class="absolute inset-0 bg-cover bg-center opacity-30 filter blur-[0.5px] pointer-events-none group-hover:scale-108 transition duration-1000 theme-bg-logo" style="background-image: url('../images/logo.jpg');"></div>
+                <div class="absolute inset-0 opacity-90 transition-opacity duration-700" style="background: linear-gradient(135deg, var(--brand-color) 0%, rgba(26,26,26,0.95) 100%);"></div>
                 
                 <div class="relative z-10 w-full">
-                    <span class="bg-white/10 text-stone-100 border border-white/20 text-xs font-semibold px-3 py-1.5 rounded-full inline-block mb-4">صناعة يدوية بشغف وإتقان</span>
-                    <h2 class="text-3xl md:text-5xl font-extrabold tracking-tight leading-tight mb-4">TATRIZA | تحف فنية تنبض بالهوية والتطريز الأصيل</h2>
+                    <span class="font-heritage bg-white/10 text-amber-200 border border-amber-300/30 text-xs sm:text-sm font-semibold px-3.5 py-1.5 rounded-full inline-flex items-center gap-1.5 mb-3.5 backdrop-blur-md shadow-xs">
+                        <span>✨</span>
+                        <span>صناعة يدوية بشغف وإتقان سلطاني</span>
+                    </span>
+                    <h2 class="font-display text-2xl sm:text-4xl md:text-5xl font-black tracking-tight leading-tight mb-3 sm:mb-4 text-white drop-shadow-sm">
+                        TATRIZA | تحف فنية تنبض بالهوية والتطريز الأصيل
+                    </h2>
                     <p class="text-stone-200 text-sm md:text-base leading-relaxed mb-6 max-w-3xl">استعرض تشكيلة سجادنا اليدوي الفريد المصمم خصيصاً ليضفي على ركنك دفئاً وفخامة استثنائية.</p>
                     <span class="inline-flex items-center gap-2 text-amber-300 font-bold text-sm bg-white/10 px-4 py-2 rounded-xl backdrop-blur-xs border border-white/20">
                         تعرف على قصتنا ومن نحن ←
@@ -111,7 +123,7 @@
             <!-- السطر العلوي: العنوان مع شريط البحث والترتيب -->
             <div class="flex flex-col lg:flex-row justify-between items-stretch lg:items-center gap-4">
                 <div>
-                    <h3 class="text-xl md:text-2xl font-extrabold text-stone-900 tracking-tight">المعرض الفني</h3>
+                    <h3 class="font-display text-xl md:text-2xl font-black text-stone-900 tracking-tight">المعرض الفني</h3>
                     <p class="text-xs md:text-sm text-stone-600 mt-1">تصفح القطع المتوفرة بالاسم، الخامة أو النقشة الفنية</p>
                 </div>
 
@@ -140,23 +152,23 @@
                 </div>
             </div>
             
-            <!-- أزرار كبسولات الكاتيجوري مع عدادات القطع المتجاوبة -->
-            <div id="filter-buttons" class="flex items-center overflow-x-auto whitespace-nowrap gap-2 py-2 px-1 scrollbar-none">
-                <button data-filter="all" class="filter-btn group flex items-center gap-2 px-4 py-2 rounded-2xl text-xs md:text-sm font-bold bg-brand text-white transition-all duration-200 shadow-xs shrink-0">
-                    <span>الكل</span>
-                    <span id="count-all" class="cat-badge px-2 py-0.5 rounded-full text-[11px] font-extrabold bg-white/20 text-white transition">0</span>
+            <!-- أزرار كبسولات الكاتيجوري ثلاثية الأبعاد التفاعلية مع عدادات القطع -->
+            <div id="filter-buttons" class="flex items-center overflow-x-auto whitespace-nowrap gap-2.5 py-2 px-1 scrollbar-none">
+                <button data-filter="all" class="filter-btn filter-pill-btn group flex items-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 rounded-2xl text-xs md:text-sm font-bold bg-brand text-white shadow-xs shrink-0 cursor-pointer">
+                    <span class="font-display text-xs sm:text-sm">الكل</span>
+                    <span id="count-all" class="cat-badge px-2 py-0.5 rounded-full text-[10px] sm:text-[11px] font-black bg-white/20 text-white transition">0</span>
                 </button>
-                <button data-filter="ajami" class="filter-btn group flex items-center gap-2 px-4 py-2 rounded-2xl text-xs md:text-sm font-semibold bg-[#fffbf7] text-stone-700 hover:bg-[#ebe1d3] border border-stone-300 transition-all duration-200 shrink-0">
-                    <span>نقشات عجمية</span>
-                    <span id="count-ajami" class="cat-badge px-2 py-0.5 rounded-full text-[11px] font-extrabold bg-stone-200/80 text-stone-700 transition">0</span>
+                <button data-filter="ajami" class="filter-btn filter-pill-btn group flex items-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 rounded-2xl text-xs md:text-sm font-bold bg-[#fffbf7] text-stone-700 hover:bg-white border border-stone-300/80 shrink-0 cursor-pointer">
+                    <span class="font-display text-xs sm:text-sm">نقشات عجمية</span>
+                    <span id="count-ajami" class="cat-badge px-2 py-0.5 rounded-full text-[10px] sm:text-[11px] font-black bg-stone-200/80 text-stone-700 transition">0</span>
                 </button>
-                <button data-filter="silk" class="filter-btn group flex items-center gap-2 px-4 py-2 rounded-2xl text-xs md:text-sm font-semibold bg-[#fffbf7] text-stone-700 hover:bg-[#ebe1d3] border border-stone-300 transition-all duration-200 shrink-0">
-                    <span>سجاد حريري</span>
-                    <span id="count-silk" class="cat-badge px-2 py-0.5 rounded-full text-[11px] font-extrabold bg-stone-200/80 text-stone-700 transition">0</span>
+                <button data-filter="silk" class="filter-btn filter-pill-btn group flex items-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 rounded-2xl text-xs md:text-sm font-bold bg-[#fffbf7] text-stone-700 hover:bg-white border border-stone-300/80 shrink-0 cursor-pointer">
+                    <span class="font-display text-xs sm:text-sm">سجاد حريري</span>
+                    <span id="count-silk" class="cat-badge px-2 py-0.5 rounded-full text-[10px] sm:text-[11px] font-black bg-stone-200/80 text-stone-700 transition">0</span>
                 </button>
-                <button data-filter="traditional" class="filter-btn group flex items-center gap-2 px-4 py-2 rounded-2xl text-xs md:text-sm font-semibold bg-[#fffbf7] text-stone-700 hover:bg-[#ebe1d3] border border-stone-300 transition-all duration-200 shrink-0">
-                    <span>تراثي أصيل</span>
-                    <span id="count-traditional" class="cat-badge px-2 py-0.5 rounded-full text-[11px] font-extrabold bg-stone-200/80 text-stone-700 transition">0</span>
+                <button data-filter="traditional" class="filter-btn filter-pill-btn group flex items-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 rounded-2xl text-xs md:text-sm font-bold bg-[#fffbf7] text-stone-700 hover:bg-white border border-stone-300/80 shrink-0 cursor-pointer">
+                    <span class="font-display text-xs sm:text-sm">تراثي أصيل</span>
+                    <span id="count-traditional" class="cat-badge px-2 py-0.5 rounded-full text-[10px] sm:text-[11px] font-black bg-stone-200/80 text-stone-700 transition">0</span>
                 </button>
             </div>
         </div>
@@ -168,8 +180,8 @@
     </main>
 
     <!-- نافذة تفاصيل المنتج (متجاوبة باحترافية تامة للجوال والكمبيوتر) -->
-    <div id="product-modal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4 md:p-6">
-        <div class="bg-[#fffbf7] w-full max-w-3xl rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl border border-stone-300 flex flex-col max-h-[94vh] sm:max-h-[90vh] relative">
+    <div id="product-modal" class="hidden fixed inset-0 z-50 modal-glass-backdrop flex items-center justify-center p-2 sm:p-4 md:p-6">
+        <div class="bg-[#fffbf7] modal-glass-content w-full max-w-3xl rounded-2xl sm:rounded-3xl overflow-hidden border border-stone-300/80 flex flex-col max-h-[94vh] sm:max-h-[90vh] relative">
             <button onclick="closeModal()" class="absolute top-3 left-3 sm:top-5 sm:left-5 z-30 bg-black/60 hover:bg-black/80 text-white w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center transition cursor-pointer shadow-md text-sm sm:text-base" title="إغلاق النافذة">
                 ✕
             </button>
@@ -224,7 +236,7 @@
                         <span id="modal-sku-badge" class="text-xs font-mono font-bold text-stone-600 bg-stone-200/80 border border-stone-300 px-2.5 py-1 rounded-xl shadow-2xs select-all" title="رمز القطعة التسلسلي"></span>
                     </div>
 
-                    <h3 id="modal-title" class="text-lg sm:text-xl md:text-2xl font-bold text-stone-900"></h3>
+                    <h3 id="modal-title" class="font-display text-lg sm:text-xl md:text-2xl font-black text-stone-900"></h3>
                     <p id="modal-desc" class="text-stone-700 text-xs sm:text-sm md:text-base leading-relaxed"></p>
                     <div class="grid grid-cols-2 gap-2.5 sm:gap-4 text-[11px] sm:text-xs md:text-sm text-stone-600 bg-stone-100/80 p-3 sm:p-4 rounded-xl sm:rounded-2xl border border-stone-200">
                         <div><span class="font-bold text-stone-800">الأبعاد:</span> <span id="modal-dim"></span></div>
@@ -352,7 +364,7 @@
                     <textarea id="new-desc" rows="3" class="w-full bg-stone-50 border border-stone-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[#7c1d3c]" placeholder="اكتب نبذة عن تفاصيل الحياكة والقصة..."></textarea>
                 </div>
 
-                <button type="submit" class="w-full bg-brand hover:bg-brand-hover text-white font-bold py-3 rounded-xl transition shadow-md text-sm md:text-base">               
+                <button type="submit" class="w-full btn-liquid-metal font-display text-white font-bold py-3.5 rounded-2xl transition shadow-md text-sm md:text-base cursor-pointer">               
                     حفظ ونشر القطعة في المعرض
                 </button>
             </form>
@@ -568,11 +580,11 @@
     </div>
 
     <!-- نافذة تخصيص الهوية وألوان الدار -->
-    <div id="theme-modal" class="hidden fixed inset-0 z-[120] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="bg-[#fffbf7] w-full max-w-md rounded-3xl p-6 md:p-8 shadow-2xl border border-stone-300 relative text-center">
+    <div id="theme-modal" class="hidden fixed inset-0 z-[120] modal-glass-backdrop flex items-center justify-center p-4">
+        <div class="bg-[#fffbf7] modal-glass-content w-full max-w-md rounded-3xl p-6 md:p-8 border border-stone-300/80 relative text-center">
             <button onclick="closeThemeModal()" class="absolute top-4 left-4 text-stone-500 hover:text-stone-900 text-xl font-bold">✕</button>
             
-            <h3 class="text-xl font-bold text-stone-900 mb-2">تخصيص هوية وألوان الدار</h3>
+            <h3 class="font-display text-xl font-black text-stone-900 mb-2">تخصيص هوية وألوان الدار</h3>
             <p class="text-xs text-stone-600 mb-6">اختر لون وشعار الدار المفضل لديك لتغيير هوية الموقع بالكامل</p>
             
             <div class="grid grid-cols-2 gap-4 mb-6">
@@ -597,7 +609,7 @@
                 </div>
             </div>
 
-            <button onclick="applyTheme()" class="w-full text-white font-bold py-3 rounded-xl transition shadow-md text-sm md:text-base" style="background-color: var(--brand-color);">
+            <button onclick="applyTheme()" class="w-full btn-liquid-metal font-display text-white font-bold py-3.5 rounded-2xl transition shadow-md text-sm md:text-base cursor-pointer">
                 تطبيق الهوية الجديدة
             </button>
         </div>
@@ -608,7 +620,7 @@
         <div class="bg-[#fffbf7] w-full max-w-lg rounded-3xl p-6 md:p-8 shadow-2xl border border-stone-300 relative text-right" dir="rtl">
             <button onclick="closeCustomOrderModal()" class="absolute top-4 left-4 text-stone-500 hover:text-stone-900 text-xl font-bold">✕</button>
             
-            <h3 class="text-xl font-bold text-stone-900 mb-2">طلب سجادة بتصميم خاص وأبعاد مخصصة</h3>
+            <h3 class="font-display text-xl font-black text-stone-900 mb-2">طلب سجادة بتصميم خاص وأبعاد مخصصة</h3>
             <p class="text-xs text-stone-600 mb-6">أدخل تفاصيل طلبك وسيتم تحويلك مباشرة لتأكيد الطلب وإرسال التصميم مع الإدارة عبر الواتساب</p>
             
             <form onsubmit="submitCustomOrder(event)" class="space-y-4">
@@ -633,7 +645,7 @@
                     <textarea id="cust-notes" rows="3" placeholder="اشرح لنا رغبتك بالتصميم أو النقشة..." required class="w-full bg-stone-50 border border-stone-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-brand"></textarea>
                 </div>
                 
-                <button type="submit" class="w-full bg-brand hover:bg-brand-hover text-white font-bold py-3 rounded-xl transition shadow-md text-sm md:text-base">
+                <button type="submit" class="w-full btn-liquid-metal font-display text-white font-bold py-3.5 rounded-2xl transition shadow-md text-sm md:text-base cursor-pointer">
                     إرسال الطلب الخاص ومتابعة إرسال التصميم عبر الواتساب
                 </button>
             </form>
@@ -645,7 +657,7 @@
         <div class="bg-[#fffbf7] w-full max-w-lg rounded-3xl p-6 md:p-8 shadow-2xl border border-stone-300 relative text-right flex flex-col max-h-[85vh]" dir="rtl">
             <button onclick="closeCartModal()" class="absolute top-4 left-4 text-stone-500 hover:text-stone-900 text-xl font-bold">✕</button>
             
-            <h3 class="text-xl font-bold text-stone-900 mb-4 flex items-center gap-2">
+            <h3 class="font-display text-xl font-black text-stone-900 mb-4 flex items-center gap-2">
                 <span>سلة المشتريات</span>
             </h3>
             

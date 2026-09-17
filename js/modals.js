@@ -348,14 +348,14 @@ export function openModal(carpetId, allCarpets) {
     if (addBtn) {
         if (isOutOfStock) {
             addBtn.innerText = "يمكنك طلب نفس التصميم";
-            addBtn.className = "bg-brand hover:bg-brand-hover text-white font-bold px-6 py-2.5 rounded-xl transition shadow-sm text-sm flex items-center gap-1.5 cursor-pointer";
+            addBtn.className = "btn-liquid-metal font-display text-white font-bold px-6 py-3 rounded-2xl transition text-xs sm:text-sm flex items-center gap-1.5 cursor-pointer shadow-md";
             addBtn.onclick = () => {
                 addToCart(carpet.id, carpet.title, carpet.price, carpet.dimensions, "طلب إعادة تفصيل نفس التصميم");
                 closeModal();
             };
         } else {
             addBtn.innerText = "إضافة للسلة";
-            addBtn.className = "bg-brand hover:bg-brand-hover text-white font-bold px-6 py-2.5 rounded-xl transition shadow-sm text-sm cursor-pointer";
+            addBtn.className = "btn-liquid-metal font-display text-white font-bold px-7 py-3 rounded-2xl transition text-sm sm:text-base cursor-pointer shadow-md";
             addBtn.onclick = () => {
                 addToCart(carpet.id, carpet.title, carpet.price, carpet.dimensions);
                 closeModal();
