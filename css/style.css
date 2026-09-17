@@ -7,6 +7,7 @@
     --brand-color: #7c1d3c;
     --brand-hover: #631730;
     --brand-border: #96264a;
+    --brand-rgb: 124, 29, 60;
 }
 
 /* 1. اللون الأساسي (العنابي الملكي) */
@@ -14,6 +15,7 @@ html.theme-burgundy, body.theme-burgundy {
     --brand-color: #7c1d3c;
     --brand-hover: #631730;
     --brand-border: #96264a;
+    --brand-rgb: 124, 29, 60;
 }
 
 /* 2. الأخضر التراثي */
@@ -21,6 +23,7 @@ html.theme-green, body.theme-green {
     --brand-color: #435838;
     --brand-hover: #33432a;
     --brand-border: #56714a;
+    --brand-rgb: 67, 88, 56;
 }
 
 /* 3. الأزرق الفاخر */
@@ -28,6 +31,7 @@ html.theme-blue, body.theme-blue {
     --brand-color: #2d5f75;
     --brand-hover: #204557;
     --brand-border: #3d7a96;
+    --brand-rgb: 45, 95, 117;
 }
 
 /* 4. الذهبي الأصيل */
@@ -35,6 +39,7 @@ html.theme-gold, body.theme-gold {
     --brand-color: #c59b27;
     --brand-hover: #9e771c;
     --brand-border: #d6af3d;
+    --brand-rgb: 197, 155, 39;
 }
 
 /* فئات مساعدة لربط العناصر والأزرار ديناميكياً مع الثيم المختَار */
@@ -1184,20 +1189,21 @@ button[type="submit"]:active {
     top: 15%;
     right: 0;
     bottom: 15%;
-    width: 3px;
-    background: linear-gradient(180deg, var(--brand-color, #7c1d3c), #c59b27);
+    width: 3.5px;
+    background: var(--brand-color, #7c1d3c);
     opacity: 0;
     transform: scaleY(0);
     transition: all 0.25s ease;
     border-radius: 3px 0 0 3px;
+    box-shadow: 0 0 8px rgba(var(--brand-rgb, 124, 29, 60), 0.5);
 }
 
 .drawer-lux-card:hover {
     background: #ffffff;
-    border-color: rgba(197, 155, 39, 0.45);
+    border-color: rgba(var(--brand-rgb, 124, 29, 60), 0.45);
     transform: translateY(-1px);
-    box-shadow: 0 6px 16px -3px rgba(44, 30, 20, 0.08),
-                0 0 0 1px rgba(197, 155, 39, 0.15),
+    box-shadow: 0 6px 18px -3px rgba(var(--brand-rgb, 124, 29, 60), 0.12),
+                0 0 0 1px rgba(var(--brand-rgb, 124, 29, 60), 0.22),
                 inset 0 1px 0 rgba(255, 255, 255, 1);
 }
 
@@ -1223,14 +1229,17 @@ button[type="submit"]:active {
     box-shadow: 0 3px 8px -2px rgba(0, 0, 0, 0.12), inset 0 1px 1px rgba(255, 255, 255, 0.8);
     border: 1px solid rgba(255, 255, 255, 0.6);
     position: relative;
-    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease, border-color 0.3s ease;
     overflow: visible !important;
 }
 
-/* حركة التكبير الناعمة مع الميلان لليمين المحبوبة لدى المستخدم */
+/* حركة التكبير الناعمة مع الميلان لليمين وتأثير ظل وبوردر بلون الثيم المختار */
 .drawer-lux-card:hover .drawer-icon-orb {
     transform: scale(1.08) rotate(4deg);
-    box-shadow: 0 6px 14px -2px rgba(197, 155, 39, 0.3), inset 0 1px 1px rgba(255, 255, 255, 1);
+    box-shadow: 0 6px 16px -2px rgba(var(--brand-rgb, 124, 29, 60), 0.38),
+                0 0 12px rgba(var(--brand-rgb, 124, 29, 60), 0.22),
+                inset 0 1px 1px rgba(255, 255, 255, 1);
+    border-color: rgba(var(--brand-rgb, 124, 29, 60), 0.4);
 }
 
 .drawer-action-arrow {
