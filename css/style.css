@@ -10,28 +10,28 @@
 }
 
 /* 1. اللون الأساسي (العنابي الملكي) */
-body.theme-burgundy {
+html.theme-burgundy, body.theme-burgundy {
     --brand-color: #7c1d3c;
     --brand-hover: #631730;
     --brand-border: #96264a;
 }
 
 /* 2. الأخضر التراثي */
-body.theme-green {
+html.theme-green, body.theme-green {
     --brand-color: #435838;
     --brand-hover: #33432a;
     --brand-border: #56714a;
 }
 
 /* 3. الأزرق الفاخر */
-body.theme-blue {
+html.theme-blue, body.theme-blue {
     --brand-color: #2d5f75;
     --brand-hover: #204557;
     --brand-border: #3d7a96;
 }
 
 /* 4. الذهبي الأصيل */
-body.theme-gold {
+html.theme-gold, body.theme-gold {
     --brand-color: #c59b27;
     --brand-hover: #9e771c;
     --brand-border: #d6af3d;
@@ -94,6 +94,14 @@ input[type="file"]::file-selector-button:hover {
 /* تأثيرات تفاعلية للبطاقات */
 .carpet-card {
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 1.5rem !important; /* rounded-3xl */
+    overflow: hidden !important;
+    -webkit-mask-image: -webkit-radial-gradient(white, black);
+    mask-image: radial-gradient(white, black);
+    isolation: isolate;
+    transform: translateZ(0);
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
 }
 .carpet-card:hover {
     transform: translateY(-8px);
@@ -101,10 +109,15 @@ input[type="file"]::file-selector-button:hover {
 }
 
 .card-img-zoom {
-    transition: transform 0.6s ease;
+    transition: transform 0.6s ease, filter 0.4s ease;
 }
 .carpet-card:hover .card-img-zoom {
     transform: scale(1.05);
+}
+
+/* خلفية إضاءة استوديو العرض الفاخرة للقطع المفرغة لمنع اختفاء الألوان الداكنة والبيضاء */
+.carpet-stage-container {
+    background: radial-gradient(circle at 50% 45%, #ffffff 0%, #f8f4ed 55%, #ebe3d6 100%) !important;
 }
 
 /* ==========================================
@@ -313,4 +326,566 @@ input[type="file"]::file-selector-button:hover {
     max-width: 140px;
     opacity: 1;
     margin-right: 6px;
+}
+
+/* ==========================================
+   شريط الخيارات الجانبي الفاخر (Luxury Options Drawer)
+   ========================================== */
+#options-drawer-overlay {
+    transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.35s ease;
+}
+
+#options-drawer-panel {
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    transform: translateX(-100%);
+}
+
+#options-drawer.drawer-active #options-drawer-overlay {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+
+#options-drawer.drawer-active #options-drawer-panel {
+    transform: translateX(0);
+}
+
+/* أزرار الخيارات داخل الشريط الجانبي مع حركة التمدد الفاخرة */
+.drawer-item-btn {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 9999px;
+    padding: 6px;
+    background-color: rgba(255, 255, 255, 0.85);
+    border: 1px solid rgba(214, 211, 209, 0.8);
+    transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+    max-width: 100%;
+}
+
+.drawer-item-btn:hover {
+    background-color: #ffffff;
+    border-color: var(--brand-color);
+    box-shadow: 0 10px 25px -4px rgba(0, 0, 0, 0.08);
+    transform: translateX(-4px);
+}
+
+.drawer-item-btn .drawer-btn-label {
+    max-width: 0;
+    opacity: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    transition: max-width 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease-in-out, margin-right 0.3s ease-in-out, margin-left 0.3s ease-in-out;
+    margin-right: 0;
+    margin-left: 0;
+}
+
+.drawer-item-btn:hover .drawer-btn-label {
+    max-width: 250px;
+    opacity: 1;
+    margin-right: 12px;
+    margin-left: 12px;
+}
+
+/* على الشاشات التي تدعم اللمس (جوال/تابلت) يكون النص ظاهراً لسهولة القراءة السريعة */
+@media (max-width: 768px) {
+    .drawer-item-btn {
+        width: 100%;
+        border-radius: 1.25rem;
+        padding: 8px 12px;
+    }
+    .drawer-item-btn .drawer-btn-label {
+        max-width: 250px;
+        opacity: 1;
+        margin-right: 12px;
+        margin-left: 4px;
+    }
+}
+/* ==========================================
+   تأثيرات الظل والحركة الفاخرة لشعار الدار (Logo Hover Effects)
+   ========================================== */
+.logo-header-interactive {
+    transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+.logo-header-interactive:hover {
+    transform: scale(1.08) translateY(-1px);
+    box-shadow: 0 12px 28px -4px rgba(0, 0, 0, 0.22), 0 6px 12px -2px rgba(0, 0, 0, 0.12) !important;
+    border-color: var(--brand-color) !important;
+}
+
+.logo-card-interactive {
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    box-shadow: 0 15px 35px -5px rgba(0, 0, 0, 0.4), 0 8px 16px -3px rgba(0, 0, 0, 0.25) !important;
+}
+.logo-card-interactive:hover {
+    transform: scale(1.08) translateY(-4px);
+    box-shadow: 0 28px 55px -10px rgba(0, 0, 0, 0.65), 0 16px 28px -5px rgba(0, 0, 0, 0.4), 0 0 30px rgba(255, 255, 255, 0.35) !important;
+    border-color: rgba(255, 255, 255, 0.7) !important;
+}
+
+/* ==========================================
+   نظام الأنيميشن والظلال الفاخرة لجميع أزرار الموقع (Luxury Button Animations & Shadows)
+   ========================================== */
+
+/* 1. أزرار التفاصيل على كروت السجاد */
+.carpet-card button,
+button[onclick*="openModal"] {
+    transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    cursor: pointer;
+}
+.carpet-card button:hover,
+button[onclick*="openModal"]:hover {
+    transform: translateY(-2.5px) scale(1.06) !important;
+    box-shadow: 0 14px 28px -4px rgba(124, 29, 60, 0.35), 0 6px 12px -2px rgba(0, 0, 0, 0.15) !important;
+}
+.carpet-card button:active,
+button[onclick*="openModal"]:active {
+    transform: scale(0.96) !important;
+}
+
+/* 2. زر العودة للمعرض وزر السلة وأزرار الهوية والشريط العلوي */
+a[title="العودة للمعرض"],
+button[title="تغيير النمط والهوية"],
+button[title="تغيير النمط"],
+#header-cart-btn,
+#options-toggle-btn {
+    transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    cursor: pointer;
+}
+a[title="العودة للمعرض"]:hover,
+button[title="تغيير النمط والهوية"]:hover,
+button[title="تغيير النمط"]:hover,
+#header-cart-btn:hover,
+#options-toggle-btn:hover {
+    transform: translateY(-2.5px) scale(1.05) !important;
+    box-shadow: 0 14px 26px -4px rgba(0, 0, 0, 0.18), 0 6px 12px -2px rgba(0, 0, 0, 0.08) !important;
+    border-color: var(--brand-color) !important;
+}
+a[title="العودة للمعرض"]:active,
+#header-cart-btn:active,
+#options-toggle-btn:active {
+    transform: scale(0.96) !important;
+}
+
+/* 3. قنوات التواصل (واتساب، إنستجرام، بريد إلكتروني) */
+a[href*="wa.me"],
+button[onclick*="sendCartToWhatsApp"],
+.btn-whatsapp {
+    transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    cursor: pointer;
+}
+a[href*="wa.me"]:hover,
+button[onclick*="sendCartToWhatsApp"]:hover,
+.btn-whatsapp:hover {
+    transform: translateY(-3px) scale(1.05) !important;
+    box-shadow: 0 16px 32px -4px rgba(5, 150, 105, 0.45), 0 8px 16px -2px rgba(0, 0, 0, 0.18) !important;
+}
+a[href*="wa.me"]:active,
+button[onclick*="sendCartToWhatsApp"]:active {
+    transform: scale(0.96) !important;
+}
+
+a[href*="instagram.com"],
+a[href*="instagram"],
+.btn-instagram {
+    transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    cursor: pointer;
+}
+a[href*="instagram.com"]:hover,
+a[href*="instagram"]:hover,
+.btn-instagram:hover {
+    transform: translateY(-3px) scale(1.05) !important;
+    box-shadow: 0 16px 32px -4px rgba(220, 39, 67, 0.45), 0 8px 16px -2px rgba(0, 0, 0, 0.18) !important;
+}
+a[href*="instagram.com"]:active {
+    transform: scale(0.96) !important;
+}
+
+a[href*="mailto:"],
+.btn-email {
+    transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    cursor: pointer;
+}
+a[href*="mailto:"]:hover,
+.btn-email:hover {
+    transform: translateY(-3px) scale(1.05) !important;
+    box-shadow: 0 16px 32px -4px rgba(28, 25, 23, 0.45), 0 8px 16px -2px rgba(0, 0, 0, 0.18) !important;
+}
+a[href*="mailto:"]:active {
+    transform: scale(0.96) !important;
+}
+
+/* 4. أزرار الفلترة والتصنيفات (Filter Buttons) - ثابتة تماماً في مساحتها بدون إزاحة أو خروج عن السطر */
+.filter-btn {
+    transition: background-color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease, color 0.25s ease !important;
+    transform: none !important;
+    cursor: pointer;
+}
+.filter-btn:hover {
+    transform: none !important;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12) !important;
+}
+.filter-btn:active {
+    transform: none !important;
+}
+
+/* 5. الأزرار الرئيسية وأزرار النماذج والسلة (Action & Submit Buttons) */
+button.bg-brand,
+a.bg-brand,
+#modal-add-btn,
+button[type="submit"] {
+    transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    cursor: pointer;
+}
+button.bg-brand:hover,
+a.bg-brand:hover,
+#modal-add-btn:hover,
+button[type="submit"]:hover {
+    transform: translateY(-2.5px) scale(1.04) !important;
+    box-shadow: 0 16px 32px -4px rgba(0, 0, 0, 0.28), 0 6px 14px -2px rgba(0, 0, 0, 0.14) !important;
+}
+button.bg-brand:active,
+#modal-add-btn:active,
+button[type="submit"]:active {
+    transform: scale(0.97) !important;
+}
+
+/* 6. أزرار إغلاق النوافذ المنبثقة الحقيقية فقط (بدون أي دوران أو تأثير على أزرار القائمة) */
+.drawer-item-btn {
+    transform: none !important;
+    transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+.drawer-item-btn:hover {
+    transform: translateX(-4px) !important;
+    background-color: #ffffff !important;
+    border-color: var(--brand-color) !important;
+    box-shadow: 0 16px 32px -4px rgba(0, 0, 0, 0.18), 0 6px 14px -2px rgba(0, 0, 0, 0.08) !important;
+}
+
+/* ظلال فاخرة وواضحة جداً لكل خيار في القائمة الجانبية عند تمرير المؤشر */
+.drawer-item-btn[title="طلب تصميم خاص"]:hover {
+    box-shadow: 0 16px 32px -4px rgba(217, 119, 6, 0.35), 0 6px 14px -2px rgba(0, 0, 0, 0.12) !important;
+    border-color: #d97706 !important;
+}
+
+.drawer-item-btn[title="من نحن"]:hover {
+    box-shadow: 0 16px 32px -4px rgba(44, 44, 44, 0.28), 0 6px 14px -2px rgba(0, 0, 0, 0.12) !important;
+    border-color: var(--brand-color) !important;
+}
+
+.drawer-item-btn[title="إضافة سجادة"]:hover {
+    box-shadow: 0 16px 32px -4px rgba(5, 150, 105, 0.35), 0 6px 14px -2px rgba(0, 0, 0, 0.12) !important;
+    border-color: #059669 !important;
+}
+
+#lightbox-modal button[onclick*="close"],
+#theme-modal button[onclick*="close"],
+#cart-modal button[onclick*="close"],
+#custom-order-modal button[onclick*="close"],
+#add-product-modal button[onclick*="close"],
+#edit-product-modal button[onclick*="close"],
+#admin-auth-modal button[onclick*="close"],
+#firebase-config-modal button[onclick*="close"] {
+    transition: all 0.25s ease !important;
+    transform: none !important;
+    cursor: pointer;
+}
+#lightbox-modal button[onclick*="close"]:hover,
+#theme-modal button[onclick*="close"]:hover,
+#cart-modal button[onclick*="close"]:hover,
+#custom-order-modal button[onclick*="close"]:hover,
+#add-product-modal button[onclick*="close"]:hover,
+#admin-auth-modal button[onclick*="close"]:hover,
+#firebase-config-modal button[onclick*="close"]:hover {
+    transform: scale(1.1) !important;
+    opacity: 0.85;
+}
+
+/* 7. بطاقات الثيم داخل نافذة تخصيص الألوان */
+.theme-box {
+    transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    cursor: pointer;
+}
+.theme-box:hover {
+    transform: translateY(-3px) scale(1.04) !important;
+    box-shadow: 0 14px 26px -4px rgba(0, 0, 0, 0.12), 0 6px 12px -2px rgba(0, 0, 0, 0.06) !important;
+}
+
+/* ==========================================
+   تجاوب نوافذ التفاصيل ومصغرات الصور للجوال والكمبيوتر
+   Responsive Modal Image & Admin Thumbnails
+   ========================================== */
+
+.admin-thumb-box {
+    width: 58px !important;
+    height: 58px !important;
+    flex-shrink: 0 !important;
+    position: relative !important;
+    overflow: hidden !important;
+}
+@media (min-width: 640px) {
+    .admin-thumb-box {
+        width: 70px !important;
+        height: 70px !important;
+    }
+}
+@media (min-width: 768px) {
+    .admin-thumb-box {
+        width: 80px !important;
+        height: 80px !important;
+    }
+}
+
+.admin-thumb-box img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    display: block !important;
+}
+
+/* تنسيق كرت الصورة الرئيسية البارز */
+.admin-primary-card {
+    border: 2.5px solid #f59e0b !important;
+    box-shadow: 0 8px 22px -3px rgba(217, 119, 6, 0.42), 0 3px 8px -1px rgba(0, 0, 0, 0.18) !important;
+    position: relative !important;
+    flex-shrink: 0 !important;
+    border-radius: 1rem !important;
+    margin-right: 0.35rem !important;
+    margin-left: 0.25rem !important;
+}
+
+/* تنسيق كروت الصور الإضافية */
+.admin-secondary-card {
+    border: 2px solid #e7e5e4 !important;
+    position: relative !important;
+    flex-shrink: 0 !important;
+    border-radius: 1rem !important;
+    margin-right: 0.15rem !important;
+    margin-left: 0.15rem !important;
+    transition: all 0.25s ease !important;
+}
+.admin-secondary-card:hover {
+    border-color: #f59e0b !important;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12) !important;
+}
+
+
+/* ==========================================
+   وسم وشريط "جديد وحصري" الفاخر (Luxury New & Exclusive Badge)
+   ========================================== */
+
+.badge-new-exclusive {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.28rem 0.68rem;
+    border-radius: 9999px;
+    background: linear-gradient(135deg, #781734 0%, #a13d17 35%, #d97706 70%, #f59e0b 100%);
+    color: #ffffff;
+    font-weight: 900;
+    font-size: 0.6875rem; /* 11px */
+    letter-spacing: 0.02em;
+    border: 1.5px solid rgba(254, 240, 138, 0.85);
+    box-shadow: 0 4px 14px -1px rgba(180, 83, 9, 0.48), 0 2px 5px -1px rgba(0, 0, 0, 0.22);
+    overflow: hidden;
+    white-space: nowrap;
+    z-index: 12;
+    transform: translateZ(0);
+}
+
+/* وميض ضوء فاخر يمر عبر الشريط (Luxury Shimmer Sweep) */
+.badge-new-exclusive::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -80%;
+    width: 50%;
+    height: 200%;
+    background: linear-gradient(
+        65deg,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0.65) 50%,
+        rgba(255, 255, 255, 0) 100%
+    );
+    transform: rotate(25deg);
+    animation: exclusiveLightSweep 3.2s infinite cubic-bezier(0.4, 0, 0.2, 1);
+    pointer-events: none;
+}
+
+@keyframes exclusiveLightSweep {
+    0% {
+        left: -85%;
+    }
+    35%, 100% {
+        left: 140%;
+    }
+}
+
+/* نقطة النبض الذهبية المضيئة للشريط */
+.exclusive-pulse-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 9999px;
+    background-color: #fef08a;
+    box-shadow: 0 0 7px #fef08a;
+    position: relative;
+    flex-shrink: 0;
+}
+.exclusive-pulse-dot::after {
+    content: '';
+    position: absolute;
+    inset: -3px;
+    border-radius: 9999px;
+    background-color: rgba(254, 240, 138, 0.55);
+    animation: exclusiveDotPing 1.9s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+@keyframes exclusiveDotPing {
+    0% {
+        transform: scale(0.9);
+        opacity: 0.95;
+    }
+    75%, 100% {
+        transform: scale(2.4);
+        opacity: 0;
+    }
+}
+
+/* إطار ولمعة ذهبية ملكية لبطاقة المنتج الحصري */
+.card-exclusive-border {
+    border-color: rgba(245, 158, 11, 0.6) !important;
+    box-shadow: 0 6px 20px -3px rgba(217, 119, 6, 0.15), 0 2px 8px -2px rgba(0, 0, 0, 0.05) !important;
+}
+.card-exclusive-border:hover {
+    border-color: rgba(245, 158, 11, 0.9) !important;
+    box-shadow: 0 12px 28px -4px rgba(217, 119, 6, 0.25), 0 4px 12px -2px rgba(0, 0, 0, 0.08) !important;
+}
+
+
+/* الشريط العلوي التاجي الفاخر (Top Slim Crown Ribbon) */
+.exclusive-top-crown-ribbon {
+    position: relative;
+    width: 100%;
+    background: linear-gradient(90deg, #781734 0%, #9a3412 25%, #d97706 55%, #b45309 80%, #781734 100%);
+    color: #ffffff;
+    padding: 0.35rem 0.85rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    border-bottom: 1.5px solid rgba(254, 240, 138, 0.85);
+    box-shadow: 0 3px 10px rgba(180, 83, 9, 0.3);
+    white-space: nowrap !important;
+    /* تثبيت انحناء زوايا الشريط العلوي ليطابق انحناء الكرت ويمنع التقطيع على الجوال */
+    border-top-left-radius: 1.5rem !important;
+    border-top-right-radius: 1.5rem !important;
+    -webkit-mask-image: -webkit-radial-gradient(white, black);
+    mask-image: radial-gradient(white, black);
+    overflow: hidden !important;
+    isolation: isolate;
+    transform: translateZ(0);
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    z-index: 10;
+    flex-shrink: 0;
+}
+
+/* وميض ضوء انسيابي ومضبوط بحدود الشريط يمنع وميض الزوايا تماماً */
+.exclusive-top-crown-ribbon::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 40%;
+    height: 100%;
+    background: linear-gradient(
+        110deg,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0.55) 50%,
+        rgba(255, 255, 255, 0) 100%
+    );
+    transform: translateX(-150%);
+    animation: exclusiveCrownSweep 3.6s infinite cubic-bezier(0.4, 0, 0.2, 1);
+    pointer-events: none;
+    will-change: transform;
+}
+
+@keyframes exclusiveCrownSweep {
+    0% {
+        transform: translateX(-150%);
+    }
+    35%, 100% {
+        transform: translateX(350%);
+    }
+}
+
+.exclusive-crown-pill {
+    background: rgba(0, 0, 0, 0.32);
+    backdrop-filter: blur(4px);
+    border: 1px solid rgba(254, 240, 138, 0.6);
+    color: #fef08a;
+    font-size: 0.625rem; /* 10px */
+    font-weight: 800;
+    padding: 0.15rem 0.55rem;
+    border-radius: 9999px;
+    letter-spacing: 0.02em;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.25);
+}
+
+
+/* عند نفاذ الكمية: إيقاف وميض ولمعان الشريط ليصبح هادئاً وراقياً */
+.exclusive-top-crown-ribbon.ribbon-static::after {
+    display: none !important;
+    animation: none !important;
+}
+.exclusive-top-crown-ribbon.ribbon-static {
+    background: linear-gradient(90deg, #571325 0%, #782a17 35%, #8f4f0e 70%, #571325 100%) !important;
+    border-bottom-color: rgba(254, 240, 138, 0.45) !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25) !important;
+}
+
+
+/* شبكة عرض المنتجات: تحديد الحد الأدنى لعرض البطاقة لمنع انكسار النصوص */
+#carpets-grid {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 285px), 1fr)) !important;
+}
+
+/* ==========================================
+   مشغل الفيديو الاستعراضي للقطع الفاخرة (Showcase Video Player)
+   ========================================== */
+#modal-video-slide video {
+    outline: none;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+#modal-video-center-btn {
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+}
+
+#modal-video-center-icon {
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.3);
+    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.2s ease;
+}
+
+#modal-video-center-icon:hover {
+    background-color: rgba(0, 0, 0, 0.85);
+    transform: scale(1.12);
+}
+
+#modal-video-audio-btn {
+    transition: all 0.2s ease;
+}
+
+#modal-video-audio-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
 }

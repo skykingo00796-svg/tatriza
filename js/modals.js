@@ -1,8 +1,37 @@
+import { getVideoFromIndexedDB } from './firebase.js';
 // ==========================================
 // ملف إدارة النوافذ، السلة، والمنتجات (modals.js)
 // ==========================================
 
 export let cart = [];
+try {
+    const savedCart = sessionStorage.getItem('tatr_cart');
+    if (savedCart) cart = JSON.parse(savedCart);
+} catch(e) {}
+
+export function updateCartBadges(shouldBounce = false) {
+    const cartCountEl = document.getElementById('cart-count');
+    if (cartCountEl) {
+        cartCountEl.innerText = cart.length;
+        if (cart.length > 0) {
+            cartCountEl.classList.remove('hidden');
+            if (shouldBounce) {
+                cartCountEl.classList.add('animate-bounce');
+                setTimeout(() => cartCountEl.classList.remove('animate-bounce'), 1200);
+            }
+        } else {
+            cartCountEl.classList.add('hidden');
+        }
+    }
+    const drawerCartCountEl = document.getElementById('drawer-cart-count');
+    if (drawerCartCountEl) {
+        drawerCartCountEl.innerText = cart.length;
+    }
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+    updateCartBadges(false);
+});
 
 // ==========================================
 // نظام الإشعارات الفاخرة (Luxury Toast Notifications)
@@ -68,11 +97,68 @@ export function showToast(message, type = 'success', title = '', duration = 3500
 
 if (typeof window !== 'undefined') {
     window.showToast = showToast;
+    window.openOptionsDrawer = openOptionsDrawer;
+    window.closeOptionsDrawer = closeOptionsDrawer;
+}
+
+// ==========================================
+// شريط الخيارات الجانبي الفاخر (Options Drawer)
+// ==========================================
+export function openOptionsDrawer() {
+    const drawer = document.getElementById('options-drawer');
+    if (drawer) {
+        drawer.classList.remove('hidden');
+        void drawer.offsetWidth;
+        drawer.classList.add('drawer-active');
+        document.body.style.overflow = 'hidden';
+    }
+}
+
+export function closeOptionsDrawer() {
+    const drawer = document.getElementById('options-drawer');
+    if (drawer) {
+        drawer.classList.remove('drawer-active');
+        document.body.style.overflow = '';
+        setTimeout(() => {
+            if (!drawer.classList.contains('drawer-active')) {
+                drawer.classList.add('hidden');
+            }
+        }, 350);
+    }
 }
 
 export function openModal(carpetId, allCarpets) {
     const carpet = allCarpets.find(c => c.id === carpetId);
     if (!carpet) return;
+
+    // وسم جديد وحصري في نافذة التفاصيل
+    const modalNewBadge = document.getElementById('modal-new-badge');
+    const modalNewBadgeText = document.getElementById('modal-new-badge-text');
+    const isOutOfStock = carpet.status === 'out_of_stock';
+
+    if (modalNewBadge) {
+        const isNew = typeof window.isProductNew === 'function' ? window.isProductNew(carpet) : false;
+        if (isNew) {
+            modalNewBadge.classList.remove('hidden');
+            modalNewBadge.classList.add('inline-flex');
+            if (modalNewBadgeText) {
+                modalNewBadgeText.innerText = isOutOfStock ? "المنتج جديد وحصري (نفدت الكمية)" : "المنتج جديد وحصري";
+            }
+            if (isOutOfStock) {
+                modalNewBadge.classList.add('opacity-90');
+            } else {
+                modalNewBadge.classList.remove('opacity-90');
+            }
+        } else {
+            modalNewBadge.classList.add('hidden');
+            modalNewBadge.classList.remove('inline-flex');
+        }
+    }
+
+    const modalSku = document.getElementById('modal-sku-badge');
+    if (modalSku) {
+        modalSku.innerText = carpet.id || '';
+    }
 
     document.getElementById('modal-title').innerText = carpet.title;
     document.getElementById('modal-desc').innerText = carpet.description || '';
@@ -87,33 +173,189 @@ export function openModal(carpetId, allCarpets) {
         const images = carpet.images && carpet.images.length > 0 ? carpet.images : [carpet.image || 'https://placehold.co/800x600/7c1d3c/ffffff?text=Tatriza'];
         modalImagesContainer.innerHTML = '';
         
-        images.forEach((img, index) => {
-            modalImagesContainer.innerHTML += `
-                <img src="${img}" class="w-full h-full object-cover shrink-0 snap-center cursor-pointer" onclick="window.openLightboxFromModalExternal('${carpet.id}', ${index})" alt="${carpet.title}">
-            `;
-        });
+        // 1. الشريحة الأولى: صورة الغلاف الرئيسية
+        modalImagesContainer.innerHTML += `
+            <img src="${images[0]}" class="w-full h-full object-cover shrink-0 snap-center cursor-pointer" onclick="window.openLightboxFromModalExternal('${carpet.id}', 0)" alt="${carpet.title}">
+        `;
 
+        // 2. الشريحة الثانية: الفيديو الاستعراضي الحي إن وجد للسجادة
+        let hasVideo = Boolean(carpet.video);
+        const initialVideoSrc = (carpet.video && !carpet.video.startsWith('idb://')) ? carpet.video : '';
+        if (hasVideo) {
+            modalImagesContainer.innerHTML += `
+                <div class="relative w-full h-full shrink-0 snap-center bg-[#fffbf7] flex items-center justify-center overflow-hidden select-none group/videoplayer" id="modal-video-slide">
+                    <video 
+                        id="modal-product-video" 
+                        src="${initialVideoSrc}" 
+                        playsinline 
+                        muted 
+                        loop 
+                        autoplay 
+                        preload="auto"
+                        class="w-full h-full object-contain bg-[#fffbf7] cursor-pointer"
+                        onclick="window.toggleProductVideoPlay(this)"
+                    ></video>
+                    
+                    <!-- زر الإيقاف والتشغيل العائم بالمنتصف -->
+                    <div 
+                        id="modal-video-center-btn" 
+                        onclick="window.toggleProductVideoPlay(document.getElementById('modal-product-video'))" 
+                        class="absolute inset-0 flex items-center justify-center pointer-events-none transition-all duration-300 opacity-0"
+                    >
+                        <div class="w-16 h-16 rounded-full bg-black/65 backdrop-blur-md border border-white/30 text-white flex items-center justify-center text-2xl shadow-2xl transform transition hover:scale-110 pointer-events-auto cursor-pointer" id="modal-video-center-icon">
+                            ▶
+                        </div>
+                    </div>
+
+                    <!-- شريط تحكم الفيديو السفلي الفاخر -->
+                    <div class="absolute bottom-3 inset-x-3 flex items-center justify-between pointer-events-none z-20">
+                        <!-- زر فتح وكتم الصوت بالزاوية - أيقونة فقط أنيقة ومكتومة افتراضياً -->
+                        <button 
+                            type="button" 
+                            onclick="event.stopPropagation(); window.toggleProductVideoAudio(this)" 
+                            id="modal-video-audio-btn" 
+                            class="pointer-events-auto bg-black/60 hover:bg-black/85 text-white w-9 h-9 rounded-xl backdrop-blur-md border border-white/20 flex items-center justify-center transition shadow-md cursor-pointer hover:scale-105" 
+                            title="تشغيل الصوت"
+                        >
+                            <span class="text-sm audio-icon leading-none">🔇</span>
+                        </button>
+
+                        <!-- شارة الفيديو الحي -->
+                        <span class="bg-black/60 text-amber-300 text-[10px] font-bold px-2.5 py-1 rounded-xl backdrop-blur-md border border-amber-300/30 flex items-center gap-1 shadow-md">
+                            <span class="text-xs">🎬</span>
+                            <span>استعراض حي ${carpet.videoDuration ? `(${carpet.videoDuration}ث)` : ''}</span>
+                        </span>
+                    </div>
+                </div>
+            `;
+        }
+
+        // 3. باقي الصور إن وجدت
+        for (let i = 1; i < images.length; i++) {
+            modalImagesContainer.innerHTML += `
+                <img src="${images[i]}" class="w-full h-full object-cover shrink-0 snap-center cursor-pointer" onclick="window.openLightboxFromModalExternal('${carpet.id}', ${i})" alt="${carpet.title}">
+            `;
+        }
+
+        // إلزام فيديو التفاصيل بحالة كتم الصوت دائماً وتلقائياً لراحة العميل
+        const initialModalVid = document.getElementById('modal-product-video');
+        if (initialModalVid) {
+            initialModalVid.muted = true;
+            initialModalVid.defaultMuted = true;
+            initialModalVid.setAttribute('muted', '');
+        }
+
+        if (hasVideo && carpet.video && carpet.video.startsWith('idb://')) {
+            getVideoFromIndexedDB(carpet.id).then(blobUrl => {
+                if (blobUrl) {
+                    const videoEl = document.getElementById('modal-product-video');
+                    if (videoEl) {
+                        videoEl.muted = true;
+                        videoEl.defaultMuted = true;
+                        videoEl.setAttribute('muted', '');
+                        videoEl.src = blobUrl;
+                        videoEl.load();
+                        videoEl.play().catch(() => {});
+                    }
+                }
+            });
+        }
+
+        const totalMediaItems = images.length + (hasVideo ? 1 : 0);
         document.getElementById('modal-counter').innerText = '1';
-        document.getElementById('modal-total').innerText = images.length;
+        document.getElementById('modal-total').innerText = totalMediaItems;
         if (counterWrapper) {
-            counterWrapper.style.display = images.length > 1 ? 'block' : 'none';
+            counterWrapper.style.display = totalMediaItems > 1 ? 'block' : 'none';
+        }
+
+        // زر تكبير الفيديو يظل مخفياً في البداية ويظهر فقط عند التمرير لشريحة الفيديو
+        const fullscreenBtn = document.getElementById('modal-video-fullscreen-btn');
+        if (fullscreenBtn) {
+            fullscreenBtn.classList.add('hidden');
+        }
+
+        // عرض شريط إدارة الصور للمسؤول لتحديد الصورة الرئيسية
+        const adminBar = document.getElementById('admin-image-manager-bar');
+        const adminThumbs = document.getElementById('admin-modal-thumbnails');
+        const isAdmin = localStorage.getItem('tatr_is_admin') === 'true';
+
+        if (adminBar && adminThumbs) {
+            if (isAdmin) {
+                adminBar.classList.remove('hidden');
+                adminThumbs.innerHTML = '';
+                
+                const modalEditBtn = document.getElementById('admin-modal-edit-btn');
+                if (modalEditBtn) {
+                    modalEditBtn.onclick = (e) => {
+                        e.stopPropagation();
+                        if (typeof window.openEditModal === 'function') {
+                            window.openEditModal(carpet.id);
+                        }
+                    };
+                }
+                images.forEach((img, index) => {
+                    const isPrimary = index === 0;
+                    const thumbCard = document.createElement('div');
+                    
+                    if (isPrimary) {
+                        thumbCard.className = "admin-primary-card cursor-default overflow-hidden ring-2 sm:ring-4 ring-amber-400/40";
+                        thumbCard.title = "هذه هي الصورة الرئيسية الحالية (الغلاف الأول المعروض للزوار)";
+                        thumbCard.innerHTML = `
+                            <div class="admin-thumb-box bg-stone-100">
+                                <img src="${img}" class="brightness-105 contrast-105 pointer-events-none" alt="غلاف رئيسي">
+                                <span class="absolute inset-x-0 bottom-0 bg-gradient-to-r from-amber-500 via-amber-600 to-amber-500 text-stone-950 font-black text-[8px] sm:text-[9px] text-center py-0.5 sm:py-1 shadow-md border-t border-amber-300/40 tracking-wider">
+                                    ⭐ الرئيسية
+                                </span>
+                                <span class="absolute top-1 right-1 bg-amber-400 text-stone-950 font-black text-[8px] sm:text-[9px] w-4 h-4 sm:w-5 sm:h-5 rounded-full flex items-center justify-center shadow-md">
+                                    👑
+                                </span>
+                            </div>
+                        `;
+                    } else {
+                        thumbCard.className = "admin-secondary-card cursor-pointer overflow-hidden opacity-85 hover:opacity-100 group";
+                        thumbCard.title = "انقر لجعل هذه الصورة هي الغلاف الرئيسي في المعرض";
+                        thumbCard.innerHTML = `
+                            <div class="admin-thumb-box bg-stone-100">
+                                <img src="${img}" class="pointer-events-none" alt="صورة إضافية">
+                                <span class="absolute top-1 right-1 bg-black/65 text-white font-bold text-[8px] sm:text-[9px] w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full flex items-center justify-center shadow">
+                                    ${index + 1}
+                                </span>
+                                <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex flex-col items-center justify-center gap-1 transition-all duration-200">
+                                    <span class="text-[8px] sm:text-[9px] font-bold text-white bg-amber-600 hover:bg-amber-500 px-1.5 py-0.5 rounded shadow whitespace-nowrap">
+                                        تعيين كغلاف ⭐
+                                    </span>
+                                </div>
+                            </div>
+                        `;
+
+                        thumbCard.onclick = () => {
+                            if (typeof window.setCarpetPrimaryImage === 'function') {
+                                window.setCarpetPrimaryImage(carpet.id, index);
+                            }
+                        };
+                    }
+
+                    adminThumbs.appendChild(thumbCard);
+                });
+            } else {
+                adminBar.classList.add('hidden');
+            }
         }
     }
 
     const addBtn = document.getElementById('modal-add-btn');
-    const isOutOfStock = carpet.status === 'out_of_stock';
 
     if (addBtn) {
         if (isOutOfStock) {
-            addBtn.innerText = "طلب تفصيل خاص";
-            addBtn.className = "bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-5 py-2.5 rounded-xl transition shadow-sm text-sm flex items-center gap-1.5";
+            addBtn.innerText = "يمكنك طلب نفس التصميم";
+            addBtn.className = "bg-brand hover:bg-brand-hover text-white font-bold px-6 py-2.5 rounded-xl transition shadow-sm text-sm flex items-center gap-1.5 cursor-pointer";
             addBtn.onclick = () => {
-                const message = encodeURIComponent(`مرحباً دار تطريز، أنا مهتم بطلب تفصيل خاص أو إعادة إنتاج هذه القطعة غير المتوفرة: "${carpet.title}"`);
-                window.open(`https://wa.me/?text=${message}`, '_blank');
+                addToCart(carpet.id, carpet.title, carpet.price, carpet.dimensions, "طلب إعادة تفصيل نفس التصميم");
+                closeModal();
             };
         } else {
             addBtn.innerText = "إضافة للسلة";
-            addBtn.className = "bg-brand hover:bg-brand-hover text-white font-bold px-6 py-2.5 rounded-xl transition shadow-sm text-sm";
+            addBtn.className = "bg-brand hover:bg-brand-hover text-white font-bold px-6 py-2.5 rounded-xl transition shadow-sm text-sm cursor-pointer";
             addBtn.onclick = () => {
                 addToCart(carpet.id, carpet.title, carpet.price, carpet.dimensions);
                 closeModal();
@@ -128,6 +370,22 @@ export function openModal(carpetId, allCarpets) {
 export function closeModal() {
     const modal = document.getElementById('product-modal');
     if (modal) modal.classList.add('hidden');
+    const videoEl = document.getElementById('modal-product-video');
+    if (videoEl) {
+        videoEl.pause();
+        videoEl.currentTime = 0;
+        videoEl.muted = true;
+        videoEl.defaultMuted = true;
+        videoEl.setAttribute('muted', '');
+    }
+    const audioBtn = document.getElementById('modal-video-audio-btn');
+    if (audioBtn) {
+        const icon = audioBtn.querySelector('.audio-icon');
+        if (icon) icon.innerText = '🔇';
+        audioBtn.setAttribute('title', 'تشغيل الصوت');
+    }
+    const fullscreenBtn = document.getElementById('modal-video-fullscreen-btn');
+    if (fullscreenBtn) fullscreenBtn.classList.add('hidden');
 }
 
 export function handleModalScroll(container) {
@@ -138,23 +396,234 @@ export function handleModalScroll(container) {
     if (counterSpan) {
         counterSpan.innerText = activeIndex + 1;
     }
+
+    // إيقاف وتشغيل الفيديو بذكاء وإظهار زر التكبير فقط عند شريحة الفيديو
+    const videoSlide = document.getElementById('modal-video-slide');
+    const videoEl = document.getElementById('modal-product-video');
+    const fullscreenBtn = document.getElementById('modal-video-fullscreen-btn');
+
+    if (videoSlide && videoEl) {
+        const slideRect = videoSlide.getBoundingClientRect();
+        const containerRect = container.getBoundingClientRect();
+        // فحص دقيق: شريحة الفيديو معروضة أمام المستخدم بالكامل تقريباً
+        const isVideoActive = Math.abs(slideRect.left - containerRect.left) < (width * 0.35);
+
+        if (isVideoActive) {
+            if (videoEl.paused) {
+                videoEl.play().catch(() => {});
+            }
+            // إظهار زر التكبير فقط عندما يكون المستخدم داخل شريحة الفيديو
+            if (fullscreenBtn) fullscreenBtn.classList.remove('hidden');
+        } else {
+            if (!videoEl.paused) {
+                videoEl.pause();
+            }
+            // كتم الصوت تلقائياً عند الابتعاد عن شريحة الفيديو
+            videoEl.muted = true;
+            videoEl.defaultMuted = true;
+            videoEl.setAttribute('muted', '');
+            const audioBtn = document.getElementById('modal-video-audio-btn');
+            if (audioBtn) {
+                const icon = audioBtn.querySelector('.audio-icon');
+                if (icon) icon.innerText = '🔇';
+                audioBtn.setAttribute('title', 'تشغيل الصوت');
+            }
+            // إخفاء زر التكبير تماماً عند الانتقال لأي صورة لحفظ راحة التصفح
+            if (fullscreenBtn) fullscreenBtn.classList.add('hidden');
+        }
+    } else {
+        if (fullscreenBtn) fullscreenBtn.classList.add('hidden');
+    }
 }
+
+// ==========================================
+// التحكم التفاعلي بالفيديو وتكبيره داخل حدود المتصفح (In-Browser Video Lightbox)
+// ==========================================
+window.toggleModalVideoFullscreen = () => {
+    const videoEl = document.getElementById('modal-product-video');
+    if (!videoEl || !videoEl.src) return;
+
+    // إيقاف وكتم الفيديو في نافذة التفاصيل مؤقتاً
+    videoEl.pause();
+    videoEl.muted = true;
+    videoEl.defaultMuted = true;
+    videoEl.setAttribute('muted', '');
+    const audioBtn = document.getElementById('modal-video-audio-btn');
+    if (audioBtn) {
+        const icon = audioBtn.querySelector('.audio-icon');
+        if (icon) icon.innerText = '🔇';
+        audioBtn.setAttribute('title', 'تشغيل الصوت');
+    }
+
+    // فتح نافذة تكبير الفيديو على مستوى المتصفح (مكتومة الصوت دائماً)
+    const titleEl = document.getElementById('modal-title');
+    const title = titleEl ? titleEl.innerText : 'فيديو استعراضي';
+    window.openVideoLightbox(videoEl.src, title);
+};
+
+window.openVideoLightbox = (videoSrc, title = 'فيديو استعراضي') => {
+    if (!videoSrc) return;
+    const modal = document.getElementById('video-lightbox-modal');
+    const player = document.getElementById('lightbox-video-player');
+    const titleEl = document.getElementById('lightbox-video-title');
+    const audioBtn = document.getElementById('lightbox-video-audio-btn');
+
+    if (modal && player) {
+        // نلزم المشغل بحالة الكتم التام قبل تعيين المصدر لمنع أي تسرب للصوت
+        player.pause();
+        player.muted = true;
+        player.defaultMuted = true;
+        player.setAttribute('muted', '');
+        
+        player.src = videoSrc;
+        player.currentTime = 0;
+        player.load();
+
+        // تأكيد مضاعف لكتم الصوت في المشغل لضمان بقائه مكتوماً عند التشغيل
+        player.muted = true;
+        player.defaultMuted = true;
+
+        if (titleEl) titleEl.innerText = `🎬 ${title}`;
+        if (audioBtn) {
+            const icon = audioBtn.querySelector('.lightbox-audio-icon');
+            if (icon) icon.innerText = '🔇';
+            audioBtn.setAttribute('title', 'تشغيل الصوت');
+        }
+        modal.classList.remove('hidden');
+        player.play().catch(() => {});
+    }
+};
+
+window.closeVideoLightbox = () => {
+    const modal = document.getElementById('video-lightbox-modal');
+    const player = document.getElementById('lightbox-video-player');
+    if (player) {
+        player.pause();
+        player.muted = true;
+        player.defaultMuted = true;
+        player.setAttribute('muted', '');
+        player.removeAttribute('src');
+        player.load();
+    }
+    const audioBtn = document.getElementById('lightbox-video-audio-btn');
+    if (audioBtn) {
+        const icon = audioBtn.querySelector('.lightbox-audio-icon');
+        if (icon) icon.innerText = '🔇';
+        audioBtn.setAttribute('title', 'تشغيل الصوت');
+    }
+    if (modal) modal.classList.add('hidden');
+};
+
+window.toggleLightboxVideoPlay = () => {
+    const player = document.getElementById('lightbox-video-player');
+    if (!player) return;
+
+    const centerBtn = document.getElementById('lightbox-video-center-btn');
+    const centerIcon = document.getElementById('lightbox-video-center-icon');
+
+    if (player.paused) {
+        player.play().catch(() => {});
+        if (centerIcon) centerIcon.innerText = '▶';
+        if (centerBtn) {
+            centerBtn.classList.remove('opacity-0');
+            centerBtn.classList.add('opacity-100');
+            setTimeout(() => {
+                centerBtn.classList.remove('opacity-100');
+                centerBtn.classList.add('opacity-0');
+            }, 350);
+        }
+    } else {
+        player.pause();
+        if (centerIcon) centerIcon.innerText = '⏸';
+        if (centerBtn) {
+            centerBtn.classList.remove('opacity-0');
+            centerBtn.classList.add('opacity-100');
+        }
+    }
+};
+
+window.toggleLightboxVideoAudio = (btnEl) => {
+    const player = document.getElementById('lightbox-video-player');
+    if (!player) return;
+
+    player.muted = !player.muted;
+    const isMuted = player.muted;
+    const btn = btnEl || document.getElementById('lightbox-video-audio-btn');
+    if (btn) {
+        const icon = btn.querySelector('.lightbox-audio-icon');
+        if (icon) icon.innerText = isMuted ? '🔇' : '🔊';
+        btn.setAttribute('title', isMuted ? 'تشغيل الصوت' : 'كتم الصوت');
+    }
+};
+
+window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        window.closeVideoLightbox();
+    }
+});
+
+window.toggleProductVideoPlay = (videoEl) => {
+    if (!videoEl) videoEl = document.getElementById('modal-product-video');
+    if (!videoEl) return;
+
+    const centerBtn = document.getElementById('modal-video-center-btn');
+    const centerIcon = document.getElementById('modal-video-center-icon');
+
+    if (videoEl.paused) {
+        videoEl.play().catch(() => {});
+        if (centerIcon) centerIcon.innerText = '▶';
+        if (centerBtn) {
+            centerBtn.classList.remove('opacity-0');
+            centerBtn.classList.add('opacity-100');
+            setTimeout(() => {
+                centerBtn.classList.remove('opacity-100');
+                centerBtn.classList.add('opacity-0');
+            }, 450);
+        }
+    } else {
+        videoEl.pause();
+        if (centerIcon) centerIcon.innerText = '⏸';
+        if (centerBtn) {
+            centerBtn.classList.remove('opacity-0');
+            centerBtn.classList.add('opacity-100');
+        }
+    }
+};
+
+window.toggleProductVideoAudio = (btnEl) => {
+    const videoEl = document.getElementById('modal-product-video');
+    if (!videoEl) return;
+
+    videoEl.muted = !videoEl.muted;
+    const isMuted = videoEl.muted;
+
+    const btn = btnEl || document.getElementById('modal-video-audio-btn');
+    if (btn) {
+        const iconSpan = btn.querySelector('.audio-icon');
+        if (iconSpan) iconSpan.innerText = isMuted ? '🔇' : '🔊';
+        btn.setAttribute('title', isMuted ? 'تشغيل الصوت' : 'كتم الصوت');
+    }
+};
 
 // ==========================================
 // إدارة سلة المشتريات
 // ==========================================
-export function addToCart(id, title, price, dimensions) {
+export function addToCart(id, title, price, dimensions, note = '') {
     cart.push({
         id: id,
         title: title,
         price: Number(price),
-        dimensions: dimensions
+        dimensions: dimensions,
+        note: note
     });
     
-    const cartCountEl = document.getElementById('cart-count');
-    if (cartCountEl) cartCountEl.innerText = cart.length;
+    try {
+        sessionStorage.setItem('tatr_cart', JSON.stringify(cart));
+    } catch(e) {}
+    updateCartBadges(true);
     
-    showToast(`تمت إضافة "${title}" إلى السلة بنجاح!`, 'success', 'سلة المشتريات');
+    const toastMsg = note ? `تمت إضافة "${title}" (${note}) إلى السلة بنجاح!` : `تمت إضافة "${title}" إلى السلة بنجاح!`;
+    showToast(toastMsg, 'success', 'سلة المشتريات');
 }
 
 export function openCartModal() {
@@ -194,6 +663,7 @@ export function updateCartDisplay() {
                 <div>
                     <h5 class="font-bold text-stone-900 text-sm">${item.title}</h5>
                     <p class="text-xs text-stone-500 mt-0.5">الأبعاد: ${item.dimensions}</p>
+                    ${item.note ? `<span class="inline-block text-[10px] font-bold text-amber-800 bg-amber-100/90 px-2 py-0.5 rounded-md mt-1 border border-amber-300/60">${item.note}</span>` : ''}
                     <span class="text-brand font-black text-xs mt-1 block">${item.price} ر.ع.</span>
                 </div>
                 <button onclick="window.removeFromCartGlobal(${index})" class="text-red-500 hover:text-red-700 text-xs font-bold p-2 bg-red-50 rounded-xl transition" title="حذف من السلة">
@@ -211,8 +681,10 @@ export function updateCartDisplay() {
 export function removeFromCart(index) {
     const removedItem = cart[index];
     cart.splice(index, 1);
-    const cartCountEl = document.getElementById('cart-count');
-    if (cartCountEl) cartCountEl.innerText = cart.length;
+    try {
+        sessionStorage.setItem('tatr_cart', JSON.stringify(cart));
+    } catch(e) {}
+    updateCartBadges(true);
     updateCartDisplay();
     if (removedItem) {
         showToast(`تم حذف "${removedItem.title}" من السلة`, 'info', 'سلة المشتريات', 2500);
@@ -231,8 +703,11 @@ export function sendCartToWhatsApp() {
 
     let total = 0;
     cart.forEach((item, idx) => {
-        message += `▫️ *[${idx + 1}] ${item.title}*\n`;
+        message += `▫️ *[${idx + 1}] ${item.title}* ${item.id ? `(${item.id})` : ''}\n`;
         message += `   📐 الأبعاد: ${item.dimensions}\n`;
+        if (item.note) {
+            message += `   ✨ نوع الطلب: *${item.note}*\n`;
+        }
         message += `   💵 السعر: *${item.price} ر.ع.*\n\n`;
         total += item.price;
     });

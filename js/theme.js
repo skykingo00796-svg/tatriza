@@ -47,9 +47,23 @@ export function selectThemeOption(themeName, logoSrc) {
 }
 
 export function applyTheme() {
+    document.documentElement.className = `theme-${pendingTheme}`;
     document.body.className = `theme-${pendingTheme}`;
     localStorage.setItem('tatr_theme', pendingTheme);
     localStorage.setItem('tatr_logo', pendingLogo);
+
+    // تحديث نمط الألوان الفوري
+    const injected = document.getElementById('early-theme-inject');
+    const palette = {
+        burgundy: { color: '#7c1d3c', hover: '#631730', border: '#96264a' },
+        green:    { color: '#435838', hover: '#33432a', border: '#56714a' },
+        blue:     { color: '#2d5f75', hover: '#204557', border: '#3d7a96' },
+        gold:     { color: '#c59b27', hover: '#9e771c', border: '#d6af3d' }
+    };
+    const active = palette[pendingTheme] || palette.burgundy;
+    if (injected) {
+        injected.textContent = `:root, html, body { --brand-color: ${active.color} !important; --brand-hover: ${active.hover} !important; --brand-border: ${active.border} !important; }`;
+    }
 
     document.querySelectorAll('img[alt="Tatriza Logo"]').forEach(img => {
         img.src = pendingLogo;
@@ -66,6 +80,7 @@ export function initTheme() {
     const savedTheme = localStorage.getItem('tatr_theme') || 'burgundy';
     const savedLogo = localStorage.getItem('tatr_logo') || '../images/logo.jpg';
     
+    document.documentElement.className = `theme-${savedTheme}`;
     document.body.className = `theme-${savedTheme}`;
     
     document.querySelectorAll('img[alt="Tatriza Logo"]').forEach(img => {
