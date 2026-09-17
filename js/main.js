@@ -783,12 +783,69 @@ function resetSearchAndFilters() {
     filterAndDisplayCarpets();
 }
 
+
+// ==========================================
+// حركة تتبع الشعار التفاعلية في خلفية البانر الترحيبي (Parallax Hero Background)
+// ==========================================
+export function initHeroParallax() {
+    const banner = document.getElementById('welcome-hero-banner');
+    const logo = document.getElementById('welcome-parallax-logo');
+    if (!banner || !logo) return;
+
+    let currentX = 0, currentY = 0;
+    let targetX = 0, targetY = 0;
+    let targetRotate = 0, currentRotate = 0;
+    let isHovered = false;
+    let rafId = null;
+
+    function updateParallax() {
+        currentX += (targetX - currentX) * 0.08;
+        currentY += (targetY - currentY) * 0.08;
+        currentRotate += (targetRotate - currentRotate) * 0.08;
+
+        logo.style.transform = `translate3d(${currentX.toFixed(2)}px, ${currentY.toFixed(2)}px, 0) scale(1.08) rotate(${currentRotate.toFixed(2)}deg)`;
+
+        if (isHovered || Math.abs(targetX - currentX) > 0.05 || Math.abs(targetY - currentY) > 0.05) {
+            rafId = requestAnimationFrame(updateParallax);
+        } else {
+            rafId = null;
+        }
+    }
+
+    banner.addEventListener('mousemove', (e) => {
+        const rect = banner.getBoundingClientRect();
+        const relX = (e.clientX - rect.left) / rect.width - 0.5; // -0.5 to 0.5
+        const relY = (e.clientY - rect.top) / rect.height - 0.5; // -0.5 to 0.5
+
+        // يتحرك الشعار بنعومة مع المؤشر ليمنح عمقاً ثلاثي الأبعاد
+        targetX = relX * 36;
+        targetY = relY * 24;
+        targetRotate = relX * 3;
+
+        isHovered = true;
+        if (!rafId) {
+            rafId = requestAnimationFrame(updateParallax);
+        }
+    });
+
+    banner.addEventListener('mouseleave', () => {
+        isHovered = false;
+        targetX = 0;
+        targetY = 0;
+        targetRotate = 0;
+        if (!rafId) {
+            rafId = requestAnimationFrame(updateParallax);
+        }
+    });
+}
+
 window.addEventListener('DOMContentLoaded', () => {
     initTheme();
     try {
         initAmbient3D('ambient-3d-canvas');
     } catch(e) {}
     initAdminShortcut();
+    initHeroParallax();
     initImageUploadPreview();
     initEditImageManager();
     initVideoUploadHandlers();
