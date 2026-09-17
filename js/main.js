@@ -720,8 +720,8 @@ function setupFilters() {
     buttons.forEach(button => {
         button.addEventListener('click', (e) => {
             buttons.forEach(btn => {
-                btn.classList.remove('bg-brand', 'text-white', 'shadow-xs', 'font-bold');
-                btn.classList.add('bg-[#fffbf7]', 'text-stone-700', 'border', 'border-stone-300', 'hover:bg-[#ebe1d3]', 'font-semibold');
+                btn.classList.remove('active', 'bg-brand', 'text-white', 'shadow-xs', 'font-bold');
+                btn.classList.add('font-semibold');
                 const badge = btn.querySelector('.cat-badge');
                 if (badge) {
                     badge.classList.remove('bg-white/20', 'text-white');
@@ -730,8 +730,8 @@ function setupFilters() {
             });
             
             const activeBtn = e.currentTarget;
-            activeBtn.classList.remove('bg-[#fffbf7]', 'text-stone-700', 'border', 'border-stone-300', 'hover:bg-[#ebe1d3]', 'font-semibold');
-            activeBtn.classList.add('bg-brand', 'text-white', 'shadow-xs', 'font-bold');
+            activeBtn.classList.add('active', 'bg-brand', 'text-white', 'shadow-xs', 'font-bold');
+            activeBtn.classList.remove('font-semibold');
             
             const activeBadge = activeBtn.querySelector('.cat-badge');
             if (activeBadge) {
@@ -764,15 +764,15 @@ function resetSearchAndFilters() {
         const filter = btn.getAttribute('data-filter');
         const badge = btn.querySelector('.cat-badge');
         if (filter === 'all') {
-            btn.classList.remove('bg-[#fffbf7]', 'text-stone-700', 'border', 'border-stone-300', 'hover:bg-[#ebe1d3]', 'font-semibold');
-            btn.classList.add('bg-brand', 'text-white', 'shadow-xs', 'font-bold');
+            btn.classList.add('active', 'bg-brand', 'text-white', 'shadow-xs', 'font-bold');
+            btn.classList.remove('font-semibold');
             if (badge) {
                 badge.classList.remove('bg-stone-200/80', 'text-stone-700');
                 badge.classList.add('bg-white/20', 'text-white');
             }
         } else {
-            btn.classList.remove('bg-brand', 'text-white', 'shadow-xs', 'font-bold');
-            btn.classList.add('bg-[#fffbf7]', 'text-stone-700', 'border', 'border-stone-300', 'hover:bg-[#ebe1d3]', 'font-semibold');
+            btn.classList.remove('active', 'bg-brand', 'text-white', 'shadow-xs', 'font-bold');
+            btn.classList.add('font-semibold');
             if (badge) {
                 badge.classList.remove('bg-white/20', 'text-white');
                 badge.classList.add('bg-stone-200/80', 'text-stone-700');

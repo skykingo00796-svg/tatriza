@@ -15,11 +15,11 @@ export function openThemeModal() {
     
     document.querySelectorAll('.theme-box').forEach(box => {
         if (box.getAttribute('data-theme') === currentTheme) {
+            box.classList.add('active-theme');
             box.style.borderColor = 'var(--brand-color)';
-            box.style.backgroundColor = '#f5efe6';
         } else {
-            box.style.borderColor = 'transparent';
-            box.style.backgroundColor = '#f9f9f9';
+            box.classList.remove('active-theme');
+            box.style.borderColor = 'rgba(220, 210, 198, 0.75)';
         }
     });
 
@@ -38,11 +38,11 @@ export function selectThemeOption(themeName, logoSrc) {
     
     document.querySelectorAll('.theme-box').forEach(box => {
         if (box.getAttribute('data-theme') === themeName) {
+            box.classList.add('active-theme');
             box.style.borderColor = 'var(--brand-color)';
-            box.style.backgroundColor = '#f5efe6';
         } else {
-            box.style.borderColor = 'transparent';
-            box.style.backgroundColor = '#f9f9f9';
+            box.classList.remove('active-theme');
+            box.style.borderColor = 'rgba(220, 210, 198, 0.75)';
         }
     });
 }

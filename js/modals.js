@@ -262,8 +262,10 @@ export function openModal(carpetId, allCarpets) {
         }
 
         const totalMediaItems = images.length + (hasVideo ? 1 : 0);
-        document.getElementById('modal-counter').innerText = '1';
-        document.getElementById('modal-total').innerText = totalMediaItems;
+        const counterEl = document.getElementById('modal-counter');
+        const totalEl = document.getElementById('modal-total');
+        if (counterEl) counterEl.innerText = '1';
+        if (totalEl) totalEl.innerText = totalMediaItems;
         if (counterWrapper) {
             counterWrapper.style.display = totalMediaItems > 1 ? 'block' : 'none';
         }
@@ -346,19 +348,29 @@ export function openModal(carpetId, allCarpets) {
     const addBtn = document.getElementById('modal-add-btn');
 
     if (addBtn) {
+        const carpetImageThumb = (carpet.images && carpet.images.length > 0) ? carpet.images[0] : (carpet.image || '');
         if (isOutOfStock) {
-            addBtn.innerText = "يمكنك طلب نفس التصميم";
-            addBtn.className = "btn-liquid-metal font-display text-white font-bold px-6 py-3 rounded-2xl transition text-xs sm:text-sm flex items-center gap-1.5 cursor-pointer shadow-md";
+            addBtn.innerHTML = `<span>طلب نفس التصميم</span><span class="text-xs shrink-0">🔄</span>`;
+            addBtn.className = "btn-liquid-metal font-display text-white font-bold px-5 sm:px-6 py-3 rounded-2xl transition text-xs sm:text-sm flex items-center justify-center gap-2 cursor-pointer shadow-md flex-1";
             addBtn.onclick = () => {
-                addToCart(carpet.id, carpet.title, carpet.price, carpet.dimensions, "طلب إعادة تفصيل نفس التصميم");
+                addToCart(carpet.id, carpet.title, carpet.price, carpet.dimensions, "طلب إعادة تفصيل نفس التصميم", carpetImageThumb);
                 closeModal();
             };
         } else {
-            addBtn.innerText = "إضافة للسلة";
-            addBtn.className = "btn-liquid-metal font-display text-white font-bold px-7 py-3 rounded-2xl transition text-sm sm:text-base cursor-pointer shadow-md";
+            addBtn.innerHTML = `<span>إضافة للسلة</span><span class="text-xs shrink-0">🛍️</span>`;
+            addBtn.className = "btn-liquid-metal font-display text-white font-bold px-6 sm:px-7 py-3 rounded-2xl transition text-xs sm:text-sm flex items-center justify-center gap-2 cursor-pointer shadow-md flex-1";
             addBtn.onclick = () => {
-                addToCart(carpet.id, carpet.title, carpet.price, carpet.dimensions);
+                addToCart(carpet.id, carpet.title, carpet.price, carpet.dimensions, '', carpetImageThumb);
                 closeModal();
+            };
+        }
+
+        // إعداد زر الاستفسار السريع عبر الواتساب للمنتج
+        const whatsappBtn = document.getElementById('modal-whatsapp-inquire-btn');
+        if (whatsappBtn) {
+            whatsappBtn.onclick = () => {
+                const msg = encodeURIComponent(`مرحباً دار تطريز TATRIZA 🌸\nأود الاستفسار عن القطعة:\n- الاسم: ${carpet.title}\n- الرمز: ${carpet.id}\n- الأبعاد: ${carpet.dimensions}\n- السعر: ${carpet.price} ر.ع.\nهل هي متوفرة للتسليم؟`);
+                window.open(`https://wa.me/96890000000?text=${msg}`, '_blank');
             };
         }
     }
@@ -608,13 +620,14 @@ window.toggleProductVideoAudio = (btnEl) => {
 // ==========================================
 // إدارة سلة المشتريات
 // ==========================================
-export function addToCart(id, title, price, dimensions, note = '') {
+export function addToCart(id, title, price, dimensions, note = '', image = '') {
     cart.push({
         id: id,
         title: title,
         price: Number(price),
         dimensions: dimensions,
-        note: note
+        note: note,
+        image: image
     });
     
     try {
@@ -647,8 +660,12 @@ export function updateCartDisplay() {
 
     if (cart.length === 0) {
         container.innerHTML = `
-            <div class="text-center py-12 text-stone-500">
-                <p class="text-sm font-semibold">سلة المشتريات فارغة حالياً</p>
+            <div class="text-center py-12 px-4">
+                <div class="w-16 h-16 mx-auto mb-3 rounded-2xl bg-amber-50 border border-amber-200/80 flex items-center justify-center text-3xl shadow-xs">
+                    🛍️
+                </div>
+                <h5 class="font-display font-black text-stone-800 text-base mb-1">سلة المشتريات فارغة حالياً</h5>
+                <p class="text-xs text-stone-500 max-w-xs mx-auto">تفضل بتصفح المعرض واختيار ما يناسب ذوقك من التحف الفنية الفريدة</p>
             </div>
         `;
         if (totalAmountEl) totalAmountEl.innerText = '0';
@@ -658,16 +675,28 @@ export function updateCartDisplay() {
     let total = 0;
     cart.forEach((item, index) => {
         total += item.price;
+        const itemImg = item.image || '../images/logo.jpg';
         container.innerHTML += `
-            <div class="flex items-center justify-between pt-3 first:pt-0">
-                <div>
-                    <h5 class="font-bold text-stone-900 text-sm">${item.title}</h5>
-                    <p class="text-xs text-stone-500 mt-0.5">الأبعاد: ${item.dimensions}</p>
-                    ${item.note ? `<span class="inline-block text-[10px] font-bold text-amber-800 bg-amber-100/90 px-2 py-0.5 rounded-md mt-1 border border-amber-300/60">${item.note}</span>` : ''}
-                    <span class="text-brand font-black text-xs mt-1 block">${item.price} ر.ع.</span>
+            <div class="lux-cart-item flex items-center justify-between gap-3">
+                <div class="flex items-center gap-3 min-w-0">
+                    <div class="w-14 h-14 rounded-2xl overflow-hidden bg-stone-100 border border-stone-200 shrink-0 shadow-2xs">
+                        <img src="${itemImg}" alt="${item.title}" class="w-full h-full object-cover">
+                    </div>
+                    <div class="min-w-0">
+                        <h5 class="font-display font-black text-stone-900 text-xs sm:text-sm truncate">${item.title}</h5>
+                        <div class="flex items-center gap-2 mt-0.5">
+                            <span class="text-[11px] text-stone-500 font-medium">الأبعاد: ${item.dimensions}</span>
+                            ${item.note ? `<span class="text-[9px] font-black text-amber-800 bg-amber-100/90 px-1.5 py-0.5 rounded-md border border-amber-300/60">${item.note}</span>` : ''}
+                        </div>
+                        <div class="flex items-center gap-1 mt-1">
+                            <span class="font-display font-black text-brand text-xs sm:text-sm">${item.price}</span>
+                            <span class="text-brand text-[10px] font-bold">ر.ع.</span>
+                        </div>
+                    </div>
                 </div>
-                <button onclick="window.removeFromCartGlobal(${index})" class="text-red-500 hover:text-red-700 text-xs font-bold p-2 bg-red-50 rounded-xl transition" title="حذف من السلة">
-                    🗑️ حذف
+                <button onclick="window.removeFromCartGlobal(${index})" class="lux-delete-btn shrink-0" title="حذف القطعة من السلة">
+                    <span>حذف</span>
+                    <span class="text-xs">🗑️</span>
                 </button>
             </div>
         `;
