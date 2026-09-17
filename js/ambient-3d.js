@@ -66,14 +66,14 @@ class GoldenParticle {
     draw(ctx) {
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.size * this.z, 0, Math.PI * 2);
-        ctx.fillStyle = ;
+        ctx.fillStyle = `rgba(${currentThemeColor.r}, ${currentThemeColor.g}, ${currentThemeColor.b}, ${this.alpha * this.z})`;
         ctx.fill();
 
         // هالة ضوئية ناعمة للجزيئات القريبة فقط
         if (this.z > 0.6) {
             ctx.beginPath();
             ctx.arc(this.x, this.y, this.size * this.z * 2.5, 0, Math.PI * 2);
-            ctx.fillStyle = ;
+            ctx.fillStyle = `rgba(${currentThemeColor.r}, ${currentThemeColor.g}, ${currentThemeColor.b}, ${this.alpha * this.z * 0.25})`;
             ctx.fill();
         }
     }
@@ -190,7 +190,7 @@ function renderLoop() {
                 ctx.beginPath();
                 ctx.moveTo(p1.x, p1.y);
                 ctx.lineTo(p2.x, p2.y);
-                ctx.strokeStyle = ;
+                ctx.strokeStyle = `rgba(${currentThemeColor.r}, ${currentThemeColor.g}, ${currentThemeColor.b}, ${lineAlpha})`;
                 ctx.lineWidth = 0.5;
                 ctx.stroke();
             }
