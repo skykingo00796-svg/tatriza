@@ -1275,6 +1275,12 @@ button[type="submit"]:active {
     white-space: nowrap !important;
 }
 
+
+.catalog-subtitle-text {
+    font-size: clamp(0.68rem, 1.35vw, 0.85rem);
+    line-height: 1.3;
+}
+
 .catalog-tag-badge {
     font-size: clamp(0.65rem, 1.2vw, 0.8rem);
     white-space: nowrap !important;
