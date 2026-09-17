@@ -260,7 +260,7 @@ function displayCarpets(carpetsToDisplay) {
         return;
     }
 
-    carpetsToDisplay.forEach(carpet => {
+    carpetsToDisplay.forEach((carpet, index) => {
         const images = carpet.images && carpet.images.length > 0 ? carpet.images : [carpet.image || 'https://placehold.co/800x600/7c1d3c/ffffff?text=Tatriza'];
         const hasVideo = Boolean(carpet.video);
         const totalMedia = images.length + (hasVideo ? 1 : 0);
