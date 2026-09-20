@@ -339,16 +339,16 @@ function displayCarpets(carpetsToDisplay) {
                         onclick="event.stopPropagation(); window.toggleCardVideoPlay('${carpet.id}')"
                     ></video>
                     
-<!-- زر إيقاف وتشغيل تفاعلي بالوسط مصغر -->
+<!-- زر إيقاف وتشغيل تفاعلي بالوسط مصغر ومضبوط للبطاقة -->
                     <div id="card-video-center-btn-${carpet.id}" onclick="event.stopPropagation(); window.toggleCardVideoPlay('${carpet.id}')" class="absolute inset-0 flex items-center justify-center pointer-events-none transition-all duration-300 opacity-0">
-                        <div class="w-8 h-8 rounded-full bg-black/65 backdrop-blur-md border border-white/30 text-white flex items-center justify-center text-xs shadow-md transform transition hover:scale-110 pointer-events-auto cursor-pointer" id="card-video-center-icon-${carpet.id}">
+                        <div class="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-black/65 backdrop-blur-md border border-white/30 text-white flex items-center justify-center text-[9px] shadow-md transform transition hover:scale-110 pointer-events-auto cursor-pointer" id="card-video-center-icon-${carpet.id}">
                             ▶
                         </div>
                     </div>
 
-                    <!-- زر الصوت المصغر لبطاقة المعرض -->
-                    <button type="button" onclick="event.stopPropagation(); window.toggleCardVideoAudio('${carpet.id}', this)" id="card-video-audio-btn-${carpet.id}" class="absolute top-1.5 left-1.5 pointer-events-auto bg-black/60 hover:bg-black/85 text-white w-6 h-6 rounded-md backdrop-blur-md border border-white/20 flex items-center justify-center transition shadow-2xs cursor-pointer z-10 hover:scale-110" title="تشغيل الصوت">
-                        <span class="text-[10px] card-audio-icon leading-none">🔇</span>
+                    <!-- زر الصوت المصغر لبطاقة المعرض بحجم مريح ومتناسق -->
+                    <button type="button" onclick="event.stopPropagation(); window.toggleCardVideoAudio('${carpet.id}', this)" id="card-video-audio-btn-${carpet.id}" class="absolute top-1.5 left-1.5 pointer-events-auto bg-black/70 hover:bg-black/90 text-white w-5 h-5 sm:w-5.5 sm:h-5.5 rounded-md backdrop-blur-md border border-white/20 flex items-center justify-center transition shadow-2xs cursor-pointer z-10 hover:scale-105" title="تشغيل الصوت">
+                        <span class="text-[8.5px] sm:text-[9.5px] card-audio-icon leading-none">🔇</span>
                     </button>
                 </div>
             `;
@@ -457,7 +457,7 @@ function displayCarpets(carpetsToDisplay) {
                             id="video-badge-${carpet.id}" 
                             onclick="event.stopPropagation(); window.handleCardVideoBadgeClick('${carpet.id}')"
                             class="absolute bottom-1.5 right-1.5 bg-stone-900/85 hover:bg-stone-900 backdrop-blur-md text-amber-300 text-[8px] sm:text-[9px] font-bold px-1.5 py-0.5 rounded-md pointer-events-auto z-10 border border-amber-300/30 flex items-center gap-0.5 shadow-xs transition cursor-pointer leading-tight"
-                            title="فيديو استعراضي"
+                            title="مشاهدة الفيديو"
                         >
                             <span class="text-[9px]">🎬</span>
                             <span class="badge-text">فيديو</span>
@@ -533,10 +533,10 @@ function handleImageScrollForGrid(container, carpetId) {
                 cardVideo.play().catch(() => {});
             }
 
-            // 2. تحويل الزر فوراً إلى أيقونة تكبير فقط بنفس تصميم ولون زر كتم الصوت
+            // 2. تحويل الزر إلى أيقونة تكبير مصغرة ومحكمة ومتناسقة مع حجم الكارد وزر كتم الصوت
             if (badge) {
-                badge.className = "absolute bottom-3 right-3 bg-black/60 hover:bg-black/85 text-white w-8 h-8 rounded-xl backdrop-blur-md border border-white/20 flex items-center justify-center transition shadow-md cursor-pointer pointer-events-auto z-20 hover:scale-110";
-                badge.innerHTML = `<span class="text-sm leading-none">⛶</span>`;
+                badge.className = "absolute bottom-1.5 right-1.5 bg-black/75 hover:bg-black/90 text-white w-5 h-5 sm:w-5.5 sm:h-5.5 rounded-md backdrop-blur-md border border-white/20 flex items-center justify-center transition shadow-2xs cursor-pointer pointer-events-auto z-20 hover:scale-105";
+                badge.innerHTML = `<span class="text-[9px] sm:text-[10px] leading-none">⛶</span>`;
                 badge.title = "تكبير الفيديو للشاشة كاملة";
             }
         } else {
@@ -555,14 +555,14 @@ function handleImageScrollForGrid(container, carpetId) {
                 audioBtn.setAttribute('title', 'تشغيل الصوت');
             }
 
-            // إعادة الشارة إلى مظهرها الأصلي "فيديو استعراضي"
+            // إعادة الشارة إلى مظهرها الأصلي تماماً "فيديو" بنفس الحجم الأولي بدون أي تضخيم
             if (badge) {
-                badge.className = "absolute bottom-3 right-3 bg-stone-900/80 hover:bg-stone-900 backdrop-blur-md text-amber-300 text-[10px] font-bold px-2.5 py-1 rounded-full pointer-events-auto z-10 border border-amber-300/30 flex items-center gap-1 shadow-md transition-all duration-300 cursor-pointer";
+                badge.className = "absolute bottom-1.5 right-1.5 bg-stone-900/85 hover:bg-stone-900 backdrop-blur-md text-amber-300 text-[8px] sm:text-[9px] font-bold px-1.5 py-0.5 rounded-md pointer-events-auto z-10 border border-amber-300/30 flex items-center gap-0.5 shadow-xs transition cursor-pointer leading-tight";
                 badge.innerHTML = `
-                    <span class="text-xs badge-icon">🎬</span>
-                    <span class="badge-text">فيديو استعراضي</span>
+                    <span class="text-[9px]">🎬</span>
+                    <span class="badge-text">فيديو</span>
                 `;
-                badge.title = "انقر للانتقال للفيديو الاستعراضي";
+                badge.title = "مشاهدة الفيديو";
             }
         }
     }
