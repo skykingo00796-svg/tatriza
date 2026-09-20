@@ -1,4 +1,4 @@
-import { getVideoFromIndexedDB } from './firebase.js';
+import { getVideoFromIndexedDB } from './firebase-public.js';
 // ==========================================
 // ملف إدارة النوافذ، السلة، والمنتجات (modals.js)
 // ==========================================
@@ -130,6 +130,9 @@ export function closeOptionsDrawer() {
 export function openModal(carpetId, allCarpets) {
     const carpet = allCarpets.find(c => c.id === carpetId);
     if (!carpet) return;
+
+    const modal = document.getElementById('product-modal');
+    if (!modal) return;
 
     // وسم جديد وحصري في نافذة التفاصيل
     const modalNewBadge = document.getElementById('modal-new-badge');
@@ -284,6 +287,7 @@ export function openModal(carpetId, allCarpets) {
         }
 
         modal.classList.remove('hidden');
+    }
 }
 
 export function closeModal() {

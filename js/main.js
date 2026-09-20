@@ -73,40 +73,6 @@ window.applyTheme = applyTheme;
 window.openCurrentLogoLightbox = openCurrentLogoLightbox;
 window.closeLightbox = closeLightbox;
 window.handleLightboxScroll = handleLightboxScroll;
-window.openAddModal = () => openAddModal(allCarpets);
-window.closeAddModal = closeAddModal;
-window.openEditModal = (id) => openEditModal(id, allCarpets);
-window.closeEditModal = closeEditModal;
-window.handleEditProduct = (e) => handleEditProduct(e, allCarpets, (updatedList, editedId) => {
-    allCarpets = updatedList;
-    updateCategoryCounts();
-    filterAndDisplayCarpets();
-    const productModal = document.getElementById('product-modal');
-    if (productModal && !productModal.classList.contains('hidden') && editedId) {
-        openModal(editedId, allCarpets);
-    }
-});
-window.handleAddProduct = (e) => handleAddProduct(e, allCarpets, (updated) => {
-    allCarpets = updated;
-    updateCategoryCounts();
-    filterAndDisplayCarpets();
-});
-window.toggleStockStatus = (id) => toggleStockStatus(id, allCarpets, (updated) => {
-    allCarpets = updated;
-    updateCategoryCounts();
-    filterAndDisplayCarpets();
-});
-window.deleteCarpet = (id) => deleteCarpet(id, allCarpets, (updated) => {
-    allCarpets = updated;
-    updateCategoryCounts();
-    filterAndDisplayCarpets();
-});
-window.setCarpetPrimaryImage = (id, idx) => setCarpetPrimaryImage(id, idx, allCarpets, (updated) => {
-    allCarpets = updated;
-    updateCategoryCounts();
-    filterAndDisplayCarpets();
-    openModal(id, allCarpets);
-});
 window.openLightboxFromModalExternal = (id, idx) => openLightboxFromModal(id, idx, allCarpets);
 window.resetSearchAndFilters = resetSearchAndFilters;
 window.handleImageScroll = handleImageScrollForGrid;
@@ -178,7 +144,6 @@ async function loadCarpets() {
                         saveCustomQuickIcons(settings.customQuickIcons);
                     }
                     renderCustomCategoriesInUI();
-                    renderQuickIconsUI();
                     filterAndDisplayCarpets();
                 }
             });
@@ -893,77 +858,6 @@ export function getAllQuickIcons() {
     return unique;
 }
 
-export function renderQuickIconsUI() {
-    const container = document.getElementById('quick-icons-container');
-    if (!container) return;
-
-    const allIcons = getAllQuickIcons();
-    let html = '';
-    allIcons.forEach(icon => {
-        html += `<button type="button" onclick="setNewCatIcon('${icon}')" class="w-7 h-7 rounded-lg bg-stone-100 hover:bg-stone-200 text-sm flex items-center justify-center transition active:scale-95 shadow-2xs cursor-pointer" title="اختيار ${icon}">${icon}</button>`;
-    });
-
-    // زر إضافة أيقونة جديدة (+) في نهاية القائمة دائماً
-    html += `
-        <button type="button" id="btn-add-quick-icon" onclick="toggleAddQuickIconForm()" class="w-7 h-7 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-300 flex items-center justify-center text-xs font-black transition active:scale-95 shadow-2xs cursor-pointer" title="إضافة أيقونة جديدة من كيبورد الجوال">＋</button>
-    `;
-
-    container.innerHTML = html;
-}
-window.renderQuickIconsUI = renderQuickIconsUI;
-
-export function toggleAddQuickIconForm(forceState) {
-    const box = document.getElementById('add-quick-icon-inline');
-    if (!box) return;
-    const isHidden = box.classList.contains('hidden');
-    const show = typeof forceState === 'boolean' ? forceState : isHidden;
-    if (show) {
-        box.classList.remove('hidden');
-        const input = document.getElementById('new-custom-emoji-input');
-        if (input) {
-            input.value = '';
-            input.focus();
-        }
-    } else {
-        box.classList.add('hidden');
-    }
-}
-window.toggleAddQuickIconForm = toggleAddQuickIconForm;
-
-export function confirmAddQuickIcon() {
-    const input = document.getElementById('new-custom-emoji-input');
-    if (!input || !input.value.trim()) {
-        if (window.showToast) {
-            window.showToast('يرجى كتابة أو لصق إيموجي من الكيبورد أولاً.', 'warning', 'الأيقونات السريعة');
-        } else {
-            alert('يرجى إدخال إيموجي من الكيبورد.');
-        }
-        return;
-    }
-
-    const emoji = input.value.trim();
-    const customIcons = getCustomQuickIcons();
-    if (!customIcons.includes(emoji)) {
-        customIcons.push(emoji);
-        saveCustomQuickIcons(customIcons);
-
-        // حفظ سحابي في إعدادات المعرض ليكون متاحاً دائماً لكافة الأجهزة
-        saveCategorySettingsToCloud({
-            deletedDefaultCategoryIds: getDeletedCategoryIds(),
-            customQuickIcons: customIcons
-        });
-    }
-
-    setNewCatIcon(emoji);
-    renderQuickIconsUI();
-    toggleAddQuickIconForm(false);
-
-    if (window.showToast) {
-        window.showToast(`تم حفظ وتثبيت الأيقونة (${emoji}) بنجاح كأيقونة سريعة دائمة!`, 'success', 'الأيقونات السريعة');
-    }
-}
-window.confirmAddQuickIcon = confirmAddQuickIcon;
-
 export function getDeletedCategoryIds() {
     try {
         const stored = localStorage.getItem('tatr_deleted_categories');
@@ -1000,6 +894,33 @@ export function getActiveCategories() {
 window.getActiveCategories = getActiveCategories;
 
 
+
+export function filterCarpetsByCategory(catId) {
+    currentFilter = catId || 'all';
+    const buttons = document.querySelectorAll('.filter-btn');
+    buttons.forEach(btn => {
+        const isMatch = (btn.getAttribute('data-filter') === currentFilter);
+        if (isMatch) {
+            btn.classList.add('active', 'bg-brand', 'text-white', 'shadow-xs', 'font-bold');
+            btn.classList.remove('font-semibold');
+            const badge = btn.querySelector('.cat-badge');
+            if (badge) {
+                badge.classList.remove('bg-stone-200/80', 'text-stone-700');
+                badge.classList.add('bg-white/20', 'text-white');
+            }
+        } else {
+            btn.classList.remove('active', 'bg-brand', 'text-white', 'shadow-xs', 'font-bold');
+            btn.classList.add('font-semibold');
+            const badge = btn.querySelector('.cat-badge');
+            if (badge) {
+                badge.classList.remove('bg-white/20', 'text-white');
+                badge.classList.add('bg-stone-200/80', 'text-stone-700');
+            }
+        }
+    });
+    filterAndDisplayCarpets();
+}
+window.filterCarpetsByCategory = filterCarpetsByCategory;
 
 export function renderCustomCategoriesInUI() {
     const filterTrack = document.getElementById('filter-buttons');
