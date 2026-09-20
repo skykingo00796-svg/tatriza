@@ -253,19 +253,21 @@ function displayCarpets(carpetsToDisplay) {
 
     if (carpetsToDisplay.length === 0) {
         grid.innerHTML = `
-            <div class="col-span-full text-center py-16 px-6 bg-[#fffbf7]/80 backdrop-blur-md rounded-3xl border border-stone-300/80 shadow-xs space-y-4">
-                <div class="w-16 h-16 rounded-2xl bg-stone-100 flex items-center justify-center mx-auto text-2xl text-stone-400 border border-stone-200">
+            <div class="col-span-full text-center py-12 sm:py-16 px-4 space-y-3.5 my-2">
+                <div class="w-14 h-14 rounded-full bg-stone-200/50 flex items-center justify-center mx-auto text-2xl text-stone-400 border border-stone-300/40">
                     🔍
                 </div>
                 <div>
-                    <h4 class="text-lg font-bold text-stone-900">لم يتم العثور على قطع مطابقة</h4>
-                    <p class="text-xs md:text-sm text-stone-600 mt-1 max-w-md mx-auto">
+                    <h4 class="font-display font-bold text-stone-800 text-base md:text-lg">لم يتم العثور على قطع مطابقة</h4>
+                    <p class="text-xs sm:text-sm text-stone-500 mt-1 max-w-md mx-auto leading-relaxed">
                         ${currentSearchQuery ? `لا توجد نتائج تطابق بحثك عن "${currentSearchQuery}".` : 'لا توجد قطع متوفرة في هذا القسم حالياً.'}
                     </p>
                 </div>
-                <button onclick="window.resetSearchAndFilters()" class="inline-flex items-center gap-2 bg-brand hover:bg-brand-hover text-white font-bold text-xs md:text-sm px-5 py-2.5 rounded-xl shadow-xs transition duration-200 cursor-pointer">
-                    <span>إعادة تعيين البحث والتصنيفات</span>
-                </button>
+                <div>
+                    <button onclick="window.resetSearchAndFilters()" class="btn-liquid-metal font-display text-white font-bold text-xs sm:text-sm px-5 py-2.5 rounded-xl shadow-xs transition cursor-pointer inline-flex items-center gap-2">
+                        <span>إعادة تعيين البحث والتصنيفات</span>
+                    </button>
+                </div>
             </div>
         `;
         return;
