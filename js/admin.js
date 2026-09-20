@@ -1426,37 +1426,41 @@ export function openFirebaseConfigModal() {
     modal.classList.remove('hidden');
 }
 
-if (typeof window !== 'undefined') {
-    window.closeFirebaseConfigModal = function() {
-        const modal = document.getElementById('firebase-config-modal');
-        if (modal) modal.classList.add('hidden');
+export function closeFirebaseConfigModal() {
+    const modal = document.getElementById('firebase-config-modal');
+    if (modal) modal.classList.add('hidden');
+}
+
+export function saveFirebaseConfigHandler(e) {
+    if (e) e.preventDefault();
+    const apiKey = document.getElementById('cfg-api-key').value.trim();
+    const projectId = document.getElementById('cfg-project-id').value.trim();
+    const storageBucket = document.getElementById('cfg-storage-bucket').value.trim();
+    const appId = document.getElementById('cfg-app-id').value.trim();
+    const messagingSenderId = document.getElementById('cfg-sender-id').value.trim();
+
+    const config = {
+        apiKey,
+        authDomain: `${projectId}.firebaseapp.com`,
+        projectId,
+        storageBucket,
+        messagingSenderId,
+        appId
     };
 
-    window.openFirebaseConfigModal = openFirebaseConfigModal;
-
-    window.saveFirebaseConfigHandler = function(e) {
-        if (e) e.preventDefault();
-        const apiKey = document.getElementById('cfg-api-key').value.trim();
-        const projectId = document.getElementById('cfg-project-id').value.trim();
-        const storageBucket = document.getElementById('cfg-storage-bucket').value.trim();
-        const appId = document.getElementById('cfg-app-id').value.trim();
-        const messagingSenderId = document.getElementById('cfg-sender-id').value.trim();
-
-        const config = {
-            apiKey,
-            authDomain: `${projectId}.firebaseapp.com`,
-            projectId,
-            storageBucket,
-            messagingSenderId,
-            appId
-        };
-
-        saveFirebaseConfig(config);
-        window.closeFirebaseConfigModal();
+    saveFirebaseConfig(config);
+    closeFirebaseConfigModal();
+    if (typeof window !== 'undefined' && window.closeAdminAuthModal) {
         window.closeAdminAuthModal();
-        showToast("تم حفظ وتفعيل إعدادات Firebase بنجاح! جاري إعادة التحميل للربط...", "success", "السحابة الفائقة", 2500);
-        setTimeout(() => location.reload(), 1200);
-    };
+    }
+    showToast("تم حفظ وتفعيل إعدادات Firebase بنجاح! جاري إعادة التحميل للربط...", "success", "السحابة الفائقة", 2500);
+    setTimeout(() => location.reload(), 1200);
+}
+
+if (typeof window !== 'undefined') {
+    window.closeFirebaseConfigModal = closeFirebaseConfigModal;
+    window.openFirebaseConfigModal = openFirebaseConfigModal;
+    window.saveFirebaseConfigHandler = saveFirebaseConfigHandler;
 
     window.triggerExportBackup = function() {
         const carpets = window.getAllCarpetsGlobal ? window.getAllCarpetsGlobal() : [];
