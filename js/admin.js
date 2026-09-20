@@ -50,7 +50,7 @@ import {
     adminLogoutFromCloud,
     subscribeToAdminAuth,
     getCurrentAdminUser
-} from './firebase.js';
+} from './firebase-admin.js';
 
 // ==========================================
 // توليد كود القطعة التسلسلي الاحترافي (Luxury Sequential SKU)

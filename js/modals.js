@@ -283,107 +283,7 @@ export function openModal(carpetId, allCarpets) {
             }
         }
 
-        // عرض شريط إدارة الصور للمسؤول لتحديد الصورة الرئيسية
-        const adminBar = document.getElementById('admin-image-manager-bar');
-        const adminThumbs = document.getElementById('admin-modal-thumbnails');
-        const isAdmin = typeof window.checkAdminPermission === 'function' ? window.checkAdminPermission() : false;
-
-        if (adminBar && adminThumbs) {
-            if (isAdmin) {
-                adminBar.classList.remove('hidden');
-                adminThumbs.innerHTML = '';
-                
-                const modalEditBtn = document.getElementById('admin-modal-edit-btn');
-                if (modalEditBtn) {
-                    modalEditBtn.onclick = (e) => {
-                        e.stopPropagation();
-                        if (typeof window.openEditModal === 'function') {
-                            window.openEditModal(carpet.id);
-                        }
-                    };
-                }
-                images.forEach((img, index) => {
-                    const isPrimary = index === 0;
-                    const thumbCard = document.createElement('div');
-                    
-                    if (isPrimary) {
-                        thumbCard.className = "admin-primary-card cursor-default overflow-hidden ring-2 sm:ring-4 ring-amber-400/40";
-                        thumbCard.title = "هذه هي الصورة الرئيسية الحالية (الغلاف الأول المعروض للزوار)";
-                        thumbCard.innerHTML = `
-                            <div class="admin-thumb-box bg-stone-100">
-                                <img src="${img}" class="brightness-105 contrast-105 pointer-events-none" alt="غلاف رئيسي">
-                                <span class="absolute inset-x-0 bottom-0 bg-gradient-to-r from-amber-500 via-amber-600 to-amber-500 text-stone-950 font-black text-[8px] sm:text-[9px] text-center py-0.5 sm:py-1 shadow-md border-t border-amber-300/40 tracking-wider">
-                                    ⭐ الرئيسية
-                                </span>
-                                <span class="absolute top-1 right-1 bg-amber-400 text-stone-950 font-black text-[8px] sm:text-[9px] w-4 h-4 sm:w-5 sm:h-5 rounded-full flex items-center justify-center shadow-md">
-                                    👑
-                                </span>
-                            </div>
-                        `;
-                    } else {
-                        thumbCard.className = "admin-secondary-card cursor-pointer overflow-hidden opacity-85 hover:opacity-100 group";
-                        thumbCard.title = "انقر لجعل هذه الصورة هي الغلاف الرئيسي في المعرض";
-                        thumbCard.innerHTML = `
-                            <div class="admin-thumb-box bg-stone-100">
-                                <img src="${img}" class="pointer-events-none" alt="صورة إضافية">
-                                <span class="absolute top-1 right-1 bg-black/65 text-white font-bold text-[8px] sm:text-[9px] w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full flex items-center justify-center shadow">
-                                    ${index + 1}
-                                </span>
-                                <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex flex-col items-center justify-center gap-1 transition-all duration-200">
-                                    <span class="text-[8px] sm:text-[9px] font-bold text-white bg-amber-600 hover:bg-amber-500 px-1.5 py-0.5 rounded shadow whitespace-nowrap">
-                                        تعيين كغلاف ⭐
-                                    </span>
-                                </div>
-                            </div>
-                        `;
-
-                        thumbCard.onclick = () => {
-                            if (typeof window.setCarpetPrimaryImage === 'function') {
-                                window.setCarpetPrimaryImage(carpet.id, index);
-                            }
-                        };
-                    }
-
-                    adminThumbs.appendChild(thumbCard);
-                });
-            } else {
-                adminBar.classList.add('hidden');
-            }
-        }
-    }
-
-    const addBtn = document.getElementById('modal-add-btn');
-
-    if (addBtn) {
-        const carpetImageThumb = (carpet.images && carpet.images.length > 0) ? carpet.images[0] : (carpet.image || '');
-        if (isOutOfStock) {
-            addBtn.innerHTML = `<span>طلب نفس التصميم</span><span class="text-xs shrink-0">🔄</span>`;
-            addBtn.className = "btn-liquid-metal font-display text-white font-bold px-5 sm:px-6 py-3 rounded-2xl transition text-xs sm:text-sm flex items-center justify-center gap-2 cursor-pointer shadow-md flex-1";
-            addBtn.onclick = () => {
-                addToCart(carpet.id, carpet.title, carpet.price, carpet.dimensions, "طلب إعادة تفصيل نفس التصميم", carpetImageThumb);
-                closeModal();
-            };
-        } else {
-            addBtn.innerHTML = `<span>إضافة للسلة</span><span class="text-xs shrink-0">🛍️</span>`;
-            addBtn.className = "btn-liquid-metal font-display text-white font-bold px-6 sm:px-7 py-3 rounded-2xl transition text-xs sm:text-sm flex items-center justify-center gap-2 cursor-pointer shadow-md flex-1";
-            addBtn.onclick = () => {
-                addToCart(carpet.id, carpet.title, carpet.price, carpet.dimensions, '', carpetImageThumb);
-                closeModal();
-            };
-        }
-
-        // إعداد زر الاستفسار السريع عبر الواتساب للمنتج
-        const whatsappBtn = document.getElementById('modal-whatsapp-inquire-btn');
-        if (whatsappBtn) {
-            whatsappBtn.onclick = () => {
-                const msg = encodeURIComponent(`مرحباً دار تطريز TATRIZA 🌸\nأود الاستفسار عن القطعة:\n- الاسم: ${carpet.title}\n- الرمز: ${carpet.id}\n- الأبعاد: ${carpet.dimensions}\n- السعر: ${carpet.price} ر.ع.\nهل هي متوفرة للتسليم؟`);
-                window.open(`https://wa.me/96890000000?text=${msg}`, '_blank');
-            };
-        }
-    }
-
-    const modal = document.getElementById('product-modal');
-    if (modal) modal.classList.remove('hidden');
+        modal.classList.remove('hidden');
 }
 
 export function closeModal() {
@@ -781,8 +681,8 @@ export function sendCartToWhatsApp() {
     message += `✨ _أرجو تأكيد الطلب وترتيب تفاصيل الدفع والتوصيل. شكراً لخدمتكم الراسخة!_`;
 
     const encodedMessage = encodeURIComponent(message);
-    const adminPhone = "96890000000";
-    window.open(`https://wa.me/${adminPhone}?text=${encodedMessage}`, '_blank');
+    const storePhone = "96890000000";
+    window.open(`https://wa.me/${storePhone}?text=${encodedMessage}`, '_blank');
 }
 
 // ==========================================
@@ -816,8 +716,8 @@ export function submitCustomOrder(event) {
         `✨ _سأقوم بإرسال صورة أو نموذج التصميم المطلوب في هذه المحادثة الآن._`
     );
 
-    const adminPhone = "96890000000";
-    window.open(`https://wa.me/${adminPhone}?text=${message}`, '_blank');
+    const storePhone = "96890000000";
+    window.open(`https://wa.me/${storePhone}?text=${message}`, '_blank');
     closeCustomOrderModal();
     
     document.querySelector('#custom-order-modal form').reset();

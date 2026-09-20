@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بوابة الإدارة المعتمدة | دار تطريز TATRIZA</title>
+    
+    <!-- خطوط جوجل العربية الفاخرة -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Tajawal:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- TailwindCSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <style>
+        :root {
+            --brand-color: #7c1d3c;
+            --brand-color-rgb: 124, 29, 60;
+            --brand-gold: #c59b27;
+            --brand-gold-rgb: 197, 155, 39;
+        }
+
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: #f8f6f0;
+            color: #1c1917;
+            min-height: 100vh;
+        }
+
+        .font-heritage {
+            font-family: 'Amiri', serif;
+        }
+
+        .font-display {
+            font-family: 'Tajawal', sans-serif;
+        }
+
+        .text-brand {
+            color: var(--brand-color);
+        }
+
+        .bg-brand {
+            background-color: var(--brand-color);
+        }
+
+        .border-brand {
+            border-color: var(--brand-color);
+        }
+
+        .btn-liquid-metal {
+            background: linear-gradient(135deg, var(--brand-color) 0%, #4a0e22 100%);
+            box-shadow: 0 4px 15px rgba(124, 29, 60, 0.25);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .btn-liquid-metal:hover {
+            box-shadow: 0 6px 20px rgba(124, 29, 60, 0.35);
+            transform: translateY(-1px);
+        }
+
+        .btn-liquid-emerald {
+            background: linear-gradient(135deg, #059669 0%, #065f46 100%);
+            box-shadow: 0 4px 15px rgba(5, 150, 105, 0.25);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .btn-liquid-emerald:hover {
+            box-shadow: 0 6px 20px rgba(5, 150, 105, 0.35);
+            transform: translateY(-1px);
+        }
+
+        .modal-glass-backdrop {
+            background: rgba(28, 25, 23, 0.75);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+
+        .lux-modal-box {
+            background: #fffbf7;
+            border: 1px solid rgba(214, 211, 209, 0.8);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+
+        .spark-badge-crystal {
+            background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+            border: 1px solid rgba(217, 119, 6, 0.3);
+            color: #78350f;
+        }
+
+        .tatr-shake {
+            animation: tatrShake 0.4s cubic-bezier(.36,.07,.19,.97) both;
+        }
+
+        @keyframes tatrShake {
+            10%, 90% { transform: translate3d(-1px, 0, 0); }
+            20%, 80% { transform: translate3d(2px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+            40%, 60% { transform: translate3d(4px, 0, 0); }
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-amber-900 selection:text-white">
+
+    <!-- ========================================== -->
+    <!-- شاشة تسجيل الدخول السحابية (Login Gate) -->
+    <!-- تظهر فقط عندما لا يكون هناك مسؤول مسجل -->
+    <!-- ========================================== -->
+    <div id="portal-login-gate" class="min-h-screen flex items-center justify-center p-4">
+        <div class="w-full max-w-md bg-[#fffbf7] rounded-3xl p-6 sm:p-8 shadow-2xl border border-stone-300 relative text-center">
+            
+            <div class="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 text-2xl shadow-xs" style="background-color: rgba(124, 29, 60, 0.1); color: var(--brand-color);">
+                👑
+            </div>
+
+            <h2 class="text-2xl font-black text-stone-900 mb-1">دار تطريز TATRIZA</h2>
+            <p class="text-xs text-stone-600 mb-6 font-medium">بوابة إدارة المعرض السحابية المعتمدة</p>
+
+            <form onsubmit="executePortalLogin(event)" class="space-y-4 text-right">
+                <div>
+                    <label class="block text-xs font-bold text-stone-700 mb-1">البريد الإلكتروني للمسؤول</label>
+                    <input type="email" id="portal-email-input" required placeholder="admin@tatriza.com" dir="ltr" class="w-full bg-white border border-stone-300 rounded-xl px-4 py-2.5 text-sm text-stone-900 outline-none focus:border-brand font-mono text-left transition">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-stone-700 mb-1">كلمة المرور السحابية</label>
+                    <div class="relative">
+                        <input type="password" id="portal-password-input" required placeholder="••••••••••••" dir="ltr" class="w-full bg-white border border-stone-300 rounded-xl pr-4 pl-11 py-2.5 text-sm text-stone-900 outline-none focus:border-brand font-mono text-left transition">
+                        <button type="button" onclick="togglePortalPasswordVisibility()" class="absolute inset-y-0 left-0 pl-3 flex items-center text-stone-400 hover:text-stone-700 transition cursor-pointer" title="إظهار / إخفاء">
+                            <span id="portal-toggle-pwd-icon" class="text-sm">👁️</span>
+                        </button>
+                    </div>
+                </div>
+
+                <p id="portal-login-error" class="hidden text-xs text-rose-700 font-semibold p-3 bg-rose-50 border border-rose-200 rounded-xl text-right leading-relaxed">
+                </p>
+
+                <div class="pt-2">
+                    <button type="submit" id="portal-login-btn" class="w-full btn-liquid-metal font-display text-white font-bold py-3 px-4 rounded-xl transition shadow-md text-sm cursor-pointer flex items-center justify-center gap-2">
+                        <span>🔐</span>
+                        <span id="portal-login-btn-text">تسجيل الدخول إلى لوحة الإدارة</span>
+                    </button>
+                </div>
+
+                <div class="pt-3 border-t border-stone-200/80 flex items-center justify-between text-xs">
+                    <a href="index.html" class="text-stone-500 hover:text-brand font-bold transition flex items-center gap-1">
+                        <span>← العودة إلى المعرض العام</span>
+                    </a>
+                    <span class="text-[11px] text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded-lg border border-emerald-200">
+                        🔒 مشفر بـ Firebase Auth
+                    </span>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- لوحة التحكم الكاملة للمسؤول (Dashboard) -->
+    <!-- تظهر فقط بعد نجاح تسجيل الدخول السحابي -->
+    <!-- ========================================== -->
+    <div id="portal-dashboard" class="hidden min-h-screen flex flex-col">
+        
+        <!-- الشريط العلوي الفاخر للوحة الإدارة -->
+        <header class="sticky top-0 z-40 bg-[#fffbf7]/90 backdrop-blur-md border-b border-stone-300/80 px-4 sm:px-8 py-3.5 shadow-xs">
+            <div class="max-w-7xl mx-auto flex items-center justify-between gap-3">
+                <div class="flex items-center gap-3">
+                    <img src="../images/logo.jpg" alt="Tatriza Logo" class="w-10 h-10 rounded-2xl object-cover shadow-sm border border-stone-300">
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <h1 class="font-black text-base sm:text-lg text-stone-900">دار تطريز TATRIZA</h1>
+                            <span class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-amber-100 text-amber-900 border border-amber-300/60">بوابة الإدارة</span>
+                        </div>
+                        <p class="text-[11px] text-stone-500 font-medium">مسجل كـ: <span id="portal-user-email" class="font-bold font-mono text-brand dir-ltr inline-block">admin@tatriza.com</span></p>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-2">
+                    <a href="index.html" target="_blank" class="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white hover:bg-stone-50 border border-stone-300 text-stone-700 text-xs font-bold transition shadow-xs">
+                        <span>👁️</span>
+                        <span>معاينة المتجر العام</span>
+                    </a>
+                    <button type="button" onclick="window.portalExportBackup()" class="hidden md:inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white hover:bg-stone-50 border border-stone-300 text-stone-700 text-xs font-bold transition shadow-xs" title="تنزيل نسخة احتياطية من جميع السجاد">
+                        <span>💾</span>
+                        <span>نسخة JSON</span>
+                    </button>
+                    <button type="button" onclick="window.openFirebaseConfigModal()" class="hidden lg:inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white hover:bg-stone-50 border border-stone-300 text-stone-700 text-xs font-bold transition shadow-xs">
+                        <span>⚙️</span>
+                        <span>إعدادات السحابة</span>
+                    </button>
+                    <button type="button" onclick="executePortalLogout()" class="px-3.5 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold transition shadow-xs flex items-center gap-1.5 cursor-pointer">
+                        <span>🚪</span>
+                        <span>تسجيل الخروج</span>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- المحتوى الرئيسي للوحة التحكم -->
+        <main class="flex-1 max-w-7xl mx-auto w-full p-4 sm:p-8 space-y-6">
+            
+            <!-- بطاقات الإحصائيات السريعة -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
+                <div class="p-4 rounded-2xl bg-white border border-stone-200 shadow-xs flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-xl bg-amber-50 border border-amber-200 text-amber-700 flex items-center justify-center text-xl">
+                        👑
+                    </div>
+                    <div>
+                        <span class="text-[11px] text-stone-500 font-bold block">إجمالي القطع المعروضة</span>
+                        <span id="stat-total-carpets" class="font-display font-black text-xl sm:text-2xl text-stone-900">0</span>
+                    </div>
+                </div>
+
+                <div class="p-4 rounded-2xl bg-white border border-stone-200 shadow-xs flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 flex items-center justify-center text-xl">
+                        ✅
+                    </div>
+                    <div>
+                        <span class="text-[11px] text-stone-500 font-bold block">القطع المتوفرة</span>
+                        <span id="stat-available-carpets" class="font-display font-black text-xl sm:text-2xl text-emerald-700">0</span>
+                    </div>
+                </div>
+
+                <div class="p-4 rounded-2xl bg-white border border-stone-200 shadow-xs flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 flex items-center justify-center text-xl">
+                        ⏳
+                    </div>
+                    <div>
+                        <span class="text-[11px] text-stone-500 font-bold block">نفدت الكمية</span>
+                        <span id="stat-out-carpets" class="font-display font-black text-xl sm:text-2xl text-rose-700">0</span>
+                    </div>
+                </div>
+
+                <div class="p-4 rounded-2xl bg-white border border-stone-200 shadow-xs flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-xl bg-purple-50 border border-purple-200 text-purple-700 flex items-center justify-center text-xl">
+                        🏷️
+                    </div>
+                    <div>
+                        <span class="text-[11px] text-stone-500 font-bold block">أقسام الكاتلوج النشطة</span>
+                        <span id="stat-total-categories" class="font-display font-black text-xl sm:text-2xl text-stone-900">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- شريط الأدوات وإجراءات الإدارة السريعة -->
+            <div class="bg-white p-4 sm:p-5 rounded-3xl border border-stone-200 shadow-xs flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
+                <div class="flex items-center gap-2">
+                    <button type="button" onclick="openAddModal()" class="btn-liquid-metal text-white font-bold text-xs sm:text-sm px-4 py-2.5 rounded-xl shadow-xs transition flex items-center gap-2 cursor-pointer">
+                        <span>＋</span>
+                        <span>إضافة سجادة جديدة</span>
+                    </button>
+                    <button type="button" onclick="openAddCategoryModal()" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-900 border border-emerald-300 font-bold text-xs sm:text-sm px-3.5 py-2.5 rounded-xl transition flex items-center gap-1.5 cursor-pointer">
+                        <span>🏷️</span>
+                        <span>إدارة التصنيفات</span>
+                    </button>
+                </div>
+
+                <!-- أدوات الفرز والبحث الداخلي -->
+                <div class="flex flex-col sm:flex-row items-center gap-2 flex-1 max-w-xl md:justify-end">
+                    <div class="relative w-full sm:w-60">
+                        <input type="text" oninput="handlePortalSearch(this.value)" placeholder="ابحث برمز القطعة، الاسم..." class="w-full bg-stone-50 border border-stone-300 rounded-xl px-3 py-2 text-xs text-stone-900 outline-none focus:border-brand">
+                    </div>
+                    <select id="portal-filter-category" onchange="handlePortalCategoryFilter(this.value)" class="w-full sm:w-44 bg-stone-50 border border-stone-300 rounded-xl px-3 py-2 text-xs text-stone-800 outline-none cursor-pointer">
+                        <option value="all">جميع التصنيفات</option>
+                    </select>
+                    <select onchange="handlePortalStockFilter(this.value)" class="w-full sm:w-36 bg-stone-50 border border-stone-300 rounded-xl px-3 py-2 text-xs text-stone-800 outline-none cursor-pointer">
+                        <option value="all">جميع الحالات</option>
+                        <option value="available">متوفرة فقط</option>
+                        <option value="out_of_stock">نفدت فقط</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- شبكة عرض وإدارة السجاد -->
+            <div id="portal-products-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5">
+                <!-- تحقن المنتجات برمجياً عبر portal.js -->
+            </div>
+
+        </main>
+
+        <footer class="bg-white border-t border-stone-200 py-4 text-center text-xs text-stone-500">
+            <span>دار تطريز TATRIZA © 2026 | بوابة الإدارة الآمنة والمشفرة بسحابة Google Firebase</span>
+        </footer>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- حاوية النوافذ الإدارية المستقلة -->
+    <!-- ========================================== -->
+        <!-- نافذة إدارة وتخصيص التصنيفات الملكية (إضافة وحذف التصنيفات للأدمن) -->
+    <div id="add-category-modal" class="hidden fixed inset-0 z-50 modal-glass-backdrop flex items-center justify-center p-3 sm:p-4">
+        <div class="lux-modal-box w-full max-w-lg rounded-2xl sm:rounded-3xl p-5 sm:p-6 space-y-4 shadow-2xl relative max-h-[90vh] overflow-y-auto">
+            <button type="button" onclick="closeAddCategoryModal()" class="absolute top-4 left-4 bg-stone-100 hover:bg-stone-200 text-stone-600 hover:text-stone-900 w-8 h-8 rounded-full flex items-center justify-center transition text-sm font-bold cursor-pointer" title="إغلاق">
+                ✕
+            </button>
+            
+            <div class="flex items-center gap-2.5">
+                <div class="w-10 h-10 rounded-2xl bg-emerald-100 text-emerald-800 flex items-center justify-center text-xl shadow-xs">
+                    📁
+                </div>
+                <div>
+                    <h3 class="font-display font-black text-stone-900 text-base sm:text-lg">إدارة وتخصيص تصنيفات المعرض</h3>
+                    <p class="text-xs text-stone-500 font-medium">إضافة أقسام جديدة أو حذف وتحديث الأقسام الحالية للمعرض</p>
+                </div>
+            </div>
+
+            <!-- نموذج إضافة تصنيف جديد -->
+            <form onsubmit="submitNewCategory(event)" class="space-y-3 pt-3 border-t border-stone-200/80">
+                <div class="text-xs font-bold text-stone-800 flex items-center gap-1.5">
+                    <span class="text-emerald-700 font-black">＋</span>
+                    <span>إضافة تصنيف جديد للمعرض:</span>
+                </div>
+                <div>
+                    <div class="flex gap-2">
+                        <input type="text" id="new-cat-icon" value="✨" maxlength="4" class="w-12 text-center text-base bg-stone-50 border border-stone-300/80 rounded-xl px-2 py-2 outline-none focus:border-brand" title="أيقونة التصنيف">
+                        <input type="text" id="new-cat-name" placeholder="مثال: مرايا مطرزة، وسائد، تحف جدارية..." required class="flex-1 bg-stone-50 border border-stone-300/80 rounded-xl px-3 py-2 text-xs sm:text-sm text-stone-900 outline-none focus:border-brand font-medium">
+                        <button type="submit" class="btn-liquid-emerald font-display text-white font-bold text-xs sm:text-sm px-4 py-2 rounded-xl shadow-xs transition flex items-center justify-center gap-1 shrink-0">
+                            <span>إضافة</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- خيارات سريعة للأيقونات مع زر الإضافة المخصص -->
+                <div>
+                    <div class="flex items-center justify-between mb-1">
+                        <span class="block text-[11px] font-bold text-stone-500">أيقونة سريعة:</span>
+                        <span class="text-[10px] text-stone-400 font-medium">اختر أو أضف أيقونة جديدة (＋)</span>
+                    </div>
+                    <div id="quick-icons-container" class="flex items-center gap-1.5 flex-wrap">
+                        <button type="button" onclick="setNewCatIcon('✨')" class="w-7 h-7 rounded-lg bg-stone-100 hover:bg-stone-200 text-sm flex items-center justify-center transition">✨</button>
+                        <button type="button" onclick="setNewCatIcon('🪞')" class="w-7 h-7 rounded-lg bg-stone-100 hover:bg-stone-200 text-sm flex items-center justify-center transition">🪞</button>
+                        <button type="button" onclick="setNewCatIcon('🧵')" class="w-7 h-7 rounded-lg bg-stone-100 hover:bg-stone-200 text-sm flex items-center justify-center transition">🧵</button>
+                        <button type="button" onclick="setNewCatIcon('👑')" class="w-7 h-7 rounded-lg bg-stone-100 hover:bg-stone-200 text-sm flex items-center justify-center transition">👑</button>
+                        <button type="button" onclick="setNewCatIcon('🏛️')" class="w-7 h-7 rounded-lg bg-stone-100 hover:bg-stone-200 text-sm flex items-center justify-center transition">🏛️</button>
+                        <button type="button" onclick="setNewCatIcon('🎨')" class="w-7 h-7 rounded-lg bg-stone-100 hover:bg-stone-200 text-sm flex items-center justify-center transition">🎨</button>
+                        <button type="button" onclick="setNewCatIcon('💎')" class="w-7 h-7 rounded-lg bg-stone-100 hover:bg-stone-200 text-sm flex items-center justify-center transition">💎</button>
+                        <button type="button" onclick="setNewCatIcon('🪡')" class="w-7 h-7 rounded-lg bg-stone-100 hover:bg-stone-200 text-sm flex items-center justify-center transition">🪡</button>
+                        <button type="button" id="btn-add-quick-icon" onclick="toggleAddQuickIconForm()" class="w-7 h-7 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-300 flex items-center justify-center text-xs font-black transition active:scale-95 shadow-2xs cursor-pointer" title="إضافة أيقونة جديدة من كيبورد الجوال">＋</button>
+                    </div>
+
+                    <!-- نموذج سريع لإضافة أيقونة جديدة من كيبورد الجوال -->
+                    <div id="add-quick-icon-inline" class="hidden mt-2 p-2.5 bg-emerald-50/70 rounded-xl border border-emerald-200/90 space-y-1.5 transition-all">
+                        <div class="flex items-center justify-between">
+                            <span class="text-[11px] font-bold text-emerald-950 flex items-center gap-1">
+                                <span>✨</span>
+                                <span>إضافة أيقونة جديدة من كيبورد الجوال:</span>
+                            </span>
+                            <span class="text-[10px] text-emerald-700 font-medium">اكتب أي إيموجي (مثال: ⚽ 🏋️ 🧶 🌺 🕌)</span>
+                        </div>
+                        <div class="flex items-center gap-1.5">
+                            <input type="text" id="new-custom-emoji-input" placeholder="اضغط هنا واختر الإيموجي من الكيبورد" maxlength="8" class="flex-1 text-center text-base bg-white border border-emerald-300 rounded-lg px-2 py-1.5 outline-none focus:ring-2 focus:ring-emerald-500/20 font-emoji">
+                            <button type="button" onclick="confirmAddQuickIcon()" class="btn-liquid-emerald font-display text-white text-xs font-bold px-3 py-1.5 rounded-lg shrink-0 shadow-2xs cursor-pointer">حفظ وتثبيت</button>
+                            <button type="button" onclick="toggleAddQuickIconForm(false)" class="text-xs text-stone-500 hover:text-stone-700 px-2 py-1.5 shrink-0 cursor-pointer">إلغاء</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+            <!-- قائمة التصنيفات الحالية مع خيار الحذف المباشر -->
+            <div class="pt-3 border-t border-stone-200/80 space-y-2">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-bold text-stone-800 flex items-center gap-1.5">
+                        <span>📋</span>
+                        <span>التصنيفات المعروضة حالياً:</span>
+                    </span>
+                    <span class="text-[10px] text-stone-400 font-medium">حذف أي تصنيف لا تحتاجه</span>
+                </div>
+                
+                <div id="existing-custom-categories" class="space-y-1.5 max-h-56 overflow-y-auto pr-0.5">
+                    <!-- تحقن التصنيفات ديناميكياً مع حماية قسم الكل -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة إضافة منتج جديد -->
+    <div id="add-product-modal" class="fixed inset-0 z-50 modal-glass-backdrop hidden flex items-center justify-center p-4">
+        <div class="lux-modal-box rounded-3xl max-w-xl w-full overflow-hidden p-6 md:p-8 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-6 pb-4 border-b border-stone-100">
+                <div>
+                    <h3 class="text-xl font-bold text-stone-900">إضافة سجادة جديدة للمعرض</h3>
+                    <div class="flex items-center gap-1.5 mt-1">
+                        <span class="text-[11px] text-stone-500 font-medium">رمز القطعة التلقائي:</span>
+                        <span id="new-product-sku-preview" class="text-xs font-mono font-black text-amber-900 bg-amber-100/90 border border-amber-300 px-2 py-0.5 rounded-lg shadow-2xs">TATR-001A</span>
+                    </div>
+                </div>
+                <button onclick="closeAddModal()" class="w-9 h-9 rounded-full bg-stone-100 hover:bg-stone-200 flex items-center justify-center text-stone-500 transition">✕</button>
+            </div>
+            
+            <form id="add-product-form" onsubmit="handleAddProduct(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-stone-700 mb-1">عنوان السجادة</label>
+                    <input type="text" id="new-title" required class="w-full bg-stone-50 border border-stone-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[#7c1d3c]" placeholder="مثال: سجادة صوف كلاسيكية فاخرة">
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-stone-700 mb-1">التصنيف (Category)</label>
+                        <select id="new-category" class="w-full bg-stone-50 border border-stone-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[#7c1d3c]">
+                            <option value="ajami">نقشات عجمية</option>
+                            <option value="silk">سجاد حريري</option>
+                            <option value="traditional">تراثي أصيل</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-stone-700 mb-1">السعر (ر.ع.)</label>
+                        <input type="number" id="new-price" required class="w-full bg-stone-50 border border-stone-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[#7c1d3c]" placeholder="150">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <div class="flex items-center justify-between mb-1">
+                            <label class="block text-xs font-bold text-stone-700">الأبعاد (سم)</label>
+                            <span id="new-dimensions-preview" class="text-[10px] font-bold text-amber-900 bg-amber-100/90 px-2 py-0.5 rounded-md border border-amber-300/60 transition opacity-50">0 × 0 سم</span>
+                        </div>
+                        <div class="flex items-center gap-1.5 bg-stone-50 border border-stone-200 rounded-xl px-2.5 py-1 focus-within:border-[#7c1d3c] focus-within:bg-white focus-within:ring-2 focus-within:ring-[#7c1d3c]/15 transition shadow-2xs">
+                            <input type="number" id="new-dim-length" required min="1" step="any" placeholder="الطول" class="w-full bg-transparent text-sm text-center py-1.5 focus:outline-none font-bold text-stone-800 placeholder:text-stone-400 placeholder:font-normal" oninput="window.updateDimensionsPreview('new')">
+                            <span class="text-stone-400 font-black text-sm select-none px-0.5">×</span>
+                            <input type="number" id="new-dim-width" required min="1" step="any" placeholder="العرض" class="w-full bg-transparent text-sm text-center py-1.5 focus:outline-none font-bold text-stone-800 placeholder:text-stone-400 placeholder:font-normal" oninput="window.updateDimensionsPreview('new')">
+                            <span class="text-stone-600 font-bold text-xs shrink-0 select-none bg-stone-200/80 px-2 py-1 rounded-lg">سم</span>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-stone-700 mb-1">الخامات</label>
+                        <input type="text" id="new-material" required class="w-full bg-stone-50 border border-stone-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[#7c1d3c]" placeholder="صوف طبيعي 100%">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-stone-700 mb-1">صور السجادة (اختر صورة أو عدة صور من جهازك)</label>
+                    <input type="file" id="new-image-files" accept="image/*" multiple class="w-full text-xs text-stone-600 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-[#7c1d3c] file:text-white hover:file:bg-[#631730] cursor-pointer bg-stone-100 border border-stone-300 rounded-xl p-1.5">
+                </div>
+
+                <!-- حاوية المعاينة التفاعلية وتحديد الغلاف الرئيسي قبل النشر -->
+                <div id="new-images-preview-container" class="hidden p-3.5 bg-stone-50 border border-stone-200/90 rounded-2xl space-y-2">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
+                        <span class="text-xs font-bold text-stone-800 flex items-center gap-1.5">
+                            <span>🖼️ الصور المختارة</span>
+                            <span id="selected-images-count" class="text-[11px] font-normal text-stone-500">(0 صور)</span>
+                        </span>
+                        <span class="text-[10px] text-amber-900 bg-amber-100/80 border border-amber-300/60 px-2.5 py-0.5 rounded-full font-bold">
+                            ⭐ انقر على أي صورة لتعيينها كغلاف رئيسي
+                        </span>
+                    </div>
+                    <div id="new-images-preview-grid" class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2.5 max-h-48 overflow-y-auto p-1 scrollbar-none">
+                        <!-- تحقن مصغرات الصور المختارة برمجياً -->
+                    </div>
+                </div>
+
+                <!-- قسم رفع الفيديو الاستعراضي للقطعة (اختياري - أقصى مدة 20 ثانية) -->
+                <div class="p-3.5 bg-gradient-to-r from-amber-500/5 via-stone-50 to-amber-500/5 border border-amber-200/80 rounded-2xl space-y-2">
+                    <div class="flex items-center justify-between">
+                        <label class="block text-xs font-bold text-stone-800 flex items-center gap-1.5">
+                            <span>🎬 فيديو استعراضي للقطعة (اختياري)</span>
+                        </label>
+                        <span class="text-[10px] font-bold text-amber-900 bg-amber-100/90 px-2.5 py-0.5 rounded-full border border-amber-300">
+                            ⏱️ أقصى مدة: 20 ثانية
+                        </span>
+                    </div>
+                    <input type="file" id="new-video-file" accept="video/mp4,video/webm,video/quicktime" class="w-full text-xs text-stone-600 file:mr-3 file:py-2 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-amber-800 file:text-white hover:file:bg-amber-900 cursor-pointer bg-white border border-stone-300 rounded-xl p-1">
+                    <p class="text-[10px] text-stone-500">مقطع فيديو قصير وحي يبرز لمعة الخيوط والنسيج (MP4 / WebM / MOV بحد أقصى 20 ثانية).</p>
+                    
+                    <!-- منطقة معاينة الفيديو المختار -->
+                    <div id="new-video-preview-wrapper" class="hidden relative rounded-xl overflow-hidden border border-amber-300/80 bg-black aspect-video max-h-48 mt-2">
+                        <video id="new-video-preview" playsinline muted loop class="w-full h-full object-contain"></video>
+                        <div class="absolute top-2 right-2 bg-black/70 text-white text-[10px] font-bold px-2 py-1 rounded-lg backdrop-blur-md flex items-center gap-1">
+                            <span>⏱️</span>
+                            <span id="new-video-duration-badge">0 ثانية</span>
+                        </div>
+                        <button type="button" onclick="window.clearNewVideoSelection()" class="absolute top-2 left-2 bg-red-600 hover:bg-red-700 text-white text-xs w-6 h-6 rounded-full flex items-center justify-center transition shadow cursor-pointer" title="إلغاء الفيديو">
+                            ✕
+                        </button>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-stone-700 mb-1">وصف القطعة</label>
+                    <textarea id="new-desc" rows="3" class="w-full bg-stone-50 border border-stone-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[#7c1d3c]" placeholder="اكتب نبذة عن تفاصيل الحياكة والقصة..."></textarea>
+                </div>
+
+                <button type="submit" class="w-full btn-liquid-metal font-display text-white font-bold py-3.5 rounded-2xl transition shadow-md text-sm md:text-base cursor-pointer">               
+                    حفظ ونشر القطعة في المعرض
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- نافذة تعديل تفاصيل القطعة -->
+    <div id="edit-product-modal" class="fixed inset-0 z-50 modal-glass-backdrop hidden flex items-center justify-center p-3 sm:p-4">
+        <div class="lux-modal-box rounded-3xl max-w-xl w-full overflow-hidden p-6 md:p-8 max-h-[92vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-5 pb-4 border-b border-stone-100">
+                <div class="flex items-center gap-2.5">
+                    <span class="w-9 h-9 rounded-2xl bg-amber-100 text-amber-800 flex items-center justify-center text-base shadow-xs">✏️</span>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <h3 class="text-lg md:text-xl font-bold text-stone-900">تعديل تفاصيل السجادة</h3>
+                            <span id="edit-carpet-sku-preview" class="text-xs font-mono font-bold text-stone-700 bg-stone-100 border border-stone-300 px-2 py-0.5 rounded-lg shadow-2xs"></span>
+                        </div>
+                        <p class="text-[11px] text-stone-500 font-medium">تعديل الصور، العنوان، الأسعار، والمواصفات</p>
+                    </div>
+                </div>
+                <button onclick="closeEditModal()" class="w-9 h-9 rounded-full bg-stone-100 hover:bg-stone-200 flex items-center justify-center text-stone-500 transition cursor-pointer">✕</button>
+            </div>
+            
+            <form id="edit-product-form" onsubmit="handleEditProduct(event)" class="space-y-4">
+                <input type="hidden" id="edit-carpet-id">
+
+                <div>
+                    <label class="block text-xs font-bold text-stone-700 mb-1">عنوان السجادة</label>
+                    <input type="text" id="edit-title" required class="w-full bg-stone-50 border border-stone-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[#7c1d3c]">
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-stone-700 mb-1">التصنيف (Category)</label>
+                        <select id="edit-category" class="w-full bg-stone-50 border border-stone-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[#7c1d3c]">
+                            <option value="ajami">نقشات عجمية</option>
+                            <option value="silk">سجاد حريري</option>
+                            <option value="traditional">تراثي أصيل</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-stone-700 mb-1">السعر (ر.ع.)</label>
+                        <input type="number" id="edit-price" required step="any" class="w-full bg-stone-50 border border-stone-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[#7c1d3c]">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <div class="flex items-center justify-between mb-1">
+                            <label class="block text-xs font-bold text-stone-700">الأبعاد (سم)</label>
+                            <span id="edit-dimensions-preview" class="text-[10px] font-bold text-amber-900 bg-amber-100/90 px-2 py-0.5 rounded-md border border-amber-300/60 transition">0 × 0 سم</span>
+                        </div>
+                        <div class="flex items-center gap-1.5 bg-stone-50 border border-stone-200 rounded-xl px-2.5 py-1 focus-within:border-[#7c1d3c] focus-within:bg-white focus-within:ring-2 focus-within:ring-[#7c1d3c]/15 transition shadow-2xs">
+                            <input type="number" id="edit-dim-length" required min="1" step="any" placeholder="الطول" class="w-full bg-transparent text-sm text-center py-1.5 focus:outline-none font-bold text-stone-800 placeholder:text-stone-400 placeholder:font-normal" oninput="window.updateDimensionsPreview('edit')">
+                            <span class="text-stone-400 font-black text-sm select-none px-0.5">×</span>
+                            <input type="number" id="edit-dim-width" required min="1" step="any" placeholder="العرض" class="w-full bg-transparent text-sm text-center py-1.5 focus:outline-none font-bold text-stone-800 placeholder:text-stone-400 placeholder:font-normal" oninput="window.updateDimensionsPreview('edit')">
+                            <span class="text-stone-600 font-bold text-xs shrink-0 select-none bg-stone-200/80 px-2 py-1 rounded-lg">سم</span>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-stone-700 mb-1">الخامات</label>
+                        <input type="text" id="edit-material" required class="w-full bg-stone-50 border border-stone-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[#7c1d3c]">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-stone-700 mb-1">حالة التوفر والمخزون</label>
+                    <select id="edit-status" class="w-full bg-stone-50 border border-stone-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[#7c1d3c]">
+                        <option value="available">🟢 متوفرة في المعرض (Available)</option>
+                        <option value="out_of_stock">🔴 نفدت الكمية - تتوفر قريباً (Out of Stock)</option>
+                    </select>
+                </div>
+
+                <!-- قسم إدارة وتعديل صور السجادة الحالية وإضافة صور جديدة -->
+                <div class="bg-stone-50 border border-stone-200 rounded-2xl p-4 space-y-3">
+                    <div class="flex items-center justify-between">
+                        <label class="block text-xs font-bold text-stone-900">🖼️ صور السجادة الحالية</label>
+                        <span class="text-[10px] text-amber-800 font-bold bg-amber-100/70 border border-amber-300/60 px-2.5 py-0.5 rounded-full">
+                            ⭐ انقر لجعل الصورة هي الغلاف الرئيسي
+                        </span>
+                    </div>
+
+                    <!-- شبكة الصور الحالية -->
+                    <div id="edit-images-grid" class="flex items-center gap-3 overflow-x-auto p-2 scrollbar-none">
+                        <!-- تحقن الصور الحالية برمجياً -->
+                    </div>
+
+                    <!-- إضافة صور إضافية من الجهاز -->
+                    <div class="pt-2 border-t border-stone-200">
+                        <label class="block text-[11px] font-bold text-stone-700 mb-1">➕ إضافة صور إضافية جديدة للقطعة</label>
+                        <input type="file" id="edit-new-image-files" accept="image/*" multiple class="w-full text-xs text-stone-600 file:mr-3 file:py-2 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-amber-600 file:text-white hover:file:bg-amber-700 cursor-pointer bg-white border border-stone-300 rounded-xl p-1.5">
+                    </div>
+
+                    <!-- معاينة الصور الجديدة الإضافية المختارة -->
+                    <div id="edit-new-files-preview" class="hidden flex items-center gap-2 overflow-x-auto p-1 scrollbar-none">
+                        <!-- تحقن الصور الجديدة المختارة برمجياً -->
+                    </div>
+                </div>
+
+                <!-- قسم إدارة واستبدال الفيديو الاستعراضي في التعديل (أقصى مدة 20 ثانية) -->
+                <div class="p-3.5 bg-gradient-to-r from-amber-500/5 via-stone-50 to-amber-500/5 border border-amber-200/80 rounded-2xl space-y-2">
+                    <div class="flex items-center justify-between">
+                        <label class="block text-xs font-bold text-stone-800 flex items-center gap-1.5">
+                            <span>🎬 الفيديو الاستعراضي للقطعة (أقصى مدة 20 ثانية)</span>
+                        </label>
+                        <span class="text-[10px] font-bold text-amber-900 bg-amber-100/90 px-2.5 py-0.5 rounded-full border border-amber-300">
+                            ⏱️ أقصى مدة: 20 ثانية
+                        </span>
+                    </div>
+                    <input type="file" id="edit-video-file" accept="video/mp4,video/webm,video/quicktime" class="w-full text-xs text-stone-600 file:mr-3 file:py-2 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-amber-800 file:text-white hover:file:bg-amber-900 cursor-pointer bg-white border border-stone-300 rounded-xl p-1">
+                    <p class="text-[10px] text-stone-500">اختر فيديو جديد لاستبدال الفيديو الحالي، أو اتركه فارغاً للإبقاء عليه كما هو.</p>
+                    
+                    <!-- منطقة معاينة الفيديو الحالي أو الجديد في التعديل -->
+                    <div id="edit-video-preview-wrapper" class="hidden relative rounded-xl overflow-hidden border border-amber-300/80 bg-black aspect-video max-h-48 mt-2">
+                        <video id="edit-video-preview" playsinline muted loop controls class="w-full h-full object-contain"></video>
+                        <div class="absolute top-2 right-2 bg-black/70 text-white text-[10px] font-bold px-2 py-1 rounded-lg backdrop-blur-md flex items-center gap-1">
+                            <span>⏱️</span>
+                            <span id="edit-video-duration-badge">0 ثانية</span>
+                        </div>
+                        <button type="button" onclick="window.clearEditVideoSelection()" class="absolute top-2 left-2 bg-red-600 hover:bg-red-700 text-white text-xs px-2.5 py-1 rounded-lg flex items-center gap-1 transition shadow cursor-pointer" title="حذف الفيديو">
+                            <span>✕</span>
+                            <span class="text-[10px] font-bold">حذف الفيديو</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-stone-700 mb-1">الوصف والملاحظات</label>
+                    <textarea id="edit-desc" rows="3" class="w-full bg-stone-50 border border-stone-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[#7c1d3c]"></textarea>
+                </div>
+
+                <!-- خيار تجديد وسم جديد وحصري -->
+                <div class="bg-amber-50/70 border border-amber-200/80 rounded-2xl p-3 sm:p-3.5 flex items-center justify-between gap-3">
+                    <div class="flex items-center gap-2.5">
+                        <span class="w-8 h-8 rounded-xl bg-amber-500/20 text-amber-900 flex items-center justify-center text-sm shrink-0 shadow-xs">✨</span>
+                        <div>
+                            <span class="text-xs font-bold text-amber-950 block">وسم "جديد وحصري" الملكي</span>
+                            <span class="text-[10px] text-amber-800/80 block">تفعيل أو تجديد ظهور الشريط الذهبي اللامع للزوار لمدة أسبوع كامل (7 أيام)</span>
+                        </div>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                        <input type="checkbox" id="edit-renew-exclusive" class="sr-only peer">
+                        <div class="w-10 h-6 bg-stone-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-stone-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-amber-600"></div>
+                    </label>
+                </div>
+
+                <div class="flex gap-3 pt-2">
+                    <button type="submit" id="edit-submit-btn" class="flex-1 bg-brand hover:bg-brand-hover text-white font-bold py-3 rounded-xl transition shadow-md text-sm md:text-base cursor-pointer">               
+                        حفظ التعديلات والتحديث الفوري
+                    </button>
+                    <button type="button" onclick="closeEditModal()" class="px-5 bg-stone-200/80 hover:bg-stone-300 text-stone-800 font-bold rounded-xl transition text-sm cursor-pointer">
+                        إلغاء
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <!-- نافذة إعدادات مفاتيح Firebase السحابية -->
+    <div id="firebase-config-modal" class="hidden fixed inset-0 z-50 modal-glass-backdrop flex items-center justify-center p-3 sm:p-4">
+        <div class="lux-modal-box w-full max-w-lg rounded-3xl p-6 sm:p-8 space-y-4 shadow-2xl relative" dir="rtl">
+            <button type="button" onclick="window.closeFirebaseConfigModal()" class="absolute top-4 left-4 text-stone-400 hover:text-stone-800 text-xl font-bold w-8 h-8 rounded-full flex items-center justify-center transition cursor-pointer">✕</button>
+            
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-2xl bg-amber-100 text-amber-800 flex items-center justify-center text-xl">
+                    ⚙️
+                </div>
+                <div>
+                    <h3 class="font-display font-black text-stone-900 text-base">إعدادات سحابة Google Firebase</h3>
+                    <p class="text-xs text-stone-500">مفاتيح المشروع وقواعد البيانات السحابية</p>
+                </div>
+            </div>
+
+            <form onsubmit="window.saveFirebaseConfigHandler(event)" class="space-y-3 pt-2">
+                <div>
+                    <label class="block text-xs font-bold text-stone-700 mb-1">API Key</label>
+                    <input type="text" id="cfg-api-key" dir="ltr" class="w-full bg-stone-50 border border-stone-300 rounded-xl px-3 py-2 text-xs font-mono text-left">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-stone-700 mb-1">Project ID</label>
+                    <input type="text" id="cfg-project-id" dir="ltr" class="w-full bg-stone-50 border border-stone-300 rounded-xl px-3 py-2 text-xs font-mono text-left">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-stone-700 mb-1">Storage Bucket</label>
+                    <input type="text" id="cfg-storage-bucket" dir="ltr" class="w-full bg-stone-50 border border-stone-300 rounded-xl px-3 py-2 text-xs font-mono text-left">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-stone-700 mb-1">App ID</label>
+                    <input type="text" id="cfg-app-id" dir="ltr" class="w-full bg-stone-50 border border-stone-300 rounded-xl px-3 py-2 text-xs font-mono text-left">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-stone-700 mb-1">Messaging Sender ID</label>
+                    <input type="text" id="cfg-sender-id" dir="ltr" class="w-full bg-stone-50 border border-stone-300 rounded-xl px-3 py-2 text-xs font-mono text-left">
+                </div>
+
+                <div class="pt-3 flex gap-2">
+                    <button type="submit" class="flex-1 btn-liquid-metal text-white font-bold py-2.5 px-4 rounded-xl text-xs">
+                        حفظ الإعدادات
+                    </button>
+                    <button type="button" onclick="window.closeFirebaseConfigModal()" class="bg-stone-200 hover:bg-stone-300 text-stone-800 font-bold py-2.5 px-4 rounded-xl text-xs">
+                        إلغاء
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- استدعاء محرك البوابة المستقل حصرياً -->
+    <script type="module" src="../js/portal.js"></script>
+</body>
+</html>

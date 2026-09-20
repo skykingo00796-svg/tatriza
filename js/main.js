@@ -2,7 +2,7 @@
 // الملف الرئيسي ونقطة التوصيل (main.js)
 // ==========================================
 
-import { checkAdminPermission, initAdminShortcut, handleMobileAdminTap, toggleStockStatus, deleteCarpet, setCarpetPrimaryImage, initImageUploadPreview, handleAddProduct, openAddModal, closeAddModal, openAdminAuthModal, openEditModal, closeEditModal, handleEditProduct, initEditImageManager, initVideoUploadHandlers } from './admin.js';
+// المتجر العام - مهيأ للعرض العام فائق السرعة والأمان
 import { initTheme, openThemeModal, closeThemeModal, selectThemeOption, applyTheme } from './theme.js';
 import { 
     openModal, closeModal, handleModalScroll, 
@@ -18,12 +18,8 @@ import {
     formatReadableDate, 
     getVideoFromIndexedDB,
     subscribeToCategories,
-    saveCategoryToCloud,
-    deleteCategoryFromCloud,
-    subscribeToCategorySettings,
-    saveCategorySettingsToCloud,
-    subscribeToAdminAuth
-} from './firebase.js';
+    subscribeToCategorySettings
+} from './firebase-public.js';
 import { initAmbient3D } from './ambient-3d.js';
 
 // مدة ظهور وسم "جديد وحصري" للمنتجات الجديدة (7 أيام)
@@ -60,7 +56,6 @@ window.isProductNew = isProductNew;
 window.getProductRemainingDays = getProductRemainingDays;
 window.openOptionsDrawer = openOptionsDrawer;
 window.closeOptionsDrawer = closeOptionsDrawer;
-window.openAdminAuthModal = openAdminAuthModal;
 window.openModal = (id) => openModal(id, allCarpets);
 window.closeModal = closeModal;
 window.handleModalScroll = handleModalScroll;
@@ -115,7 +110,6 @@ window.setCarpetPrimaryImage = (id, idx) => setCarpetPrimaryImage(id, idx, allCa
 window.openLightboxFromModalExternal = (id, idx) => openLightboxFromModal(id, idx, allCarpets);
 window.resetSearchAndFilters = resetSearchAndFilters;
 window.handleImageScroll = handleImageScrollForGrid;
-window.handleMobileAdminTap = handleMobileAdminTap;
 
 // ==========================================
 // ترقية وضمان الأكواد والتواريخ التسلسلية الفاخرة (TATR-001A)
@@ -271,83 +265,12 @@ async function loadFallbackLocalCarpets() {
 }
 
 
-// ==========================================
-// إدارة المظهر المخصص للمسؤول والمزامنة الفورية (Admin Dynamic UI Injection)
-// لا يتم إنشاء أو حقن أي عناصر للمسؤول في DOM إلا بعد المصادقة السحابية الحقيقية
-// ==========================================
-export function syncAdminUI(isAdmin) {
-    // 1. زر إدارة التصنيفات في شريط التصنيفات (#filter-buttons)
-    const filterTrack = document.getElementById('filter-buttons');
-    let addCatBtn = document.getElementById('admin-add-cat-btn');
-    if (isAdmin) {
-        if (!addCatBtn && filterTrack) {
-            addCatBtn = document.createElement('button');
-            addCatBtn.id = 'admin-add-cat-btn';
-            addCatBtn.onclick = () => window.openAddCategoryModal();
-            addCatBtn.className = "catalog-tab-btn sm:ms-auto border-dashed border-emerald-600/70 bg-emerald-50/80 hover:bg-emerald-100 text-emerald-900 transition flex items-center gap-1.5 shrink-0";
-            addCatBtn.title = "إدارة وإضافة وحذف تصنيفات المعرض";
-            addCatBtn.innerHTML = `
-                <span class="tab-icon font-black text-emerald-700">⚙️</span>
-                <span class="font-display font-black text-emerald-950">إدارة التصنيفات</span>
-            `;
-            filterTrack.appendChild(addCatBtn);
-        }
-    } else {
-        if (addCatBtn) addCatBtn.remove();
-    }
-
-    // 2. زر إضافة سجادة في الشريط الجانبي للخيارات (#options-drawer-items-list)
-    const drawerList = document.getElementById('options-drawer-items-list');
-    let drawerAddBtn = document.getElementById('drawer-add-carpet-btn');
-    if (isAdmin) {
-        if (!drawerAddBtn && drawerList) {
-            drawerAddBtn = document.createElement('button');
-            drawerAddBtn.id = 'drawer-add-carpet-btn';
-            drawerAddBtn.onclick = () => {
-                if (typeof window.closeOptionsDrawer === 'function') window.closeOptionsDrawer();
-                if (typeof window.openAddModal === 'function') window.openAddModal();
-            };
-            drawerAddBtn.className = "drawer-lux-card group w-full flex items-center justify-between cursor-pointer";
-            drawerAddBtn.title = "إضافة سجادة جديدة";
-            drawerAddBtn.innerHTML = `
-                <div class="flex items-center gap-2.5 min-w-0 flex-1">
-                    <div class="drawer-icon-orb bg-emerald-100 text-emerald-800 border-emerald-300/60 shrink-0">
-                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
-                    </div>
-                    <div class="flex flex-col text-right min-w-0 flex-1 overflow-hidden">
-                        <div class="flex items-center gap-1.5 whitespace-nowrap">
-                            <span class="font-display text-[11px] sm:text-xs font-black text-emerald-950">إضافة سجادة جديدة</span>
-                            <span class="px-1.5 py-0.2 rounded text-[8.5px] sm:text-[9px] font-black bg-emerald-100 text-emerald-800 border border-emerald-300 shrink-0">إدارة</span>
-                        </div>
-                        <span class="text-[9.5px] sm:text-[10px] text-emerald-700 font-medium whitespace-nowrap mt-0.5 block">نشر قطعة فنية جديدة في المعرض</span>
-                    </div>
-                </div>
-                <div class="drawer-action-arrow">&gt;</div>
-            `;
-            const firstChild = drawerList.firstElementChild;
-            if (firstChild && firstChild.nextSibling) {
-                drawerList.insertBefore(drawerAddBtn, firstChild.nextSibling);
-            } else {
-                drawerList.appendChild(drawerAddBtn);
-            }
-        }
-    } else {
-        if (drawerAddBtn) drawerAddBtn.remove();
-    }
-
-    renderCustomCategoriesInUI();
-    renderQuickIconsUI();
-}
-window.syncAdminUI = syncAdminUI;
-
 // عرض السجاد في الشبكة الرئيسية
 function displayCarpets(carpetsToDisplay) {
     const grid = document.getElementById('carpets-grid');
     if (!grid) return;
 
-    const isAdmin = checkAdminPermission();
     renderCustomCategoriesInUI();
-    renderQuickIconsUI();
     grid.innerHTML = '';
 
     if (carpetsToDisplay.length === 0) {
@@ -480,25 +403,7 @@ function displayCarpets(carpetsToDisplay) {
                         ${carpet.dimensions}
                     </span>
 
-                    <!-- أزرار تحكم الأدمين في أعلى اليسار (فوق اللمعة بوضوح تام z-30) -->
-                    ${isAdmin ? `
-                        <div class="absolute top-1.5 left-1.5 flex items-center gap-1 z-30" onclick="event.stopPropagation()">
-                            <!-- زر تعديل تفاصيل القطعة -->
-                            <button onclick="openEditModal('${carpet.id}')" class="w-6 h-6 rounded-full bg-white/90 hover:bg-white text-stone-800 hover:text-amber-800 shadow-2xs backdrop-blur-md border border-stone-200/80 hover:border-amber-300 flex items-center justify-center cursor-pointer transition hover:scale-110" title="تعديل تفاصيل السجادة">
-                                <span class="text-[10px]">✏️</span>
-                            </button>
 
-                            <!-- زر تبديل حالة توفر المنتج -->
-                            <button onclick="toggleStockStatus('${carpet.id}')" class="w-6 h-6 rounded-full bg-white/90 hover:bg-white text-stone-800 shadow-2xs backdrop-blur-md border border-stone-200/80 flex items-center justify-center cursor-pointer transition hover:scale-110" title="${isOutOfStock ? 'توفر المنتج' : 'عدم توفر المنتج'}">
-                                <span class="text-[10px]">${isOutOfStock ? '🟢' : '🔄'}</span>
-                            </button>
-
-                            <!-- زر حذف القطعة -->
-                            <button onclick="deleteCarpet('${carpet.id}')" class="w-6 h-6 rounded-full bg-white/90 hover:bg-white text-stone-700 hover:text-red-600 shadow-2xs backdrop-blur-md border border-stone-200/80 hover:border-red-200 flex items-center justify-center cursor-pointer transition hover:scale-110" title="حذف القطعة">
-                                <span class="text-[10px]">🗑️</span>
-                            </button>
-                        </div>
-                    ` : ''}
 
                     ${isOutOfStock ? `
                         <div class="absolute inset-0 bg-stone-950/45 backdrop-blur-[1.5px] flex items-center justify-center z-10 pointer-events-none p-1">
@@ -1094,327 +999,68 @@ export function getActiveCategories() {
 }
 window.getActiveCategories = getActiveCategories;
 
-// استعادة التصنيفات الافتراضية المحذوفة
-export function restoreDefaultCategories() {
-    if (!checkAdminPermission()) return;
-    saveDeletedCategoryIds([]);
-    saveCategorySettingsToCloud({
-        deletedDefaultCategoryIds: [],
-        customQuickIcons: getCustomQuickIcons()
-    });
-    renderCustomCategoriesInUI();
-    openAddCategoryModal();
-    if (window.showToast) {
-        window.showToast('تم استعادة التصنيفات الافتراضية بنجاح ومزامنتها سحابياً.', 'success', 'إدارة التصنيفات');
-    }
-}
-window.restoreDefaultCategories = restoreDefaultCategories;
+
 
 export function renderCustomCategoriesInUI() {
-    const isAdmin = checkAdminPermission();
     const filterTrack = document.getElementById('filter-buttons');
-    const adminBtn = document.getElementById('admin-add-cat-btn');
+    if (!filterTrack) return;
+
     const deletedIds = getDeletedCategoryIds();
     const activeCats = getActiveCategories();
 
-    if (filterTrack) {
-        // 1. إدارة ظهور التصنيفات الافتراضية في شريط الكاتلوج
-        DEFAULT_CATEGORIES.forEach(cat => {
-            let tabBtn = document.getElementById(`tab-cat-${cat.id}`) || filterTrack.querySelector(`button[data-filter="${cat.id}"]`);
-            if (tabBtn) {
-                if (deletedIds.includes(cat.id)) {
-                    tabBtn.remove();
-                } else {
-                    tabBtn.id = `tab-cat-${cat.id}`;
-                    // إضافة زر الحذف للأدمن فقط إذا لم يكن موجوداً
-                    const existingDel = tabBtn.querySelector('.admin-cat-del-btn');
-                    if (isAdmin && !existingDel) {
-                        const delBtn = document.createElement('span');
-                        delBtn.className = 'admin-cat-del-btn text-rose-500 hover:text-white hover:bg-rose-600 rounded-full w-4 h-4 flex items-center justify-center text-[9px] font-bold cursor-pointer transition shadow-2xs mr-0.5';
-                        delBtn.title = `حذف تصنيف ${cat.name}`;
-                        delBtn.innerText = '✕';
-                        delBtn.onclick = (e) => {
-                            e.stopPropagation();
-                            deleteCategoryPrompt(cat.id, cat.name);
-                        };
-                        tabBtn.appendChild(delBtn);
-                    } else if (!isAdmin && existingDel) {
-                        existingDel.remove();
-                    }
-                }
-            } else if (!deletedIds.includes(cat.id)) {
-                // إعادة إنشاء الزر الافتراضي إن لم يكن موجوداً
-                const btn = document.createElement('button');
-                btn.id = `tab-cat-${cat.id}`;
-                btn.setAttribute('data-filter', cat.id);
-                const isActive = currentFilter === cat.id;
-                btn.className = `filter-btn catalog-tab-btn group flex items-center gap-1.5 sm:gap-2 ${isActive ? 'active bg-brand text-white shadow-xs font-bold' : ''}`;
-                btn.innerHTML = `
-                    <span class="tab-icon">${cat.icon}</span>
-                    <span class="font-display">${cat.name}</span>
-                    <span id="count-${cat.id}" class="cat-badge px-1.5 sm:px-2 py-0.2 rounded-full font-black ${isActive ? 'bg-white/20 text-white' : 'bg-stone-200/80 text-stone-700'} transition">0</span>
-                    ${isAdmin ? `
-                        <span class="admin-cat-del-btn text-rose-500 hover:text-white hover:bg-rose-600 rounded-full w-4 h-4 flex items-center justify-center text-[9px] font-bold cursor-pointer transition shadow-2xs mr-0.5" title="حذف تصنيف ${cat.name}">✕</span>
-                    ` : ''}
-                `;
-                const delIcon = btn.querySelector('.admin-cat-del-btn');
-                if (delIcon) {
-                    delIcon.onclick = (e) => {
-                        e.stopPropagation();
-                        deleteCategoryPrompt(cat.id, cat.name);
-                    };
-                }
-                if (adminBtn) {
-                    filterTrack.insertBefore(btn, adminBtn);
-                } else {
-                    filterTrack.appendChild(btn);
-                }
+    // 1. تحديث التبويبات الافتراضية
+    DEFAULT_CATEGORIES.forEach(cat => {
+        let tabBtn = document.getElementById(`tab-cat-${cat.id}`) || filterTrack.querySelector(`button[data-filter="${cat.id}"]`);
+        if (tabBtn) {
+            if (deletedIds.includes(cat.id)) {
+                tabBtn.remove();
+            } else {
+                tabBtn.id = `tab-cat-${cat.id}`;
             }
-        });
-
-        // 2. تحديث التبويبات المخصصة
-        document.querySelectorAll('.custom-cat-tab').forEach(el => el.remove());
-        getCustomCategories().forEach(cat => {
+        } else if (!deletedIds.includes(cat.id)) {
             const btn = document.createElement('button');
+            btn.id = `tab-cat-${cat.id}`;
             btn.setAttribute('data-filter', cat.id);
             const isActive = currentFilter === cat.id;
-            btn.className = `filter-btn catalog-tab-btn custom-cat-tab group flex items-center gap-1.5 sm:gap-2 ${isActive ? 'active bg-brand text-white shadow-xs font-bold' : ''}`;
+            btn.className = `filter-btn catalog-tab-btn group flex items-center gap-1.5 sm:gap-2 ${isActive ? 'active bg-brand text-white shadow-xs font-bold' : ''}`;
             btn.innerHTML = `
-                <span class="tab-icon">${cat.icon || '✨'}</span>
+                <span class="tab-icon">${cat.icon}</span>
                 <span class="font-display">${cat.name}</span>
                 <span id="count-${cat.id}" class="cat-badge px-1.5 sm:px-2 py-0.2 rounded-full font-black ${isActive ? 'bg-white/20 text-white' : 'bg-stone-200/80 text-stone-700'} transition">0</span>
-                ${isAdmin ? `
-                    <span class="admin-cat-del-btn text-rose-500 hover:text-white hover:bg-rose-600 rounded-full w-4 h-4 flex items-center justify-center text-[9px] font-bold cursor-pointer transition shadow-2xs mr-0.5" title="حذف تصنيف ${cat.name}">✕</span>
-                ` : ''}
             `;
-            const delIcon = btn.querySelector('.admin-cat-del-btn');
-            if (delIcon) {
-                delIcon.onclick = (e) => {
-                    e.stopPropagation();
-                    deleteCategoryPrompt(cat.id, cat.name);
-                };
-            }
-            if (adminBtn) {
-                filterTrack.insertBefore(btn, adminBtn);
-            } else {
-                filterTrack.appendChild(btn);
-            }
-        });
-    }
-
-    // 3. تحديث قوائم خيارات التصنيف في نماذج إضافة وتعديل السجاد
-    ['new-category', 'edit-category'].forEach(selectId => {
-        const selectEl = document.getElementById(selectId);
-        if (selectEl) {
-            selectEl.querySelectorAll('.dynamic-cat-opt').forEach(opt => opt.remove());
-            // إزالة الخيارات الافتراضية القديمة إن وجدت لإعادة بنائها حسب التصنيفات النشطة
-            selectEl.innerHTML = '';
-            activeCats.forEach(cat => {
-                const opt = document.createElement('option');
-                opt.className = 'dynamic-cat-opt';
-                opt.value = cat.id;
-                opt.innerText = `${cat.icon || ''} ${cat.name}`;
-                selectEl.appendChild(opt);
-            });
+            btn.onclick = () => filterCarpetsByCategory(cat.id);
+            filterTrack.appendChild(btn);
         }
     });
 
-    // 4. ربط الأحداث وتحديث العدادات
-    setupFilters();
+    // 2. تحديث التبويبات المخصصة
+    filterTrack.querySelectorAll('.custom-cat-tab').forEach(el => el.remove());
+    getCustomCategories().forEach(cat => {
+        const btn = document.createElement('button');
+        btn.setAttribute('data-filter', cat.id);
+        const isActive = currentFilter === cat.id;
+        btn.className = `filter-btn catalog-tab-btn custom-cat-tab group flex items-center gap-1.5 sm:gap-2 ${isActive ? 'active bg-brand text-white shadow-xs font-bold' : ''}`;
+        btn.innerHTML = `
+            <span class="tab-icon">${cat.icon || '✨'}</span>
+            <span class="font-display">${cat.name}</span>
+            <span id="count-${cat.id}" class="cat-badge px-1.5 sm:px-2 py-0.2 rounded-full font-black ${isActive ? 'bg-white/20 text-white' : 'bg-stone-200/80 text-stone-700'} transition">0</span>
+        `;
+        btn.onclick = () => filterCarpetsByCategory(cat.id);
+        filterTrack.appendChild(btn);
+    });
+
     updateCategoryCounts();
 }
 window.renderCustomCategoriesInUI = renderCustomCategoriesInUI;
-
-export function openAddCategoryModal() {
-    if (!checkAdminPermission()) {
-        alert('هذه الميزة مخصصة لمشرف الدار فقط.');
-        return;
-    }
-    const modal = document.getElementById('add-category-modal');
-    if (!modal) return;
-    
-    // عرض قائمة كافة التصنيفات الحالية مع إمكانية حذف أي منها باستثناء "الكل"
-    const listEl = document.getElementById('existing-custom-categories');
-    if (listEl) {
-        const activeCats = getActiveCategories();
-        const deletedDefaults = getDeletedCategoryIds();
-        
-        let html = `
-            <!-- زر الكل المحمي دائماً -->
-            <div class="flex items-center justify-between bg-amber-50/70 border border-amber-200/80 rounded-xl px-3 py-2 text-xs shadow-2xs">
-                <div class="flex items-center gap-2">
-                    <span class="text-sm">👑</span>
-                    <span class="font-bold text-amber-950">الكل (شامل كافة المنتجات)</span>
-                </div>
-                <span class="bg-amber-100 text-amber-800 text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1 border border-amber-300/60" title="تصنيف أساسي دائم للنظام">
-                    <span>🔒</span>
-                    <span>محمي دائماً</span>
-                </span>
-            </div>
-        `;
-
-        activeCats.forEach(cat => {
-            const count = allCarpets.filter(c => c.category === cat.id).length;
-            html += `
-                <div class="flex items-center justify-between bg-white hover:bg-stone-50 border border-stone-200/90 rounded-xl px-3 py-2 text-xs shadow-2xs transition">
-                    <div class="flex items-center gap-2 min-w-0">
-                        <span class="text-sm shrink-0">${cat.icon || '✨'}</span>
-                        <span class="font-bold text-stone-800 truncate">${cat.name}</span>
-                        <span class="text-[10px] text-stone-400 font-medium font-mono shrink-0">(${count} قطعة)</span>
-                    </div>
-                    <button type="button" onclick="deleteCategoryPrompt('${cat.id}', '${cat.name}')" class="bg-rose-50 hover:bg-rose-600 text-rose-600 hover:text-white border border-rose-200 hover:border-rose-600 text-[11px] font-bold px-2.5 py-1 rounded-lg transition cursor-pointer flex items-center gap-1 shadow-2xs shrink-0" title="حذف هذا التصنيف من المعرض">
-                        <span>🗑️</span>
-                        <span>حذف</span>
-                    </button>
-                </div>
-            `;
-        });
-
-        if (deletedDefaults.length > 0) {
-            html += `
-                <div class="pt-2 text-center">
-                    <button type="button" onclick="restoreDefaultCategories()" class="text-amber-800 hover:text-amber-950 text-xs font-bold underline transition inline-flex items-center gap-1">
-                        <span>🔄</span>
-                        <span>استعادة التصنيفات الافتراضية المحذوفة (${deletedDefaults.length})</span>
-                    </button>
-                </div>
-            `;
-        }
-
-        listEl.innerHTML = html;
-    }
-    
-    // تحديث وتجهيز الأيقونات السريعة وإخفاء نموذج الإضافة السريع
-    renderQuickIconsUI();
-    toggleAddQuickIconForm(false);
-
-    modal.classList.remove('hidden');
-    const input = document.getElementById('new-cat-name');
-    if (input) {
-        input.value = '';
-        input.focus();
-    }
-}
-window.openAddCategoryModal = openAddCategoryModal;
-
-export function closeAddCategoryModal() {
-    const modal = document.getElementById('add-category-modal');
-    if (modal) modal.classList.add('hidden');
-}
-window.closeAddCategoryModal = closeAddCategoryModal;
-
-export function setNewCatIcon(icon) {
-    const input = document.getElementById('new-cat-icon');
-    if (input) input.value = icon;
-}
-window.setNewCatIcon = setNewCatIcon;
-
-export function submitNewCategory(e) {
-    e.preventDefault();
-    if (!checkAdminPermission()) return;
-
-    const nameInput = document.getElementById('new-cat-name');
-    const iconInput = document.getElementById('new-cat-icon');
-    if (!nameInput || !nameInput.value.trim()) return;
-
-    const name = nameInput.value.trim();
-    const icon = iconInput && iconInput.value.trim() ? iconInput.value.trim() : '✨';
-    const id = 'cat_' + Date.now().toString(36);
-
-    const newCat = { id, name, icon };
-    const customCats = getCustomCategories();
-    customCats.push(newCat);
-    saveCustomCategories(customCats);
-
-    // حفظ ونشر فوري في سحابة Firebase ليظهر لكافة الزوار حول العالم
-    saveCategoryToCloud(newCat);
-
-    closeAddCategoryModal();
-    if (window.showToast) {
-        window.showToast(`تمت إضافة تصنيف «${name}» بنجاح للمعرض.`, 'success', 'إدارة التصنيفات');
-    }
-}
-window.submitNewCategory = submitNewCategory;
-
-export function deleteCategoryPrompt(id, name) {
-    // حماية تامة وحصرية لزر "الكل"
-    if (id === 'all') {
-        if (window.showToast) {
-            window.showToast('تصنيف "الكل" هو تصنيف رئيسي دائم للنظام ولا يمكن حذفه نهائياً.', 'warning', 'تنبيه النظام');
-        } else {
-            alert('تصنيف "الكل" هو تصنيف رئيسي دائم للنظام ولا يمكن حذفه نهائياً.');
-        }
-        return;
-    }
-
-    if (!checkAdminPermission()) {
-        alert('هذه الميزة مخصصة لمشرف الدار فقط.');
-        return;
-    }
-
-    const count = allCarpets.filter(c => c.category === id).length;
-    const warningText = count > 0 
-        ? `تنبيه: يوجد (${count}) قطعة في هذا التصنيف حالياً. حذف التصنيف سيحذفه من شريط الكاتلوج وتبقى القطع معروضة في قسم "الكل".
-
-هل أنت متأكد من رغبتك في حذف تصنيف «${name}»؟`
-        : `هل أنت متأكد من رغبتك في حذف تصنيف «${name}» من شريط الكاتلوج؟`;
-
-    if (!confirm(warningText)) return;
-
-    // 1. إذا كان من التصنيفات المخصصة
-    let customCats = getCustomCategories();
-    if (customCats.some(c => c.id === id)) {
-        customCats = customCats.filter(c => c.id !== id);
-        saveCustomCategories(customCats);
-        // حذف من سحابة Firebase لمزامنته عالمياً
-        deleteCategoryFromCloud(id);
-    } else {
-        // إذا كان من التصنيفات الافتراضية
-        const deleted = getDeletedCategoryIds();
-        if (!deleted.includes(id)) {
-            deleted.push(id);
-            saveDeletedCategoryIds(deleted);
-            // حفظ إعدادات الحذف سحابياً
-            saveCategorySettingsToCloud({
-                deletedDefaultCategoryIds: deleted,
-                customQuickIcons: getCustomQuickIcons()
-            });
-        }
-    }
-
-    // 2. إذا كان الفلتر النشط هو المحذوف، العودة إلى "الكل"
-    if (currentFilter === id) {
-        currentFilter = 'all';
-    }
-
-    // 3. إعادة بناء الواجهة
-    renderCustomCategoriesInUI();
-    filterAndDisplayCarpets();
-    openAddCategoryModal(); // تحديث القائمة إن كانت النافذة مفتوحة
-
-    if (window.showToast) {
-        window.showToast(`تم حذف تصنيف «${name}» بنجاح.`, 'success', 'إدارة التصنيفات');
-    }
-}
-window.deleteCategoryPrompt = deleteCategoryPrompt;
-window.deleteCustomCategory = deleteCategoryPrompt;
 
 window.addEventListener('DOMContentLoaded', () => {
     initTheme();
     try {
         initAmbient3D('ambient-3d-canvas');
     } catch(e) {}
-    initAdminShortcut();
     initHeroParallax();
-    initImageUploadPreview();
-    initEditImageManager();
-    initVideoUploadHandlers();
 
-    subscribeToAdminAuth((user) => {
-        const isAdmin = Boolean(user && user.uid);
-        syncAdminUI(isAdmin);
-        filterAndDisplayCarpets();
-    });
+    renderCustomCategoriesInUI();
 
     window.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
