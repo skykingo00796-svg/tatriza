@@ -1393,6 +1393,21 @@ button[type="submit"]:active {
     transform: translateY(-1px) scale(1.02);
 }
 
+/* وضع زر إضافة التصنيف للأدمن في أقصى يسار شريط الكاتلوج بالشاشات الكبيرة وتقريبه تدريجياً وبجانب آخر زر في شاشات الجوال */
+@media (min-width: 640px) {
+    #admin-add-cat-btn {
+        margin-inline-start: auto !important;
+        margin-right: auto !important;
+    }
+}
+
+@media (max-width: 639px) {
+    #admin-add-cat-btn {
+        margin-inline-start: 0 !important;
+        margin-right: 0 !important;
+    }
+}
+
 /* 3. نوافذ المعاينة والتفاصيل الملكية (Bespoke Royal Modals) */
 .lux-modal-box {
     background: rgba(255, 252, 248, 0.98) !important;
