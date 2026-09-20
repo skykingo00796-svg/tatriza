@@ -280,12 +280,14 @@
                 <!-- القسم الأيسر: التفاصيل، المواصفات، السعر والأزرار -->
                 <div class="p-5 sm:p-6 md:p-8 flex flex-col justify-between space-y-4 bg-gradient-to-b from-[#fffbf7] to-[#f9f4ec]">
                     <div class="space-y-4">
-                        <div class="flex items-center justify-between gap-2 flex-wrap">
+                        <!-- شارات المنتج والرمز التسلسلي مع إعطاء مسافة أمان كافية لزر الإغلاق في اليسار -->
+                        <div class="flex items-center gap-2.5 flex-wrap pl-12 sm:pl-16">
                             <!-- شارة جديد وحصري -->
                             <div id="modal-new-badge" class="spark-badge-crystal items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black shadow-xs hidden">
                                 <span>✨</span>
                                 <span id="modal-new-badge-text" class="font-black text-amber-950">المنتج جديد وحصري</span>
                             </div>
+                            <!-- رمز القطعة التسلسلي (أيدي المنتج) بجانب الشارة في اليمين -->
                             <span id="modal-sku-badge" class="text-xs font-mono font-black text-stone-700 bg-stone-200/80 border border-stone-300 px-3 py-1 rounded-xl shadow-2xs select-all" title="رمز القطعة التسلسلي"></span>
                         </div>
 
