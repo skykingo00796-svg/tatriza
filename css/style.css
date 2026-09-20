@@ -1299,9 +1299,9 @@ button[type="submit"]:active {
    قسم المعرض الفني (Exhibition Section - Seamless Layout)
    =================================================== */
 
-/* العنوان الملكي: سطر واحد دائم في جميع الشاشات */
+/* العنوان الملكي: سطر واحد دائم في جميع الشاشات بحجم متناسق ومصغر */
 .catalog-main-title {
-    font-size: clamp(1.05rem, 2.5vw, 1.85rem);
+    font-size: clamp(0.95rem, 1.8vw, 1.4rem);
     line-height: 1.2;
     white-space: nowrap !important;
 }
