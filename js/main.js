@@ -21,7 +21,8 @@ import {
     saveCategoryToCloud,
     deleteCategoryFromCloud,
     subscribeToCategorySettings,
-    saveCategorySettingsToCloud
+    saveCategorySettingsToCloud,
+    subscribeToAdminAuth
 } from './firebase.js';
 import { initAmbient3D } from './ambient-3d.js';
 
@@ -269,6 +270,76 @@ async function loadFallbackLocalCarpets() {
     }
 }
 
+
+// ==========================================
+// إدارة المظهر المخصص للمسؤول والمزامنة الفورية (Admin Dynamic UI Injection)
+// لا يتم إنشاء أو حقن أي عناصر للمسؤول في DOM إلا بعد المصادقة السحابية الحقيقية
+// ==========================================
+export function syncAdminUI(isAdmin) {
+    // 1. زر إدارة التصنيفات في شريط التصنيفات (#filter-buttons)
+    const filterTrack = document.getElementById('filter-buttons');
+    let addCatBtn = document.getElementById('admin-add-cat-btn');
+    if (isAdmin) {
+        if (!addCatBtn && filterTrack) {
+            addCatBtn = document.createElement('button');
+            addCatBtn.id = 'admin-add-cat-btn';
+            addCatBtn.onclick = () => window.openAddCategoryModal();
+            addCatBtn.className = "catalog-tab-btn sm:ms-auto border-dashed border-emerald-600/70 bg-emerald-50/80 hover:bg-emerald-100 text-emerald-900 transition flex items-center gap-1.5 shrink-0";
+            addCatBtn.title = "إدارة وإضافة وحذف تصنيفات المعرض";
+            addCatBtn.innerHTML = `
+                <span class="tab-icon font-black text-emerald-700">⚙️</span>
+                <span class="font-display font-black text-emerald-950">إدارة التصنيفات</span>
+            `;
+            filterTrack.appendChild(addCatBtn);
+        }
+    } else {
+        if (addCatBtn) addCatBtn.remove();
+    }
+
+    // 2. زر إضافة سجادة في الشريط الجانبي للخيارات (#options-drawer-items-list)
+    const drawerList = document.getElementById('options-drawer-items-list');
+    let drawerAddBtn = document.getElementById('drawer-add-carpet-btn');
+    if (isAdmin) {
+        if (!drawerAddBtn && drawerList) {
+            drawerAddBtn = document.createElement('button');
+            drawerAddBtn.id = 'drawer-add-carpet-btn';
+            drawerAddBtn.onclick = () => {
+                if (typeof window.closeOptionsDrawer === 'function') window.closeOptionsDrawer();
+                if (typeof window.openAddModal === 'function') window.openAddModal();
+            };
+            drawerAddBtn.className = "drawer-lux-card group w-full flex items-center justify-between cursor-pointer";
+            drawerAddBtn.title = "إضافة سجادة جديدة";
+            drawerAddBtn.innerHTML = `
+                <div class="flex items-center gap-2.5 min-w-0 flex-1">
+                    <div class="drawer-icon-orb bg-emerald-100 text-emerald-800 border-emerald-300/60 shrink-0">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+                    </div>
+                    <div class="flex flex-col text-right min-w-0 flex-1 overflow-hidden">
+                        <div class="flex items-center gap-1.5 whitespace-nowrap">
+                            <span class="font-display text-[11px] sm:text-xs font-black text-emerald-950">إضافة سجادة جديدة</span>
+                            <span class="px-1.5 py-0.2 rounded text-[8.5px] sm:text-[9px] font-black bg-emerald-100 text-emerald-800 border border-emerald-300 shrink-0">إدارة</span>
+                        </div>
+                        <span class="text-[9.5px] sm:text-[10px] text-emerald-700 font-medium whitespace-nowrap mt-0.5 block">نشر قطعة فنية جديدة في المعرض</span>
+                    </div>
+                </div>
+                <div class="drawer-action-arrow">&gt;</div>
+            `;
+            const firstChild = drawerList.firstElementChild;
+            if (firstChild && firstChild.nextSibling) {
+                drawerList.insertBefore(drawerAddBtn, firstChild.nextSibling);
+            } else {
+                drawerList.appendChild(drawerAddBtn);
+            }
+        }
+    } else {
+        if (drawerAddBtn) drawerAddBtn.remove();
+    }
+
+    renderCustomCategoriesInUI();
+    renderQuickIconsUI();
+}
+window.syncAdminUI = syncAdminUI;
+
 // عرض السجاد في الشبكة الرئيسية
 function displayCarpets(carpetsToDisplay) {
     const grid = document.getElementById('carpets-grid');
@@ -277,16 +348,6 @@ function displayCarpets(carpetsToDisplay) {
     const isAdmin = checkAdminPermission();
     renderCustomCategoriesInUI();
     renderQuickIconsUI();
-    const addCatBtn = document.getElementById('admin-add-cat-btn');
-    if (addCatBtn) {
-        if (isAdmin) {
-            addCatBtn.classList.remove('hidden');
-            addCatBtn.classList.add('flex');
-        } else {
-            addCatBtn.classList.add('hidden');
-            addCatBtn.classList.remove('flex');
-        }
-    }
     grid.innerHTML = '';
 
     if (carpetsToDisplay.length === 0) {
@@ -1349,33 +1410,11 @@ window.addEventListener('DOMContentLoaded', () => {
     initEditImageManager();
     initVideoUploadHandlers();
 
-    const isAdmin = checkAdminPermission();
-    renderCustomCategoriesInUI();
-    const addCatBtn = document.getElementById('admin-add-cat-btn');
-    if (addCatBtn) {
-        if (isAdmin) {
-            addCatBtn.classList.remove('hidden');
-            addCatBtn.classList.add('flex');
-        } else {
-            addCatBtn.classList.add('hidden');
-            addCatBtn.classList.remove('flex');
-        }
-    }
-    const addCarpetBtn = document.querySelector('button[onclick="openAddModal()"]');
-    if (addCarpetBtn) {
-        addCarpetBtn.style.display = isAdmin ? 'flex' : 'none';
-    }
-
-    const drawerAddBtn = document.getElementById('drawer-add-carpet-btn');
-    if (drawerAddBtn) {
-        if (isAdmin) {
-            drawerAddBtn.classList.remove('hidden');
-            drawerAddBtn.classList.add('flex');
-        } else {
-            drawerAddBtn.classList.add('hidden');
-            drawerAddBtn.classList.remove('flex');
-        }
-    }
+    subscribeToAdminAuth((user) => {
+        const isAdmin = Boolean(user && user.uid);
+        syncAdminUI(isAdmin);
+        filterAndDisplayCarpets();
+    });
 
     window.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {

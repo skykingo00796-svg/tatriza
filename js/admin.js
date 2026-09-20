@@ -45,7 +45,11 @@ import {
     fileToBase64,
     formatReadableDate,
     uploadCarpetVideo,
-    getVideoFromIndexedDB
+    getVideoFromIndexedDB,
+    adminLoginWithCloud,
+    adminLogoutFromCloud,
+    subscribeToAdminAuth,
+    getCurrentAdminUser
 } from './firebase.js';
 
 // ==========================================
@@ -259,21 +263,13 @@ window.clearEditVideoSelection = () => {
 };
 
 export function checkAdminPermission() {
-    const isAdmin = localStorage.getItem('tatr_is_admin') === 'true';
-    const loginTime = localStorage.getItem('tatr_login_time');
-    
-    if (!isAdmin || !loginTime) return false;
-
-    const oneHour = 60 * 60 * 1000;
-    if (Date.now() - parseInt(loginTime) > oneHour) {
-        localStorage.setItem('tatr_is_admin', 'false');
-        localStorage.removeItem('tatr_login_time');
-        return false;
-    }
-    return true;
+    const cloudUser = getCurrentAdminUser();
+    return Boolean(cloudUser && cloudUser.uid);
 }
+window.checkAdminPermission = checkAdminPermission;
 
 export function initAdminShortcut() {
+    // 1. اختصار لوحة المفاتيح: Cmd+Shift+A (Mac) أو Ctrl+Shift+A (Windows/Linux)
     window.addEventListener('keydown', (e) => {
         const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
         const modifier = isMac ? e.metaKey : e.ctrlKey;
@@ -283,6 +279,32 @@ export function initAdminShortcut() {
             triggerAdminLogin();
         }
     });
+
+    // 2. فحص الرابط السري عبر الهاش (#admin)
+    if (window.location.hash === '#admin') {
+        setTimeout(() => triggerAdminLogin(), 300);
+    }
+    window.addEventListener('hashchange', () => {
+        if (window.location.hash === '#admin') {
+            triggerAdminLogin();
+        }
+    });
+
+    // 3. نقر خفي على رأس الصفحة (5 نقرات متتالية) بدون أي وسوم أو علامات في HTML
+    let logoTaps = 0;
+    let logoTapTimer = null;
+    const headerTitle = document.querySelector('header h1') || document.querySelector('header');
+    if (headerTitle) {
+        headerTitle.addEventListener('click', () => {
+            logoTaps++;
+            clearTimeout(logoTapTimer);
+            logoTapTimer = setTimeout(() => { logoTaps = 0; }, 1800);
+            if (logoTaps >= 5) {
+                logoTaps = 0;
+                triggerAdminLogin();
+            }
+        });
+    }
 }
 
 function triggerAdminLogin() {
@@ -303,6 +325,8 @@ export function openAdminAuthModal() {
 
     const isAdmin = checkAdminPermission();
     const cloudConnected = isFirebaseConfigured();
+    const currentAdmin = getCurrentAdminUser();
+    const adminEmail = currentAdmin ? currentAdmin.email : (localStorage.getItem('tatr_admin_email') || 'المسؤول المعتمد');
 
     if (isAdmin) {
         modal.innerHTML = `
@@ -313,9 +337,9 @@ export function openAdminAuthModal() {
                     👑
                 </div>
 
-                <h3 class="text-xl font-extrabold text-stone-900 mb-1">جلسة الإدارة نشطة</h3>
-                <p class="text-xs text-stone-600 mb-4 leading-relaxed">
-                    أنت مسجل حالياً كمسؤول في <span class="font-bold text-stone-800">TATRIZA</span>.
+                <h3 class="text-xl font-extrabold text-stone-900 mb-1">جلسة الإدارة السحابية نشطة</h3>
+                <p class="text-xs text-stone-600 mb-3 leading-relaxed">
+                    مسجل حالياً بحساب: <span class="font-bold font-mono text-brand dir-ltr inline-block px-2 py-0.5 bg-amber-50 border border-amber-200 rounded-lg text-xs">${adminEmail}</span>
                 </p>
 
                 <!-- حالة الاتصال بالسحابة -->
@@ -323,12 +347,12 @@ export function openAdminAuthModal() {
                     <div class="flex items-center gap-2">
                         <span class="w-2.5 h-2.5 rounded-full ${cloudConnected ? 'bg-emerald-500 animate-pulse' : 'bg-amber-500'}"></span>
                         <div class="flex flex-col">
-                            <span class="text-xs font-bold">${cloudConnected ? 'السحابة متصلة ونشطة (Firebase)' : 'السحابة غير مهيأة (حفظ محلي)'}</span>
-                            <span class="text-[10px] text-stone-500 font-medium">${cloudConnected ? 'القطع المنشورة تظهر لجميع الزوار حول العالم' : 'القطع تظهر فقط على هذا المتصفح'}</span>
+                            <span class="text-xs font-bold">${cloudConnected ? 'السحابة متصلة ومحمية بـ Firebase Auth' : 'السحابة غير مهيأة'}</span>
+                            <span class="text-[10px] text-stone-500 font-medium">صلاحيات الإضافة والتعديل والحذف مفعلة</span>
                         </div>
                     </div>
                     <button type="button" onclick="window.openFirebaseConfigModal()" class="text-[11px] font-bold px-2.5 py-1 rounded-xl bg-white border border-stone-300 text-stone-700 hover:bg-stone-50 shadow-xs cursor-pointer">
-                        ${cloudConnected ? 'تعديل الإعدادات' : 'ربط السحابة'}
+                        إعدادات السحابة
                     </button>
                 </div>
 
@@ -341,11 +365,12 @@ export function openAdminAuthModal() {
                 </div>
 
                 <div class="flex flex-col sm:flex-row gap-3">
-                    <button onclick="window.executeAdminLogout()" class="flex-1 bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-xl transition shadow-sm text-sm cursor-pointer">
-                        تسجيل الخروج
+                    <button onclick="window.executeAdminLogout()" class="flex-1 bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-xl transition shadow-sm text-sm cursor-pointer flex items-center justify-center gap-1.5">
+                        <span>🚪</span>
+                        <span>تسجيل الخروج السحابي</span>
                     </button>
                     <button onclick="window.closeAdminAuthModal()" class="flex-1 bg-stone-200/80 hover:bg-stone-300 text-stone-800 font-bold py-3 px-4 rounded-xl transition text-sm cursor-pointer">
-                        البقاء كمسؤول
+                        إغلاق
                     </button>
                 </div>
             </div>
@@ -359,30 +384,40 @@ export function openAdminAuthModal() {
                     🔐
                 </div>
 
-                <h3 class="text-xl font-extrabold text-stone-900 mb-1">تسجيل دخول المسؤول</h3>
-                <p class="text-xs text-stone-600 mb-6">أدخل كلمة المرور السرية للوصول لصلاحيات إدارة المعرض</p>
+                <h3 class="text-xl font-extrabold text-stone-900 mb-1">تسجيل دخول مسؤول دار تطريز</h3>
+                <p class="text-xs text-stone-600 mb-5">تسجيل الدخول المشفر عبر Google Firebase Authentication</p>
 
-                <form onsubmit="window.executeAdminLogin(event)" class="space-y-4 text-right">
+                <form onsubmit="window.executeAdminLogin(event)" class="space-y-3.5 text-right">
                     <div>
-                        <label class="block text-xs font-bold text-stone-700 mb-1.5">كلمة المرور السرية</label>
+                        <label class="block text-xs font-bold text-stone-700 mb-1">البريد الإلكتروني للمسؤول</label>
+                        <input type="email" id="admin-email-input" required placeholder="admin@tatriza.com" dir="ltr" class="search-input-focus w-full bg-white border border-stone-300 rounded-xl px-4 py-2.5 text-sm text-stone-900 outline-none transition duration-200 font-mono text-left">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-stone-700 mb-1">كلمة المرور السحابية</label>
                         <div class="relative">
-                            <input type="password" id="admin-password-input" required placeholder="••••••••••••" class="search-input-focus w-full bg-white border border-stone-300 rounded-xl pr-4 pl-11 py-3 text-sm text-stone-900 outline-none transition duration-200">
+                            <input type="password" id="admin-password-input" required placeholder="••••••••••••" dir="ltr" class="search-input-focus w-full bg-white border border-stone-300 rounded-xl pr-4 pl-11 py-2.5 text-sm text-stone-900 outline-none transition duration-200 font-mono text-left">
                             <button type="button" onclick="window.toggleAdminPasswordVisibility()" class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-stone-400 hover:text-stone-700 transition cursor-pointer" title="إظهار / إخفاء">
                                 <span id="toggle-pwd-icon" class="text-sm">👁️</span>
                             </button>
                         </div>
-                        <p id="admin-login-error" class="hidden text-xs text-red-600 font-semibold mt-2 flex items-center gap-1">
-                            <span>⚠️ كلمة المرور غير صحيحة، يرجى المحاولة مجدداً.</span>
-                        </p>
                     </div>
 
-                    <div class="pt-2 flex flex-col sm:flex-row gap-3">
-                        <button type="submit" class="flex-1 bg-brand hover:bg-brand-hover text-white font-bold py-3 px-4 rounded-xl transition shadow-md text-sm cursor-pointer">
-                            تأكيد الدخول
+                    <p id="admin-login-error" class="hidden text-xs text-red-600 font-semibold p-2.5 bg-red-50 border border-red-200 rounded-xl text-right leading-relaxed">
+                    </p>
+
+                    <div class="pt-2 flex flex-col sm:flex-row gap-2.5">
+                        <button type="submit" id="admin-login-submit-btn" class="flex-1 btn-liquid-emerald font-display text-white font-bold py-2.5 px-4 rounded-xl transition shadow-md text-xs sm:text-sm cursor-pointer flex items-center justify-center gap-1.5">
+                            <span>🔐</span>
+                            <span id="admin-login-btn-text">تأكيد الدخول المشفر</span>
                         </button>
-                        <button type="button" onclick="window.closeAdminAuthModal()" class="bg-stone-200/80 hover:bg-stone-300 text-stone-800 font-bold py-3 px-4 rounded-xl transition text-sm cursor-pointer">
+                        <button type="button" onclick="window.closeAdminAuthModal()" class="bg-stone-200/80 hover:bg-stone-300 text-stone-800 font-bold py-2.5 px-4 rounded-xl transition text-xs sm:text-sm cursor-pointer">
                             إلغاء
                         </button>
+                    </div>
+
+                    <div class="pt-2 text-center border-t border-stone-200/70">
+                        <span class="text-[10px] text-stone-500 font-medium">محمي بالكامل عبر سحابة Google Firebase (SSL / JWT Encrypted)</span>
                     </div>
                 </form>
             </div>
@@ -392,8 +427,12 @@ export function openAdminAuthModal() {
     modal.classList.remove('hidden');
 
     setTimeout(() => {
-        const input = document.getElementById('admin-password-input');
-        if (input) input.focus();
+        const emailInput = document.getElementById('admin-email-input');
+        if (emailInput) {
+            const savedEmail = localStorage.getItem('tatr_admin_email') || '';
+            if (savedEmail) emailInput.value = savedEmail;
+            emailInput.focus();
+        }
     }, 100);
 }
 
@@ -418,59 +457,85 @@ if (typeof window !== 'undefined') {
         }
     };
 
-    window.executeAdminLogout = function() {
-        localStorage.setItem('tatr_is_admin', 'false');
+    window.executeAdminLogout = async function() {
+        try {
+            await adminLogoutFromCloud();
+        } catch (e) {
+            console.warn("Logout cloud error:", e);
+        }
+        localStorage.removeItem('tatr_is_admin');
         localStorage.removeItem('tatr_login_time');
+        localStorage.removeItem('tatr_admin_email');
         window.closeAdminAuthModal();
         showToast("تم تسجيل الخروج من وضع المسؤول بنجاح.", "info", "تسجيل الخروج", 2000);
-        setTimeout(() => location.reload(), 600);
+        setTimeout(() => location.reload(), 500);
     };
 
-    window.executeAdminLogin = function(e) {
+    window.executeAdminLogin = async function(e) {
         if (e) e.preventDefault();
-        const input = document.getElementById('admin-password-input');
+        const emailInput = document.getElementById('admin-email-input');
+        const passInput = document.getElementById('admin-password-input');
         const errorEl = document.getElementById('admin-login-error');
+        const submitBtn = document.getElementById('admin-login-submit-btn');
+        const btnText = document.getElementById('admin-login-btn-text');
         const card = document.getElementById('admin-modal-card');
-        const pass = input ? input.value : '';
 
-        if (pass === "Tatriza@Admin2026") {
-            if (errorEl) errorEl.classList.add('hidden');
-            localStorage.setItem('tatr_is_admin', 'true');
+        const email = emailInput ? emailInput.value.trim() : '';
+        const pass = passInput ? passInput.value : '';
+
+        if (!email || !pass) return;
+
+        if (errorEl) errorEl.classList.add('hidden');
+        if (submitBtn) submitBtn.disabled = true;
+        if (btnText) btnText.innerText = "جاري التحقق عبر سيرفرات جوجل...";
+
+        try {
+            const user = await adminLoginWithCloud(email, pass);
+                        localStorage.setItem('tatr_admin_email', user.email || email);
             localStorage.setItem('tatr_login_time', Date.now().toString());
+
             window.closeAdminAuthModal();
-            showToast("مرحباً بك! تم تفعيل صلاحيات الإدارة بنجاح.", "success", "وضع المسؤول", 2500);
-            setTimeout(() => location.reload(), 700);
-        } else {
-            if (errorEl) errorEl.classList.remove('hidden');
+            showToast(`مرحباً بك! تم التحقق السحابي وتفعيل صلاحيات الإدارة بنجاح (${user.email}).`, "success", "المسؤول المعتمد", 3000);
+            setTimeout(() => location.reload(), 600);
+        } catch (authErr) {
+            console.warn("Admin login error:", authErr);
+            let userMsg = "البريد الإلكتروني أو كلمة المرور غير صحيحة. يرجى التأكد من البيانات المسجلة في Firebase Console.";
+            
+            if (authErr.code === 'auth/invalid-credential' || authErr.code === 'auth/wrong-password' || authErr.code === 'auth/user-not-found') {
+                userMsg = "البريد الإلكتروني أو كلمة المرور غير مطابقة لحساب المسؤول في Firebase.";
+            } else if (authErr.code === 'auth/too-many-requests') {
+                userMsg = "تم حظر محاولات الدخول مؤقتاً لحماية حسابك بسبب تكرار المحاولات الخاطئة. يرجى الانتظار بضع دقائق.";
+            } else if (authErr.code === 'auth/operation-not-allowed') {
+                userMsg = "يرجى تفعيل خيار (Email/Password) في Firebase Console -> Authentication -> Sign-in method.";
+            } else if (authErr.code === 'auth/network-request-failed') {
+                userMsg = "تعذر الاتصال بسيرفرات Firebase. يرجى التأكد من اتصال الإنترنت.";
+            } else if (authErr.message) {
+                userMsg = `فشل التحقق: ${authErr.message}`;
+            }
+
+            if (errorEl) {
+                errorEl.innerText = userMsg;
+                errorEl.classList.remove('hidden');
+            }
             if (card) {
                 card.classList.remove('tatr-shake');
                 void card.offsetWidth;
                 card.classList.add('tatr-shake');
             }
-            if (input) {
-                input.classList.add('border-red-500');
-                input.select();
+            if (passInput) {
+                passInput.classList.add('border-red-500');
+                passInput.select();
             }
-            showToast("كلمة المرور السرية غير صحيحة!", "error", "خطأ في تسجيل الدخول");
+            showToast(userMsg, "error", "خطأ في تسجيل الدخول", 4000);
+        } finally {
+            if (submitBtn) submitBtn.disabled = false;
+            if (btnText) btnText.innerText = "تأكيد الدخول المشفر";
         }
     };
 }
 
-let mobileTapCount = 0;
-let mobileTapTimer = null;
-
 export function handleMobileAdminTap() {
-    mobileTapCount++;
-    clearTimeout(mobileTapTimer);
-    
-    mobileTapTimer = setTimeout(() => {
-        mobileTapCount = 0;
-    }, 1000);
-
-    if (mobileTapCount >= 5) {
-        mobileTapCount = 0;
-        triggerAdminLogin();
-    }
+    // دالة توافقية - تم التحول لنظام الهاش الخفي (#admin) واختصارات لوحة المفاتيح
 }
 
 export async function toggleStockStatus(carpetId, allCarpets, callback) {

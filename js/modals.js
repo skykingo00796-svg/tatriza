@@ -286,7 +286,7 @@ export function openModal(carpetId, allCarpets) {
         // عرض شريط إدارة الصور للمسؤول لتحديد الصورة الرئيسية
         const adminBar = document.getElementById('admin-image-manager-bar');
         const adminThumbs = document.getElementById('admin-modal-thumbnails');
-        const isAdmin = localStorage.getItem('tatr_is_admin') === 'true';
+        const isAdmin = typeof window.checkAdminPermission === 'function' ? window.checkAdminPermission() : false;
 
         if (adminBar && adminThumbs) {
             if (isAdmin) {

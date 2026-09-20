@@ -59,8 +59,7 @@
                 <img src="../images/logo.jpg" alt="Tatriza Logo" class="w-10 h-10 md:w-12 md:h-12 rounded-2xl object-cover shadow-sm border border-stone-200 cursor-pointer logo-header-interactive shrink-0" onclick="openCurrentLogoLightbox(event)" title="شعار الدار - انقر لعرضه بدقة عالية">
                 <div>
                     <h1 class="font-bold text-lg md:text-xl text-stone-900 tracking-wider">TATRIZA</h1>
-                    <!-- انقر هنا 5 مرات متتالية من الجوال لفتح نافذة الأدمين -->
-                    <p class="text-[10px] md:text-xs font-semibold cursor-pointer select-none" style="color: var(--brand-color);" onclick="handleMobileAdminTap()">دار تطريز وسجاد يدوية</p>
+                    <p class="text-[10px] md:text-xs font-semibold" style="color: var(--brand-color);">دار تطريز وسجاد يدوية</p>
                 </div>
             </div>
             
@@ -216,11 +215,7 @@
                     <span id="count-traditional" class="cat-badge px-1.5 sm:px-2 py-0.2 rounded-full font-black bg-stone-200/80 text-stone-700 transition">0</span>
                 </button>
                 
-                <!-- زر إضافة تصنيف جديد خاص بالأدمن فقط بنمط احترافي فاخر -->
-                <button id="admin-add-cat-btn" onclick="openAddCategoryModal()" class="admin-only hidden catalog-tab-btn sm:ms-auto border-dashed border-emerald-600/70 bg-emerald-50/80 hover:bg-emerald-100 text-emerald-900 transition flex items-center gap-1.5 shrink-0" title="إدارة وإضافة وحذف تصنيفات المعرض">
-                    <span class="tab-icon font-black text-emerald-700">⚙️</span>
-                    <span class="font-display font-black text-emerald-950">إدارة التصنيفات</span>
-                </button>
+
             </div>
         </section>
 
@@ -570,7 +565,7 @@
         </div>
     </div>
 
-    <!-- نافذة تعديل تفاصيل السجادة الشاملة (خاص بالمسؤول) -->
+    <!-- نافذة تعديل تفاصيل القطعة -->
     <div id="edit-product-modal" class="fixed inset-0 z-50 modal-glass-backdrop hidden flex items-center justify-center p-3 sm:p-4">
         <div class="lux-modal-box rounded-3xl max-w-xl w-full overflow-hidden p-6 md:p-8 max-h-[92vh] overflow-y-auto">
             <div class="flex justify-between items-center mb-5 pb-4 border-b border-stone-100">
@@ -947,7 +942,7 @@
             </div>
 
             <!-- قائمة كروت الخيارات الفاخرة المستقلة -->
-            <div class="flex-1 overflow-y-auto p-4 sm:p-5 space-y-3">
+            <div id="options-drawer-items-list" class="flex-1 overflow-y-auto p-4 sm:p-5 space-y-3">
                 
                 <!-- 1. طلب تصميم -->
                 <button onclick="closeOptionsDrawer(); openCustomOrderModal();" class="drawer-lux-card group w-full" title="طلب تصميم خاص">
@@ -966,22 +961,7 @@
                     <div class="drawer-action-arrow">&gt;</div>
                 </button>
 
-                <!-- 2. إضافة سجاد (للأدمين فقط) -->
-                <button id="drawer-add-carpet-btn" onclick="closeOptionsDrawer(); openAddModal();" class="drawer-lux-card group w-full hidden" title="إضافة سجادة جديدة">
-                    <div class="flex items-center gap-2.5 min-w-0 flex-1">
-                        <div class="drawer-icon-orb bg-emerald-100 text-emerald-800 border-emerald-300/60 shrink-0">
-                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
-                        </div>
-                        <div class="flex flex-col text-right min-w-0 flex-1 overflow-hidden">
-                            <div class="flex items-center gap-1.5 whitespace-nowrap">
-                                <span class="font-display text-[11px] sm:text-xs font-black text-emerald-950">إضافة سجادة جديدة</span>
-                                <span class="px-1.5 py-0.2 rounded text-[8.5px] sm:text-[9px] font-black bg-emerald-100 text-emerald-800 border border-emerald-300 shrink-0">أدمين</span>
-                            </div>
-                            <span class="text-[9.5px] sm:text-[10px] text-emerald-700 font-medium whitespace-nowrap mt-0.5 block">نشر قطعة فنية جديدة في المعرض</span>
-                        </div>
-                    </div>
-                    <div class="drawer-action-arrow">&gt;</div>
-                </button>
+
 
                 <!-- 3. قصة الدار -->
                 <a href="about.html" class="drawer-lux-card group w-full" title="من نحن وقصة الدار">

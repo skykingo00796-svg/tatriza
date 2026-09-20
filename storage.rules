@@ -1,0 +1,11 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    // يسمح للزوار بمشاهدة صور وفيديوهات السجاد
+    match /{allPaths=**} {
+      allow read: if true;
+      // لا يُسمح برفع وسائط أو حذفها إلا للمسؤول الموثق فقط
+      allow write: if request.auth != null;
+    }
+  }
+}

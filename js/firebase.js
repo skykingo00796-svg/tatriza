@@ -21,6 +21,12 @@ import {
     uploadBytesResumable,
     getDownloadURL
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
+import { 
+    getAuth, 
+    signInWithEmailAndPassword, 
+    signOut, 
+    onAuthStateChanged 
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 // ==========================================
 // إعدادات وبيانات مشروع Firebase الخاص بك
@@ -61,14 +67,16 @@ export function isFirebaseConfigured() {
     return Boolean(config.apiKey && !config.apiKey.includes('YOUR_API_KEY') && config.projectId && !config.projectId.includes('YOUR_PROJECT'));
 }
 
-// تهيئة تطبيق Firebase وقواعد البيانات
+// تهيئة تطبيق Firebase وقواعد البيانات والمصادقة الآمنة
 let app = null;
 let db = null;
 let storage = null;
+let auth = null;
+let cachedAuthUser = null;
 
 export function initFirebaseServices() {
     if (!isFirebaseConfigured()) {
-        return { app: null, db: null, storage: null, isReady: false };
+        return { app: null, db: null, storage: null, auth: null, isReady: false };
     }
 
     try {
@@ -79,17 +87,66 @@ export function initFirebaseServices() {
             app = getApps()[0];
         }
         db = getFirestore(app);
+        if (!auth) {
+            try {
+                auth = getAuth(app);
+                onAuthStateChanged(auth, (user) => {
+                    cachedAuthUser = user;
+                });
+            } catch (authInitErr) {
+                console.warn("Auth initialization error:", authInitErr);
+                auth = null;
+            }
+        }
         try {
             storage = config.storageBucket ? getStorage(app) : null;
         } catch (storageInitErr) {
             console.warn("Storage not initialized (using 100% Free Firestore mode):", storageInitErr);
             storage = null;
         }
-        return { app, db, storage, isReady: true };
+        return { app, db, storage, auth, isReady: true };
     } catch (error) {
         console.error("Firebase initialization failed:", error);
-        return { app: null, db: null, storage: null, isReady: false };
+        return { app: null, db: null, storage: null, auth: null, isReady: false };
     }
+}
+
+// ==========================================
+// نظام المصادقة السحابي المعتمد للأدمن (Firebase Authentication Engine)
+// حماية سيبرانية مشفرة بالكامل - لا توجد أي كلمات مرور في الكود إطلاقاً
+// ==========================================
+
+export async function adminLoginWithCloud(email, password) {
+    const { auth, isReady } = initFirebaseServices();
+    if (!isReady || !auth) {
+        throw new Error("سحابة Firebase غير مهيأة بعد بمفاتيح مشروعك.");
+    }
+    const userCredential = await signInWithEmailAndPassword(auth, email.trim(), password);
+    return userCredential.user;
+}
+
+export async function adminLogoutFromCloud() {
+    const { auth } = initFirebaseServices();
+    if (!auth) return;
+    await signOut(auth);
+}
+
+export function subscribeToAdminAuth(callback) {
+    const { auth, isReady } = initFirebaseServices();
+    if (!isReady || !auth) {
+        if (callback) callback(null);
+        return () => {};
+    }
+    return onAuthStateChanged(auth, (user) => {
+        cachedAuthUser = user;
+        if (callback) callback(user);
+    });
+}
+
+export function getCurrentAdminUser() {
+    const { auth } = initFirebaseServices();
+    if (cachedAuthUser) return cachedAuthUser;
+    return auth ? auth.currentUser : null;
 }
 
 // تحويل الملف إلى Base64 فائق السرعة
