@@ -290,12 +290,13 @@ export function initAdminShortcut() {
         }
     });
 
-    // 3. نقر خفي على رأس الصفحة (5 نقرات متتالية) بدون أي وسوم أو علامات في HTML
+    // 3. نقر خفي على عنوان الهيدر أو الوصف (5 نقرات سريعة) بدون أي كود في HTML
     let logoTaps = 0;
     let logoTapTimer = null;
-    const headerTitle = document.querySelector('header h1') || document.querySelector('header');
-    if (headerTitle) {
-        headerTitle.addEventListener('click', () => {
+    // استهداف الحاوية التي تحتوي على TATRIZA وعنوان "دار تطريز وسجاد يدوية" معاً
+    const headerTitleContainer = document.querySelector('header h1')?.parentElement || document.querySelector('header h1');
+    if (headerTitleContainer) {
+        headerTitleContainer.addEventListener('click', () => {
             logoTaps++;
             clearTimeout(logoTapTimer);
             logoTapTimer = setTimeout(() => { logoTaps = 0; }, 1800);
