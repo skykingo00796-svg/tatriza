@@ -861,9 +861,9 @@ button[type="submit"]:active {
 
 /* ==========================================================================
    شبكة بطاقات المنتجات المصغرة المتجاوبة (Compact Luxury Grid)
-   - الشاشة الكبيرة (Desktop >= 1200px): 8 بطاقات في السطر الواحد
-   - الشاشة الوسط (Tablets / Medium 768px - 1199px): 6 بطاقات في السطر الواحد
-   - الشاشة الانتقالية (640px - 767px): 4 بطاقات في السطر
+   - الشاشة الكبيرة (Desktop >= 1350px): 8 بطاقات في السطر الواحد
+   - الشاشة المتوسطة / اللابتوب (1024px - 1349px): 6 بطاقات في السطر
+   - الشاشات النصفية والتابلت (640px - 1023px): 4 بطاقات في السطر (تحول أسرع لمنع انضغاط الكروت في النوافذ النصفية للبي سي)
    - شاشة الجوال (< 640px): بطاقتان جنباً إلى جنب (2 بطاقات بالسطر)
    ========================================================================== */
 #carpets-grid {
@@ -874,21 +874,21 @@ button[type="submit"]:active {
 
 @media (min-width: 640px) {
     #carpets-grid {
-        grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
-        gap: 0.6rem !important;
-    }
-}
-
-@media (min-width: 768px) {
-    #carpets-grid {
-        grid-template-columns: repeat(6, minmax(0, 1fr)) !important; /* حجم الشاشة الوسط: 6 بطاقات في السطر */
+        grid-template-columns: repeat(4, minmax(0, 1fr)) !important; /* تحول مبكر ومريح لـ 4 بطاقات لمنع أي تداخل */
         gap: 0.65rem !important;
     }
 }
 
-@media (min-width: 1200px) {
+@media (min-width: 1024px) {
     #carpets-grid {
-        grid-template-columns: repeat(8, minmax(0, 1fr)) !important; /* الشاشة الكبيرة: 8 بطاقات في السطر الواحد */
+        grid-template-columns: repeat(6, minmax(0, 1fr)) !important; /* 6 بطاقات تبدأ من 1024px وما فوق فقط */
+        gap: 0.7rem !important;
+    }
+}
+
+@media (min-width: 1350px) {
+    #carpets-grid {
+        grid-template-columns: repeat(8, minmax(0, 1fr)) !important; /* 8 بطاقات في الشاشات الكبيرة */
         gap: 0.75rem !important;
     }
 }
