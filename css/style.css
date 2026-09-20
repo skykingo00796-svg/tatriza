@@ -96,10 +96,10 @@ input[type="file"]::file-selector-button:hover {
     scrollbar-width: none;
 }
 
-/* تأثيرات تفاعلية للبطاقات */
+/* تأثيرات تفاعلية للبطاقات المصغرة المتناسقة */
 .carpet-card {
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    border-radius: 1.5rem !important; /* rounded-3xl */
+    transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    border-radius: 0.85rem !important;
     overflow: hidden !important;
     -webkit-mask-image: -webkit-radial-gradient(white, black);
     mask-image: radial-gradient(white, black);
@@ -109,8 +109,8 @@ input[type="file"]::file-selector-button:hover {
     backface-visibility: hidden;
 }
 .carpet-card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.08), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    transform: translateY(-3px) scale(1.015);
+    box-shadow: 0 12px 24px -6px rgba(44, 30, 20, 0.12), 0 4px 10px -3px rgba(0, 0, 0, 0.05);
 }
 
 .card-img-zoom {
@@ -123,6 +123,9 @@ input[type="file"]::file-selector-button:hover {
 /* خلفية إضاءة استوديو العرض الفاخرة للقطع المفرغة لمنع اختفاء الألوان الداكنة والبيضاء */
 .carpet-stage-container {
     background: radial-gradient(circle at 50% 45%, #ffffff 0%, #f8f4ed 55%, #ebe3d6 100%) !important;
+    aspect-ratio: 1 / 1 !important;
+    width: 100% !important;
+    position: relative !important;
 }
 
 /* ==========================================
@@ -775,17 +778,17 @@ button[type="submit"]:active {
     width: 100%;
     background: linear-gradient(90deg, #781734 0%, #9a3412 25%, #d97706 55%, #b45309 80%, #781734 100%);
     color: #ffffff;
-    padding: 0.35rem 0.85rem;
+    padding: 0.2rem 0.4rem;
     display: flex;
     align-items: center;
     justify-content: center;
     text-align: center;
-    border-bottom: 1.5px solid rgba(254, 240, 138, 0.85);
-    box-shadow: 0 3px 10px rgba(180, 83, 9, 0.3);
+    border-bottom: 1px solid rgba(254, 240, 138, 0.85);
+    box-shadow: 0 2px 6px rgba(180, 83, 9, 0.25);
     white-space: nowrap !important;
-    /* تثبيت انحناء زوايا الشريط العلوي ليطابق انحناء الكرت ويمنع التقطيع على الجوال */
-    border-top-left-radius: 1.5rem !important;
-    border-top-right-radius: 1.5rem !important;
+    /* تثبيت انحناء زوايا الشريط العلوي ليطابق انحناء الكرت المصغر */
+    border-top-left-radius: 0.85rem !important;
+    border-top-right-radius: 0.85rem !important;
     -webkit-mask-image: -webkit-radial-gradient(white, black);
     mask-image: radial-gradient(white, black);
     overflow: hidden !important;
@@ -856,10 +859,38 @@ button[type="submit"]:active {
 }
 
 
-/* شبكة عرض المنتجات: تحديد الحد الأدنى لعرض البطاقة لمنع انكسار النصوص */
+/* ==========================================================================
+   شبكة بطاقات المنتجات المصغرة المتجاوبة (Compact Luxury Grid)
+   - الشاشة الكبيرة (Desktop >= 1200px): 8 بطاقات في السطر الواحد
+   - الشاشة الوسط (Tablets / Medium 768px - 1199px): 6 بطاقات في السطر الواحد
+   - الشاشة الانتقالية (640px - 767px): 4 بطاقات في السطر
+   - شاشة الجوال (< 640px): بطاقتان جنباً إلى جنب (2 بطاقات بالسطر)
+   ========================================================================== */
 #carpets-grid {
     display: grid !important;
-    grid-template-columns: repeat(auto-fill, minmax(min(100%, 285px), 1fr)) !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important; /* شاشة الجوال: 2 بطاقات جنب بعض */
+    gap: 0.5rem !important;
+}
+
+@media (min-width: 640px) {
+    #carpets-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+        gap: 0.6rem !important;
+    }
+}
+
+@media (min-width: 768px) {
+    #carpets-grid {
+        grid-template-columns: repeat(6, minmax(0, 1fr)) !important; /* حجم الشاشة الوسط: 6 بطاقات في السطر */
+        gap: 0.65rem !important;
+    }
+}
+
+@media (min-width: 1200px) {
+    #carpets-grid {
+        grid-template-columns: repeat(8, minmax(0, 1fr)) !important; /* الشاشة الكبيرة: 8 بطاقات في السطر الواحد */
+        gap: 0.75rem !important;
+    }
 }
 
 /* ==========================================

@@ -299,16 +299,16 @@ function displayCarpets(carpetsToDisplay) {
                         onclick="event.stopPropagation(); window.toggleCardVideoPlay('${carpet.id}')"
                     ></video>
                     
-                    <!-- زر إيقاف وتشغيل تفاعلي بالوسط -->
+<!-- زر إيقاف وتشغيل تفاعلي بالوسط مصغر -->
                     <div id="card-video-center-btn-${carpet.id}" onclick="event.stopPropagation(); window.toggleCardVideoPlay('${carpet.id}')" class="absolute inset-0 flex items-center justify-center pointer-events-none transition-all duration-300 opacity-0">
-                        <div class="w-12 h-12 rounded-full bg-black/65 backdrop-blur-md border border-white/30 text-white flex items-center justify-center text-xl shadow-lg transform transition hover:scale-110 pointer-events-auto cursor-pointer" id="card-video-center-icon-${carpet.id}">
+                        <div class="w-8 h-8 rounded-full bg-black/65 backdrop-blur-md border border-white/30 text-white flex items-center justify-center text-xs shadow-md transform transition hover:scale-110 pointer-events-auto cursor-pointer" id="card-video-center-icon-${carpet.id}">
                             ▶
                         </div>
                     </div>
 
-                    <!-- زر الصوت المصغر لبطاقة المعرض - أيقونة فقط وبنفس تصميم وتدرج الزر المقابل -->
-                    <button type="button" onclick="event.stopPropagation(); window.toggleCardVideoAudio('${carpet.id}', this)" id="card-video-audio-btn-${carpet.id}" class="absolute top-3 left-3 pointer-events-auto bg-black/60 hover:bg-black/85 text-white w-8 h-8 rounded-xl backdrop-blur-md border border-white/20 flex items-center justify-center transition shadow-md cursor-pointer z-10 hover:scale-110" title="تشغيل الصوت">
-                        <span class="text-sm card-audio-icon leading-none">🔇</span>
+                    <!-- زر الصوت المصغر لبطاقة المعرض -->
+                    <button type="button" onclick="event.stopPropagation(); window.toggleCardVideoAudio('${carpet.id}', this)" id="card-video-audio-btn-${carpet.id}" class="absolute top-1.5 left-1.5 pointer-events-auto bg-black/60 hover:bg-black/85 text-white w-6 h-6 rounded-md backdrop-blur-md border border-white/20 flex items-center justify-center transition shadow-2xs cursor-pointer z-10 hover:scale-110" title="تشغيل الصوت">
+                        <span class="text-[10px] card-audio-icon leading-none">🔇</span>
                     </button>
                 </div>
             `;
@@ -323,26 +323,26 @@ function displayCarpets(carpetsToDisplay) {
         const remainingDays = isNew ? getProductRemainingDays(carpet) : 0;
 
         const card = document.createElement('div');
-        card.className = `carpet-card carpet-card-reveal bg-[#fffbf7] rounded-3xl overflow-hidden border ${isNew ? 'card-exclusive-border' : 'border-stone-200/80'} shadow-sm flex flex-col h-full cursor-pointer group relative`;
-        card.style.animationDelay = `${Math.min(index * 0.05, 0.35)}s`;
+        card.className = `carpet-card carpet-card-reveal bg-[#fffbf7] rounded-xl sm:rounded-2xl overflow-hidden border ${isNew ? 'card-exclusive-border' : 'border-stone-200/80'} shadow-2xs flex flex-col h-full cursor-pointer group relative`;
+        card.style.animationDelay = `${Math.min(index * 0.04, 0.3)}s`;
         card.onclick = () => openModal(carpet.id, allCarpets);
 
-        // إضافة مستمعات الـ 3D Tilt والانعكاس الضوئي التفاعلي للبطاقة
+        // إضافة مستمعات الـ 3D Tilt والانعكاس الضوئي التفاعلي للبطاقة المصغرة
         card.addEventListener('mousemove', (e) => {
             const rect = card.getBoundingClientRect();
             const x = e.clientX - rect.left;
             const y = e.clientY - rect.top;
             const centerX = rect.width / 2;
             const centerY = rect.height / 2;
-            const rotateX = ((y - centerY) / centerY) * -6;
-            const rotateY = ((x - centerX) / centerX) * 6;
-            card.style.transform = `perspective(1000px) rotateX(${rotateX.toFixed(1)}deg) rotateY(${rotateY.toFixed(1)}deg) translateY(-4px)`;
+            const rotateX = ((y - centerY) / centerY) * -5;
+            const rotateY = ((x - centerX) / centerX) * 5;
+            card.style.transform = `perspective(800px) rotateX(${rotateX.toFixed(1)}deg) rotateY(${rotateY.toFixed(1)}deg) translateY(-3px)`;
             card.style.setProperty('--glare-x', `${((x / rect.width) * 100).toFixed(1)}%`);
             card.style.setProperty('--glare-y', `${((y / rect.height) * 100).toFixed(1)}%`);
         });
 
         card.addEventListener('mouseleave', () => {
-            card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0)';
+            card.style.transform = 'perspective(800px) rotateX(0deg) rotateY(0deg) translateY(0)';
         });
 
         card.innerHTML = `
@@ -352,64 +352,55 @@ function displayCarpets(carpetsToDisplay) {
             <!-- الكتلة العلوية: الشريط الملاصق للصورة يمنع ظهور أي فراغ أبيض نهائياً -->
             <div class="w-full shrink-0 flex flex-col bg-stone-100 relative z-10">
                 ${isNew ? `
-                    <div class="exclusive-top-crown-ribbon ${isOutOfStock ? 'ribbon-static' : 'spark-badge-crystal'} rounded-t-3xl" title="${isOutOfStock ? 'المنتج جديد وحصري (نفدت الكمية)' : 'المنتج جديد وحصري'}">
-                        <div class="flex items-center justify-center gap-1.5 text-xs font-black text-white whitespace-nowrap">
-                            <span class="text-xs shrink-0">✨</span>
-                            <span class="tracking-wide whitespace-nowrap">${isOutOfStock ? 'المنتج جديد وحصري (نفدت الكمية)' : 'المنتج جديد وحصري'}</span>
+                    <div class="exclusive-top-crown-ribbon ${isOutOfStock ? 'ribbon-static' : 'spark-badge-crystal'} rounded-t-xl" title="${isOutOfStock ? 'المنتج جديد وحصري (نفدت الكمية)' : 'المنتج جديد وحصري'}">
+                        <div class="flex items-center justify-center gap-1 text-[9px] sm:text-[10px] font-black text-white whitespace-nowrap">
+                            <span class="text-[9px] shrink-0">✨</span>
+                            <span class="tracking-tight whitespace-nowrap">${isOutOfStock ? 'جديد وحصري (نفد)' : 'جديد وحصري'}</span>
                             ${!isOutOfStock ? '<span class="exclusive-pulse-dot shrink-0"></span>' : ''}
                         </div>
                     </div>
                 ` : ''}
 
-                <div class="relative w-full h-72 md:h-80 carpet-stage-container overflow-hidden">
+                <div class="relative w-full aspect-square carpet-stage-container overflow-hidden">
                     <div id="card-stage-${carpet.id}" class="absolute inset-0 flex overflow-x-auto snap-x snap-mandatory scrollbar-none w-full h-full" dir="ltr" onscroll="handleImageScroll(this, '${carpet.id}')" onclick="event.stopPropagation()">
                         ${mediaHtml}
                     </div>
                     
-                    <!-- أبعاد السجادة في أعلى اليمين في مكانها الأصلي المستقل تماماً -->
-                    <span class="absolute top-3 right-3 bg-white/90 backdrop-blur-md text-stone-900 text-xs font-bold px-3 py-1.5 rounded-full shadow-xs z-10 pointer-events-none border border-stone-200/50">
+                    <!-- أبعاد السجادة في أعلى اليمين بحجم متناسق وملموم -->
+                    <span class="absolute top-1.5 right-1.5 bg-white/90 backdrop-blur-md text-stone-900 text-[9px] sm:text-[10px] font-bold px-1.5 sm:px-2 py-0.5 rounded-md shadow-2xs z-10 pointer-events-none border border-stone-200/60 leading-tight">
                         ${carpet.dimensions}
                     </span>
 
-                    <!-- أزرار تحكم الأدمين في أعلى اليسار مقابل الأبعاد مع توسع النص المنفصل لكل زر -->
+                    <!-- أزرار تحكم الأدمين في أعلى اليسار بحجم أيقونات أنيقة وملمومة -->
                     ${isAdmin ? `
-                        <div class="absolute top-3 left-3 flex items-center gap-1.5 z-20" onclick="event.stopPropagation()">
+                        <div class="absolute top-1.5 left-1.5 flex items-center gap-1 z-20" onclick="event.stopPropagation()">
                             <!-- زر تعديل تفاصيل القطعة -->
-                            <button onclick="openEditModal('${carpet.id}')" class="admin-action-btn flex items-center h-8 px-2.5 bg-white/90 hover:bg-white text-stone-800 hover:text-amber-800 shadow-xs backdrop-blur-md rounded-full border border-stone-200/80 hover:border-amber-300 cursor-pointer" title="تعديل تفاصيل السجادة">
-                                <span class="text-xs shrink-0">✏️</span>
-                                <span class="btn-text text-[11px] font-bold text-amber-900">
-                                    تعديل
-                                </span>
+                            <button onclick="openEditModal('${carpet.id}')" class="w-6 h-6 rounded-full bg-white/90 hover:bg-white text-stone-800 hover:text-amber-800 shadow-2xs backdrop-blur-md border border-stone-200/80 hover:border-amber-300 flex items-center justify-center cursor-pointer transition hover:scale-110" title="تعديل تفاصيل السجادة">
+                                <span class="text-[10px]">✏️</span>
                             </button>
 
-                            <!-- زر تبديل حالة توفر المنتج (يتمدد فقط عند مرور المؤشر عليه وحده) -->
-                            <button onclick="toggleStockStatus('${carpet.id}')" class="admin-action-btn flex items-center h-8 px-2.5 bg-white/90 hover:bg-white text-stone-800 shadow-xs backdrop-blur-md rounded-full border border-stone-200/80 cursor-pointer" title="${isOutOfStock ? 'توفر المنتج' : 'عدم توفر المنتج'}">
-                                <span class="text-xs shrink-0">${isOutOfStock ? '🟢' : '🔄'}</span>
-                                <span class="btn-text text-[11px] font-bold text-stone-800">
-                                    ${isOutOfStock ? 'توفر المنتج' : 'عدم توفر المنتج'}
-                                </span>
+                            <!-- زر تبديل حالة توفر المنتج -->
+                            <button onclick="toggleStockStatus('${carpet.id}')" class="w-6 h-6 rounded-full bg-white/90 hover:bg-white text-stone-800 shadow-2xs backdrop-blur-md border border-stone-200/80 flex items-center justify-center cursor-pointer transition hover:scale-110" title="${isOutOfStock ? 'توفر المنتج' : 'عدم توفر المنتج'}">
+                                <span class="text-[10px]">${isOutOfStock ? '🟢' : '🔄'}</span>
                             </button>
 
-                            <!-- زر حذف القطعة (يتمدد فقط عند مرور المؤشر عليه وحده) -->
-                            <button onclick="deleteCarpet('${carpet.id}')" class="admin-action-btn flex items-center h-8 px-2.5 bg-white/90 hover:bg-white text-stone-700 hover:text-red-600 shadow-xs backdrop-blur-md rounded-full border border-stone-200/80 hover:border-red-200 cursor-pointer" title="حذف القطعة">
-                                <span class="text-xs shrink-0">🗑️</span>
-                                <span class="btn-text text-[11px] font-bold text-red-600">
-                                    حذف القطعة
-                                </span>
+                            <!-- زر حذف القطعة -->
+                            <button onclick="deleteCarpet('${carpet.id}')" class="w-6 h-6 rounded-full bg-white/90 hover:bg-white text-stone-700 hover:text-red-600 shadow-2xs backdrop-blur-md border border-stone-200/80 hover:border-red-200 flex items-center justify-center cursor-pointer transition hover:scale-110" title="حذف القطعة">
+                                <span class="text-[10px]">🗑️</span>
                             </button>
                         </div>
                     ` : ''}
 
                     ${isOutOfStock ? `
-                        <div class="absolute inset-0 bg-stone-950/40 backdrop-blur-[2px] flex items-center justify-center z-10 pointer-events-none">
-                            <span class="bg-stone-900/90 text-amber-300 border border-amber-300/30 text-xs font-bold px-4 py-2 rounded-2xl shadow-lg text-center">
-                                نفدت الكمية - يمكنك طلب نفس التصميم
+                        <div class="absolute inset-0 bg-stone-950/45 backdrop-blur-[1.5px] flex items-center justify-center z-10 pointer-events-none p-1">
+                            <span class="bg-stone-900/95 text-amber-300 border border-amber-300/30 text-[9px] sm:text-[10px] font-bold px-2 py-1 rounded-lg shadow-lg text-center leading-tight">
+                                نفدت الكمية
                             </span>
                         </div>
                     ` : ''}
 
-                    <div id="counter-wrapper-${carpet.id}" class="absolute bottom-3 left-3 bg-black/50 backdrop-blur-md text-white text-xs font-semibold px-2.5 py-1 rounded-full pointer-events-none z-10 ${hasMultipleMedia && !isOutOfStock ? '' : 'hidden'}">
-                        <span id="counter-${carpet.id}">1</span> / <span id="total-${carpet.id}">${totalMedia}</span>
+                    <div id="counter-wrapper-${carpet.id}" class="absolute bottom-1.5 left-1.5 bg-black/60 backdrop-blur-md text-white text-[8px] sm:text-[9px] font-bold px-1.5 py-0.5 rounded-md pointer-events-none z-10 ${hasMultipleMedia && !isOutOfStock ? '' : 'hidden'} leading-tight">
+                        <span id="counter-${carpet.id}">1</span>/<span id="total-${carpet.id}">${totalMedia}</span>
                     </div>
 
                     ${hasVideo ? `
@@ -417,35 +408,35 @@ function displayCarpets(carpetsToDisplay) {
                             type="button" 
                             id="video-badge-${carpet.id}" 
                             onclick="event.stopPropagation(); window.handleCardVideoBadgeClick('${carpet.id}')"
-                            class="absolute bottom-3 right-3 bg-stone-900/80 hover:bg-stone-900 backdrop-blur-md text-amber-300 text-[10px] font-bold px-2.5 py-1 rounded-full pointer-events-auto z-10 border border-amber-300/30 flex items-center gap-1 shadow-md transition-all duration-300 cursor-pointer"
-                            title="انقر للانتقال للفيديو الاستعراضي"
+                            class="absolute bottom-1.5 right-1.5 bg-stone-900/85 hover:bg-stone-900 backdrop-blur-md text-amber-300 text-[8px] sm:text-[9px] font-bold px-1.5 py-0.5 rounded-md pointer-events-auto z-10 border border-amber-300/30 flex items-center gap-0.5 shadow-xs transition cursor-pointer leading-tight"
+                            title="فيديو استعراضي"
                         >
-                            <span class="text-xs badge-icon">🎬</span>
-                            <span class="badge-text">فيديو استعراضي</span>
+                            <span class="text-[9px]">🎬</span>
+                            <span class="badge-text">فيديو</span>
                         </button>
                     ` : ''}
                 </div>
             </div>
 
-            <!-- الكتلة السفلية: تتمدد لامتصاص أي فرق في ارتفاع البطاقات وتثبيت السعر والزر في الأسفل -->
-            <div class="p-4 md:p-5 flex-1 flex flex-col justify-between bg-stone-50/60 border-t border-stone-200/50 relative z-10">
-                <div class="mb-3">
-                    <h4 class="font-display font-black text-stone-900 text-sm md:text-base truncate group-hover:text-brand transition">${carpet.title}</h4>
+            <!-- الكتلة السفلية: مصغرة ومتناسقة لتثبيت السعر والزر في الأسفل -->
+            <div class="p-2 sm:p-2.5 flex-1 flex flex-col justify-between bg-stone-50/70 border-t border-stone-200/60 relative z-10">
+                <div class="mb-1.5">
+                    <h4 class="font-display font-bold text-stone-900 text-xs sm:text-[13px] leading-tight truncate group-hover:text-brand transition" title="${carpet.title}">${carpet.title}</h4>
                 </div>
 
-                <div class="flex items-center justify-between gap-2 mt-auto">
-                    <div class="flex items-center gap-1 shrink-0">
-                        <span class="font-display text-base md:text-lg font-black text-brand">${carpet.price}</span>
-                        <span class="font-display text-brand text-xs font-bold">ر.ع.</span>
+                <div class="flex items-center justify-between gap-1 mt-auto">
+                    <div class="flex items-baseline gap-0.5 shrink-0">
+                        <span class="font-display text-xs sm:text-sm font-black text-brand leading-none">${carpet.price}</span>
+                        <span class="font-display text-brand text-[8px] sm:text-[9px] font-bold leading-none">ر.ع.</span>
                     </div>
                     
                     ${isOutOfStock ? `
-                        <button onclick="event.stopPropagation(); openModal('${carpet.id}')" class="btn-liquid-metal font-display text-white text-[10px] sm:text-[11px] font-bold px-3 sm:px-3.5 py-2 rounded-xl transition shadow-sm flex items-center gap-1.5 cursor-pointer whitespace-nowrap shrink-0" title="التفاصيل وإعادة طلب المنتج">
-                            <span class="whitespace-nowrap">إعادة طلب المنتج</span>
-                            <span class="text-xs shrink-0">🔄</span>
+                        <button onclick="event.stopPropagation(); openModal('${carpet.id}')" class="btn-liquid-metal font-display text-white text-[9px] sm:text-[10px] font-bold px-2 sm:px-2.5 py-1 rounded-lg transition shadow-2xs flex items-center gap-1 cursor-pointer whitespace-nowrap shrink-0" title="طلب المنتج">
+                            <span class="whitespace-nowrap">طلب</span>
+                            <span class="text-[8px] shrink-0">🔄</span>
                         </button>
                     ` : `
-                        <button onclick="event.stopPropagation(); openModal('${carpet.id}')" class="btn-liquid-metal font-display text-white text-xs font-bold px-4 sm:px-5 py-2 rounded-xl transition shadow-sm cursor-pointer whitespace-nowrap shrink-0">
+                        <button onclick="event.stopPropagation(); openModal('${carpet.id}')" class="btn-liquid-metal font-display text-white text-[9px] sm:text-[10px] font-bold px-2 sm:px-2.5 py-1 rounded-lg transition shadow-2xs cursor-pointer whitespace-nowrap shrink-0">
                             التفاصيل
                         </button>
                     `}
