@@ -217,9 +217,9 @@
                 </button>
                 
                 <!-- زر إضافة تصنيف جديد خاص بالأدمن فقط بنمط احترافي فاخر -->
-                <button id="admin-add-cat-btn" onclick="openAddCategoryModal()" class="admin-only hidden catalog-tab-btn sm:ms-auto border-dashed border-emerald-600/70 bg-emerald-50/80 hover:bg-emerald-100 text-emerald-900 transition flex items-center gap-1.5 shrink-0" title="إضافة تصنيف جديد للمعرض">
-                    <span class="tab-icon font-black text-emerald-700">＋</span>
-                    <span class="font-display font-black text-emerald-950">تصنيف جديد</span>
+                <button id="admin-add-cat-btn" onclick="openAddCategoryModal()" class="admin-only hidden catalog-tab-btn sm:ms-auto border-dashed border-emerald-600/70 bg-emerald-50/80 hover:bg-emerald-100 text-emerald-900 transition flex items-center gap-1.5 shrink-0" title="إدارة وإضافة وحذف تصنيفات المعرض">
+                    <span class="tab-icon font-black text-emerald-700">⚙️</span>
+                    <span class="font-display font-black text-emerald-950">إدارة التصنيفات</span>
                 </button>
             </div>
         </section>
@@ -346,6 +346,72 @@
                             </button>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة إدارة وتخصيص التصنيفات الملكية (إضافة وحذف التصنيفات للأدمن) -->
+    <div id="add-category-modal" class="hidden fixed inset-0 z-50 modal-glass-backdrop flex items-center justify-center p-3 sm:p-4">
+        <div class="lux-modal-box w-full max-w-lg rounded-2xl sm:rounded-3xl p-5 sm:p-6 space-y-4 shadow-2xl relative max-h-[90vh] overflow-y-auto">
+            <button type="button" onclick="closeAddCategoryModal()" class="absolute top-4 left-4 bg-stone-100 hover:bg-stone-200 text-stone-600 hover:text-stone-900 w-8 h-8 rounded-full flex items-center justify-center transition text-sm font-bold cursor-pointer" title="إغلاق">
+                ✕
+            </button>
+            
+            <div class="flex items-center gap-2.5">
+                <div class="w-10 h-10 rounded-2xl bg-emerald-100 text-emerald-800 flex items-center justify-center text-xl shadow-xs">
+                    📁
+                </div>
+                <div>
+                    <h3 class="font-display font-black text-stone-900 text-base sm:text-lg">إدارة وتخصيص تصنيفات المعرض</h3>
+                    <p class="text-xs text-stone-500 font-medium">إضافة أقسام جديدة أو حذف وتحديث الأقسام الحالية للمعرض</p>
+                </div>
+            </div>
+
+            <!-- نموذج إضافة تصنيف جديد -->
+            <form onsubmit="submitNewCategory(event)" class="space-y-3 pt-3 border-t border-stone-200/80">
+                <div class="text-xs font-bold text-stone-800 flex items-center gap-1.5">
+                    <span class="text-emerald-700 font-black">＋</span>
+                    <span>إضافة تصنيف جديد للمعرض:</span>
+                </div>
+                <div>
+                    <div class="flex gap-2">
+                        <input type="text" id="new-cat-icon" value="✨" maxlength="4" class="w-12 text-center text-base bg-stone-50 border border-stone-300/80 rounded-xl px-2 py-2 outline-none focus:border-brand" title="أيقونة التصنيف">
+                        <input type="text" id="new-cat-name" placeholder="مثال: مرايا مطرزة، وسائد، تحف جدارية..." required class="flex-1 bg-stone-50 border border-stone-300/80 rounded-xl px-3 py-2 text-xs sm:text-sm text-stone-900 outline-none focus:border-brand font-medium">
+                        <button type="submit" class="btn-liquid-emerald font-display text-white font-bold text-xs sm:text-sm px-4 py-2 rounded-xl shadow-xs transition flex items-center justify-center gap-1 shrink-0">
+                            <span>إضافة</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- خيارات سريعة للأيقونات -->
+                <div>
+                    <span class="block text-[11px] font-bold text-stone-500 mb-1">أيقونة سريعة:</span>
+                    <div class="flex items-center gap-1.5 flex-wrap">
+                        <button type="button" onclick="setNewCatIcon('✨')" class="w-7 h-7 rounded-lg bg-stone-100 hover:bg-stone-200 text-sm flex items-center justify-center transition">✨</button>
+                        <button type="button" onclick="setNewCatIcon('🪞')" class="w-7 h-7 rounded-lg bg-stone-100 hover:bg-stone-200 text-sm flex items-center justify-center transition">🪞</button>
+                        <button type="button" onclick="setNewCatIcon('🧵')" class="w-7 h-7 rounded-lg bg-stone-100 hover:bg-stone-200 text-sm flex items-center justify-center transition">🧵</button>
+                        <button type="button" onclick="setNewCatIcon('👑')" class="w-7 h-7 rounded-lg bg-stone-100 hover:bg-stone-200 text-sm flex items-center justify-center transition">👑</button>
+                        <button type="button" onclick="setNewCatIcon('🏛️')" class="w-7 h-7 rounded-lg bg-stone-100 hover:bg-stone-200 text-sm flex items-center justify-center transition">🏛️</button>
+                        <button type="button" onclick="setNewCatIcon('🎨')" class="w-7 h-7 rounded-lg bg-stone-100 hover:bg-stone-200 text-sm flex items-center justify-center transition">🎨</button>
+                        <button type="button" onclick="setNewCatIcon('💎')" class="w-7 h-7 rounded-lg bg-stone-100 hover:bg-stone-200 text-sm flex items-center justify-center transition">💎</button>
+                        <button type="button" onclick="setNewCatIcon('🪡')" class="w-7 h-7 rounded-lg bg-stone-100 hover:bg-stone-200 text-sm flex items-center justify-center transition">🪡</button>
+                    </div>
+                </div>
+            </form>
+
+            <!-- قائمة التصنيفات الحالية مع خيار الحذف المباشر -->
+            <div class="pt-3 border-t border-stone-200/80 space-y-2">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-bold text-stone-800 flex items-center gap-1.5">
+                        <span>📋</span>
+                        <span>التصنيفات المعروضة حالياً:</span>
+                    </span>
+                    <span class="text-[10px] text-stone-400 font-medium">حذف أي تصنيف لا تحتاجه</span>
+                </div>
+                
+                <div id="existing-custom-categories" class="space-y-1.5 max-h-56 overflow-y-auto pr-0.5">
+                    <!-- تحقن التصنيفات ديناميكياً مع حماية قسم الكل -->
                 </div>
             </div>
         </div>

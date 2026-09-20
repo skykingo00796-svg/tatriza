@@ -630,26 +630,16 @@ window.toggleCardVideoAudio = (carpetId, btnEl) => {
 // ==========================================
 
 function updateCategoryCounts() {
-    const counts = {
-        all: allCarpets.length,
-        ajami: allCarpets.filter(c => c.category === 'ajami').length,
-        silk: allCarpets.filter(c => c.category === 'silk').length,
-        traditional: allCarpets.filter(c => c.category === 'traditional').length
-    };
-
     const setBadge = (id, count) => {
         const el = document.getElementById(id);
         if (el) el.innerText = count;
     };
 
-    setBadge('count-all', counts.all);
-    setBadge('count-ajami', counts.ajami);
-    setBadge('count-silk', counts.silk);
-    setBadge('count-traditional', counts.traditional);
+    setBadge('count-all', allCarpets.length);
 
-    // تحديث عدادات التصنيفات المخصصة للأدمن
+    // تحديث عدادات جميع التصنيفات النشطة ديناميكياً
     try {
-        getCustomCategories().forEach(cat => {
+        getActiveCategories().forEach(cat => {
             const cCount = allCarpets.filter(c => c.category === cat.id).length;
             setBadge(`count-${cat.id}`, cCount);
         });
@@ -736,7 +726,7 @@ function setupSearchAndSort() {
 function setupFilters() {
     const buttons = document.querySelectorAll('.filter-btn');
     buttons.forEach(button => {
-        button.addEventListener('click', (e) => {
+        button.onclick = (e) => {
             buttons.forEach(btn => {
                 btn.classList.remove('active', 'bg-brand', 'text-white', 'shadow-xs', 'font-bold');
                 btn.classList.add('font-semibold');
@@ -759,7 +749,7 @@ function setupFilters() {
 
             currentFilter = activeBtn.getAttribute('data-filter') || 'all';
             filterAndDisplayCarpets();
-        });
+        };
     });
 }
 
@@ -859,8 +849,27 @@ export function initHeroParallax() {
 
 
 // ==========================================
-// نظام إدارة التصنيفات المخصصة للأدمن (Custom Categories Management)
+// نظام إدارة وتخصيص وحذف التصنيفات (Category Management & Deletion Engine)
 // ==========================================
+export const DEFAULT_CATEGORIES = [
+    { id: 'ajami', name: 'نقشات عجمية', icon: '✨' },
+    { id: 'silk', name: 'سجاد حريري', icon: '🧵' },
+    { id: 'traditional', name: 'تراثي أصيل', icon: '🏛️' }
+];
+
+export function getDeletedCategoryIds() {
+    try {
+        const stored = localStorage.getItem('tatr_deleted_categories');
+        return stored ? JSON.parse(stored) : [];
+    } catch(e) {
+        return [];
+    }
+}
+
+export function saveDeletedCategoryIds(ids) {
+    localStorage.setItem('tatr_deleted_categories', JSON.stringify(ids));
+}
+
 export function getCustomCategories() {
     try {
         const stored = localStorage.getItem('tatr_custom_categories');
@@ -872,20 +881,94 @@ export function getCustomCategories() {
 
 export function saveCustomCategories(cats) {
     localStorage.setItem('tatr_custom_categories', JSON.stringify(cats));
-    renderCustomCategoriesInUI();
 }
 
+// جلب كافة التصنيفات النشطة المعتمدة في المتجر
+export function getActiveCategories() {
+    const deletedIds = getDeletedCategoryIds();
+    const activeDefaults = DEFAULT_CATEGORIES.filter(c => !deletedIds.includes(c.id));
+    const custom = getCustomCategories();
+    return [...activeDefaults, ...custom];
+}
+window.getActiveCategories = getActiveCategories;
+
+// استعادة التصنيفات الافتراضية المحذوفة
+export function restoreDefaultCategories() {
+    if (!checkAdminPermission()) return;
+    saveDeletedCategoryIds([]);
+    renderCustomCategoriesInUI();
+    openAddCategoryModal();
+    if (window.showToast) {
+        window.showToast('تم استعادة التصنيفات الافتراضية بنجاح.', 'success', 'إدارة التصنيفات');
+    }
+}
+window.restoreDefaultCategories = restoreDefaultCategories;
+
 export function renderCustomCategoriesInUI() {
-    const customCats = getCustomCategories();
+    const isAdmin = checkAdminPermission();
     const filterTrack = document.getElementById('filter-buttons');
     const adminBtn = document.getElementById('admin-add-cat-btn');
-    
-    // 1. إزالة أي تبويبات مخصصة سابقة في شريط الكاتلوج
+    const deletedIds = getDeletedCategoryIds();
+    const activeCats = getActiveCategories();
+
     if (filterTrack) {
+        // 1. إدارة ظهور التصنيفات الافتراضية في شريط الكاتلوج
+        DEFAULT_CATEGORIES.forEach(cat => {
+            let tabBtn = document.getElementById(`tab-cat-${cat.id}`) || filterTrack.querySelector(`button[data-filter="${cat.id}"]`);
+            if (tabBtn) {
+                if (deletedIds.includes(cat.id)) {
+                    tabBtn.remove();
+                } else {
+                    tabBtn.id = `tab-cat-${cat.id}`;
+                    // إضافة زر الحذف للأدمن فقط إذا لم يكن موجوداً
+                    const existingDel = tabBtn.querySelector('.admin-cat-del-btn');
+                    if (isAdmin && !existingDel) {
+                        const delBtn = document.createElement('span');
+                        delBtn.className = 'admin-cat-del-btn text-rose-500 hover:text-white hover:bg-rose-600 rounded-full w-4 h-4 flex items-center justify-center text-[9px] font-bold cursor-pointer transition shadow-2xs mr-0.5';
+                        delBtn.title = `حذف تصنيف ${cat.name}`;
+                        delBtn.innerText = '✕';
+                        delBtn.onclick = (e) => {
+                            e.stopPropagation();
+                            deleteCategoryPrompt(cat.id, cat.name);
+                        };
+                        tabBtn.appendChild(delBtn);
+                    } else if (!isAdmin && existingDel) {
+                        existingDel.remove();
+                    }
+                }
+            } else if (!deletedIds.includes(cat.id)) {
+                // إعادة إنشاء الزر الافتراضي إن لم يكن موجوداً
+                const btn = document.createElement('button');
+                btn.id = `tab-cat-${cat.id}`;
+                btn.setAttribute('data-filter', cat.id);
+                const isActive = currentFilter === cat.id;
+                btn.className = `filter-btn catalog-tab-btn group flex items-center gap-1.5 sm:gap-2 ${isActive ? 'active bg-brand text-white shadow-xs font-bold' : ''}`;
+                btn.innerHTML = `
+                    <span class="tab-icon">${cat.icon}</span>
+                    <span class="font-display">${cat.name}</span>
+                    <span id="count-${cat.id}" class="cat-badge px-1.5 sm:px-2 py-0.2 rounded-full font-black ${isActive ? 'bg-white/20 text-white' : 'bg-stone-200/80 text-stone-700'} transition">0</span>
+                    ${isAdmin ? `
+                        <span class="admin-cat-del-btn text-rose-500 hover:text-white hover:bg-rose-600 rounded-full w-4 h-4 flex items-center justify-center text-[9px] font-bold cursor-pointer transition shadow-2xs mr-0.5" title="حذف تصنيف ${cat.name}">✕</span>
+                    ` : ''}
+                `;
+                const delIcon = btn.querySelector('.admin-cat-del-btn');
+                if (delIcon) {
+                    delIcon.onclick = (e) => {
+                        e.stopPropagation();
+                        deleteCategoryPrompt(cat.id, cat.name);
+                    };
+                }
+                if (adminBtn) {
+                    filterTrack.insertBefore(btn, adminBtn);
+                } else {
+                    filterTrack.appendChild(btn);
+                }
+            }
+        });
+
+        // 2. تحديث التبويبات المخصصة
         document.querySelectorAll('.custom-cat-tab').forEach(el => el.remove());
-        
-        // حقن التبويبات الجديدة قبل زر الأدمن
-        customCats.forEach(cat => {
+        getCustomCategories().forEach(cat => {
             const btn = document.createElement('button');
             btn.setAttribute('data-filter', cat.id);
             const isActive = currentFilter === cat.id;
@@ -894,7 +977,17 @@ export function renderCustomCategoriesInUI() {
                 <span class="tab-icon">${cat.icon || '✨'}</span>
                 <span class="font-display">${cat.name}</span>
                 <span id="count-${cat.id}" class="cat-badge px-1.5 sm:px-2 py-0.2 rounded-full font-black ${isActive ? 'bg-white/20 text-white' : 'bg-stone-200/80 text-stone-700'} transition">0</span>
+                ${isAdmin ? `
+                    <span class="admin-cat-del-btn text-rose-500 hover:text-white hover:bg-rose-600 rounded-full w-4 h-4 flex items-center justify-center text-[9px] font-bold cursor-pointer transition shadow-2xs mr-0.5" title="حذف تصنيف ${cat.name}">✕</span>
+                ` : ''}
             `;
+            const delIcon = btn.querySelector('.admin-cat-del-btn');
+            if (delIcon) {
+                delIcon.onclick = (e) => {
+                    e.stopPropagation();
+                    deleteCategoryPrompt(cat.id, cat.name);
+                };
+            }
             if (adminBtn) {
                 filterTrack.insertBefore(btn, adminBtn);
             } else {
@@ -903,14 +996,16 @@ export function renderCustomCategoriesInUI() {
         });
     }
 
-    // 2. تحديث قوائم التصنيفات في نوافذ إضافة وتعديل السجاد
+    // 3. تحديث قوائم خيارات التصنيف في نماذج إضافة وتعديل السجاد
     ['new-category', 'edit-category'].forEach(selectId => {
         const selectEl = document.getElementById(selectId);
         if (selectEl) {
-            selectEl.querySelectorAll('.custom-cat-opt').forEach(opt => opt.remove());
-            customCats.forEach(cat => {
+            selectEl.querySelectorAll('.dynamic-cat-opt').forEach(opt => opt.remove());
+            // إزالة الخيارات الافتراضية القديمة إن وجدت لإعادة بنائها حسب التصنيفات النشطة
+            selectEl.innerHTML = '';
+            activeCats.forEach(cat => {
                 const opt = document.createElement('option');
-                opt.className = 'custom-cat-opt';
+                opt.className = 'dynamic-cat-opt';
                 opt.value = cat.id;
                 opt.innerText = `${cat.icon || ''} ${cat.name}`;
                 selectEl.appendChild(opt);
@@ -918,10 +1013,11 @@ export function renderCustomCategoriesInUI() {
         }
     });
 
-    // 3. إعادة تفعيل أحداث النقر للتبويبات
+    // 4. ربط الأحداث وتحديث العدادات
     setupFilters();
     updateCategoryCounts();
 }
+window.renderCustomCategoriesInUI = renderCustomCategoriesInUI;
 
 export function openAddCategoryModal() {
     if (!checkAdminPermission()) {
@@ -931,25 +1027,55 @@ export function openAddCategoryModal() {
     const modal = document.getElementById('add-category-modal');
     if (!modal) return;
     
-    // عرض قائمة التصنيفات المخصصة الموجودة مع إمكانية حذفها
+    // عرض قائمة كافة التصنيفات الحالية مع إمكانية حذف أي منها باستثناء "الكل"
     const listEl = document.getElementById('existing-custom-categories');
     if (listEl) {
-        const customCats = getCustomCategories();
-        if (customCats.length === 0) {
-            listEl.innerHTML = '';
-        } else {
-            listEl.innerHTML = `
-                <div class="text-[11px] font-bold text-stone-600 mb-1 border-t border-stone-200/80 pt-2">التصنيفات المضافة حالياً:</div>
-                <div class="space-y-1 max-h-36 overflow-y-auto">
-                    ${customCats.map(c => `
-                        <div class="flex items-center justify-between bg-stone-100/90 rounded-lg px-2.5 py-1.5 text-xs">
-                            <span class="font-bold text-stone-800">${c.icon} ${c.name}</span>
-                            <button type="button" onclick="deleteCustomCategory('${c.id}')" class="text-rose-600 hover:text-rose-800 text-[11px] font-bold px-1.5 py-0.5 rounded hover:bg-rose-50 transition" title="حذف التصنيف">✕ حذف</button>
-                        </div>
-                    `).join('')}
+        const activeCats = getActiveCategories();
+        const deletedDefaults = getDeletedCategoryIds();
+        
+        let html = `
+            <!-- زر الكل المحمي دائماً -->
+            <div class="flex items-center justify-between bg-amber-50/70 border border-amber-200/80 rounded-xl px-3 py-2 text-xs shadow-2xs">
+                <div class="flex items-center gap-2">
+                    <span class="text-sm">👑</span>
+                    <span class="font-bold text-amber-950">الكل (شامل كافة المنتجات)</span>
+                </div>
+                <span class="bg-amber-100 text-amber-800 text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1 border border-amber-300/60" title="تصنيف أساسي دائم للنظام">
+                    <span>🔒</span>
+                    <span>محمي دائماً</span>
+                </span>
+            </div>
+        `;
+
+        activeCats.forEach(cat => {
+            const count = allCarpets.filter(c => c.category === cat.id).length;
+            html += `
+                <div class="flex items-center justify-between bg-white hover:bg-stone-50 border border-stone-200/90 rounded-xl px-3 py-2 text-xs shadow-2xs transition">
+                    <div class="flex items-center gap-2 min-w-0">
+                        <span class="text-sm shrink-0">${cat.icon || '✨'}</span>
+                        <span class="font-bold text-stone-800 truncate">${cat.name}</span>
+                        <span class="text-[10px] text-stone-400 font-medium font-mono shrink-0">(${count} قطعة)</span>
+                    </div>
+                    <button type="button" onclick="deleteCategoryPrompt('${cat.id}', '${cat.name}')" class="bg-rose-50 hover:bg-rose-600 text-rose-600 hover:text-white border border-rose-200 hover:border-rose-600 text-[11px] font-bold px-2.5 py-1 rounded-lg transition cursor-pointer flex items-center gap-1 shadow-2xs shrink-0" title="حذف هذا التصنيف من المعرض">
+                        <span>🗑️</span>
+                        <span>حذف</span>
+                    </button>
+                </div>
+            `;
+        });
+
+        if (deletedDefaults.length > 0) {
+            html += `
+                <div class="pt-2 text-center">
+                    <button type="button" onclick="restoreDefaultCategories()" class="text-amber-800 hover:text-amber-950 text-xs font-bold underline transition inline-flex items-center gap-1">
+                        <span>🔄</span>
+                        <span>استعادة التصنيفات الافتراضية المحذوفة (${deletedDefaults.length})</span>
+                    </button>
                 </div>
             `;
         }
+
+        listEl.innerHTML = html;
     }
     
     modal.classList.remove('hidden');
@@ -981,29 +1107,76 @@ export function submitNewCategory(e) {
     const iconInput = document.getElementById('new-cat-icon');
     if (!nameInput || !nameInput.value.trim()) return;
 
-    const catName = nameInput.value.trim();
-    const catIcon = iconInput && iconInput.value.trim() ? iconInput.value.trim() : '✨';
-    const catId = 'cat_' + Date.now().toString(36);
+    const name = nameInput.value.trim();
+    const icon = iconInput && iconInput.value.trim() ? iconInput.value.trim() : '✨';
+    const id = 'cat_' + Date.now().toString(36);
 
     const customCats = getCustomCategories();
-    customCats.push({ id: catId, name: catName, icon: catIcon });
+    customCats.push({ id, name, icon });
     saveCustomCategories(customCats);
 
     closeAddCategoryModal();
+    if (window.showToast) {
+        window.showToast(`تمت إضافة تصنيف «${name}» بنجاح للمعرض.`, 'success', 'إدارة التصنيفات');
+    }
 }
 window.submitNewCategory = submitNewCategory;
 
-export function deleteCustomCategory(id) {
-    if (!checkAdminPermission()) return;
-    if (!confirm('هل أنت متأكد من رغبتك في حذف هذا التصنيف؟')) return;
+export function deleteCategoryPrompt(id, name) {
+    // حماية تامة وحصرية لزر "الكل"
+    if (id === 'all') {
+        if (window.showToast) {
+            window.showToast('تصنيف "الكل" هو تصنيف رئيسي دائم للنظام ولا يمكن حذفه نهائياً.', 'warning', 'تنبيه النظام');
+        } else {
+            alert('تصنيف "الكل" هو تصنيف رئيسي دائم للنظام ولا يمكن حذفه نهائياً.');
+        }
+        return;
+    }
 
-    const customCats = getCustomCategories().filter(c => c.id !== id);
-    if (currentFilter === id) currentFilter = 'all';
-    saveCustomCategories(customCats);
-    openAddCategoryModal(); // تحديث القائمة
+    if (!checkAdminPermission()) {
+        alert('هذه الميزة مخصصة لمشرف الدار فقط.');
+        return;
+    }
+
+    const count = allCarpets.filter(c => c.category === id).length;
+    const warningText = count > 0 
+        ? `تنبيه: يوجد (${count}) قطعة في هذا التصنيف حالياً. حذف التصنيف سيحذفه من شريط الكاتلوج وتبقى القطع معروضة في قسم "الكل".
+
+هل أنت متأكد من رغبتك في حذف تصنيف «${name}»؟`
+        : `هل أنت متأكد من رغبتك في حذف تصنيف «${name}» من شريط الكاتلوج؟`;
+
+    if (!confirm(warningText)) return;
+
+    // 1. إذا كان من التصنيفات المخصصة
+    let customCats = getCustomCategories();
+    if (customCats.some(c => c.id === id)) {
+        customCats = customCats.filter(c => c.id !== id);
+        saveCustomCategories(customCats);
+    } else {
+        // إذا كان من التصنيفات الافتراضية
+        const deleted = getDeletedCategoryIds();
+        if (!deleted.includes(id)) {
+            deleted.push(id);
+            saveDeletedCategoryIds(deleted);
+        }
+    }
+
+    // 2. إذا كان الفلتر النشط هو المحذوف، العودة إلى "الكل"
+    if (currentFilter === id) {
+        currentFilter = 'all';
+    }
+
+    // 3. إعادة بناء الواجهة
+    renderCustomCategoriesInUI();
     filterAndDisplayCarpets();
+    openAddCategoryModal(); // تحديث القائمة إن كانت النافذة مفتوحة
+
+    if (window.showToast) {
+        window.showToast(`تم حذف تصنيف «${name}» بنجاح.`, 'success', 'إدارة التصنيفات');
+    }
 }
-window.deleteCustomCategory = deleteCustomCategory;
+window.deleteCategoryPrompt = deleteCategoryPrompt;
+window.deleteCustomCategory = deleteCategoryPrompt;
 
 window.addEventListener('DOMContentLoaded', () => {
     initTheme();
