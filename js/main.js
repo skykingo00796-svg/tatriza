@@ -327,7 +327,7 @@ function displayCarpets(carpetsToDisplay) {
         card.style.animationDelay = `${Math.min(index * 0.04, 0.3)}s`;
         card.onclick = () => openModal(carpet.id, allCarpets);
 
-        // إضافة مستمعات الـ 3D Tilt والانعكاس الضوئي التفاعلي للبطاقة المصغرة
+        // إضافة مستمعات الـ 3D Tilt والانعكاس الضوئي المحصور على مساحة الصورة فقط
         card.addEventListener('mousemove', (e) => {
             const rect = card.getBoundingClientRect();
             const x = e.clientX - rect.left;
@@ -337,8 +337,16 @@ function displayCarpets(carpetsToDisplay) {
             const rotateX = ((y - centerY) / centerY) * -5;
             const rotateY = ((x - centerX) / centerX) * 5;
             card.style.transform = `perspective(800px) rotateX(${rotateX.toFixed(1)}deg) rotateY(${rotateY.toFixed(1)}deg) translateY(-3px)`;
-            card.style.setProperty('--glare-x', `${((x / rect.width) * 100).toFixed(1)}%`);
-            card.style.setProperty('--glare-y', `${((y / rect.height) * 100).toFixed(1)}%`);
+            
+            // حساب بقعة اللمعان بدقة على سطح الصورة دون تجاوزها
+            const stage = card.querySelector('.carpet-stage-container');
+            if (stage) {
+                const sRect = stage.getBoundingClientRect();
+                const sx = e.clientX - sRect.left;
+                const sy = e.clientY - sRect.top;
+                card.style.setProperty('--glare-x', `${((sx / sRect.width) * 100).toFixed(1)}%`);
+                card.style.setProperty('--glare-y', `${((sy / sRect.height) * 100).toFixed(1)}%`);
+            }
         });
 
         card.addEventListener('mouseleave', () => {
@@ -346,9 +354,6 @@ function displayCarpets(carpetsToDisplay) {
         });
 
         card.innerHTML = `
-            <!-- طبقة الانعكاس الضوئي ثلاثي الأبعاد -->
-            <div class="card-light-glare"></div>
-
             <!-- الكتلة العلوية: الشريط الملاصق للصورة يمنع ظهور أي فراغ أبيض نهائياً -->
             <div class="w-full shrink-0 flex flex-col bg-stone-100 relative z-10">
                 ${isNew ? `
@@ -365,15 +370,18 @@ function displayCarpets(carpetsToDisplay) {
                     <div id="card-stage-${carpet.id}" class="absolute inset-0 flex overflow-x-auto snap-x snap-mandatory scrollbar-none w-full h-full" dir="ltr" onscroll="handleImageScroll(this, '${carpet.id}')" onclick="event.stopPropagation()">
                         ${mediaHtml}
                     </div>
+
+                    <!-- لمعة الانعكاس الضوئي التفاعلية محصورة فقط على سطح الصورة لغرض الجمالية دون التأثير على الأزرار -->
+                    <div class="card-light-glare"></div>
                     
-                    <!-- أبعاد السجادة في أعلى اليمين بحجم متناسق وملموم -->
-                    <span class="absolute top-1.5 right-1.5 bg-white/90 backdrop-blur-md text-stone-900 text-[9px] sm:text-[10px] font-bold px-1.5 sm:px-2 py-0.5 rounded-md shadow-2xs z-10 pointer-events-none border border-stone-200/60 leading-tight">
+                    <!-- أبعاد السجادة في أعلى اليمين (فوق اللمعة بوضوح تام z-30) -->
+                    <span class="absolute top-1.5 right-1.5 bg-white/95 backdrop-blur-md text-stone-900 text-[9px] sm:text-[10px] font-bold px-1.5 sm:px-2 py-0.5 rounded-md shadow-2xs z-30 pointer-events-none border border-stone-200/80 leading-tight">
                         ${carpet.dimensions}
                     </span>
 
-                    <!-- أزرار تحكم الأدمين في أعلى اليسار بحجم أيقونات أنيقة وملمومة -->
+                    <!-- أزرار تحكم الأدمين في أعلى اليسار (فوق اللمعة بوضوح تام z-30) -->
                     ${isAdmin ? `
-                        <div class="absolute top-1.5 left-1.5 flex items-center gap-1 z-20" onclick="event.stopPropagation()">
+                        <div class="absolute top-1.5 left-1.5 flex items-center gap-1 z-30" onclick="event.stopPropagation()">
                             <!-- زر تعديل تفاصيل القطعة -->
                             <button onclick="openEditModal('${carpet.id}')" class="w-6 h-6 rounded-full bg-white/90 hover:bg-white text-stone-800 hover:text-amber-800 shadow-2xs backdrop-blur-md border border-stone-200/80 hover:border-amber-300 flex items-center justify-center cursor-pointer transition hover:scale-110" title="تعديل تفاصيل السجادة">
                                 <span class="text-[10px]">✏️</span>

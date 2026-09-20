@@ -991,21 +991,20 @@ button[type="submit"]:active {
                 0 0 0 1px rgba(197, 155, 39, 0.35);
 }
 
-/* لمعة الانعكاس الضوئي التفاعلية على البطاقة (Interactive Light Glare) */
+/* لمعة الانعكاس الضوئي التفاعلية محصورة فقط على مساحة صورة السجادة لمنع أي ضباب على الأزرار */
 .card-light-glare {
     position: absolute;
     inset: 0;
     pointer-events: none;
-    border-radius: inherit;
     background: radial-gradient(
-        circle 280px at var(--glare-x, 50%) var(--glare-y, 50%),
-        rgba(255, 255, 255, 0.35) 0%,
-        rgba(255, 248, 230, 0.12) 40%,
-        transparent 75%
+        circle 160px at var(--glare-x, 50%) var(--glare-y, 50%),
+        rgba(255, 255, 255, 0.45) 0%,
+        rgba(255, 248, 230, 0.18) 38%,
+        transparent 72%
     );
     opacity: 0;
     transition: opacity 0.25s ease;
-    z-index: 15;
+    z-index: 5;
     mix-blend-mode: overlay;
 }
 
