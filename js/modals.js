@@ -173,17 +173,19 @@ export function openModal(carpetId, allCarpets) {
         const images = carpet.images && carpet.images.length > 0 ? carpet.images : [carpet.image || 'https://placehold.co/800x600/7c1d3c/ffffff?text=Tatriza'];
         modalImagesContainer.innerHTML = '';
         
-        // 1. الشريحة الأولى: صورة الغلاف الرئيسية
+        // 1. الشريحة الأولى: صورة الغلاف الرئيسية بحجم منضبط وتناسب تام
         modalImagesContainer.innerHTML += `
-            <img src="${images[0]}" class="w-full h-full object-cover shrink-0 snap-center cursor-pointer" onclick="window.openLightboxFromModalExternal('${carpet.id}', 0)" alt="${carpet.title}">
+            <div class="min-w-full w-full h-full shrink-0 snap-center flex items-center justify-center overflow-hidden bg-stone-950">
+                <img src="${images[0]}" class="max-w-full max-h-[50vh] sm:max-h-[55vh] md:max-h-[75vh] w-auto h-auto object-contain cursor-pointer" onclick="window.openLightboxFromModalExternal('${carpet.id}', 0)" alt="${carpet.title}">
+            </div>
         `;
 
-        // 2. الشريحة الثانية: الفيديو الاستعراضي الحي إن وجد للسجادة
+        // 2. الشريحة الثانية: الفيديو الاستعراضي الحي يوضح كاملاً في الكارد دون أي اقتطاع
         let hasVideo = Boolean(carpet.video);
         const initialVideoSrc = (carpet.video && !carpet.video.startsWith('idb://')) ? carpet.video : '';
         if (hasVideo) {
             modalImagesContainer.innerHTML += `
-                <div class="relative w-full h-full shrink-0 snap-center bg-[#fffbf7] flex items-center justify-center overflow-hidden select-none group/videoplayer" id="modal-video-slide">
+                <div class="relative min-w-full w-full h-full shrink-0 snap-center bg-stone-950 flex items-center justify-center overflow-hidden select-none group/videoplayer" id="modal-video-slide">
                     <video 
                         id="modal-product-video" 
                         src="${initialVideoSrc}" 
@@ -192,7 +194,7 @@ export function openModal(carpetId, allCarpets) {
                         loop 
                         autoplay 
                         preload="auto"
-                        class="w-full h-full object-contain bg-[#fffbf7] cursor-pointer"
+                        class="max-w-full max-h-[50vh] sm:max-h-[55vh] md:max-h-[75vh] w-auto h-auto object-contain mx-auto block cursor-pointer"
                         onclick="window.toggleProductVideoPlay(this)"
                     ></video>
                     
@@ -206,26 +208,6 @@ export function openModal(carpetId, allCarpets) {
                             ▶
                         </div>
                     </div>
-
-                    <!-- شريط تحكم الفيديو السفلي الفاخر -->
-                    <div class="absolute bottom-3 inset-x-3 flex items-center justify-between pointer-events-none z-20">
-                        <!-- زر فتح وكتم الصوت بالزاوية - أيقونة فقط أنيقة ومكتومة افتراضياً -->
-                        <button 
-                            type="button" 
-                            onclick="event.stopPropagation(); window.toggleProductVideoAudio(this)" 
-                            id="modal-video-audio-btn" 
-                            class="pointer-events-auto bg-black/60 hover:bg-black/85 text-white w-9 h-9 rounded-xl backdrop-blur-md border border-white/20 flex items-center justify-center transition shadow-md cursor-pointer hover:scale-105" 
-                            title="تشغيل الصوت"
-                        >
-                            <span class="text-sm audio-icon leading-none">🔇</span>
-                        </button>
-
-                        <!-- شارة الفيديو الحي -->
-                        <span class="bg-black/60 text-amber-300 text-[10px] font-bold px-2.5 py-1 rounded-xl backdrop-blur-md border border-amber-300/30 flex items-center gap-1 shadow-md">
-                            <span class="text-xs">🎬</span>
-                            <span>استعراض حي ${carpet.videoDuration ? `(${carpet.videoDuration}ث)` : ''}</span>
-                        </span>
-                    </div>
                 </div>
             `;
         }
@@ -233,7 +215,9 @@ export function openModal(carpetId, allCarpets) {
         // 3. باقي الصور إن وجدت
         for (let i = 1; i < images.length; i++) {
             modalImagesContainer.innerHTML += `
-                <img src="${images[i]}" class="w-full h-full object-cover shrink-0 snap-center cursor-pointer" onclick="window.openLightboxFromModalExternal('${carpet.id}', ${i})" alt="${carpet.title}">
+                <div class="min-w-full w-full h-full shrink-0 snap-center flex items-center justify-center overflow-hidden bg-stone-950">
+                    <img src="${images[i]}" class="max-w-full max-h-[50vh] sm:max-h-[55vh] md:max-h-[75vh] w-auto h-auto object-contain cursor-pointer" onclick="window.openLightboxFromModalExternal('${carpet.id}', ${i})" alt="${carpet.title}">
+                </div>
             `;
         }
 
@@ -270,10 +254,33 @@ export function openModal(carpetId, allCarpets) {
             counterWrapper.style.display = totalMediaItems > 1 ? 'block' : 'none';
         }
 
-        // زر تكبير الفيديو يظل مخفياً في البداية ويظهر فقط عند التمرير لشريحة الفيديو
-        const fullscreenBtn = document.getElementById('modal-video-fullscreen-btn');
-        if (fullscreenBtn) {
-            fullscreenBtn.classList.add('hidden');
+        // إعداد شارة الفيديو وأزرار التحكم العلوية (كتم الصوت والتكبير)
+        const videoTopControls = document.getElementById('modal-video-top-controls');
+        const videoBadge = document.getElementById('modal-video-badge');
+        const videoBadgeText = document.getElementById('modal-video-badge-text');
+
+        if (videoBadgeText) {
+            videoBadgeText.innerText = carpet.videoDuration ? `استعراض حي (${carpet.videoDuration}ث)` : 'استعراض حي';
+        }
+
+        // إخفاء عناصر التحكم بالفيديو في البداية إن كان العرض يبدأ بصورة
+        if (videoTopControls) {
+            videoTopControls.classList.add('hidden');
+            videoTopControls.classList.remove('flex');
+        }
+        if (videoBadge) {
+            videoBadge.classList.add('hidden');
+        }
+
+        // إذا كان المنتج لا يحتوي على صور ويبدأ بالفيديو مباشرة، نظهر الأزرار والشارة فوراً
+        if (hasVideo && (!carpet.images || carpet.images.length === 0)) {
+            if (videoTopControls) {
+                videoTopControls.classList.remove('hidden');
+                videoTopControls.classList.add('flex');
+            }
+            if (videoBadge) {
+                videoBadge.classList.remove('hidden');
+            }
         }
 
         // عرض شريط إدارة الصور للمسؤول لتحديد الصورة الرئيسية
@@ -396,36 +403,52 @@ export function closeModal() {
         if (icon) icon.innerText = '🔇';
         audioBtn.setAttribute('title', 'تشغيل الصوت');
     }
-    const fullscreenBtn = document.getElementById('modal-video-fullscreen-btn');
-    if (fullscreenBtn) fullscreenBtn.classList.add('hidden');
+    const videoTopControls = document.getElementById('modal-video-top-controls');
+    if (videoTopControls) {
+        videoTopControls.classList.add('hidden');
+        videoTopControls.classList.remove('flex');
+    }
+    const videoBadge = document.getElementById('modal-video-badge');
+    if (videoBadge) {
+        videoBadge.classList.add('hidden');
+    }
 }
 
 export function handleModalScroll(container) {
-    const scrollLeft = container.scrollLeft;
-    const width = container.clientWidth;
+    if (!container) return;
+    const scrollLeft = Math.abs(container.scrollLeft);
+    const width = container.clientWidth || 1;
     const activeIndex = Math.round(scrollLeft / width);
     const counterSpan = document.getElementById('modal-counter');
     if (counterSpan) {
         counterSpan.innerText = activeIndex + 1;
     }
 
-    // إيقاف وتشغيل الفيديو بذكاء وإظهار زر التكبير فقط عند شريحة الفيديو
+    // إيقاف وتشغيل الفيديو بذكاء وإظهار أزرار كتم الصوت والتكبير والشارة فقط عند شريحة الفيديو
     const videoSlide = document.getElementById('modal-video-slide');
     const videoEl = document.getElementById('modal-product-video');
-    const fullscreenBtn = document.getElementById('modal-video-fullscreen-btn');
+    const videoTopControls = document.getElementById('modal-video-top-controls');
+    const videoBadge = document.getElementById('modal-video-badge');
 
     if (videoSlide && videoEl) {
         const slideRect = videoSlide.getBoundingClientRect();
         const containerRect = container.getBoundingClientRect();
         // فحص دقيق: شريحة الفيديو معروضة أمام المستخدم بالكامل تقريباً
-        const isVideoActive = Math.abs(slideRect.left - containerRect.left) < (width * 0.35);
+        const isVideoActive = Math.abs(slideRect.left - containerRect.left) < (width * 0.45);
 
         if (isVideoActive) {
             if (videoEl.paused) {
                 videoEl.play().catch(() => {});
             }
-            // إظهار زر التكبير فقط عندما يكون المستخدم داخل شريحة الفيديو
-            if (fullscreenBtn) fullscreenBtn.classList.remove('hidden');
+            // إظهار زري كتم الصوت وتكبير الفيديو في الأعلى يمين مقابل زر الإغلاق
+            if (videoTopControls) {
+                videoTopControls.classList.remove('hidden');
+                videoTopControls.classList.add('flex');
+            }
+            // إظهار شارة استعراض حي في الأسفل يسار مقابل الترقيم
+            if (videoBadge) {
+                videoBadge.classList.remove('hidden');
+            }
         } else {
             if (!videoEl.paused) {
                 videoEl.pause();
@@ -440,11 +463,23 @@ export function handleModalScroll(container) {
                 if (icon) icon.innerText = '🔇';
                 audioBtn.setAttribute('title', 'تشغيل الصوت');
             }
-            // إخفاء زر التكبير تماماً عند الانتقال لأي صورة لحفظ راحة التصفح
-            if (fullscreenBtn) fullscreenBtn.classList.add('hidden');
+            // إخفاء عناصر التحكم بالفيديو والشارة عند تصفح الصور العادية لحفظ راحة العميل
+            if (videoTopControls) {
+                videoTopControls.classList.add('hidden');
+                videoTopControls.classList.remove('flex');
+            }
+            if (videoBadge) {
+                videoBadge.classList.add('hidden');
+            }
         }
     } else {
-        if (fullscreenBtn) fullscreenBtn.classList.add('hidden');
+        if (videoTopControls) {
+            videoTopControls.classList.add('hidden');
+            videoTopControls.classList.remove('flex');
+        }
+        if (videoBadge) {
+            videoBadge.classList.add('hidden');
+        }
     }
 }
 

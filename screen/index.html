@@ -234,28 +234,46 @@
     <div id="product-modal" class="hidden fixed inset-0 z-50 modal-glass-backdrop flex items-center justify-center p-2 sm:p-4 md:p-6">
         <div class="lux-modal-box w-full max-w-4xl rounded-2xl sm:rounded-3xl overflow-hidden flex flex-col max-h-[94vh] sm:max-h-[90vh] relative">
             
-            <!-- زر إغلاق النافذة الفاخر -->
-            <button onclick="closeModal()" class="absolute top-3 left-3 sm:top-5 sm:left-5 z-30 bg-black/60 hover:bg-black/85 text-white w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center transition cursor-pointer shadow-lg text-sm sm:text-base backdrop-blur-md border border-white/20" title="إغلاق النافذة">
+            <!-- زر إغلاق النافذة الفاخر (في الأعلى يسار) -->
+            <button onclick="closeModal()" class="absolute top-3 left-3 sm:top-5 sm:left-5 z-30 bg-black/60 hover:bg-black/85 text-white w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center transition cursor-pointer shadow-lg text-sm sm:text-base backdrop-blur-md border border-white/20 hover:scale-105" title="إغلاق النافذة">
                 ✕
             </button>
             
-            <!-- زر تكبير الفيديو للشاشة كاملة -->
-            <button id="modal-video-fullscreen-btn" onclick="window.toggleModalVideoFullscreen()" class="absolute top-3 right-3 sm:top-5 sm:right-5 z-30 bg-black/60 hover:bg-black/85 text-white w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center transition cursor-pointer shadow-lg text-sm sm:text-base hidden hover:scale-110 backdrop-blur-md border border-white/20" title="تكبير الفيديو للشاشة كاملة">
-                <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/></svg>
-            </button>
+            <!-- أزرار التحكم بالفيديو في الأعلى يمين (كتم الصوت وبجانبه زر التكبير مباشرة مقابل زر الإغلاق) -->
+            <div id="modal-video-top-controls" class="absolute top-3 right-3 sm:top-5 sm:right-5 z-30 flex items-center gap-2 hidden">
+                <!-- زر كتم وفتح الصوت (جنب التكبير على طول) -->
+                <button id="modal-video-audio-btn" type="button" onclick="window.toggleProductVideoAudio(this)" class="bg-black/60 hover:bg-black/85 text-white w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center transition cursor-pointer shadow-lg text-sm sm:text-base backdrop-blur-md border border-white/20 hover:scale-105" title="تشغيل الصوت">
+                    <span class="audio-icon leading-none">🔇</span>
+                </button>
+
+                <!-- زر تكبير الفيديو للشاشة كاملة (مقابل زر الإغلاق بالجهة الثانية) -->
+                <button id="modal-video-fullscreen-btn" type="button" onclick="window.toggleModalVideoFullscreen()" class="bg-black/60 hover:bg-black/85 text-white w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center transition cursor-pointer shadow-lg text-sm sm:text-base backdrop-blur-md border border-white/20 hover:scale-105" title="تكبير الفيديو للشاشة كاملة">
+                    <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/></svg>
+                </button>
+            </div>
 
             <!-- حاوية المحتوى مقسمة نصفين: معرض الصور والمعلومات -->
             <div class="flex flex-col md:grid md:grid-cols-2 overflow-y-auto flex-1">
                 
                 <!-- القسم الأيمن: معرض الوسائط المتجاوب بالكامل -->
-                <div class="relative w-full bg-stone-950 flex flex-col justify-center items-center overflow-hidden min-h-[300px] sm:min-h-[360px] md:min-h-full">
-                    <div id="modal-images-container" class="flex overflow-x-auto snap-x snap-mandatory scrollbar-none w-full h-full max-h-[50vh] sm:max-h-[55vh] md:max-h-[80vh] items-center">
+                <div class="relative w-full bg-stone-950 flex flex-col justify-center items-center overflow-hidden min-h-[300px] sm:min-h-[360px] md:min-h-full select-none">
+                    <div id="modal-images-container" class="flex overflow-x-auto snap-x snap-mandatory scrollbar-none w-full h-full max-h-[50vh] sm:max-h-[55vh] md:max-h-[80vh] items-center" onscroll="handleModalScroll(this)">
                         <!-- تُحقن الصور والفيديو برمجياً -->
                     </div>
 
-                    <!-- عداد الشرائح الزجاجي الفاخر -->
-                    <div id="modal-counter-wrapper" class="absolute bottom-4 inset-x-0 flex justify-center pointer-events-none">
-                        <div class="bg-black/75 backdrop-blur-md text-amber-200 text-xs font-mono font-bold px-3.5 py-1 rounded-full border border-amber-400/30 shadow-md flex items-center gap-1"><span id="modal-counter">1</span><span>/</span><span id="modal-total">1</span></div>
+                    <!-- شارة استعراض حي (في الأسفل يسار مقابل الترقيم من الجهة الثانية) -->
+                    <div id="modal-video-badge" class="absolute bottom-3 left-3 sm:bottom-4 sm:left-4 z-20 pointer-events-none hidden">
+                        <span class="bg-black/75 text-amber-300 text-[11px] font-bold px-3 py-1 rounded-full backdrop-blur-md border border-amber-400/30 shadow-md flex items-center gap-1.5">
+                            <span class="text-xs">🎬</span>
+                            <span id="modal-video-badge-text">استعراض حي</span>
+                        </span>
+                    </div>
+
+                    <!-- عداد وترقيم الشرائح المستقل بدون أي تداخل وبحجم مضبوط لا يمتد بطول الشاشة (في الأسفل يمين) -->
+                    <div id="modal-counter-wrapper" class="absolute bottom-3 right-3 sm:bottom-4 sm:right-4 z-20 pointer-events-none">
+                        <div class="bg-black/75 backdrop-blur-md text-amber-200 text-xs font-mono font-bold px-3 py-1 rounded-full border border-amber-400/30 shadow-md flex items-center gap-1">
+                            <span id="modal-counter">1</span><span>/</span><span id="modal-total">1</span>
+                        </div>
                     </div>
                 </div>
 
@@ -717,41 +735,40 @@
         </div>
     </div>
 
-    <!-- نافذة تكبير واستعراض الفيديو على مستوى شاشة المتصفح (In-Browser Video Lightbox) -->
-    <div id="video-lightbox-modal" class="hidden fixed inset-0 z-[110] bg-[#fffbf7]/95 backdrop-blur-md flex flex-col items-center justify-center p-3 sm:p-6 md:p-10" onclick="window.closeVideoLightbox()">
-        <!-- زر إغلاق التكبير -->
-        <button onclick="window.closeVideoLightbox()" class="absolute top-4 left-4 sm:top-6 sm:left-6 z-30 bg-stone-900/80 hover:bg-stone-900 text-white w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center text-lg sm:text-xl transition shadow-xl cursor-pointer hover:scale-105" title="إغلاق التكبير">
+    <!-- نافذة تكبير واستعراض الفيديو على مستوى شاشة المتصفح (يملا شاشة المتصفح بالكامل مثل عرض الصور تماماً) -->
+    <div id="video-lightbox-modal" class="hidden fixed inset-0 z-[110] bg-[#fffbf7]/95 backdrop-blur-md flex items-center justify-center select-none" onclick="window.closeVideoLightbox()">
+        <!-- زر إغلاق التكبير (في الأعلى يسار) -->
+        <button onclick="window.closeVideoLightbox()" class="absolute top-4 left-4 sm:top-6 sm:left-6 z-30 bg-stone-900/85 hover:bg-stone-950 text-white w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center text-lg sm:text-xl transition shadow-xl cursor-pointer hover:scale-105 backdrop-blur-md border border-white/20" title="إغلاق التكبير">
             ✕
         </button>
 
-        <!-- حاوية الفيديو داخل حدود المتصفح بخلفية فاتحة تتناسب مع ألوان السجاد والصور -->
-        <div class="relative max-w-4xl max-h-[85vh] w-full h-full flex items-center justify-center rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl border border-stone-200/80 bg-stone-100" onclick="event.stopPropagation()">
+        <!-- زر كتم وفتح الصوت (في الأعلى يمين مقابل زر الإغلاق تماماً) -->
+        <button type="button" onclick="event.stopPropagation(); window.toggleLightboxVideoAudio(this)" id="lightbox-video-audio-btn" class="absolute top-4 right-4 sm:top-6 sm:right-6 z-30 bg-stone-900/85 hover:bg-stone-950 text-white w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center text-lg sm:text-xl transition shadow-xl cursor-pointer hover:scale-105 backdrop-blur-md border border-white/20" title="تشغيل الصوت">
+            <span class="lightbox-audio-icon leading-none">🔇</span>
+        </button>
+
+        <!-- حاوية الفيديو تملأ شاشة المتصفح بالكامل مثل معرض الصور تماماً -->
+        <div class="w-full h-full flex items-center justify-center p-3 sm:p-6 md:p-10 relative" onclick="event.stopPropagation()">
             <video 
                 id="lightbox-video-player"
                 playsinline
                 muted
                 loop
                 preload="auto"
-                class="max-w-full max-h-full w-auto h-auto object-contain cursor-pointer bg-stone-100"
+                class="max-w-full max-h-full w-auto h-auto object-contain rounded-2xl shadow-2xl cursor-pointer"
                 onclick="window.toggleLightboxVideoPlay()"
             ></video>
 
             <!-- زر إيقاف وتشغيل تفاعلي بالوسط -->
             <div id="lightbox-video-center-btn" onclick="window.toggleLightboxVideoPlay()" class="absolute inset-0 flex items-center justify-center pointer-events-none transition-all duration-300 opacity-0">
-                <div class="w-16 h-16 rounded-full bg-black/65 backdrop-blur-md border border-white/30 text-white flex items-center justify-center text-2xl shadow-2xl transform transition hover:scale-110 pointer-events-auto cursor-pointer" id="lightbox-video-center-icon">
+                <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-black/65 backdrop-blur-md border border-white/30 text-white flex items-center justify-center text-2xl sm:text-3xl shadow-2xl transform transition hover:scale-110 pointer-events-auto cursor-pointer" id="lightbox-video-center-icon">
                     ▶
                 </div>
             </div>
 
-            <!-- شريط تحكم سفلي مصغر ومريح للعين -->
-            <div class="absolute bottom-4 inset-x-4 flex items-center justify-between pointer-events-none z-20">
-                <!-- زر كتم وفتح الصوت -->
-                <button type="button" onclick="event.stopPropagation(); window.toggleLightboxVideoAudio(this)" id="lightbox-video-audio-btn" class="pointer-events-auto bg-black/60 hover:bg-black/85 text-white w-9 h-9 rounded-xl backdrop-blur-md border border-white/20 flex items-center justify-center transition shadow-md cursor-pointer hover:scale-105" title="تشغيل الصوت">
-                    <span class="text-sm lightbox-audio-icon leading-none">🔇</span>
-                </button>
-
-                <!-- شارة استعراض الفيديو -->
-                <span id="lightbox-video-title" class="bg-black/60 text-amber-300 text-xs font-bold px-3 py-1.5 rounded-xl backdrop-blur-md border border-amber-300/30 shadow-md">
+            <!-- عنوان/شارة السجادة أسفل الفيديو -->
+            <div class="absolute bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 pointer-events-none z-20">
+                <span id="lightbox-video-title" class="bg-stone-900/85 text-amber-200 text-xs sm:text-sm font-bold px-4 py-1.5 rounded-full backdrop-blur-md border border-amber-400/25 shadow-lg flex items-center gap-1.5">
                     🎬 استعراض السجادة
                 </span>
             </div>
