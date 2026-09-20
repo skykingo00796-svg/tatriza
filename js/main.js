@@ -12,7 +12,17 @@ import {
     openOptionsDrawer, closeOptionsDrawer
 } from './modals.js';
 
-import { isFirebaseConfigured, subscribeToCarpets, formatReadableDate, getVideoFromIndexedDB } from './firebase.js';
+import { 
+    isFirebaseConfigured, 
+    subscribeToCarpets, 
+    formatReadableDate, 
+    getVideoFromIndexedDB,
+    subscribeToCategories,
+    saveCategoryToCloud,
+    deleteCategoryFromCloud,
+    subscribeToCategorySettings,
+    saveCategorySettingsToCloud
+} from './firebase.js';
 import { initAmbient3D } from './ambient-3d.js';
 
 // مدة ظهور وسم "جديد وحصري" للمنتجات الجديدة (7 أيام)
@@ -151,8 +161,35 @@ async function loadCarpets() {
     // بصمة للبيانات المعروضة لمنع تكرار إعادة الرسم ورمش الشاشة
     let lastRenderedSignature = '';
 
-    // 1. إذا كانت سحابة Firebase مهيأة ومفعلة، نستمع للتحديثات اللحظية بذكاء
+    // 1. إذا كانت سحابة Firebase مهيأة ومفعلة، نستمع للتحديثات اللحظية للمنتجات والتصنيفات
     if (isFirebaseConfigured()) {
+        try {
+            // مزامنة فورية للتصنيفات لجميع زوار الموقع حول العالم
+            subscribeToCategories((cloudCats) => {
+                if (cloudCats && Array.isArray(cloudCats)) {
+                    saveCustomCategories(cloudCats);
+                    renderCustomCategoriesInUI();
+                    filterAndDisplayCarpets();
+                }
+            });
+
+            // مزامنة إعدادات التصنيفات وقائمة الأيقونات السريعة المخصصة
+            subscribeToCategorySettings((settings) => {
+                if (settings) {
+                    if (Array.isArray(settings.deletedDefaultCategoryIds)) {
+                        saveDeletedCategoryIds(settings.deletedDefaultCategoryIds);
+                    }
+                    if (Array.isArray(settings.customQuickIcons)) {
+                        saveCustomQuickIcons(settings.customQuickIcons);
+                    }
+                    renderCustomCategoriesInUI();
+                    renderQuickIconsUI();
+                    filterAndDisplayCarpets();
+                }
+            });
+        } catch (catSyncErr) {
+            console.warn("Category real-time sync warning:", catSyncErr);
+        }
         try {
             subscribeToCarpets((cloudCarpets) => {
                 if (cloudCarpets && cloudCarpets.length > 0) {
@@ -239,6 +276,7 @@ function displayCarpets(carpetsToDisplay) {
 
     const isAdmin = checkAdminPermission();
     renderCustomCategoriesInUI();
+    renderQuickIconsUI();
     const addCatBtn = document.getElementById('admin-add-cat-btn');
     if (addCatBtn) {
         if (isAdmin) {
@@ -859,6 +897,107 @@ export const DEFAULT_CATEGORIES = [
     { id: 'traditional', name: 'تراثي أصيل', icon: '🏛️' }
 ];
 
+// قائمة الأيقونات السريعة الافتراضية
+export const DEFAULT_QUICK_ICONS = ['✨', '🪞', '🧵', '👑', '🏛️', '🎨', '💎', '🪡'];
+
+// إدارة وحفظ الأيقونات السريعة المخصصة
+export function getCustomQuickIcons() {
+    try {
+        const stored = localStorage.getItem('tatr_custom_quick_icons');
+        return stored ? JSON.parse(stored) : [];
+    } catch(e) {
+        return [];
+    }
+}
+
+export function saveCustomQuickIcons(icons) {
+    try {
+        localStorage.setItem('tatr_custom_quick_icons', JSON.stringify(icons));
+    } catch(e) {}
+}
+
+export function getAllQuickIcons() {
+    const custom = getCustomQuickIcons();
+    const unique = [];
+    [...DEFAULT_QUICK_ICONS, ...custom].forEach(icon => {
+        if (icon && !unique.includes(icon)) {
+            unique.push(icon);
+        }
+    });
+    return unique;
+}
+
+export function renderQuickIconsUI() {
+    const container = document.getElementById('quick-icons-container');
+    if (!container) return;
+
+    const allIcons = getAllQuickIcons();
+    let html = '';
+    allIcons.forEach(icon => {
+        html += `<button type="button" onclick="setNewCatIcon('${icon}')" class="w-7 h-7 rounded-lg bg-stone-100 hover:bg-stone-200 text-sm flex items-center justify-center transition active:scale-95 shadow-2xs cursor-pointer" title="اختيار ${icon}">${icon}</button>`;
+    });
+
+    // زر إضافة أيقونة جديدة (+) في نهاية القائمة دائماً
+    html += `
+        <button type="button" id="btn-add-quick-icon" onclick="toggleAddQuickIconForm()" class="w-7 h-7 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-300 flex items-center justify-center text-xs font-black transition active:scale-95 shadow-2xs cursor-pointer" title="إضافة أيقونة جديدة من كيبورد الجوال">＋</button>
+    `;
+
+    container.innerHTML = html;
+}
+window.renderQuickIconsUI = renderQuickIconsUI;
+
+export function toggleAddQuickIconForm(forceState) {
+    const box = document.getElementById('add-quick-icon-inline');
+    if (!box) return;
+    const isHidden = box.classList.contains('hidden');
+    const show = typeof forceState === 'boolean' ? forceState : isHidden;
+    if (show) {
+        box.classList.remove('hidden');
+        const input = document.getElementById('new-custom-emoji-input');
+        if (input) {
+            input.value = '';
+            input.focus();
+        }
+    } else {
+        box.classList.add('hidden');
+    }
+}
+window.toggleAddQuickIconForm = toggleAddQuickIconForm;
+
+export function confirmAddQuickIcon() {
+    const input = document.getElementById('new-custom-emoji-input');
+    if (!input || !input.value.trim()) {
+        if (window.showToast) {
+            window.showToast('يرجى كتابة أو لصق إيموجي من الكيبورد أولاً.', 'warning', 'الأيقونات السريعة');
+        } else {
+            alert('يرجى إدخال إيموجي من الكيبورد.');
+        }
+        return;
+    }
+
+    const emoji = input.value.trim();
+    const customIcons = getCustomQuickIcons();
+    if (!customIcons.includes(emoji)) {
+        customIcons.push(emoji);
+        saveCustomQuickIcons(customIcons);
+
+        // حفظ سحابي في إعدادات المعرض ليكون متاحاً دائماً لكافة الأجهزة
+        saveCategorySettingsToCloud({
+            deletedDefaultCategoryIds: getDeletedCategoryIds(),
+            customQuickIcons: customIcons
+        });
+    }
+
+    setNewCatIcon(emoji);
+    renderQuickIconsUI();
+    toggleAddQuickIconForm(false);
+
+    if (window.showToast) {
+        window.showToast(`تم حفظ وتثبيت الأيقونة (${emoji}) بنجاح كأيقونة سريعة دائمة!`, 'success', 'الأيقونات السريعة');
+    }
+}
+window.confirmAddQuickIcon = confirmAddQuickIcon;
+
 export function getDeletedCategoryIds() {
     try {
         const stored = localStorage.getItem('tatr_deleted_categories');
@@ -898,10 +1037,14 @@ window.getActiveCategories = getActiveCategories;
 export function restoreDefaultCategories() {
     if (!checkAdminPermission()) return;
     saveDeletedCategoryIds([]);
+    saveCategorySettingsToCloud({
+        deletedDefaultCategoryIds: [],
+        customQuickIcons: getCustomQuickIcons()
+    });
     renderCustomCategoriesInUI();
     openAddCategoryModal();
     if (window.showToast) {
-        window.showToast('تم استعادة التصنيفات الافتراضية بنجاح.', 'success', 'إدارة التصنيفات');
+        window.showToast('تم استعادة التصنيفات الافتراضية بنجاح ومزامنتها سحابياً.', 'success', 'إدارة التصنيفات');
     }
 }
 window.restoreDefaultCategories = restoreDefaultCategories;
@@ -1080,6 +1223,10 @@ export function openAddCategoryModal() {
         listEl.innerHTML = html;
     }
     
+    // تحديث وتجهيز الأيقونات السريعة وإخفاء نموذج الإضافة السريع
+    renderQuickIconsUI();
+    toggleAddQuickIconForm(false);
+
     modal.classList.remove('hidden');
     const input = document.getElementById('new-cat-name');
     if (input) {
@@ -1113,9 +1260,13 @@ export function submitNewCategory(e) {
     const icon = iconInput && iconInput.value.trim() ? iconInput.value.trim() : '✨';
     const id = 'cat_' + Date.now().toString(36);
 
+    const newCat = { id, name, icon };
     const customCats = getCustomCategories();
-    customCats.push({ id, name, icon });
+    customCats.push(newCat);
     saveCustomCategories(customCats);
+
+    // حفظ ونشر فوري في سحابة Firebase ليظهر لكافة الزوار حول العالم
+    saveCategoryToCloud(newCat);
 
     closeAddCategoryModal();
     if (window.showToast) {
@@ -1154,12 +1305,19 @@ export function deleteCategoryPrompt(id, name) {
     if (customCats.some(c => c.id === id)) {
         customCats = customCats.filter(c => c.id !== id);
         saveCustomCategories(customCats);
+        // حذف من سحابة Firebase لمزامنته عالمياً
+        deleteCategoryFromCloud(id);
     } else {
         // إذا كان من التصنيفات الافتراضية
         const deleted = getDeletedCategoryIds();
         if (!deleted.includes(id)) {
             deleted.push(id);
             saveDeletedCategoryIds(deleted);
+            // حفظ إعدادات الحذف سحابياً
+            saveCategorySettingsToCloud({
+                deletedDefaultCategoryIds: deleted,
+                customQuickIcons: getCustomQuickIcons()
+            });
         }
     }
 

@@ -604,3 +604,100 @@ export function exportCarpetsBackup(carpetsList) {
     downloadAnchor.click();
     downloadAnchor.remove();
 }
+
+// ==========================================
+// دوال إدارة ومزامنة التصنيفات في سحابة Cloud Firestore
+// دار تطريز TATRIZA
+// ==========================================
+
+export function subscribeToCategories(onSuccess, onError) {
+    const { db, isReady } = initFirebaseServices();
+    if (!isReady || !db) {
+        if (onError) onError(new Error("Firebase is not configured yet."));
+        return () => {};
+    }
+
+    try {
+        const categoriesCol = collection(db, "categories");
+        return onSnapshot(categoriesCol, (snapshot) => {
+            const categories = [];
+            snapshot.forEach((docSnap) => {
+                categories.push({
+                    id: docSnap.id,
+                    ...docSnap.data()
+                });
+            });
+            categories.sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0));
+            onSuccess(categories);
+        }, (err) => {
+            console.warn("Firestore categories snapshot error, trying fallback fetch:", err);
+            getDocs(categoriesCol).then((fallbackSnap) => {
+                const categories = [];
+                fallbackSnap.forEach((docSnap) => {
+                    categories.push({ id: docSnap.id, ...docSnap.data() });
+                });
+                categories.sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0));
+                onSuccess(categories);
+            }).catch((fallbackErr) => {
+                if (onError) onError(fallbackErr);
+            });
+        });
+    } catch (e) {
+        if (onError) onError(e);
+        return () => {};
+    }
+}
+
+export async function saveCategoryToCloud(catObj) {
+    const { db, isReady } = initFirebaseServices();
+    if (!isReady || !db) return;
+    try {
+        const catRef = doc(db, "categories", catObj.id);
+        await setDoc(catRef, {
+            ...catObj,
+            updatedAt: Date.now()
+        }, { merge: true });
+    } catch (e) {
+        console.warn("Could not save category to Firestore:", e);
+    }
+}
+
+export async function deleteCategoryFromCloud(catId) {
+    const { db, isReady } = initFirebaseServices();
+    if (!isReady || !db) return;
+    try {
+        const catRef = doc(db, "categories", catId);
+        await deleteDoc(catRef);
+    } catch (e) {
+        console.warn("Could not delete category from Firestore:", e);
+    }
+}
+
+export function subscribeToCategorySettings(onSuccess) {
+    const { db, isReady } = initFirebaseServices();
+    if (!isReady || !db) return () => {};
+    try {
+        const settingsRef = doc(db, "settings", "categories");
+        return onSnapshot(settingsRef, (snap) => {
+            if (snap.exists()) {
+                onSuccess(snap.data());
+            }
+        }, (err) => console.warn("Category settings sync error:", err));
+    } catch (e) {
+        return () => {};
+    }
+}
+
+export async function saveCategorySettingsToCloud(settingsObj) {
+    const { db, isReady } = initFirebaseServices();
+    if (!isReady || !db) return;
+    try {
+        const settingsRef = doc(db, "settings", "categories");
+        await setDoc(settingsRef, {
+            ...settingsObj,
+            updatedAt: Date.now()
+        }, { merge: true });
+    } catch (e) {
+        console.warn("Could not save category settings to Firestore:", e);
+    }
+}
