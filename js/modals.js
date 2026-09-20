@@ -173,19 +173,19 @@ export function openModal(carpetId, allCarpets) {
         const images = carpet.images && carpet.images.length > 0 ? carpet.images : [carpet.image || 'https://placehold.co/800x600/7c1d3c/ffffff?text=Tatriza'];
         modalImagesContainer.innerHTML = '';
         
-        // 1. الشريحة الأولى: صورة الغلاف الرئيسية بحجم منضبط وتناسب تام
+        // 1. الشريحة الأولى: صورة الغلاف الرئيسية بخلفية بيضاء نقية وبحجم منضبط ومحكم
         modalImagesContainer.innerHTML += `
-            <div class="min-w-full w-full h-full shrink-0 snap-center flex items-center justify-center overflow-hidden bg-stone-950">
-                <img src="${images[0]}" class="max-w-full max-h-[50vh] sm:max-h-[55vh] md:max-h-[75vh] w-auto h-auto object-contain cursor-pointer" onclick="window.openLightboxFromModalExternal('${carpet.id}', 0)" alt="${carpet.title}">
+            <div class="min-w-full w-full h-full shrink-0 snap-center flex items-center justify-center overflow-hidden bg-white p-2 sm:p-3 select-none">
+                <img src="${images[0]}" class="max-w-full max-h-full w-auto h-auto object-contain mx-auto block cursor-pointer bg-white" onclick="window.openLightboxFromModalExternal('${carpet.id}', 0)" alt="${carpet.title}">
             </div>
         `;
 
-        // 2. الشريحة الثانية: الفيديو الاستعراضي الحي يوضح كاملاً في الكارد دون أي اقتطاع
+        // 2. الشريحة الثانية: الفيديو الاستعراضي الحي بخلفية بيضاء وبحجم يظهر كاملاً تماماً عمودياً وأفقياً مثل البطاقة الرئيسية
         let hasVideo = Boolean(carpet.video);
         const initialVideoSrc = (carpet.video && !carpet.video.startsWith('idb://')) ? carpet.video : '';
         if (hasVideo) {
             modalImagesContainer.innerHTML += `
-                <div class="relative min-w-full w-full h-full shrink-0 snap-center bg-stone-950 flex items-center justify-center overflow-hidden select-none group/videoplayer" id="modal-video-slide">
+                <div class="relative min-w-full w-full h-full shrink-0 snap-center bg-white flex items-center justify-center overflow-hidden select-none group/videoplayer p-2 sm:p-3" id="modal-video-slide">
                     <video 
                         id="modal-product-video" 
                         src="${initialVideoSrc}" 
@@ -194,7 +194,7 @@ export function openModal(carpetId, allCarpets) {
                         loop 
                         autoplay 
                         preload="auto"
-                        class="max-w-full max-h-[50vh] sm:max-h-[55vh] md:max-h-[75vh] w-auto h-auto object-contain mx-auto block cursor-pointer"
+                        class="max-w-full max-h-full w-auto h-auto object-contain mx-auto block cursor-pointer bg-white"
                         onclick="window.toggleProductVideoPlay(this)"
                     ></video>
                     
@@ -204,7 +204,7 @@ export function openModal(carpetId, allCarpets) {
                         onclick="window.toggleProductVideoPlay(document.getElementById('modal-product-video'))" 
                         class="absolute inset-0 flex items-center justify-center pointer-events-none transition-all duration-300 opacity-0"
                     >
-                        <div class="w-16 h-16 rounded-full bg-black/65 backdrop-blur-md border border-white/30 text-white flex items-center justify-center text-2xl shadow-2xl transform transition hover:scale-110 pointer-events-auto cursor-pointer" id="modal-video-center-icon">
+                        <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-black/65 backdrop-blur-md border border-white/30 text-white flex items-center justify-center text-xl sm:text-2xl shadow-2xl transform transition hover:scale-110 pointer-events-auto cursor-pointer" id="modal-video-center-icon">
                             ▶
                         </div>
                     </div>
@@ -212,11 +212,11 @@ export function openModal(carpetId, allCarpets) {
             `;
         }
 
-        // 3. باقي الصور إن وجدت
+        // 3. باقي الصور إن وجدت بخلفية بيضاء نقية
         for (let i = 1; i < images.length; i++) {
             modalImagesContainer.innerHTML += `
-                <div class="min-w-full w-full h-full shrink-0 snap-center flex items-center justify-center overflow-hidden bg-stone-950">
-                    <img src="${images[i]}" class="max-w-full max-h-[50vh] sm:max-h-[55vh] md:max-h-[75vh] w-auto h-auto object-contain cursor-pointer" onclick="window.openLightboxFromModalExternal('${carpet.id}', ${i})" alt="${carpet.title}">
+                <div class="min-w-full w-full h-full shrink-0 snap-center flex items-center justify-center overflow-hidden bg-white p-2 sm:p-3 select-none">
+                    <img src="${images[i]}" class="max-w-full max-h-full w-auto h-auto object-contain mx-auto block cursor-pointer bg-white" onclick="window.openLightboxFromModalExternal('${carpet.id}', ${i})" alt="${carpet.title}">
                 </div>
             `;
         }
