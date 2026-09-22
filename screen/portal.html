@@ -1015,14 +1015,14 @@
             </div>
 
             <!-- قائمة الخيارات والأدوات الإدارية -->
-            <div class="p-4 sm:p-5 overflow-y-auto space-y-2.5 flex-1">
+            <div class="p-3.5 sm:p-5 overflow-y-auto space-y-2.5 flex-1">
                 <!-- 1. إضافة سجادة جديدة -->
                 <button type="button" onclick="closeOptionsDrawer(); openAddModal();" class="drawer-lux-card group w-full text-right cursor-pointer">
-                    <div class="flex items-center gap-3 min-w-0 flex-1">
+                    <div class="flex items-center gap-2.5 sm:gap-3 min-w-0 flex-1">
                         <div class="drawer-icon-orb bg-amber-50 text-amber-800 border-amber-300/60 shrink-0">＋</div>
-                        <div class="flex flex-col min-w-0 flex-1">
-                            <span class="font-display text-xs sm:text-sm font-black text-stone-900 group-hover:text-brand transition">إضافة سجادة جديدة</span>
-                            <span class="text-[10px] text-stone-500 font-medium">رفع الصور والفيديو وتحديد الأبعاد والسعر</span>
+                        <div class="flex flex-col text-right min-w-0 flex-1 overflow-hidden">
+                            <span class="font-display text-[11.5px] sm:text-xs md:text-sm font-black text-stone-900 group-hover:text-brand transition whitespace-nowrap truncate block">إضافة سجادة جديدة</span>
+                            <span class="text-[9px] sm:text-[9.5px] md:text-[10px] text-stone-500 font-medium whitespace-nowrap truncate block mt-1">رفع الصور والفيديو وتحديد الأبعاد والسعر</span>
                         </div>
                     </div>
                     <div class="drawer-action-arrow">&gt;</div>
@@ -1030,11 +1030,11 @@
 
                 <!-- 2. إدارة وتخصيص التصنيفات -->
                 <button type="button" onclick="closeOptionsDrawer(); openAddCategoryModal();" class="drawer-lux-card group w-full text-right cursor-pointer">
-                    <div class="flex items-center gap-3 min-w-0 flex-1">
+                    <div class="flex items-center gap-2.5 sm:gap-3 min-w-0 flex-1">
                         <div class="drawer-icon-orb bg-emerald-50 text-emerald-800 border-emerald-300/60 shrink-0">📁</div>
-                        <div class="flex flex-col min-w-0 flex-1">
-                            <span class="font-display text-xs sm:text-sm font-black text-stone-900 group-hover:text-emerald-700 transition">إدارة وتخصيص التصنيفات</span>
-                            <span class="text-[10px] text-stone-500 font-medium">تخصيص الأقسام، رموز الكود (SKU)، والأيقونات</span>
+                        <div class="flex flex-col text-right min-w-0 flex-1 overflow-hidden">
+                            <span class="font-display text-[11.5px] sm:text-xs md:text-sm font-black text-stone-900 group-hover:text-emerald-700 transition whitespace-nowrap truncate block">إدارة وتخصيص التصنيفات</span>
+                            <span class="text-[9px] sm:text-[9.5px] md:text-[10px] text-stone-500 font-medium whitespace-nowrap truncate block mt-1">تخصيص الأقسام ورموز الكود والأيقونات</span>
                         </div>
                     </div>
                     <div class="drawer-action-arrow">&gt;</div>
@@ -1042,11 +1042,11 @@
 
                 <!-- 3. تعديل النمط / الثيم -->
                 <button type="button" onclick="closeOptionsDrawer(); openThemeModal();" class="drawer-lux-card group w-full text-right cursor-pointer">
-                    <div class="flex items-center gap-3 min-w-0 flex-1">
+                    <div class="flex items-center gap-2.5 sm:gap-3 min-w-0 flex-1">
                         <div class="drawer-icon-orb bg-indigo-50 text-indigo-800 border-indigo-300/60 shrink-0">🎨</div>
-                        <div class="flex flex-col min-w-0 flex-1">
-                            <span class="font-display text-xs sm:text-sm font-black text-stone-900 group-hover:text-indigo-700 transition">تعديل النمط والثيم الملكي</span>
-                            <span class="text-[10px] text-stone-500 font-medium">تخصيص ألوان الهوية والشعار (عنابي، زيتي، كحلي)</span>
+                        <div class="flex flex-col text-right min-w-0 flex-1 overflow-hidden">
+                            <span class="font-display text-[11.5px] sm:text-xs md:text-sm font-black text-stone-900 group-hover:text-indigo-700 transition whitespace-nowrap truncate block">تعديل النمط والثيم الملكي</span>
+                            <span class="text-[9px] sm:text-[9.5px] md:text-[10px] text-stone-500 font-medium whitespace-nowrap truncate block mt-1">تخصيص ألوان الهوية والشعار الملكي</span>
                         </div>
                     </div>
                     <div class="drawer-action-arrow">&gt;</div>
@@ -1054,11 +1054,11 @@
 
                 <!-- 4. تصدير نسخة احتياطية -->
                 <button type="button" onclick="closeOptionsDrawer(); portalExportBackup();" class="drawer-lux-card group w-full text-right cursor-pointer">
-                    <div class="flex items-center gap-3 min-w-0 flex-1">
+                    <div class="flex items-center gap-2.5 sm:gap-3 min-w-0 flex-1">
                         <div class="drawer-icon-orb bg-stone-100 text-stone-800 border-stone-300 shrink-0">📦</div>
-                        <div class="flex flex-col min-w-0 flex-1">
-                            <span class="font-display text-xs sm:text-sm font-black text-stone-900 group-hover:text-stone-800 transition">تصدير نسخة احتياطية (JSON)</span>
-                            <span class="text-[10px] text-stone-500 font-medium">تنزيل ملف بيانات آمن لجميع معروضات السجاد</span>
+                        <div class="flex flex-col text-right min-w-0 flex-1 overflow-hidden">
+                            <span class="font-display text-[11.5px] sm:text-xs md:text-sm font-black text-stone-900 group-hover:text-stone-800 transition whitespace-nowrap truncate block">تصدير نسخة احتياطية (JSON)</span>
+                            <span class="text-[9px] sm:text-[9.5px] md:text-[10px] text-stone-500 font-medium whitespace-nowrap truncate block mt-1">تنزيل ملف آمن لكافة معروضات السجاد</span>
                         </div>
                     </div>
                     <div class="drawer-action-arrow">&gt;</div>
@@ -1066,11 +1066,11 @@
 
                 <!-- 5. إعدادات سحابة Firebase -->
                 <button type="button" onclick="closeOptionsDrawer(); openFirebaseConfigModal();" class="drawer-lux-card group w-full text-right cursor-pointer">
-                    <div class="flex items-center gap-3 min-w-0 flex-1">
+                    <div class="flex items-center gap-2.5 sm:gap-3 min-w-0 flex-1">
                         <div class="drawer-icon-orb bg-orange-50 text-orange-800 border-orange-300/60 shrink-0">🔥</div>
-                        <div class="flex flex-col min-w-0 flex-1">
-                            <span class="font-display text-xs sm:text-sm font-black text-stone-900 group-hover:text-orange-700 transition">إعدادات سحابة Firebase</span>
-                            <span class="text-[10px] text-stone-500 font-medium">مفاتيح الربط وتخزين الصور السحابي</span>
+                        <div class="flex flex-col text-right min-w-0 flex-1 overflow-hidden">
+                            <span class="font-display text-[11.5px] sm:text-xs md:text-sm font-black text-stone-900 group-hover:text-orange-700 transition whitespace-nowrap truncate block">إعدادات سحابة Firebase</span>
+                            <span class="text-[9px] sm:text-[9.5px] md:text-[10px] text-stone-500 font-medium whitespace-nowrap truncate block mt-1">مفاتيح الربط وتخزين الصور السحابي</span>
                         </div>
                     </div>
                     <div class="drawer-action-arrow">&gt;</div>
@@ -1078,11 +1078,11 @@
 
                 <!-- 6. معاينة المعرض كزائر -->
                 <a href="index.html" target="_blank" class="drawer-lux-card group w-full text-right cursor-pointer">
-                    <div class="flex items-center gap-3 min-w-0 flex-1">
+                    <div class="flex items-center gap-2.5 sm:gap-3 min-w-0 flex-1">
                         <div class="drawer-icon-orb bg-blue-50 text-blue-800 border-blue-300/60 shrink-0">🌐</div>
-                        <div class="flex flex-col min-w-0 flex-1">
-                            <span class="font-display text-xs sm:text-sm font-black text-stone-900 group-hover:text-blue-700 transition">معاينة المتجر كزائر</span>
-                            <span class="text-[10px] text-stone-500 font-medium">فتح واجهة المعرض في تبويب جديد</span>
+                        <div class="flex flex-col text-right min-w-0 flex-1 overflow-hidden">
+                            <span class="font-display text-[11.5px] sm:text-xs md:text-sm font-black text-stone-900 group-hover:text-blue-700 transition whitespace-nowrap truncate block">معاينة المتجر كزائر</span>
+                            <span class="text-[9px] sm:text-[9.5px] md:text-[10px] text-stone-500 font-medium whitespace-nowrap truncate block mt-1">فتح واجهة المعرض العام في تبويب جديد</span>
                         </div>
                     </div>
                     <div class="drawer-action-arrow">&gt;</div>
@@ -1090,11 +1090,11 @@
 
                 <!-- 7. تسجيل الخروج -->
                 <button type="button" onclick="closeOptionsDrawer(); executePortalLogout();" class="drawer-lux-card group w-full text-right cursor-pointer mt-4 border-rose-200 hover:border-rose-400 bg-rose-50/60">
-                    <div class="flex items-center gap-3 min-w-0 flex-1">
+                    <div class="flex items-center gap-2.5 sm:gap-3 min-w-0 flex-1">
                         <div class="drawer-icon-orb bg-rose-100 text-rose-800 border-rose-300 shrink-0">🚪</div>
-                        <div class="flex flex-col min-w-0 flex-1">
-                            <span class="font-display text-xs sm:text-sm font-black text-rose-800 transition">تسجيل الخروج من الإدارة</span>
-                            <span class="text-[10px] text-rose-600 font-medium">إنهاء الجلسة وقفل بوابة المسؤول فوراً</span>
+                        <div class="flex flex-col text-right min-w-0 flex-1 overflow-hidden">
+                            <span class="font-display text-[11.5px] sm:text-xs md:text-sm font-black text-rose-800 transition whitespace-nowrap truncate block">تسجيل الخروج من الإدارة</span>
+                            <span class="text-[9px] sm:text-[9.5px] md:text-[10px] text-rose-600 font-medium whitespace-nowrap truncate block mt-1">إنهاء الجلسة وقفل بوابة المسؤول فوراً</span>
                         </div>
                     </div>
                     <div class="drawer-action-arrow">&gt;</div>
