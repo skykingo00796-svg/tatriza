@@ -599,19 +599,19 @@ function renderPortalProductsTable() {
                             <span class="font-display text-xs sm:text-sm md:text-base font-black text-brand leading-none">${Number(c.price || 0).toLocaleString()}</span>
                             <span class="font-display text-brand text-[7.5px] sm:text-[8.5px] md:text-[9.5px] font-bold leading-none">ر.ع.</span>
                         </div>
-                        <button type="button" onclick="event.stopPropagation(); window.portalOpenProductModal('${c.id}')" class="btn-liquid-metal font-display text-white text-[8px] sm:text-[9px] md:text-[9.5px] font-bold h-6 sm:h-6.5 px-2 sm:px-2.5 rounded-lg transition shadow-2xs cursor-pointer whitespace-nowrap shrink-0 inline-flex items-center justify-center gap-1 leading-none" title="معاينة بكامل الشاشة">
-                            <span>👁️</span>
-                            <span>معاينة</span>
+                        <button type="button" onclick="event.stopPropagation(); window.portalOpenProductModal('${c.id}')" class="btn-liquid-metal font-display text-white text-[8px] sm:text-[9px] md:text-[9.5px] font-bold h-7 sm:h-7.5 w-[58px] sm:w-[66px] shrink-0 rounded-lg transition shadow-2xs cursor-pointer whitespace-nowrap inline-flex items-center justify-center gap-1 leading-none select-none" title="معاينة بكامل الشاشة">
+                            <span class="text-[9px]">👁️</span>
+                            <span class="truncate">معاينة</span>
                         </button>
                     </div>
 
-                    <!-- شريط أدوات المسؤول: 70% زر التعديل و 30% زر الحذف ومحاذاة متقنة -->
+                    <!-- شريط أدوات المسؤول: زر الحذف بنفس حجم زر المعاينة تماماً والتعديل يأخذ باقي المساحة -->
                     <div class="pt-1.5 border-t border-stone-200/70 flex items-center gap-1.5">
-                        <button type="button" onclick="event.stopPropagation(); window.portalOpenEdit('${c.id}')" style="flex: 7 1 0%; min-width: 0;" class="h-7 sm:h-7.5 bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200/80 font-bold rounded-lg transition inline-flex items-center justify-center gap-1 cursor-pointer shadow-2xs text-[8.5px] sm:text-[9.5px] leading-none select-none" title="تعديل بيانات السجادة">
+                        <button type="button" onclick="event.stopPropagation(); window.portalOpenEdit('${c.id}')" class="h-7 sm:h-7.5 flex-1 min-w-0 bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200/80 font-bold rounded-lg transition inline-flex items-center justify-center gap-1 cursor-pointer shadow-2xs text-[8.5px] sm:text-[9.5px] leading-none select-none" title="تعديل بيانات السجادة">
                             <span class="text-[9px] shrink-0">✏️</span>
                             <span class="truncate">تعديل</span>
                         </button>
-                        <button type="button" onclick="event.stopPropagation(); window.portalDeleteCarpet('${c.id}')" style="flex: 3 1 0%; min-width: 0;" class="h-7 sm:h-7.5 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200/80 font-bold rounded-lg transition inline-flex items-center justify-center gap-1 cursor-pointer shadow-2xs text-[8.5px] sm:text-[9.5px] leading-none select-none" title="حذف السجادة نهائياً">
+                        <button type="button" onclick="event.stopPropagation(); window.portalDeleteCarpet('${c.id}')" class="h-7 sm:h-7.5 w-[58px] sm:w-[66px] shrink-0 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200/80 font-bold rounded-lg transition inline-flex items-center justify-center gap-1 cursor-pointer shadow-2xs text-[8.5px] sm:text-[9.5px] leading-none select-none" title="حذف السجادة نهائياً">
                             <span class="text-[9px] shrink-0">🗑️</span>
                             <span class="truncate">حذف</span>
                         </button>

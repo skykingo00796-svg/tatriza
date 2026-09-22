@@ -261,16 +261,33 @@
                         <span class="absolute left-3 top-1/2 -translate-y-1/2 text-stone-400 text-xs pointer-events-none">🔍</span>
                     </div>
 
-                    <!-- قوائم اختيار التصنيف والحالة متجاورة في سطر واحد -->
+                    <!-- قوائم اختيار التصنيف والحالة متجاورة بأسهم متباعدة وبادينج مريح من اليسار -->
                     <div class="grid grid-cols-2 sm:flex sm:items-center gap-2 shrink-0">
-                        <select id="portal-filter-category" onchange="handlePortalCategoryFilter(this.value)" class="w-full sm:w-40 h-10 sm:h-11 bg-white border border-stone-300/90 rounded-xl px-3 text-xs text-stone-800 outline-none cursor-pointer shadow-2xs transition">
-                            <option value="all">جميع التصنيفات</option>
-                        </select>
-                        <select onchange="handlePortalStockFilter(this.value)" class="w-full sm:w-32 h-10 sm:h-11 bg-white border border-stone-300/90 rounded-xl px-3 text-xs text-stone-800 outline-none cursor-pointer shadow-2xs transition">
-                            <option value="all">جميع الحالات</option>
-                            <option value="available">متوفرة فقط</option>
-                            <option value="out_of_stock">نفدت فقط</option>
-                        </select>
+                        <!-- قائمة التصنيفات -->
+                        <div class="relative w-full sm:w-44">
+                            <select id="portal-filter-category" onchange="handlePortalCategoryFilter(this.value)" class="portal-filter-select appearance-none w-full h-10 sm:h-11 bg-white border border-stone-300/90 rounded-xl pr-3 sm:pr-3.5 pl-8 sm:pl-9 text-xs text-stone-800 outline-none focus:border-brand cursor-pointer shadow-2xs transition">
+                                <option value="all">جميع التصنيفات</option>
+                            </select>
+                            <div class="absolute inset-y-0 left-0 pl-3 sm:pl-3.5 flex items-center pointer-events-none text-stone-400">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/>
+                                </svg>
+                            </div>
+                        </div>
+
+                        <!-- قائمة الحالات -->
+                        <div class="relative w-full sm:w-36">
+                            <select onchange="handlePortalStockFilter(this.value)" class="portal-filter-select appearance-none w-full h-10 sm:h-11 bg-white border border-stone-300/90 rounded-xl pr-3 sm:pr-3.5 pl-8 sm:pl-9 text-xs text-stone-800 outline-none focus:border-brand cursor-pointer shadow-2xs transition">
+                                <option value="all">جميع الحالات</option>
+                                <option value="available">متوفرة فقط</option>
+                                <option value="out_of_stock">نفدت فقط</option>
+                            </select>
+                            <div class="absolute inset-y-0 left-0 pl-3 sm:pl-3.5 flex items-center pointer-events-none text-stone-400">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/>
+                                </svg>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
