@@ -1976,3 +1976,12 @@ button[type="submit"]:active {
         font-size: 0.6rem !important;
     }
 }
+
+/* وضوح وتغميق نصوص أزرار التعديل والحذف (Bold Typography for Action Buttons) */
+.card-btn-edit,
+.card-btn-delete,
+.card-btn-edit span,
+.card-btn-delete span {
+    font-weight: 800 !important;
+    letter-spacing: 0.015em;
+}
