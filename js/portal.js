@@ -40,7 +40,28 @@ import {
     checkAdminPermission
 } from './admin.js';
 
-import { showToast } from './modals.js';
+import { 
+    openOptionsDrawer, 
+    closeOptionsDrawer, 
+    openModal, 
+    closeModal, 
+    handleModalScroll, 
+    openLightboxFromModal, 
+    openCurrentLogoLightbox, 
+    closeLightbox, 
+    handleLightboxScroll, 
+    showToast 
+} from './modals.js';
+
+import { 
+    initTheme, 
+    openThemeModal, 
+    closeThemeModal, 
+    selectThemeOption, 
+    applyTheme 
+} from './theme.js';
+
+import { getVideoFromIndexedDB } from './firebase-public.js';
 
 // حالة لوحة الإدارة
 let currentPortalUser = null;
@@ -132,6 +153,104 @@ export function getActiveCategories() {
     return [...activeDefaults, ...custom];
 }
 
+
+// ==========================================
+// إدارة جلسة المسؤول وأمان وقت الخمول (Session Inactivity Timeout)
+// ==========================================
+const ADMIN_MAX_IDLE_TIME = 60 * 60 * 1000; // 60 دقيقة (ساعة واحدة) خمول كحد أقصى
+const ADMIN_MAX_TOTAL_TIME = 120 * 60 * 1000; // ساعتان كحد أقصى للجلسة المتواصلة
+
+let lastActivityTimestamp = Date.now();
+let sessionCheckInterval = null;
+
+export function recordAdminActivity() {
+    lastActivityTimestamp = Date.now();
+    try {
+        localStorage.setItem('tatr_admin_last_activity', lastActivityTimestamp.toString());
+    } catch(e) {}
+}
+
+function initAdminActivityListeners() {
+    const events = ['mousemove', 'mousedown', 'keydown', 'touchstart', 'scroll'];
+    let throttleTimer = null;
+    
+    events.forEach(evt => {
+        window.addEventListener(evt, () => {
+            if (!throttleTimer) {
+                recordAdminActivity();
+                throttleTimer = setTimeout(() => { throttleTimer = null; }, 10000); // تحديث كل 10 ثوان كحد أقصى
+            }
+        }, { passive: true });
+    });
+}
+
+function startAdminSessionWatcher() {
+    if (sessionCheckInterval) clearInterval(sessionCheckInterval);
+    
+    // حفظ وقت بداية الجلسة إن لم يكن موجوداً
+    if (!sessionStorage.getItem('tatr_admin_session_start')) {
+        sessionStorage.setItem('tatr_admin_session_start', Date.now().toString());
+    }
+    recordAdminActivity();
+
+    sessionCheckInterval = setInterval(() => {
+        checkAdminSessionExpiration();
+    }, 20000); // فحص دوري كل 20 ثانية
+}
+
+function stopAdminSessionWatcher() {
+    if (sessionCheckInterval) {
+        clearInterval(sessionCheckInterval);
+        sessionCheckInterval = null;
+    }
+    sessionStorage.removeItem('tatr_admin_session_start');
+    localStorage.removeItem('tatr_admin_last_activity');
+}
+
+function checkAdminSessionExpiration() {
+    if (!currentPortalUser) return false;
+
+    const now = Date.now();
+    const storedLast = localStorage.getItem('tatr_admin_last_activity');
+    const storedStart = sessionStorage.getItem('tatr_admin_session_start');
+
+    const lastActivity = parseInt(storedLast || lastActivityTimestamp.toString(), 10);
+    const sessionStart = parseInt(storedStart || now.toString(), 10);
+
+    const idleElapsed = now - lastActivity;
+    const totalElapsed = now - sessionStart;
+
+    if (idleElapsed > ADMIN_MAX_IDLE_TIME) {
+        console.warn("Admin session expired due to inactivity (>60m)");
+        handleSessionTimeout("انتهت جلسة الإدارة بسبب عدم النشاط (ساعة واحدة). تم قفل البوابة وتسجيل الخروج تلقائياً لأمان المعرض.");
+        return true;
+    }
+
+    if (totalElapsed > ADMIN_MAX_TOTAL_TIME) {
+        console.warn("Admin session reached max duration (>2h)");
+        handleSessionTimeout("انتهت المدة القصوى لجلسة الإدارة (ساعتان). تم قفل البوابة وتسجيل الخروج تلقائياً لحماية حسابك.");
+        return true;
+    }
+
+    return false;
+}
+
+async function handleSessionTimeout(message) {
+    stopAdminSessionWatcher();
+    try {
+        await adminLogoutFromCloud();
+    } catch(e) {}
+    
+    if (typeof closeOptionsDrawer === 'function') closeOptionsDrawer();
+    if (typeof closeModal === 'function') closeModal();
+    if (typeof closeLightbox === 'function') closeLightbox();
+    if (typeof window.closeVideoLightbox === 'function') window.closeVideoLightbox();
+
+    updatePortalAuthUI(null);
+    showToast(message, "warning", "انتهاء صلاحية الجلسة", 6000);
+}
+
+
 // ==========================================
 // إدارة جلسة الأدمن وتحديث الواجهة
 // ==========================================
@@ -140,19 +259,40 @@ function updatePortalAuthUI(user) {
     const loginGate = document.getElementById('portal-login-gate');
     const dashboard = document.getElementById('portal-dashboard');
     const userEmailEl = document.getElementById('portal-user-email');
+    const drawerEmailEl = document.getElementById('drawer-portal-user-email');
 
     if (user && user.uid) {
+        // فحص هل انتهت مدة الجلسة السابقة أثناء غياب المستخدم
+        const now = Date.now();
+        const storedLast = localStorage.getItem('tatr_admin_last_activity');
+        if (storedLast && (now - parseInt(storedLast, 10) > ADMIN_MAX_IDLE_TIME)) {
+            console.warn("Session expired while away");
+            stopAdminSessionWatcher();
+            adminLogoutFromCloud().catch(() => {});
+            if (loginGate) loginGate.classList.remove('hidden');
+            if (dashboard) dashboard.classList.add('hidden');
+            showToast("انتهت جلسة المسؤول السابقة لعدم النشاط. يرجى تسجيل الدخول مجدداً.", "info", "انتهت الجلسة", 5000);
+            return;
+        }
+
         if (loginGate) loginGate.classList.add('hidden');
         if (dashboard) dashboard.classList.remove('hidden');
         if (userEmailEl) userEmailEl.innerText = user.email || 'مسؤول معتمد';
+        if (drawerEmailEl) drawerEmailEl.innerText = user.email || 'admin@tatriza.com';
         
+        // بدء مراقبة الجلسة والنشاط
+        startAdminSessionWatcher();
+
         // تحميل المعروضات والتصنيفات
         initPortalSubscriptions();
     } else {
+        stopAdminSessionWatcher();
         if (loginGate) loginGate.classList.remove('hidden');
         if (dashboard) dashboard.classList.add('hidden');
+        if (drawerEmailEl) drawerEmailEl.innerText = 'admin';
     }
 }
+
 
 // معالج تسجيل الدخول
 export async function executePortalLogin(e) {
@@ -203,11 +343,13 @@ export async function executePortalLogin(e) {
 window.executePortalLogin = executePortalLogin;
 
 export async function executePortalLogout() {
+    stopAdminSessionWatcher();
     try {
         await adminLogoutFromCloud();
     } catch (e) {
         console.warn("Portal logout error:", e);
     }
+    if (typeof closeOptionsDrawer === 'function') closeOptionsDrawer();
     showToast("تم تسجيل الخروج من لوحة الإدارة بنجاح.", "info", "تسجيل الخروج", 2000);
     updatePortalAuthUI(null);
 }
@@ -289,8 +431,66 @@ function renderPortalStats() {
     if (categoriesEl) categoriesEl.innerText = totalCats;
 }
 
+
+let currentPreviewCarpetId = null;
+
+export function portalOpenProductModal(carpetId) {
+    currentPreviewCarpetId = carpetId;
+    openModal(carpetId, allPortalCarpets);
+
+    const carpet = allPortalCarpets.find(c => c.id === carpetId);
+    if (!carpet) return;
+
+    const isOutOfStock = carpet.status === 'out_of_stock';
+    const stockBtnText = document.getElementById('modal-admin-stock-text');
+    if (stockBtnText) {
+        stockBtnText.innerText = isOutOfStock ? 'إعادة توفير القطعة' : 'تعليم كـ غير متوفرة';
+    }
+}
+window.portalOpenProductModal = portalOpenProductModal;
+
+window.portalModalEditCarpet = () => {
+    if (currentPreviewCarpetId) {
+        closeModal();
+        openEditModal(currentPreviewCarpetId, allPortalCarpets);
+    }
+};
+
+window.portalModalToggleStock = async () => {
+    if (currentPreviewCarpetId) {
+        await window.portalToggleStock(currentPreviewCarpetId);
+        const carpet = allPortalCarpets.find(c => c.id === currentPreviewCarpetId);
+        const stockBtnText = document.getElementById('modal-admin-stock-text');
+        if (carpet && stockBtnText) {
+            stockBtnText.innerText = carpet.status === 'out_of_stock' ? 'إعادة توفير القطعة' : 'تعليم كـ غير متوفرة';
+        }
+    }
+};
+
+window.portalModalDeleteCarpet = async () => {
+    if (currentPreviewCarpetId) {
+        const idToDelete = currentPreviewCarpetId;
+        closeModal();
+        await window.portalDeleteCarpet(idToDelete);
+    }
+};
+
+window.portalPlayCardVideo = async (carpetId) => {
+    const carpet = allPortalCarpets.find(c => c.id === carpetId);
+    if (!carpet || !carpet.video) return;
+
+    let videoSrc = carpet.video;
+    if (videoSrc.startsWith('idb://')) {
+        const blobUrl = await getVideoFromIndexedDB(carpet.id);
+        if (blobUrl) videoSrc = blobUrl;
+    }
+    if (typeof window.openVideoLightbox === 'function') {
+        window.openVideoLightbox(videoSrc, carpet.title || 'استعراض سجادة');
+    }
+};
+
 function renderPortalProductsTable() {
-    const container = document.getElementById('portal-products-grid');
+    const container = document.getElementById('carpets-grid') || document.getElementById('portal-products-grid');
     if (!container) return;
 
     let list = [...allPortalCarpets];
@@ -320,62 +520,104 @@ function renderPortalProductsTable() {
 
     if (list.length === 0) {
         container.innerHTML = `
-            <div class="col-span-full text-center py-16 px-4 bg-white/70 rounded-3xl border border-stone-200">
-                <div class="w-14 h-14 rounded-full bg-amber-50 text-amber-700 flex items-center justify-center mx-auto text-2xl mb-3">
+            <div class="col-span-full text-center py-16 px-4 bg-white/80 rounded-3xl border border-stone-200 shadow-2xs" dir="rtl">
+                <div class="w-14 h-14 rounded-full bg-amber-50 text-amber-700 flex items-center justify-center mx-auto text-2xl mb-3 shadow-2xs border border-amber-200/60">
                     🔍
                 </div>
-                <h4 class="font-display font-bold text-stone-800 text-base">لا توجد قطع مطابقة للبحث أو الفلتر</h4>
+                <h4 class="font-display font-bold text-stone-800 text-sm sm:text-base">لا توجد قطع مطابقة للبحث أو الفلتر</h4>
                 <p class="text-xs text-stone-500 mt-1">جرّب مسح حقل البحث أو إضافة سجادة جديدة للمتجر.</p>
             </div>
         `;
         return;
     }
 
-    container.innerHTML = list.map(c => {
+    container.innerHTML = list.map((c, index) => {
         const isOutOfStock = c.status === 'out_of_stock';
-        const imgUrl = (c.images && c.images[0]) || c.image || 'https://placehold.co/400x300/7c1d3c/ffffff?text=Tatriza';
+        const imgUrl = (c.images && c.images[0]) || c.image || 'https://placehold.co/400x400/7c1d3c/ffffff?text=Tatriza';
         const imagesCount = (c.images && c.images.length) || 1;
         const hasVideo = Boolean(c.video);
 
         return `
-            <div class="bg-white rounded-2xl border border-stone-200/90 shadow-sm hover:shadow-md transition overflow-hidden flex flex-col justify-between group" dir="rtl">
-                <div class="relative w-full h-44 bg-stone-100 overflow-hidden">
-                    <img src="${imgUrl}" alt="${c.title}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
-                    
-                    <!-- رمز القطعة -->
-                    <span class="absolute top-2.5 right-2.5 px-2 py-0.5 rounded-lg text-[10px] font-mono font-bold bg-stone-900/80 text-white backdrop-blur-md">
-                        ${c.id || 'TATR'}
-                    </span>
+            <div class="carpet-card carpet-card-reveal bg-[#fffbf7] rounded-xl sm:rounded-2xl overflow-hidden border border-stone-200/80 shadow-2xs flex flex-col h-full cursor-pointer group relative" style="animation-delay: ${Math.min(index * 0.03, 0.3)}s" onclick="window.portalOpenProductModal('${c.id}')" dir="rtl">
+                
+                <!-- الكتلة العلوية: الوسائط متجاوبة تماماً مع شاشات الجوال والبيسي وبنفس مقاس المعرض الرئيسي -->
+                <div class="w-full shrink-0 flex flex-col bg-stone-100 relative z-10">
+                    <div class="relative w-full aspect-square carpet-stage-container overflow-hidden">
+                        <img src="${imgUrl}" alt="${c.title}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500 bg-white" loading="lazy">
+                        
+                        <!-- لمعة الانعكاس الضوئي الفاخرة -->
+                        <div class="card-light-glare"></div>
 
-                    <!-- شارة حالة التوفر (تفاعلية) -->
-                    <button type="button" onclick="window.portalToggleStock('${c.id}')" class="absolute top-2.5 left-2.5 px-2.5 py-1 rounded-lg text-[10.5px] font-bold shadow-xs transition flex items-center gap-1 cursor-pointer ${isOutOfStock ? 'bg-rose-600 text-white hover:bg-rose-700' : 'bg-emerald-600 text-white hover:bg-emerald-700'}" title="انقر للتبديل الفوري لحالة التوفر">
-                        <span>${isOutOfStock ? '⏳ نفدت الكمية' : '✅ متوفرة'}</span>
-                    </button>
+                        <!-- رمز السجادة SKU في أعلى اليسار -->
+                        <span class="absolute top-1.5 left-1.5 bg-stone-900/85 backdrop-blur-md text-amber-200 text-[8px] sm:text-[9px] md:text-[10px] font-mono font-bold px-1.5 py-0.5 rounded-md shadow-2xs z-30 pointer-events-none border border-stone-700/50 leading-tight">
+                            ${c.id || 'TATR'}
+                        </span>
 
-                    <!-- إشارات الوسائط -->
-                    <div class="absolute bottom-2 right-2 flex items-center gap-1">
-                        ${imagesCount > 1 ? `<span class="px-1.5 py-0.5 rounded bg-black/65 text-white text-[9px] font-bold">📷 ${imagesCount}</span>` : ''}
-                        ${hasVideo ? `<span class="px-1.5 py-0.5 rounded bg-amber-500 text-stone-950 text-[9px] font-bold">🎬 فيديو</span>` : ''}
+                        <!-- أبعاد السجادة في أعلى اليمين -->
+                        <span class="absolute top-1.5 right-1.5 bg-white/95 backdrop-blur-md text-stone-900 text-[8px] sm:text-[9px] md:text-[10px] font-bold px-1.5 py-0.5 rounded-md shadow-2xs z-30 pointer-events-none border border-stone-200/80 leading-tight">
+                            ${c.dimensions || ''}
+                        </span>
+
+                        <!-- شارة تبديل التوفر السريعة والتفاعلية للمسؤول -->
+                        <button type="button" onclick="event.stopPropagation(); window.portalToggleStock('${c.id}')" class="absolute top-7 sm:top-8 right-1.5 z-30 px-1.5 sm:px-2 py-0.5 rounded-md text-[7.5px] sm:text-[8.5px] md:text-[9.5px] font-bold shadow-xs transition flex items-center gap-0.5 cursor-pointer backdrop-blur-md ${isOutOfStock ? 'bg-rose-600/90 hover:bg-rose-700 text-white' : 'bg-emerald-600/90 hover:bg-emerald-700 text-white'}" title="انقر للتبديل الفوري لحالة التوفر">
+                            <span>${isOutOfStock ? '⏳ نفدت' : '✅ متوفر'}</span>
+                        </button>
+
+                        <!-- طبقة تغطية شبه شفافة إن كانت نافدة -->
+                        ${isOutOfStock ? `
+                            <div class="absolute inset-0 bg-stone-950/40 backdrop-blur-[1px] flex items-center justify-center z-20 pointer-events-none p-1">
+                                <span class="bg-stone-900/95 text-amber-300 border border-amber-300/30 text-[8.5px] sm:text-[9.5px] font-bold px-2 py-0.5 rounded-lg shadow-lg text-center leading-tight">
+                                    نفدت الكمية
+                                </span>
+                            </div>
+                        ` : ''}
+
+                        <!-- عداد الوسائط في أسفل اليسار -->
+                        ${imagesCount > 1 ? `
+                            <div class="absolute bottom-1.5 left-1.5 bg-black/65 backdrop-blur-md text-white text-[7.5px] sm:text-[8.5px] font-bold px-1.5 py-0.5 rounded-md pointer-events-none z-30 leading-tight">
+                                <span>📷 ${imagesCount}</span>
+                            </div>
+                        ` : ''}
+
+                        <!-- زر الفيديو في أسفل اليمين (يفتح مشغل الفيديو للمسؤول فوراً بحجم المتصفح) -->
+                        ${hasVideo ? `
+                            <button type="button" onclick="event.stopPropagation(); window.portalPlayCardVideo('${c.id}')" class="absolute bottom-1.5 right-1.5 bg-stone-900/85 hover:bg-stone-900 backdrop-blur-md text-amber-300 text-[7.5px] sm:text-[8.5px] font-bold px-1.5 py-0.5 rounded-md pointer-events-auto z-30 border border-amber-300/30 flex items-center gap-0.5 shadow-xs transition cursor-pointer leading-tight" title="مشاهدة وتكبير الفيديو">
+                                <span class="text-[8.5px]">🎬</span>
+                                <span>فيديو</span>
+                            </button>
+                        ` : ''}
                     </div>
                 </div>
 
-                <div class="p-4 flex-1 flex flex-col justify-between space-y-3">
-                    <div>
-                        <div class="flex items-center justify-between gap-1 text-[11px] text-stone-500 font-medium mb-1">
+                <!-- الكتلة السفلية: خطوط تبدأ بحجم كبير وتصغر بمرونة متجاوبة مع كل شاشة -->
+                <div class="p-2 sm:p-2.5 flex-1 flex flex-col justify-between bg-stone-50/70 border-t border-stone-200/60 relative z-10">
+                    <div class="mb-1">
+                        <div class="text-[8px] sm:text-[9px] md:text-[10px] text-stone-500 font-medium mb-0.5 truncate">
                             <span>${c.category || 'تراثي'}</span>
-                            <span>${c.dimensions || '200 × 300 سم'}</span>
                         </div>
-                        <h4 class="font-display font-bold text-stone-900 text-sm leading-tight line-clamp-1">${c.title}</h4>
-                        <span class="font-mono text-base font-black text-brand block mt-1">${Number(c.price || 0).toLocaleString()} ر.ع</span>
+                        <h4 class="font-display font-semibold text-stone-900 text-[10px] sm:text-xs md:text-sm leading-snug truncate group-hover:text-brand transition" title="${c.title}">${c.title}</h4>
                     </div>
 
-                    <!-- أزرار الإجراءات -->
-                    <div class="pt-2 border-t border-stone-100 flex items-center gap-2">
-                        <button type="button" onclick="window.portalOpenEdit('${c.id}')" class="flex-1 bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200/80 font-bold py-1.5 px-3 rounded-xl text-xs transition flex items-center justify-center gap-1 cursor-pointer">
-                            <span>✏️ تعديل</span>
+                    <div class="flex items-center justify-between gap-1 mt-auto pb-1.5">
+                        <div class="flex items-baseline gap-0.5 shrink-0">
+                            <span class="font-display text-xs sm:text-sm md:text-base font-black text-brand leading-none">${Number(c.price || 0).toLocaleString()}</span>
+                            <span class="font-display text-brand text-[7.5px] sm:text-[8.5px] md:text-[9.5px] font-bold leading-none">ر.ع.</span>
+                        </div>
+                        <button type="button" onclick="event.stopPropagation(); window.portalOpenProductModal('${c.id}')" class="btn-liquid-metal font-display text-white text-[7.5px] sm:text-[8.5px] md:text-[9.5px] font-bold px-1.5 sm:px-2 py-0.5 rounded-md transition shadow-2xs cursor-pointer whitespace-nowrap shrink-0 flex items-center gap-0.5" title="معاينة بكامل الشاشة">
+                            <span>👁️</span>
+                            <span>معاينة</span>
                         </button>
-                        <button type="button" onclick="window.portalDeleteCarpet('${c.id}')" class="bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 font-bold py-1.5 px-3 rounded-xl text-xs transition flex items-center justify-center gap-1 cursor-pointer" title="حذف القطعة نهائياً">
-                            <span>🗑️ حذف</span>
+                    </div>
+
+                    <!-- شريط أدوات المسؤول المصغر والمتجاوب -->
+                    <div class="pt-1.5 border-t border-stone-200/70 grid grid-cols-2 gap-1 text-[8px] sm:text-[9px] md:text-[10px]">
+                        <button type="button" onclick="event.stopPropagation(); window.portalOpenEdit('${c.id}')" class="bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200/80 font-bold py-1 px-1 rounded-md transition flex items-center justify-center gap-0.5 cursor-pointer shadow-2xs" title="تعديل بيانات السجادة">
+                            <span>✏️</span>
+                            <span class="truncate">تعديل</span>
+                        </button>
+                        <button type="button" onclick="event.stopPropagation(); window.portalDeleteCarpet('${c.id}')" class="bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200/80 font-bold py-1 px-1 rounded-md transition flex items-center justify-center gap-0.5 cursor-pointer shadow-2xs" title="حذف السجادة نهائياً">
+                            <span>🗑️</span>
+                            <span class="truncate">حذف</span>
                         </button>
                     </div>
                 </div>
@@ -383,6 +625,7 @@ function renderPortalProductsTable() {
         `;
     }).join('');
 }
+
 
 // تبديل حالة توفر القطعة
 window.portalToggleStock = async function(carpetId) {
@@ -872,6 +1115,8 @@ window.portalExportBackup = function() {
 
 // تهيئة أولية عند تحميل الصفحة
 window.addEventListener('DOMContentLoaded', () => {
+    initTheme();
+    initAdminActivityListeners();
     initImageUploadPreview();
     initEditImageManager();
     initVideoUploadHandlers();
@@ -883,6 +1128,21 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 // ربط النوافذ والمعالجات بالنطاق العام للوحة الإدارة
+window.openOptionsDrawer = openOptionsDrawer;
+window.closeOptionsDrawer = closeOptionsDrawer;
+window.openModal = (id) => openModal(id, allPortalCarpets);
+window.closeModal = closeModal;
+window.handleModalScroll = handleModalScroll;
+window.openLightboxFromModalExternal = (id, idx) => openLightboxFromModal(id, idx, allPortalCarpets);
+window.openCurrentLogoLightbox = openCurrentLogoLightbox;
+window.closeLightbox = closeLightbox;
+window.handleLightboxScroll = handleLightboxScroll;
+
+window.openThemeModal = openThemeModal;
+window.closeThemeModal = closeThemeModal;
+window.selectThemeOption = selectThemeOption;
+window.applyTheme = applyTheme;
+
 window.handleAddProduct = (e) => handleAddProduct(e, allPortalCarpets, renderPortalDashboard);
 window.handleEditProduct = (e) => handleEditProduct(e, allPortalCarpets, renderPortalDashboard);
 window.openAddModal = () => openAddModal(allPortalCarpets);

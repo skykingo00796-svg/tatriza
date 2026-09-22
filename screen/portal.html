@@ -10,6 +10,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Tajawal:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     
+    <link rel="stylesheet" href="../css/style.css">
     <!-- TailwindCSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     
@@ -161,35 +162,31 @@
     <div id="portal-dashboard" class="hidden min-h-screen flex flex-col">
         
         <!-- الشريط العلوي الفاخر للوحة الإدارة -->
-        <header class="sticky top-0 z-40 bg-[#fffbf7]/90 backdrop-blur-md border-b border-stone-300/80 px-4 sm:px-8 py-3.5 shadow-xs">
-            <div class="max-w-7xl mx-auto flex items-center justify-between gap-3">
+                <!-- الشريط العلوي الفاخر للوحة الإدارة (مطابق للشاشة الرئيسية) -->
+        <header class="sticky top-2 sm:top-3.5 z-40 w-full px-3 sm:px-6 md:px-12 pointer-events-none transition-all duration-300">
+            <div class="floating-luxury-dock pointer-events-auto rounded-2xl sm:rounded-3xl w-full px-4 sm:px-6 md:px-8 h-16 sm:h-20 flex justify-between items-center transition-all duration-300">
+                
+                <!-- اللوجو واسم الدار مع رتبة الإدارة -->
                 <div class="flex items-center gap-3">
-                    <img src="../images/logo.jpg" alt="Tatriza Logo" class="w-10 h-10 rounded-2xl object-cover shadow-sm border border-stone-300">
+                    <img src="../images/logo.jpg" alt="Tatriza Logo" class="theme-logo-img w-10 h-10 md:w-12 md:h-12 rounded-2xl object-cover shadow-sm border border-stone-200 cursor-pointer shrink-0" onclick="window.openCurrentLogoLightbox && window.openCurrentLogoLightbox(event)" title="شعار الدار">
                     <div>
                         <div class="flex items-center gap-2">
-                            <h1 class="font-black text-base sm:text-lg text-stone-900">دار تطريز TATRIZA</h1>
-                            <span class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-amber-100 text-amber-900 border border-amber-300/60">بوابة الإدارة</span>
+                            <h1 class="font-bold text-base sm:text-lg md:text-xl text-stone-900 tracking-wider">TATRIZA</h1>
+                            <span class="text-[9.5px] sm:text-[10px] font-bold px-2 py-0.5 rounded-md bg-amber-100 text-amber-900 border border-amber-300/60 shadow-2xs">بوابة الإدارة</span>
                         </div>
-                        <p class="text-[11px] text-stone-500 font-medium">مسجل كـ: <span id="portal-user-email" class="font-bold font-mono text-brand dir-ltr inline-block">admin@tatriza.com</span></p>
+                        <p class="text-[10px] md:text-xs font-semibold" style="color: var(--brand-color);">بوابة إدارة المعرض السحابية المعتمدة</p>
                     </div>
                 </div>
 
-                <div class="flex items-center gap-2">
-                    <a href="index.html" target="_blank" class="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white hover:bg-stone-50 border border-stone-300 text-stone-700 text-xs font-bold transition shadow-xs">
-                        <span>👁️</span>
-                        <span>معاينة المتجر العام</span>
-                    </a>
-                    <button type="button" onclick="window.portalExportBackup()" class="hidden md:inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white hover:bg-stone-50 border border-stone-300 text-stone-700 text-xs font-bold transition shadow-xs" title="تنزيل نسخة احتياطية من جميع السجاد">
-                        <span>💾</span>
-                        <span>نسخة JSON</span>
-                    </button>
-                    <button type="button" onclick="window.openFirebaseConfigModal()" class="hidden lg:inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white hover:bg-stone-50 border border-stone-300 text-stone-700 text-xs font-bold transition shadow-xs">
-                        <span>⚙️</span>
-                        <span>إعدادات السحابة</span>
-                    </button>
-                    <button type="button" onclick="executePortalLogout()" class="px-3.5 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold transition shadow-xs flex items-center gap-1.5 cursor-pointer">
-                        <span>🚪</span>
-                        <span>تسجيل الخروج</span>
+                <!-- زر موحد لجميع خيارات وأدوات الإدارة (مطابق تماماً لزر خيارات الدار) -->
+                <div class="flex items-center gap-2.5 md:gap-3 shrink-0">
+                    <button id="options-toggle-btn" onclick="openOptionsDrawer()" class="group flex items-center bg-[#fffbf7] hover:bg-stone-200/70 text-stone-800 p-2.5 rounded-2xl border border-stone-300/80 transition-all duration-300 shadow-xs cursor-pointer relative overflow-hidden" title="خيارات وأدوات الإدارة">
+                        <div class="w-5 h-5 flex flex-col justify-center items-center gap-1 shrink-0">
+                            <span class="w-5 h-0.5 bg-stone-800 rounded-full transition-all duration-300 group-hover:w-3.5"></span>
+                            <span class="w-3.5 h-0.5 rounded-full transition-all duration-300 group-hover:w-5" style="background-color: var(--brand-color);"></span>
+                            <span class="w-5 h-0.5 bg-stone-800 rounded-full transition-all duration-300 group-hover:w-4"></span>
+                        </div>
+                        <span class="max-w-0 opacity-0 overflow-hidden whitespace-nowrap group-hover:max-w-xs group-hover:opacity-100 group-hover:mr-2.5 transition-all duration-300 ease-in-out text-xs md:text-sm font-bold text-stone-800">خيارات الإدارة</span>
                     </button>
                 </div>
             </div>
@@ -270,15 +267,36 @@
                 </div>
             </div>
 
-            <!-- شبكة عرض وإدارة السجاد -->
-            <div id="portal-products-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5">
+            <!-- شبكة عرض وإدارة السجاد (مطابقة لشبكة الموقع العام 2-4-6-8 كولوم) -->
+            <div id="carpets-grid" class="grid gap-2 sm:gap-2.5 md:gap-3">
                 <!-- تحقن المنتجات برمجياً عبر portal.js -->
             </div>
 
         </main>
 
-        <footer class="bg-white border-t border-stone-200 py-4 text-center text-xs text-stone-500">
-            <span>دار تطريز TATRIZA © 2026 | بوابة الإدارة الآمنة والمشفرة بسحابة Google Firebase</span>
+        <!-- الشريط السفلي الفاخر (مطابق لشاشات الزائرين) -->
+        <footer class="mt-16 border-t border-stone-200/90 bg-[#fffbf7]/80 backdrop-blur-md py-8 px-4 text-center transition-all duration-300" dir="rtl">
+            <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div class="flex items-center gap-3">
+                    <img src="../images/logo.jpg" alt="Tatriza Logo" class="theme-logo-img w-9 h-9 rounded-xl object-cover shadow-xs border border-stone-200">
+                    <div class="text-right">
+                        <span class="font-display font-black text-sm text-stone-900 block">دار تطريز TATRIZA</span>
+                        <span class="text-[11px] text-stone-500 font-medium">بوابة إدارة المعرض السحابية الآمنة والمشفرة</span>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-4 text-xs font-bold text-stone-600">
+                    <a href="index.html" target="_blank" class="hover:text-brand transition">معاينة المتجر العام</a>
+                    <span class="text-stone-300">•</span>
+                    <a href="about.html" target="_blank" class="hover:text-brand transition">قصة الدار</a>
+                    <span class="text-stone-300">•</span>
+                    <span class="text-[11px] text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded-lg border border-emerald-200">🔒 جلسة مشفرة</span>
+                </div>
+
+                <div class="text-[11px] text-stone-500 font-medium">
+                    <span>جميع الحقوق محفوظة لدار تطريز © 2026</span>
+                </div>
+            </div>
         </footer>
     </div>
 
@@ -723,7 +741,390 @@
         </div>
     </div>
 
-    <!-- استدعاء محرك البوابة المستقل حصرياً -->
+
+
+    <!-- ========================================== -->
+    <!-- نوافذ المعاينة الشاملة والثيم وخيارات الإدارة -->
+    <!-- ========================================== -->
+    <div id="product-modal" class="hidden fixed inset-0 z-50 modal-glass-backdrop flex items-center justify-center p-2 sm:p-4 md:p-6">
+        <div class="lux-modal-box w-full max-w-4xl rounded-2xl sm:rounded-3xl overflow-hidden flex flex-col max-h-[94vh] sm:max-h-[90vh] relative">
+            
+            <!-- زر إغلاق النافذة الفاخر (في الأعلى يسار) -->
+            <button onclick="closeModal()" class="absolute top-3 left-3 sm:top-5 sm:left-5 z-30 bg-black/60 hover:bg-black/85 text-white w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center transition cursor-pointer shadow-lg text-sm sm:text-base backdrop-blur-md border border-white/20 hover:scale-105" title="إغلاق النافذة">
+                ✕
+            </button>
+            
+            <!-- أزرار التحكم بالفيديو في الأعلى يمين (كتم الصوت وبجانبه زر التكبير مباشرة مقابل زر الإغلاق) -->
+            <div id="modal-video-top-controls" class="absolute top-3 right-3 sm:top-5 sm:right-5 z-30 flex items-center gap-2 hidden">
+                <!-- زر كتم وفتح الصوت (جنب التكبير على طول) -->
+                <button id="modal-video-audio-btn" type="button" onclick="window.toggleProductVideoAudio(this)" class="bg-black/60 hover:bg-black/85 text-white w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center transition cursor-pointer shadow-lg text-sm sm:text-base backdrop-blur-md border border-white/20 hover:scale-105" title="تشغيل الصوت">
+                    <span class="audio-icon leading-none">🔇</span>
+                </button>
+
+                <!-- زر تكبير الفيديو للشاشة كاملة (مقابل زر الإغلاق بالجهة الثانية) -->
+                <button id="modal-video-fullscreen-btn" type="button" onclick="window.toggleModalVideoFullscreen()" class="bg-black/60 hover:bg-black/85 text-white w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center transition cursor-pointer shadow-lg text-sm sm:text-base backdrop-blur-md border border-white/20 hover:scale-105" title="تكبير الفيديو للشاشة كاملة">
+                    <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/></svg>
+                </button>
+            </div>
+
+            <!-- حاوية المحتوى مقسمة نصفين: معرض الصور والمعلومات -->
+            <div class="flex flex-col md:grid md:grid-cols-2 overflow-y-auto flex-1">
+                
+                <!-- القسم الأيمن: معرض الوسائط المتجاوب بالكامل بخلفية بيضاء نقية وبحجم منضبط ومحكم -->
+                <div class="relative w-full bg-white flex flex-col justify-center items-center overflow-hidden aspect-square sm:aspect-square md:aspect-auto md:h-full max-h-[46vh] sm:max-h-[50vh] md:max-h-none select-none border-b md:border-b-0 md:border-l border-stone-200/70">
+                    <div id="modal-images-container" class="flex overflow-x-auto snap-x snap-mandatory scrollbar-none w-full h-full items-center bg-white" onscroll="handleModalScroll(this)">
+                        <!-- تُحقن الصور والفيديو برمجياً -->
+                    </div>
+
+                    <!-- شارة استعراض حي (في الأسفل يسار مقابل الترقيم من الجهة الثانية) -->
+                    <div id="modal-video-badge" class="absolute bottom-3 left-3 sm:bottom-4 sm:left-4 z-20 pointer-events-none hidden">
+                        <span class="bg-stone-900/80 text-amber-300 text-[11px] font-bold px-3 py-1 rounded-full backdrop-blur-md border border-stone-700/30 shadow-md flex items-center gap-1.5">
+                            <span class="text-xs">🎬</span>
+                            <span id="modal-video-badge-text">استعراض حي</span>
+                        </span>
+                    </div>
+
+                    <!-- عداد وترقيم الشرائح المستقل بدون أي تداخل وبحجم مضبوط (في الأسفل يمين) -->
+                    <div id="modal-counter-wrapper" class="absolute bottom-3 right-3 sm:bottom-4 sm:right-4 z-20 pointer-events-none">
+                        <div class="bg-stone-900/80 backdrop-blur-md text-amber-200 text-xs font-mono font-bold px-3 py-1 rounded-full border border-stone-700/30 shadow-md flex items-center gap-1">
+                            <span id="modal-counter">1</span><span>/</span><span id="modal-total">1</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- القسم الأيسر: التفاصيل، المواصفات، السعر والأزرار -->
+                <div class="p-5 sm:p-6 md:p-8 flex flex-col justify-between space-y-4 bg-gradient-to-b from-[#fffbf7] to-[#f9f4ec]">
+                    <div class="space-y-4">
+                        <!-- شارات المنتج والرمز التسلسلي مع إعطاء مسافة أمان كافية لزر الإغلاق في اليسار -->
+                        <div class="flex items-center gap-2.5 flex-wrap pl-12 sm:pl-16">
+                            <!-- شارة جديد وحصري -->
+                            <div id="modal-new-badge" class="spark-badge-crystal items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black shadow-xs hidden">
+                                <span>✨</span>
+                                <span id="modal-new-badge-text" class="font-black text-amber-950">المنتج جديد وحصري</span>
+                            </div>
+                            <!-- رمز القطعة التسلسلي (أيدي المنتج) بجانب الشارة في اليمين -->
+                            <span id="modal-sku-badge" class="text-xs font-mono font-black text-stone-700 bg-stone-200/80 border border-stone-300 px-3 py-1 rounded-xl shadow-2xs select-all" title="رمز القطعة التسلسلي"></span>
+                        </div>
+
+                        <div>
+                            <span class="font-heritage text-xs font-bold text-amber-800">تحفة يدوية فريدة • إصدار محدود</span>
+                            <h3 id="modal-title" class="font-display text-xl sm:text-2xl md:text-3xl font-black text-stone-900 mt-1"></h3>
+                        </div>
+
+                        <!-- شبكة المواصفات الفاخرة الأربعة -->
+                        <div class="grid grid-cols-2 gap-3 pt-1">
+                            <div class="lux-spec-card flex flex-col">
+                                <span class="text-[11px] font-bold text-stone-500 flex items-center gap-1">
+                                    <span>📐</span>
+                                    <span>الأبعاد الرسمية</span>
+                                </span>
+                                <span id="modal-dim" class="font-display text-xs sm:text-sm font-black text-stone-900 mt-1"></span>
+                            </div>
+
+                            <div class="lux-spec-card flex flex-col">
+                                <span class="text-[11px] font-bold text-stone-500 flex items-center gap-1">
+                                    <span>🧶</span>
+                                    <span>نوع النسيج والخامات</span>
+                                </span>
+                                <span id="modal-mat" class="font-display text-xs sm:text-sm font-black text-stone-900 mt-1"></span>
+                            </div>
+
+                            <div class="lux-spec-card flex flex-col">
+                                <span class="text-[11px] font-bold text-stone-500 flex items-center gap-1">
+                                    <span>💎</span>
+                                    <span>جاهزية الاستلام</span>
+                                </span>
+                                <span class="font-display text-xs sm:text-sm font-black text-emerald-700 mt-1">تسليم فوري ومباشر</span>
+                            </div>
+
+                            <div class="lux-spec-card flex flex-col">
+                                <span class="text-[11px] font-bold text-stone-500 flex items-center gap-1">
+                                    <span>🏛️</span>
+                                    <span>الأصالة والحياكة</span>
+                                </span>
+                                <span class="font-display text-xs sm:text-sm font-black text-amber-800 mt-1">يدوي أصيل 100%</span>
+                            </div>
+                        </div>
+
+                        <!-- وصف القطعة وقصتها الفنية -->
+                        <div class="bg-white/80 border border-stone-200/80 rounded-2xl p-4 shadow-2xs">
+                            <h5 class="text-xs font-bold text-stone-800 mb-1 flex items-center gap-1">
+                                <span>📜</span>
+                                <span>عن القطعة وحياكتها:</span>
+                            </h5>
+                            <p id="modal-desc" class="text-stone-700 text-xs sm:text-sm leading-relaxed"></p>
+                        </div>
+                    </div>
+
+                    <!-- السعر الفاخر والشريط التفاعلي للأزرار -->
+                    <div class="pt-4 border-t border-stone-200/80 flex flex-col gap-3">
+                        <div class="lux-price-tag flex items-center justify-between">
+                            <div>
+                                <span class="text-[11px] text-stone-500 font-bold block">السعر الإجمالي للقطعة:</span>
+                                <div class="flex items-baseline gap-1.5 mt-0.5">
+                                    <span class="font-display text-2xl sm:text-3xl font-black text-brand" id="modal-price"></span>
+                                    <span class="font-display text-brand text-sm sm:text-base font-bold">ريال عماني</span>
+                                </div>
+                            </div>
+                            <span class="text-[11px] font-black text-amber-800 bg-amber-100/90 border border-amber-300/60 px-3 py-1 rounded-xl">شحن مؤمّن</span>
+                        </div>
+                        
+                        <!-- أزرار الإجراءات الإدارية المباشرة داخل نافذة المعاينة -->
+                        <div class="flex items-center gap-2">
+                            <button id="modal-add-btn" class="hidden"></button>
+                            <button type="button" onclick="window.portalModalEditCarpet()" class="flex-1 bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200/80 font-bold py-3 px-3 rounded-2xl text-xs sm:text-sm transition flex items-center justify-center gap-1.5 cursor-pointer shadow-xs">
+                                <span>✏️</span>
+                                <span>تعديل السجادة</span>
+                            </button>
+                            <button type="button" onclick="window.portalModalToggleStock()" class="flex-1 bg-stone-100 hover:bg-stone-200 text-stone-900 border border-stone-300 font-bold py-3 px-3 rounded-2xl text-xs sm:text-sm transition flex items-center justify-center gap-1.5 cursor-pointer shadow-xs">
+                                <span>🔄</span>
+                                <span id="modal-admin-stock-text">تبديل التوفر</span>
+                            </button>
+                            <button type="button" onclick="window.portalModalDeleteCarpet()" class="bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 font-bold py-3 px-3 rounded-2xl text-xs sm:text-sm transition flex items-center justify-center gap-1.5 cursor-pointer shadow-xs" title="حذف القطعة نهائياً">
+                                <span>🗑️</span>
+                                <span>حذف</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة عرض الصور بكامل الشاشة (Lightbox) -->
+    
+    <div id="lightbox-modal" class="hidden fixed inset-0 z-[100] bg-[#fffbf7]/90 backdrop-blur-md flex flex-col items-center justify-center">
+        <button onclick="closeLightbox()" class="absolute top-6 left-6 z-20 bg-stone-900 hover:bg-stone-800 text-white w-12 h-12 rounded-full flex items-center justify-center text-xl transition shadow-lg">
+            ✕
+        </button>
+        
+        <div id="lightbox-container" class="relative w-full h-full flex overflow-x-auto snap-x snap-mandatory scrollbar-none items-center" dir="ltr" onscroll="handleLightboxScroll(this)">
+            <!-- الصور تحقن برمجياً -->
+        </div>
+
+        <div class="absolute bottom-6 left-1/2 -translate-x-1/2 bg-stone-900 text-white text-sm font-semibold px-4 py-2 rounded-full pointer-events-none z-20 shadow-lg">
+            <span id="lightbox-counter">1</span> / <span id="lightbox-total">1</span>
+        </div>
+    </div>
+
+    <!-- نافذة تكبير واستعراض الفيديو على مستوى شاشة المتصفح (يملا شاشة المتصفح بالكامل مثل عرض الصور تماماً) -->
+    
+    <div id="video-lightbox-modal" class="hidden fixed inset-0 z-[110] bg-[#fffbf7]/95 backdrop-blur-md flex items-center justify-center select-none" onclick="window.closeVideoLightbox()">
+        <!-- زر إغلاق التكبير (في الأعلى يسار) -->
+        <button onclick="window.closeVideoLightbox()" class="absolute top-4 left-4 sm:top-6 sm:left-6 z-30 bg-stone-900/85 hover:bg-stone-950 text-white w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center text-lg sm:text-xl transition shadow-xl cursor-pointer hover:scale-105 backdrop-blur-md border border-white/20" title="إغلاق التكبير">
+            ✕
+        </button>
+
+        <!-- زر كتم وفتح الصوت (في الأعلى يمين مقابل زر الإغلاق تماماً) -->
+        <button type="button" onclick="event.stopPropagation(); window.toggleLightboxVideoAudio(this)" id="lightbox-video-audio-btn" class="absolute top-4 right-4 sm:top-6 sm:right-6 z-30 bg-stone-900/85 hover:bg-stone-950 text-white w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center text-lg sm:text-xl transition shadow-xl cursor-pointer hover:scale-105 backdrop-blur-md border border-white/20" title="تشغيل الصوت">
+            <span class="lightbox-audio-icon leading-none">🔇</span>
+        </button>
+
+        <!-- حاوية الفيديو تملأ شاشة المتصفح بالكامل مثل معرض الصور تماماً -->
+        <div class="w-full h-full flex items-center justify-center p-3 sm:p-6 md:p-10 relative" onclick="event.stopPropagation()">
+            <video 
+                id="lightbox-video-player"
+                playsinline
+                muted
+                loop
+                preload="auto"
+                class="max-w-full max-h-full w-auto h-auto object-contain rounded-2xl shadow-2xl cursor-pointer"
+                onclick="window.toggleLightboxVideoPlay()"
+            ></video>
+
+            <!-- زر إيقاف وتشغيل تفاعلي بالوسط -->
+            <div id="lightbox-video-center-btn" onclick="window.toggleLightboxVideoPlay()" class="absolute inset-0 flex items-center justify-center pointer-events-none transition-all duration-300 opacity-0">
+                <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-black/65 backdrop-blur-md border border-white/30 text-white flex items-center justify-center text-2xl sm:text-3xl shadow-2xl transform transition hover:scale-110 pointer-events-auto cursor-pointer" id="lightbox-video-center-icon">
+                    ▶
+                </div>
+            </div>
+
+            <!-- عنوان/شارة السجادة أسفل الفيديو -->
+            <div class="absolute bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 pointer-events-none z-20">
+                <span id="lightbox-video-title" class="bg-stone-900/85 text-amber-200 text-xs sm:text-sm font-bold px-4 py-1.5 rounded-full backdrop-blur-md border border-amber-400/25 shadow-lg flex items-center gap-1.5">
+                    🎬 استعراض السجادة
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة تخصيص الهوية وألوان الدار الفاخرة (Haute Couture Atelier) -->
+    
+    <div id="theme-modal" class="hidden fixed inset-0 z-[120] modal-glass-backdrop flex items-center justify-center p-4">
+        <div class="lux-modal-box w-full max-w-lg rounded-3xl p-6 sm:p-8 border border-stone-300/80 relative text-center">
+            <button onclick="closeThemeModal()" class="absolute top-4 left-4 w-9 h-9 rounded-full bg-stone-100 hover:bg-stone-200 text-stone-500 hover:text-stone-900 transition flex items-center justify-center text-sm font-bold">✕</button>
+            
+            <div class="w-14 h-14 mx-auto mb-3 rounded-2xl bg-amber-50 border border-amber-200/80 flex items-center justify-center text-2xl shadow-xs">
+                🎨
+            </div>
+
+            <h3 class="font-display text-xl sm:text-2xl font-black text-stone-900 mb-1">تخصيص هوية وألوان الدار</h3>
+            <p class="text-xs text-stone-600 mb-6 font-medium">اختر لون وشعار الدار المفضل لديك لتغيير الهوية البصرية والجزيئات التفاعلية بالكامل</p>
+            
+            <div class="grid grid-cols-2 gap-3.5 mb-6">
+                <!-- ثيم 1: العنابي الملكي -->
+                <div onclick="selectThemeOption('burgundy', '../images/logo.jpg')" class="lux-theme-card theme-box cursor-pointer p-4 rounded-2xl" data-theme="burgundy">
+                    <div class="theme-orb-sphere bg-[#7c1d3c]"></div>
+                    <div class="text-center">
+                        <span class="font-display text-xs sm:text-sm font-black text-stone-900 block">العنابي الملكي</span>
+                        <span class="text-[10px] text-stone-500 font-medium">الأصالة والوقار</span>
+                    </div>
+                </div>
+                
+                <!-- ثيم 2: الذهبي الأصيل -->
+                <div onclick="selectThemeOption('gold', '../images/logoY.jpg')" class="lux-theme-card theme-box cursor-pointer p-4 rounded-2xl" data-theme="gold">
+                    <div class="theme-orb-sphere bg-[#c59b27]"></div>
+                    <div class="text-center">
+                        <span class="font-display text-xs sm:text-sm font-black text-stone-900 block">الذهبي الأصيل</span>
+                        <span class="text-[10px] text-stone-500 font-medium">بريق خيوط الزري</span>
+                    </div>
+                </div>
+
+                <!-- ثيم 3: الأخضر التراثي -->
+                <div onclick="selectThemeOption('green', '../images/logoG.jpg')" class="lux-theme-card theme-box cursor-pointer p-4 rounded-2xl" data-theme="green">
+                    <div class="theme-orb-sphere bg-[#1b4d3e]"></div>
+                    <div class="text-center">
+                        <span class="font-display text-xs sm:text-sm font-black text-stone-900 block">الأخضر التراثي</span>
+                        <span class="text-[10px] text-stone-500 font-medium">واحات عُمان العريقة</span>
+                    </div>
+                </div>
+
+                <!-- ثيم 4: الأزرق الملكي -->
+                <div onclick="selectThemeOption('blue', '../images/logoB.jpg')" class="lux-theme-card theme-box cursor-pointer p-4 rounded-2xl" data-theme="blue">
+                    <div class="theme-orb-sphere bg-[#1e3a8a]"></div>
+                    <div class="text-center">
+                        <span class="font-display text-xs sm:text-sm font-black text-stone-900 block">الأزرق الملكي</span>
+                        <span class="text-[10px] text-stone-500 font-medium">سكون بحر عُمان</span>
+                    </div>
+                </div>
+            </div>
+
+            <button onclick="applyTheme()" class="w-full btn-liquid-metal font-display text-white font-bold py-3.5 rounded-2xl transition shadow-md text-sm md:text-base cursor-pointer">
+                تطبيق الهوية الجديدة
+            </button>
+        </div>
+    </div>
+
+    <!-- نافذة طلب تصميم خاص الفاخرة (VIP Atelier Request) -->
+    
+    
+    <!-- اللوحة الجانبية المنزلقة لخيارات وأدوات الإدارة (Options Drawer) -->
+    <div id="options-drawer" class="hidden fixed inset-0 z-[130]">
+        <!-- خلفية معتمة بلورية عند الفتح -->
+        <div id="options-drawer-overlay" onclick="closeOptionsDrawer()" class="opacity-0 invisible fixed inset-0 bg-stone-950/60 backdrop-blur-md pointer-events-none cursor-pointer transition-opacity duration-300"></div>
+
+        <!-- اللوحة الجانبية المنزلقة بنمط الصالون الخاص -->
+        <div id="options-drawer-panel" class="fixed top-0 bottom-0 left-0 w-80 sm:w-96 max-w-[85vw] flex flex-col z-10 overflow-hidden bg-[#fffbf7] border-r border-stone-300 shadow-2xl transition-transform duration-300" dir="rtl">
+            
+            <!-- رأس الشريط الجانبي الفاخر -->
+            <div class="drawer-lux-header p-5 sm:p-6 flex items-center justify-between border-b border-stone-200/80">
+                <div class="flex items-center gap-3">
+                    <img src="../images/logo.jpg" alt="Tatriza Logo" class="theme-logo-img w-11 h-11 rounded-2xl object-cover shadow-sm border border-stone-300/80">
+                    <div class="text-right">
+                        <span class="font-display text-sm sm:text-base font-black text-stone-900 tracking-tight block">دار تطريز TATRIZA</span>
+                        <span class="text-[11px] text-stone-500 font-medium">جلسة المسؤول: <span id="drawer-portal-user-email" class="font-bold text-brand font-mono">admin</span></span>
+                    </div>
+                </div>
+                
+                <button onclick="closeOptionsDrawer()" class="w-8 h-8 rounded-full bg-stone-200/60 hover:bg-stone-300/80 text-stone-600 hover:text-stone-900 flex items-center justify-center transition cursor-pointer text-sm font-bold" title="إغلاق القائمة">✕</button>
+            </div>
+
+            <!-- قائمة الخيارات والأدوات الإدارية -->
+            <div class="p-4 sm:p-5 overflow-y-auto space-y-2.5 flex-1">
+                <!-- 1. إضافة سجادة جديدة -->
+                <button type="button" onclick="closeOptionsDrawer(); openAddModal();" class="drawer-lux-card group w-full text-right cursor-pointer">
+                    <div class="flex items-center gap-3 min-w-0 flex-1">
+                        <div class="drawer-icon-orb bg-amber-50 text-amber-800 border-amber-300/60 shrink-0">＋</div>
+                        <div class="flex flex-col min-w-0 flex-1">
+                            <span class="font-display text-xs sm:text-sm font-black text-stone-900 group-hover:text-brand transition">إضافة سجادة جديدة</span>
+                            <span class="text-[10px] text-stone-500 font-medium">رفع الصور والفيديو وتحديد الأبعاد والسعر</span>
+                        </div>
+                    </div>
+                    <div class="drawer-action-arrow">&gt;</div>
+                </button>
+
+                <!-- 2. إدارة وتخصيص التصنيفات -->
+                <button type="button" onclick="closeOptionsDrawer(); openAddCategoryModal();" class="drawer-lux-card group w-full text-right cursor-pointer">
+                    <div class="flex items-center gap-3 min-w-0 flex-1">
+                        <div class="drawer-icon-orb bg-emerald-50 text-emerald-800 border-emerald-300/60 shrink-0">📁</div>
+                        <div class="flex flex-col min-w-0 flex-1">
+                            <span class="font-display text-xs sm:text-sm font-black text-stone-900 group-hover:text-emerald-700 transition">إدارة وتخصيص التصنيفات</span>
+                            <span class="text-[10px] text-stone-500 font-medium">تخصيص الأقسام، رموز الكود (SKU)، والأيقونات</span>
+                        </div>
+                    </div>
+                    <div class="drawer-action-arrow">&gt;</div>
+                </button>
+
+                <!-- 3. تعديل النمط / الثيم -->
+                <button type="button" onclick="closeOptionsDrawer(); openThemeModal();" class="drawer-lux-card group w-full text-right cursor-pointer">
+                    <div class="flex items-center gap-3 min-w-0 flex-1">
+                        <div class="drawer-icon-orb bg-indigo-50 text-indigo-800 border-indigo-300/60 shrink-0">🎨</div>
+                        <div class="flex flex-col min-w-0 flex-1">
+                            <span class="font-display text-xs sm:text-sm font-black text-stone-900 group-hover:text-indigo-700 transition">تعديل النمط والثيم الملكي</span>
+                            <span class="text-[10px] text-stone-500 font-medium">تخصيص ألوان الهوية والشعار (عنابي، زيتي، كحلي)</span>
+                        </div>
+                    </div>
+                    <div class="drawer-action-arrow">&gt;</div>
+                </button>
+
+                <!-- 4. تصدير نسخة احتياطية -->
+                <button type="button" onclick="closeOptionsDrawer(); portalExportBackup();" class="drawer-lux-card group w-full text-right cursor-pointer">
+                    <div class="flex items-center gap-3 min-w-0 flex-1">
+                        <div class="drawer-icon-orb bg-stone-100 text-stone-800 border-stone-300 shrink-0">📦</div>
+                        <div class="flex flex-col min-w-0 flex-1">
+                            <span class="font-display text-xs sm:text-sm font-black text-stone-900 group-hover:text-stone-800 transition">تصدير نسخة احتياطية (JSON)</span>
+                            <span class="text-[10px] text-stone-500 font-medium">تنزيل ملف بيانات آمن لجميع معروضات السجاد</span>
+                        </div>
+                    </div>
+                    <div class="drawer-action-arrow">&gt;</div>
+                </button>
+
+                <!-- 5. إعدادات سحابة Firebase -->
+                <button type="button" onclick="closeOptionsDrawer(); openFirebaseConfigModal();" class="drawer-lux-card group w-full text-right cursor-pointer">
+                    <div class="flex items-center gap-3 min-w-0 flex-1">
+                        <div class="drawer-icon-orb bg-orange-50 text-orange-800 border-orange-300/60 shrink-0">🔥</div>
+                        <div class="flex flex-col min-w-0 flex-1">
+                            <span class="font-display text-xs sm:text-sm font-black text-stone-900 group-hover:text-orange-700 transition">إعدادات سحابة Firebase</span>
+                            <span class="text-[10px] text-stone-500 font-medium">مفاتيح الربط وتخزين الصور السحابي</span>
+                        </div>
+                    </div>
+                    <div class="drawer-action-arrow">&gt;</div>
+                </button>
+
+                <!-- 6. معاينة المعرض كزائر -->
+                <a href="index.html" target="_blank" class="drawer-lux-card group w-full text-right cursor-pointer block">
+                    <div class="flex items-center gap-3 min-w-0 flex-1">
+                        <div class="drawer-icon-orb bg-blue-50 text-blue-800 border-blue-300/60 shrink-0">🌐</div>
+                        <div class="flex flex-col min-w-0 flex-1">
+                            <span class="font-display text-xs sm:text-sm font-black text-stone-900 group-hover:text-blue-700 transition">معاينة المتجر كزائر</span>
+                            <span class="text-[10px] text-stone-500 font-medium">فتح واجهة المعرض في تبويب جديد</span>
+                        </div>
+                    </div>
+                    <div class="drawer-action-arrow">&gt;</div>
+                </a>
+
+                <!-- 7. تسجيل الخروج -->
+                <button type="button" onclick="closeOptionsDrawer(); executePortalLogout();" class="drawer-lux-card group w-full text-right cursor-pointer mt-4 border-rose-200 hover:border-rose-400 bg-rose-50/60">
+                    <div class="flex items-center gap-3 min-w-0 flex-1">
+                        <div class="drawer-icon-orb bg-rose-100 text-rose-800 border-rose-300 shrink-0">🚪</div>
+                        <div class="flex flex-col min-w-0 flex-1">
+                            <span class="font-display text-xs sm:text-sm font-black text-rose-800 transition">تسجيل الخروج من الإدارة</span>
+                            <span class="text-[10px] text-rose-600 font-medium">إنهاء الجلسة وقفل بوابة المسؤول فوراً</span>
+                        </div>
+                    </div>
+                    <div class="drawer-action-arrow">&gt;</div>
+                </button>
+            </div>
+
+            <!-- ذيل الشريط الجانبي الفاخر -->
+            <div class="p-4 border-t border-stone-200/80 bg-stone-100/60 text-center">
+                <p class="font-heritage text-xs text-amber-900 font-bold">TATRIZA © بوابة الإدارة السحابية المشفرة</p>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- استدعاء محرك البوابة المستقل حصرياً في نهاية الصفحة -->
     <script type="module" src="../js/portal.js"></script>
 </body>
 </html>
