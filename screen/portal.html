@@ -312,22 +312,26 @@
                     <span class="text-[10px] text-stone-500 font-medium">تحديد الاسم ورمز الكود (SKU)</span>
                 </div>
 
-                <!-- حقول الإدخال: الأيقونة + اسم التصنيف + رمز الكود -->
+                <!-- حقول الإدخال: الأيقونة + اسم التصنيف + رمز الكود (متطابقة الارتفاع تماماً) -->
                 <div class="grid grid-cols-1 sm:grid-cols-12 gap-2.5">
                     <div class="sm:col-span-2">
-                        <label class="block text-[10px] font-bold text-stone-600 mb-1">الأيقونة</label>
-                        <input type="text" id="new-cat-icon" value="✨" maxlength="4" class="w-full text-center text-lg bg-white border border-stone-300 rounded-xl py-2 outline-none focus:border-brand shadow-2xs" title="أيقونة التصنيف">
+                        <div class="h-5 flex items-center mb-1">
+                            <label class="text-[10px] font-bold text-stone-600">الأيقونة</label>
+                        </div>
+                        <input type="text" id="new-cat-icon" value="✨" maxlength="4" class="w-full h-11 text-center text-lg bg-white border border-stone-300 rounded-xl outline-none focus:border-brand shadow-2xs box-border flex items-center justify-center" title="أيقونة التصنيف">
                     </div>
                     <div class="sm:col-span-6">
-                        <label class="block text-[10px] font-bold text-stone-600 mb-1">اسم التصنيف (بالعربي)</label>
-                        <input type="text" id="new-cat-name" placeholder="مثال: سجاد الرياضي، وسائد..." required class="w-full bg-white border border-stone-300 rounded-xl px-3 py-2 text-xs sm:text-sm text-stone-900 outline-none focus:border-brand font-medium shadow-2xs">
+                        <div class="h-5 flex items-center mb-1">
+                            <label class="text-[10px] font-bold text-stone-600">اسم التصنيف (بالعربي)</label>
+                        </div>
+                        <input type="text" id="new-cat-name" placeholder="مثال: سجاد الرياضي، وسائد..." required class="w-full h-11 bg-white border border-stone-300 rounded-xl px-3 text-xs sm:text-sm text-stone-900 outline-none focus:border-brand font-medium shadow-2xs box-border">
                     </div>
                     <div class="sm:col-span-4">
-                        <div class="flex items-center justify-between mb-1">
-                            <label class="block text-[10px] font-bold text-stone-600">رمز الكود (SKU)</label>
-                            <span class="text-[9px] text-amber-800 font-bold bg-amber-50 px-1 rounded">فريد</span>
+                        <div class="h-5 flex items-center justify-between mb-1">
+                            <label class="text-[10px] font-bold text-stone-600">رمز الكود (SKU)</label>
+                            <span class="text-[9px] text-amber-800 font-bold bg-amber-50 border border-amber-200/60 px-1.5 py-0.5 rounded">فريد</span>
                         </div>
-                        <input type="text" id="new-cat-code" placeholder="مثال: Sp أو R" maxlength="6" dir="ltr" required class="w-full bg-white border border-stone-300 rounded-xl px-3 py-2 text-xs sm:text-sm text-stone-900 outline-none focus:border-brand font-mono font-black uppercase text-center shadow-2xs" oninput="window.handleCatCodeInput(this.value)">
+                        <input type="text" id="new-cat-code" placeholder="مثال: Sp أو R" maxlength="6" dir="ltr" required class="w-full h-11 bg-white border border-stone-300 rounded-xl px-3 text-xs sm:text-sm text-stone-900 outline-none focus:border-brand font-mono font-black uppercase text-center shadow-2xs box-border" oninput="window.handleCatCodeInput(this.value)">
                     </div>
                 </div>
 
@@ -349,12 +353,12 @@
                         <span class="block text-[11px] font-bold text-stone-600 flex items-center gap-1">
                             <span>🎨 الأيقونات السريعة:</span>
                         </span>
-                        <div class="flex items-center gap-1.5">
-                            <button type="button" id="btn-toggle-delete-icon-mode" onclick="window.toggleIconDeleteMode()" class="text-[10px] text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-200 px-2.5 py-1 rounded-lg font-bold transition cursor-pointer flex items-center gap-1" title="حذف أيقونات غير مرغوبة">
+                        <div class="flex items-center gap-2">
+                            <button type="button" id="btn-toggle-delete-icon-mode" onclick="window.toggleIconDeleteMode()" class="h-8 px-3 rounded-xl text-xs font-bold text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-200 transition cursor-pointer flex items-center justify-center gap-1.5 shadow-2xs box-border" title="حذف أيقونات غير مرغوبة">
                                 <span>🗑️</span>
                                 <span id="btn-toggle-delete-icon-mode-text">حذف أيقونة</span>
                             </button>
-                            <button type="button" id="btn-show-add-quick-icon" onclick="window.toggleAddQuickIconForm(true)" class="text-[10px] text-emerald-800 bg-emerald-50 hover:bg-emerald-100 border border-emerald-300 px-2.5 py-1 rounded-lg font-bold transition cursor-pointer flex items-center gap-1" title="إضافة أيقونة جديدة">
+                            <button type="button" id="btn-show-add-quick-icon" onclick="window.toggleAddQuickIconForm(true)" class="h-8 px-3 rounded-xl text-xs font-bold text-emerald-800 bg-emerald-50 hover:bg-emerald-100 border border-emerald-300 transition cursor-pointer flex items-center justify-center gap-1.5 shadow-2xs box-border" title="إضافة أيقونة جديدة">
                                 <span>＋</span>
                                 <span>إضافة جديدة</span>
                             </button>

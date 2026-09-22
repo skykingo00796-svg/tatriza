@@ -719,10 +719,10 @@ export function toggleIconDeleteMode(forceState) {
     if (btnText && btn) {
         if (isIconDeleteMode) {
             btnText.innerText = "إنهاء الحذف (تم)";
-            btn.className = "text-[10px] text-white bg-rose-600 hover:bg-rose-700 border border-rose-700 px-2 py-0.5 rounded-lg font-bold transition cursor-pointer flex items-center gap-1 shadow-2xs";
+            btn.className = "h-8 px-3 rounded-xl text-xs font-bold text-white bg-rose-600 hover:bg-rose-700 border border-rose-600 transition cursor-pointer flex items-center justify-center gap-1.5 shadow-2xs box-border";
         } else {
             btnText.innerText = "حذف أيقونة";
-            btn.className = "text-[10px] text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-200 px-2 py-0.5 rounded-lg font-bold transition cursor-pointer flex items-center gap-1";
+            btn.className = "h-8 px-3 rounded-xl text-xs font-bold text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-200 transition cursor-pointer flex items-center justify-center gap-1.5 shadow-2xs box-border";
         }
     }
 
