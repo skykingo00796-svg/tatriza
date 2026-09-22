@@ -316,18 +316,8 @@ function displayCarpets(carpetsToDisplay) {
         card.style.animationDelay = `${Math.min(index * 0.04, 0.3)}s`;
         card.onclick = () => openModal(carpet.id, allCarpets);
 
-        // إضافة مستمعات الـ 3D Tilt والانعكاس الضوئي المحصور على مساحة الصورة فقط
+        // حساب بقعة اللمعان والوميض بدقة على سطح الصورة فقط دون تشويه أو تحريك نصوص وأزرار البطاقة
         card.addEventListener('mousemove', (e) => {
-            const rect = card.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-            const centerX = rect.width / 2;
-            const centerY = rect.height / 2;
-            const rotateX = ((y - centerY) / centerY) * -5;
-            const rotateY = ((x - centerX) / centerX) * 5;
-            card.style.transform = `perspective(800px) rotateX(${rotateX.toFixed(1)}deg) rotateY(${rotateY.toFixed(1)}deg) translateY(-3px)`;
-            
-            // حساب بقعة اللمعان بدقة على سطح الصورة دون تجاوزها
             const stage = card.querySelector('.carpet-stage-container');
             if (stage) {
                 const sRect = stage.getBoundingClientRect();
@@ -339,7 +329,8 @@ function displayCarpets(carpetsToDisplay) {
         });
 
         card.addEventListener('mouseleave', () => {
-            card.style.transform = 'perspective(800px) rotateX(0deg) rotateY(0deg) translateY(0)';
+            card.style.removeProperty('--glare-x');
+            card.style.removeProperty('--glare-y');
         });
 
         card.innerHTML = `
@@ -398,7 +389,7 @@ function displayCarpets(carpetsToDisplay) {
             </div>
 
             <!-- الكتلة السفلية: مصغرة ومتناسقة لتثبيت السعر والزر في الأسفل -->
-            <div class="p-2 sm:p-2.5 flex-1 flex flex-col justify-between bg-stone-50/70 border-t border-stone-200/60 relative z-10">
+            <div class="p-2 sm:p-2.5 flex-1 flex flex-col justify-between bg-white border-t border-stone-200/70 relative z-20">
                 <div class="mb-1.5">
                     <h4 class="font-display font-semibold text-stone-900 text-[9.5px] sm:text-[10.5px] leading-snug truncate group-hover:text-brand transition" title="${carpet.title}">${carpet.title}</h4>
                 </div>

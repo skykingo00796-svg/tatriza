@@ -96,21 +96,19 @@ input[type="file"]::file-selector-button:hover {
     scrollbar-width: none;
 }
 
-/* تأثيرات تفاعلية للبطاقات المصغرة المتناسقة */
+/* بطاقات السجاد التفاعلية الفاخرة - نصوص وأزرار واضحة وطبيعية 100% */
 .carpet-card {
-    transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+                box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+                border-color 0.3s ease;
     border-radius: 0.85rem !important;
     overflow: hidden !important;
-    -webkit-mask-image: -webkit-radial-gradient(white, black);
-    mask-image: radial-gradient(white, black);
     isolation: isolate;
-    transform: translateZ(0);
-    -webkit-backface-visibility: hidden;
-    backface-visibility: hidden;
+    background: #ffffff;
 }
 .carpet-card:hover {
-    transform: translateY(-3px) scale(1.015);
-    box-shadow: 0 12px 24px -6px rgba(44, 30, 20, 0.12), 0 4px 10px -3px rgba(0, 0, 0, 0.05);
+    transform: translateY(-2px);
+    box-shadow: 0 14px 28px -6px rgba(44, 30, 20, 0.12), 0 4px 10px -3px rgba(0, 0, 0, 0.05);
 }
 
 .card-img-zoom {
@@ -437,19 +435,20 @@ input[type="file"]::file-selector-button:hover {
    ========================================== */
 
 /* 1. أزرار التفاصيل على كروت السجاد */
-.carpet-card button,
+/* 1. أزرار التفاصيل على كروت السجاد (زر المعاينة وزر المودال) */
+.btn-liquid-metal,
 button[onclick*="openModal"] {
-    transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     cursor: pointer;
 }
-.carpet-card button:hover,
+.btn-liquid-metal:hover,
 button[onclick*="openModal"]:hover {
-    transform: translateY(-2.5px) scale(1.06) !important;
-    box-shadow: 0 14px 28px -4px rgba(124, 29, 60, 0.35), 0 6px 12px -2px rgba(0, 0, 0, 0.15) !important;
+    transform: translateY(-1.5px) scale(1.02);
+    box-shadow: 0 10px 22px -4px rgba(124, 29, 60, 0.35), 0 4px 8px -2px rgba(0, 0, 0, 0.12);
 }
-.carpet-card button:active,
+.btn-liquid-metal:active,
 button[onclick*="openModal"]:active {
-    transform: scale(0.96) !important;
+    transform: scale(0.97);
 }
 
 /* 2. زر العودة للمعرض وزر السلة وأزرار الهوية والشريط العلوي */
@@ -973,43 +972,66 @@ button[type="submit"]:active {
 }
 
 /* ==========================================================================
-   بطاقات السجاد ثلاثية الأبعاد (3D Interactive Tilt & Parallax Cards)
+   تأثيرات بطاقات السجاد والوميض المحصور على مستوى الصور فقط (100% نصوص وأزرار واضحة)
    ========================================================================== */
-.carpet-card {
-    perspective: 1200px;
-    transform-style: preserve-3d;
-    transition: transform 0.28s cubic-bezier(0.2, 0.8, 0.2, 1),
-                box-shadow 0.3s ease,
-                border-color 0.3s ease;
-    will-change: transform, box-shadow;
-}
 
-/* تأثير الإمالة ثلاثية الأبعاد مع ظل واقعي متعدد الطبقات */
-.carpet-card:hover {
-    box-shadow: 0 24px 48px -12px rgba(44, 30, 20, 0.18),
-                0 8px 20px -6px rgba(0, 0, 0, 0.08),
-                0 0 0 1px rgba(197, 155, 39, 0.35);
-}
-
-/* لمعة الانعكاس الضوئي التفاعلية محصورة فقط على مساحة صورة السجادة لمنع أي ضباب على الأزرار */
+/* وميض ولمعان الانعكاس الضوئي محصور بدقة 100% على مساحة صور السجاد دون التأثير على النصوص أو الأزرار */
 .card-light-glare {
     position: absolute;
     inset: 0;
     pointer-events: none;
+    border-radius: inherit;
     background: radial-gradient(
-        circle 160px at var(--glare-x, 50%) var(--glare-y, 50%),
-        rgba(255, 255, 255, 0.45) 0%,
-        rgba(255, 248, 230, 0.18) 38%,
-        transparent 72%
+        circle 180px at var(--glare-x, 50%) var(--glare-y, 50%),
+        rgba(255, 255, 255, 0.5) 0%,
+        rgba(255, 248, 230, 0.2) 38%,
+        transparent 70%
     );
     opacity: 0;
-    transition: opacity 0.25s ease;
+    transition: opacity 0.28s ease;
     z-index: 5;
     mix-blend-mode: overlay;
 }
 
-.carpet-card:hover .card-light-glare {
+/* تفعيل الوميض فقط على مستوى حاوية الصورة عند التحويم */
+.carpet-stage-container:hover .card-light-glare,
+.carpet-card:hover .carpet-stage-container .card-light-glare {
     opacity: 1;
+}
+
+/* وميض انسيابي براق يمر عبر سطح صورة السجادة فقط (Image Shimmer Sweep) */
+.carpet-stage-container::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -120%;
+    width: 65%;
+    height: 100%;
+    background: linear-gradient(
+        105deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.32) 50%,
+        transparent 100%
+    );
+    transform: skewX(-20deg);
+    pointer-events: none;
+    z-index: 6;
+    opacity: 0;
+}
+
+.carpet-stage-container:hover::after,
+.carpet-card:hover .carpet-stage-container::after {
+    opacity: 1;
+    animation: stageImageSweep 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes stageImageSweep {
+    0% {
+        left: -120%;
+    }
+    100% {
+        left: 170%;
+    }
 }
 
 /* لمعة الذهب الهولندغرامية للمنتجات الحصرية */
@@ -1021,9 +1043,8 @@ button[type="submit"]:active {
 }
 
 .card-exclusive-border:hover {
-    box-shadow: 0 24px 52px -10px rgba(197, 155, 39, 0.45),
-                0 0 20px rgba(245, 158, 11, 0.3),
-                0 0 0 1.5px rgba(245, 158, 11, 0.8) !important;
+    box-shadow: 0 20px 42px -10px rgba(197, 155, 39, 0.35),
+                0 0 0 1.5px rgba(245, 158, 11, 0.75) !important;
 }
 
 /* شارة الكرستال البراقة لجديد وحصري (ThreeUI Spark Badge Effect) */

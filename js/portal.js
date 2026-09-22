@@ -586,7 +586,7 @@ function renderPortalProductsTable() {
                 </div>
 
                 <!-- الكتلة السفلية: خطوط وأزرار بمحاذاة مركزية تامة وارتفاعات متساوية -->
-                <div class="p-2 sm:p-2.5 flex-1 flex flex-col justify-between bg-stone-50/70 border-t border-stone-200/60 relative z-10">
+                <div class="p-2 sm:p-2.5 flex-1 flex flex-col justify-between bg-white border-t border-stone-200/70 relative z-20">
                     <div class="mb-1">
                         <span class="text-[8.5px] sm:text-[9.5px] md:text-[10px] text-stone-500 font-medium leading-none block truncate">
                             ${c.category || 'تراثي'}
@@ -605,14 +605,14 @@ function renderPortalProductsTable() {
                         </button>
                     </div>
 
-                    <!-- شريط أدوات المسؤول المصغر بارتفاع موحد ومحاذاة رأسية متساوية -->
-                    <div class="pt-1.5 border-t border-stone-200/70 grid grid-cols-2 gap-1.5">
-                        <button type="button" onclick="event.stopPropagation(); window.portalOpenEdit('${c.id}')" class="h-7 sm:h-7.5 w-full bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200/80 font-bold rounded-lg transition inline-flex items-center justify-center gap-1 cursor-pointer shadow-2xs text-[8.5px] sm:text-[9.5px] leading-none" title="تعديل بيانات السجادة">
-                            <span class="text-[9px]">✏️</span>
+                    <!-- شريط أدوات المسؤول: 70% زر التعديل و 30% زر الحذف ومحاذاة متقنة -->
+                    <div class="pt-1.5 border-t border-stone-200/70 flex items-center gap-1.5">
+                        <button type="button" onclick="event.stopPropagation(); window.portalOpenEdit('${c.id}')" style="flex: 7 1 0%; min-width: 0;" class="h-7 sm:h-7.5 bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200/80 font-bold rounded-lg transition inline-flex items-center justify-center gap-1 cursor-pointer shadow-2xs text-[8.5px] sm:text-[9.5px] leading-none select-none" title="تعديل بيانات السجادة">
+                            <span class="text-[9px] shrink-0">✏️</span>
                             <span class="truncate">تعديل</span>
                         </button>
-                        <button type="button" onclick="event.stopPropagation(); window.portalDeleteCarpet('${c.id}')" class="h-7 sm:h-7.5 w-full bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200/80 font-bold rounded-lg transition inline-flex items-center justify-center gap-1 cursor-pointer shadow-2xs text-[8.5px] sm:text-[9.5px] leading-none" title="حذف السجادة نهائياً">
-                            <span class="text-[9px]">🗑️</span>
+                        <button type="button" onclick="event.stopPropagation(); window.portalDeleteCarpet('${c.id}')" style="flex: 3 1 0%; min-width: 0;" class="h-7 sm:h-7.5 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200/80 font-bold rounded-lg transition inline-flex items-center justify-center gap-1 cursor-pointer shadow-2xs text-[8.5px] sm:text-[9.5px] leading-none select-none" title="حذف السجادة نهائياً">
+                            <span class="text-[9px] shrink-0">🗑️</span>
                             <span class="truncate">حذف</span>
                         </button>
                     </div>
