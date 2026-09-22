@@ -54,11 +54,11 @@ let portalStockFilter = 'all';
 // التصنيفات الافتراضية وإدارتها في البوابة
 // ==========================================
 export const DEFAULT_CATEGORIES = [
-    { id: 'ajami', name: 'نقشات عجمية', icon: '✨' },
-    { id: 'silk', name: 'سجاد حريري', icon: '🧵' },
-    { id: 'traditional', name: 'تراثي أصيل', icon: '🏛️' },
-    { id: 'modern', name: 'مودرن معاصر', icon: '🎨' },
-    { id: 'wool', name: 'صوف فاخر', icon: '🧶' }
+    { id: 'ajami', name: 'نقشات عجمية', icon: '✨', code: 'A' },
+    { id: 'silk', name: 'سجاد حريري', icon: '🧵', code: 'S' },
+    { id: 'traditional', name: 'تراثي أصيل', icon: '🏛️', code: 'T' },
+    { id: 'modern', name: 'مودرن معاصر', icon: '🎨', code: 'M' },
+    { id: 'wool', name: 'صوف فاخر', icon: '🧶', code: 'W' }
 ];
 
 export const DEFAULT_QUICK_ICONS = ['👑', '💎', '🏺', '🕌', '⚜️', '🪡', '🛋️', '🪄', '🌸', '✨', '🧵', '🏛️', '🎨', '🧶'];
@@ -102,13 +102,27 @@ export function saveCustomQuickIcons(icons) {
     localStorage.setItem('tatr_custom_quick_icons', JSON.stringify(icons));
 }
 
+export function getDeletedQuickIcons() {
+    try {
+        const stored = localStorage.getItem('tatr_deleted_quick_icons');
+        return stored ? JSON.parse(stored) : [];
+    } catch (e) {
+        return [];
+    }
+}
+
+export function saveDeletedQuickIcons(icons) {
+    localStorage.setItem('tatr_deleted_quick_icons', JSON.stringify(icons));
+}
+
 export function getAllQuickIcons() {
+    const deleted = getDeletedQuickIcons();
     const custom = getCustomQuickIcons();
     const combined = [...DEFAULT_QUICK_ICONS];
     custom.forEach(ic => {
         if (!combined.includes(ic)) combined.push(ic);
     });
-    return combined;
+    return combined.filter(ic => !deleted.includes(ic));
 }
 
 export function getActiveCategories() {
@@ -242,8 +256,12 @@ function initPortalSubscriptions() {
             if (Array.isArray(settings.customQuickIcons)) {
                 saveCustomQuickIcons(settings.customQuickIcons);
             }
+            if (Array.isArray(settings.deletedQuickIcons)) {
+                saveDeletedQuickIcons(settings.deletedQuickIcons);
+            }
             renderPortalCategoriesList();
             updatePortalCategoryOptions();
+            renderQuickIconsUI();
         }
     });
 }
@@ -430,30 +448,118 @@ window.handlePortalStockFilter = function(stock) {
 };
 
 // ==========================================
-// إدارة وتخصيص التصنيفات في البوابة
+// إدارة وتخصيص التصنيفات والأكواد في البوابة
 // ==========================================
+
+let isIconDeleteMode = false;
+
+export function getExistingCategoryCodes() {
+    const activeCats = getActiveCategories();
+    const codes = [];
+    activeCats.forEach(cat => {
+        const dMatch = DEFAULT_CATEGORIES.find(d => d.id === cat.id);
+        const code = cat.code || (dMatch ? dMatch.code : cat.id.charAt(0).toUpperCase());
+        codes.push({
+            code: String(code).trim().toUpperCase(),
+            name: cat.name,
+            id: cat.id
+        });
+    });
+    return codes;
+}
+
+export function validateCategoryCode(code) {
+    const cleanCode = String(code || '').trim().toUpperCase();
+    if (!cleanCode) {
+        return { 
+            valid: false, 
+            message: 'أدخل رمزاً بالإنجليزية لتوليد كود المنتجات تلقائياً (مثال: Sp أو R)' 
+        };
+    }
+    if (!/^[A-Za-z0-9]+$/.test(cleanCode)) {
+        return { 
+            valid: false, 
+            message: 'يجب أن يتكون الرمز من أحرف إنجليزية أو أرقام فقط بدون مسافات (مثال: Sp أو S2).' 
+        };
+    }
+
+    const existing = getExistingCategoryCodes();
+    const conflict = existing.find(item => item.code === cleanCode);
+    if (conflict) {
+        return {
+            valid: false,
+            isDuplicate: true,
+            conflictName: conflict.name,
+            message: `⚠️ الرمز (${cleanCode}) مستخدم مسبقاً لتصنيف «${conflict.name}». يرجى استخدام رمز آخر (مثال: ${cleanCode}p أو ${cleanCode}1).`
+        };
+    }
+
+    return {
+        valid: true,
+        code: cleanCode,
+        previewSku: `TATR-0010${cleanCode}`,
+        message: `✅ الرمز متاح! نموذج الكود التلقائي للمنتجات: TATR-0010${cleanCode}`
+    };
+}
+
+export function handleCatCodeInput(value) {
+    const feedbackBox = document.getElementById('new-cat-code-feedback');
+    const feedbackText = document.getElementById('new-cat-code-feedback-text');
+    const submitBtn = document.getElementById('btn-submit-new-category');
+    const input = document.getElementById('new-cat-code');
+
+    const result = validateCategoryCode(value);
+    
+    if (feedbackBox && feedbackText) {
+        feedbackText.innerText = result.message;
+        feedbackBox.className = "text-[11px] p-2.5 rounded-xl border flex items-center gap-1.5 transition-all " + 
+            (!value ? "bg-stone-50 border-stone-200 text-stone-600" :
+             result.valid ? "bg-emerald-50 border-emerald-300 text-emerald-800 font-bold" :
+             "bg-rose-50 border-rose-300 text-rose-800 font-bold");
+    }
+
+    if (submitBtn) {
+        submitBtn.disabled = !result.valid;
+        if (!result.valid && value) {
+            submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        } else {
+            submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        }
+    }
+}
+window.handleCatCodeInput = handleCatCodeInput;
+
 export function openAddCategoryModal() {
     const modal = document.getElementById('add-category-modal');
     if (!modal) return;
     renderPortalCategoriesList();
     renderQuickIconsUI();
     toggleAddQuickIconForm(false);
+    toggleIconDeleteMode(false);
     modal.classList.remove('hidden');
-    const input = document.getElementById('new-cat-name');
-    if (input) {
-        input.value = '';
-        input.focus();
-    }
+
+    const nameInput = document.getElementById('new-cat-name');
+    const codeInput = document.getElementById('new-cat-code');
+    const iconInput = document.getElementById('new-cat-icon');
+
+    if (nameInput) nameInput.value = '';
+    if (codeInput) codeInput.value = '';
+    if (iconInput) iconInput.value = '✨';
+
+    handleCatCodeInput('');
+    if (nameInput) nameInput.focus();
 }
 window.openAddCategoryModal = openAddCategoryModal;
 
 export function closeAddCategoryModal() {
     const modal = document.getElementById('add-category-modal');
     if (modal) modal.classList.add('hidden');
+    toggleIconDeleteMode(false);
 }
 window.closeAddCategoryModal = closeAddCategoryModal;
 
 export function setNewCatIcon(icon) {
+    if (isIconDeleteMode) return;
     const input = document.getElementById('new-cat-icon');
     if (input) input.value = icon;
 }
@@ -463,13 +569,30 @@ export function submitNewCategory(e) {
     if (e) e.preventDefault();
     const nameInput = document.getElementById('new-cat-name');
     const iconInput = document.getElementById('new-cat-icon');
+    const codeInput = document.getElementById('new-cat-code');
     if (!nameInput || !nameInput.value.trim()) return;
 
     const name = nameInput.value.trim();
     const icon = iconInput && iconInput.value.trim() ? iconInput.value.trim() : '✨';
+    const rawCode = codeInput ? codeInput.value.trim() : '';
+
+    const validation = validateCategoryCode(rawCode);
+    if (!validation.valid) {
+        showToast(validation.message, 'error', 'رمز الكود غير متاح');
+        if (codeInput) codeInput.focus();
+        return;
+    }
+
+    const cleanCode = validation.code;
     const id = 'cat_' + Date.now().toString(36);
 
-    const newCat = { id, name, icon };
+    const newCat = { 
+        id, 
+        name, 
+        icon,
+        code: cleanCode
+    };
+
     const customCats = getCustomCategories();
     customCats.push(newCat);
     saveCustomCategories(customCats);
@@ -479,7 +602,7 @@ export function submitNewCategory(e) {
     updatePortalCategoryOptions();
     closeAddCategoryModal();
 
-    showToast(`تمت إضافة تصنيف «${name}» بنجاح.`, 'success', 'إدارة التصنيفات');
+    showToast(`تمت إضافة تصنيف «${name}» برمز [${cleanCode}] بنجاح.`, 'success', 'إدارة التصنيفات');
 }
 window.submitNewCategory = submitNewCategory;
 
@@ -503,7 +626,8 @@ export function deleteCategoryPrompt(id, name) {
             saveDeletedCategoryIds(deleted);
             saveCategorySettingsToCloud({
                 deletedDefaultCategoryIds: deleted,
-                customQuickIcons: getCustomQuickIcons()
+                customQuickIcons: getCustomQuickIcons(),
+                deletedQuickIcons: getDeletedQuickIcons()
             });
         }
     }
@@ -519,7 +643,8 @@ export function restoreDefaultCategories() {
     saveDeletedCategoryIds([]);
     saveCategorySettingsToCloud({
         deletedDefaultCategoryIds: [],
-        customQuickIcons: getCustomQuickIcons()
+        customQuickIcons: getCustomQuickIcons(),
+        deletedQuickIcons: getDeletedQuickIcons()
     });
     renderPortalCategoriesList();
     updatePortalCategoryOptions();
@@ -528,17 +653,23 @@ export function restoreDefaultCategories() {
 window.restoreDefaultCategories = restoreDefaultCategories;
 
 function renderPortalCategoriesList() {
-    const listEl = document.getElementById('categories-management-list');
+    // دعم كلاً من معرف categories-management-list والمعرف البديل existing-custom-categories
+    const listEl = document.getElementById('categories-management-list') || document.getElementById('existing-custom-categories');
     if (!listEl) return;
 
     const activeCats = getActiveCategories();
     listEl.innerHTML = activeCats.map(cat => {
         const count = allPortalCarpets.filter(c => c.category === cat.id).length;
+        const dMatch = DEFAULT_CATEGORIES.find(d => d.id === cat.id);
+        const catCode = cat.code || (dMatch ? dMatch.code : cat.id.charAt(0).toUpperCase());
         return `
             <div class="flex items-center justify-between p-2.5 rounded-xl bg-stone-50 border border-stone-200">
                 <div class="flex items-center gap-2">
                     <span class="text-base">${cat.icon || '📁'}</span>
                     <span class="font-display font-bold text-xs text-stone-800">${cat.name}</span>
+                    <span class="font-mono text-[10px] font-black px-2 py-0.5 rounded-md bg-amber-100 text-amber-900 border border-amber-300/80 shadow-2xs">
+                        كود: ${catCode}
+                    </span>
                     <span class="text-[10px] px-2 py-0.5 rounded-full bg-stone-200 text-stone-700 font-bold font-mono">${count} قطعة</span>
                 </div>
                 <button type="button" onclick="window.deleteCategoryPrompt('${cat.id}', '${cat.name}')" class="text-rose-600 hover:text-rose-800 text-xs font-bold px-2 py-1 rounded-lg hover:bg-rose-50 transition cursor-pointer">
@@ -555,7 +686,11 @@ function updatePortalCategoryOptions() {
     const editCatSelect = document.getElementById('edit-category');
 
     const activeCats = getActiveCategories();
-    const optionsHtml = activeCats.map(c => `<option value="${c.id}">${c.icon || ''} ${c.name}</option>`).join('');
+    const optionsHtml = activeCats.map(c => {
+        const dMatch = DEFAULT_CATEGORIES.find(d => d.id === c.id);
+        const code = c.code || (dMatch ? dMatch.code : c.id.charAt(0).toUpperCase());
+        return `<option value="${c.id}">${c.icon || ''} ${c.name} (${code})</option>`;
+    }).join('');
 
     if (filterSelect) {
         filterSelect.innerHTML = `<option value="all">جميع التصنيفات</option>` + optionsHtml;
@@ -568,20 +703,112 @@ function updatePortalCategoryOptions() {
     }
 }
 
+// ==========================================
+// إدارة الأيقونات السريعة (إضافة + حذف بحرية)
+// ==========================================
+
+export function toggleIconDeleteMode(forceState) {
+    if (typeof forceState === 'boolean') {
+        isIconDeleteMode = forceState;
+    } else {
+        isIconDeleteMode = !isIconDeleteMode;
+    }
+
+    const btnText = document.getElementById('btn-toggle-delete-icon-mode-text');
+    const btn = document.getElementById('btn-toggle-delete-icon-mode');
+    if (btnText && btn) {
+        if (isIconDeleteMode) {
+            btnText.innerText = "إنهاء الحذف (تم)";
+            btn.className = "text-[10px] text-white bg-rose-600 hover:bg-rose-700 border border-rose-700 px-2 py-0.5 rounded-lg font-bold transition cursor-pointer flex items-center gap-1 shadow-2xs";
+        } else {
+            btnText.innerText = "حذف أيقونة";
+            btn.className = "text-[10px] text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-200 px-2 py-0.5 rounded-lg font-bold transition cursor-pointer flex items-center gap-1";
+        }
+    }
+
+    renderQuickIconsUI();
+}
+window.toggleIconDeleteMode = toggleIconDeleteMode;
+
+export function deleteQuickIcon(iconToDelete) {
+    if (!confirm(`هل ترغب في حذف الأيقونة «${iconToDelete}» من قائمة الأيقونات السريعة؟`)) return;
+
+    // 1. إزالة من المخصصة
+    let custom = getCustomQuickIcons();
+    custom = custom.filter(ic => ic !== iconToDelete);
+    saveCustomQuickIcons(custom);
+
+    // 2. تسجيلها في المحذوفة
+    let deleted = getDeletedQuickIcons();
+    if (!deleted.includes(iconToDelete)) {
+        deleted.push(iconToDelete);
+        saveDeletedQuickIcons(deleted);
+    }
+
+    // 3. مزامنة مع السحابة
+    saveCategorySettingsToCloud({
+        deletedDefaultCategoryIds: getDeletedCategoryIds(),
+        customQuickIcons: custom,
+        deletedQuickIcons: deleted
+    });
+
+    showToast(`تم حذف الأيقونة ${iconToDelete} بنجاح.`, 'info', 'إدارة الأيقونات');
+    renderQuickIconsUI();
+}
+window.deleteQuickIcon = deleteQuickIcon;
+
+export function restoreQuickIcons() {
+    saveDeletedQuickIcons([]);
+    saveCategorySettingsToCloud({
+        deletedDefaultCategoryIds: getDeletedCategoryIds(),
+        customQuickIcons: getCustomQuickIcons(),
+        deletedQuickIcons: []
+    });
+    showToast('تمت استعادة الأيقونات الافتراضية بنجاح.', 'success', 'استعادة الأيقونات');
+    renderQuickIconsUI();
+}
+window.restoreQuickIcons = restoreQuickIcons;
+
 export function renderQuickIconsUI() {
     const container = document.getElementById('quick-icons-container');
     if (!container) return;
 
     const icons = getAllQuickIcons();
+
+    if (isIconDeleteMode) {
+        let html = `
+            <div class="w-full text-[11px] text-rose-700 bg-rose-50 border border-rose-200 rounded-lg p-1.5 flex items-center justify-between mb-1.5 font-bold">
+                <span>🗑️ انقر على أي أيقونة ترغب في حذفها:</span>
+                <button type="button" onclick="window.restoreQuickIcons()" class="text-[10px] text-stone-600 hover:text-stone-900 underline font-normal cursor-pointer">
+                    ↺ استعادة الأصلية
+                </button>
+            </div>
+        `;
+
+        if (icons.length === 0) {
+            html += `<p class="text-xs text-stone-400 py-1">لا توجد أيقونات متبقية حالياً.</p>`;
+        } else {
+            html += icons.map(ic => {
+                return `
+                    <div class="relative inline-block">
+                        <button type="button" onclick="window.deleteQuickIcon('${ic}')" class="w-8 h-8 rounded-xl bg-rose-50 border-2 border-rose-400 hover:bg-rose-100 flex items-center justify-center text-sm transition shadow-2xs hover:scale-110 cursor-pointer active:scale-95" title="حذف الأيقونة">
+                            ${ic}
+                            <span class="absolute -top-1 -right-1 w-4 h-4 bg-rose-600 text-white rounded-full text-[9px] font-black flex items-center justify-center shadow-xs">✕</span>
+                        </button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        container.innerHTML = html;
+        return;
+    }
+
+    // وضع التحديد العادي
     let html = icons.map(ic => {
-        return `<button type="button" onclick="setNewCatIcon('${ic}')" class="w-8 h-8 rounded-xl bg-white hover:bg-amber-50 border border-stone-200 hover:border-amber-400 flex items-center justify-center text-sm transition shadow-2xs hover:scale-105 cursor-pointer">${ic}</button>`;
+        return `<button type="button" onclick="setNewCatIcon('${ic}')" class="w-8 h-8 rounded-xl bg-white hover:bg-amber-50 border border-stone-200 hover:border-amber-400 flex items-center justify-center text-sm transition shadow-2xs hover:scale-105 cursor-pointer active:scale-95" title="اختيار الأيقونة">${ic}</button>`;
     }).join('');
 
-    html += `
-        <button type="button" id="btn-show-add-quick-icon" onclick="toggleAddQuickIconForm(true)" class="w-8 h-8 rounded-xl border-dashed border-emerald-500 bg-emerald-50/80 hover:bg-emerald-100 text-emerald-800 font-black flex items-center justify-center text-base transition shadow-2xs cursor-pointer" title="إضافة أيقونة جديدة">
-            ＋
-        </button>
-    `;
     container.innerHTML = html;
 }
 window.renderQuickIconsUI = renderQuickIconsUI;
@@ -591,6 +818,7 @@ export function toggleAddQuickIconForm(show) {
     const btn = document.getElementById('btn-show-add-quick-icon');
     if (form) {
         if (show) {
+            toggleIconDeleteMode(false);
             form.classList.remove('hidden');
             const input = document.getElementById('new-quick-icon-input');
             if (input) { input.value = ''; input.focus(); }
@@ -609,17 +837,27 @@ export function submitNewQuickIcon(e) {
     if (!input || !input.value.trim()) return;
 
     const newIcon = input.value.trim();
+    
+    // إزالة من قائمة المحذوفة إذا كانت موجودة سابقاً
+    let deleted = getDeletedQuickIcons();
+    if (deleted.includes(newIcon)) {
+        deleted = deleted.filter(ic => ic !== newIcon);
+        saveDeletedQuickIcons(deleted);
+    }
+
     const custom = getCustomQuickIcons();
     if (!custom.includes(newIcon)) {
         custom.push(newIcon);
         saveCustomQuickIcons(custom);
-        saveCategorySettingsToCloud({
-            deletedDefaultCategoryIds: getDeletedCategoryIds(),
-            customQuickIcons: custom
-        });
-        showToast(`تمت إضافة الأيقونة ${newIcon} بنجاح!`, 'success', 'أيقونة جديدة');
     }
 
+    saveCategorySettingsToCloud({
+        deletedDefaultCategoryIds: getDeletedCategoryIds(),
+        customQuickIcons: custom,
+        deletedQuickIcons: deleted
+    });
+
+    showToast(`تمت إضافة الأيقونة ${newIcon} بنجاح!`, 'success', 'أيقونة جديدة');
     setNewCatIcon(newIcon);
     toggleAddQuickIconForm(false);
     renderQuickIconsUI();

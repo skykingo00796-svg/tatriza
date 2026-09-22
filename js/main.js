@@ -823,9 +823,11 @@ export function initHeroParallax() {
 // نظام إدارة وتخصيص وحذف التصنيفات (Category Management & Deletion Engine)
 // ==========================================
 export const DEFAULT_CATEGORIES = [
-    { id: 'ajami', name: 'نقشات عجمية', icon: '✨' },
-    { id: 'silk', name: 'سجاد حريري', icon: '🧵' },
-    { id: 'traditional', name: 'تراثي أصيل', icon: '🏛️' }
+    { id: 'ajami', name: 'نقشات عجمية', icon: '✨', code: 'A' },
+    { id: 'silk', name: 'سجاد حريري', icon: '🧵', code: 'S' },
+    { id: 'traditional', name: 'تراثي أصيل', icon: '🏛️', code: 'T' },
+    { id: 'modern', name: 'مودرن معاصر', icon: '🎨', code: 'M' },
+    { id: 'wool', name: 'صوف فاخر', icon: '🧶', code: 'W' }
 ];
 
 // قائمة الأيقونات السريعة الافتراضية

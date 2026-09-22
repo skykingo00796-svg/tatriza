@@ -303,70 +303,103 @@
             </div>
 
             <!-- نموذج إضافة تصنيف جديد -->
-            <form onsubmit="submitNewCategory(event)" class="space-y-3 pt-3 border-t border-stone-200/80">
-                <div class="text-xs font-bold text-stone-800 flex items-center gap-1.5">
-                    <span class="text-emerald-700 font-black">＋</span>
-                    <span>إضافة تصنيف جديد للمعرض:</span>
+            <form onsubmit="submitNewCategory(event)" class="space-y-3.5 pt-3 border-t border-stone-200/80">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-bold text-stone-800 flex items-center gap-1.5">
+                        <span class="text-emerald-700 font-black">＋</span>
+                        <span>إضافة تصنيف جديد للمعرض:</span>
+                    </span>
+                    <span class="text-[10px] text-stone-500 font-medium">تحديد الاسم ورمز الكود (SKU)</span>
                 </div>
-                <div>
-                    <div class="flex gap-2">
-                        <input type="text" id="new-cat-icon" value="✨" maxlength="4" class="w-12 text-center text-base bg-stone-50 border border-stone-300/80 rounded-xl px-2 py-2 outline-none focus:border-brand" title="أيقونة التصنيف">
-                        <input type="text" id="new-cat-name" placeholder="مثال: مرايا مطرزة، وسائد، تحف جدارية..." required class="flex-1 bg-stone-50 border border-stone-300/80 rounded-xl px-3 py-2 text-xs sm:text-sm text-stone-900 outline-none focus:border-brand font-medium">
-                        <button type="submit" class="btn-liquid-emerald font-display text-white font-bold text-xs sm:text-sm px-4 py-2 rounded-xl shadow-xs transition flex items-center justify-center gap-1 shrink-0">
-                            <span>إضافة</span>
-                        </button>
+
+                <!-- حقول الإدخال: الأيقونة + اسم التصنيف + رمز الكود -->
+                <div class="grid grid-cols-1 sm:grid-cols-12 gap-2.5">
+                    <div class="sm:col-span-2">
+                        <label class="block text-[10px] font-bold text-stone-600 mb-1">الأيقونة</label>
+                        <input type="text" id="new-cat-icon" value="✨" maxlength="4" class="w-full text-center text-lg bg-white border border-stone-300 rounded-xl py-2 outline-none focus:border-brand shadow-2xs" title="أيقونة التصنيف">
+                    </div>
+                    <div class="sm:col-span-6">
+                        <label class="block text-[10px] font-bold text-stone-600 mb-1">اسم التصنيف (بالعربي)</label>
+                        <input type="text" id="new-cat-name" placeholder="مثال: سجاد الرياضي، وسائد..." required class="w-full bg-white border border-stone-300 rounded-xl px-3 py-2 text-xs sm:text-sm text-stone-900 outline-none focus:border-brand font-medium shadow-2xs">
+                    </div>
+                    <div class="sm:col-span-4">
+                        <div class="flex items-center justify-between mb-1">
+                            <label class="block text-[10px] font-bold text-stone-600">رمز الكود (SKU)</label>
+                            <span class="text-[9px] text-amber-800 font-bold bg-amber-50 px-1 rounded">فريد</span>
+                        </div>
+                        <input type="text" id="new-cat-code" placeholder="مثال: Sp أو R" maxlength="6" dir="ltr" required class="w-full bg-white border border-stone-300 rounded-xl px-3 py-2 text-xs sm:text-sm text-stone-900 outline-none focus:border-brand font-mono font-black uppercase text-center shadow-2xs" oninput="window.handleCatCodeInput(this.value)">
                     </div>
                 </div>
 
-                <!-- خيارات سريعة للأيقونات مع زر الإضافة المخصص -->
-                <div>
-                    <div class="flex items-center justify-between mb-1">
-                        <span class="block text-[11px] font-bold text-stone-500">أيقونة سريعة:</span>
-                        <span class="text-[10px] text-stone-400 font-medium">اختر أو أضف أيقونة جديدة (＋)</span>
+                <!-- شريط الملاحظات والمعاينة التفاعلية للكود لمنع التكرار -->
+                <div id="new-cat-code-feedback" class="text-[11px] p-2.5 rounded-xl border bg-stone-50 border-stone-200 text-stone-600 flex items-center gap-1.5 transition-all">
+                    <span>💡</span>
+                    <span id="new-cat-code-feedback-text">أدخل رمزاً بالإنجليزية لتوليد كود المنتجات تلقائياً (مثال: TATR-0010Sp)</span>
+                </div>
+
+                <!-- زر الإضافة -->
+                <button type="submit" id="btn-submit-new-category" class="w-full btn-liquid-emerald font-display text-white font-bold text-xs sm:text-sm py-2.5 rounded-xl shadow-xs transition flex items-center justify-center gap-1.5 cursor-pointer">
+                    <span>＋</span>
+                    <span>إضافة وتثبيت التصنيف في المعرض</span>
+                </button>
+
+                <!-- خيارات سريعة للأيقونات مع إمكانية الإضافة والحذف بحرية -->
+                <div class="pt-2 border-t border-stone-100 space-y-1.5">
+                    <div class="flex items-center justify-between">
+                        <span class="block text-[11px] font-bold text-stone-600 flex items-center gap-1">
+                            <span>🎨 الأيقونات السريعة:</span>
+                        </span>
+                        <div class="flex items-center gap-1.5">
+                            <button type="button" id="btn-toggle-delete-icon-mode" onclick="window.toggleIconDeleteMode()" class="text-[10px] text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-200 px-2.5 py-1 rounded-lg font-bold transition cursor-pointer flex items-center gap-1" title="حذف أيقونات غير مرغوبة">
+                                <span>🗑️</span>
+                                <span id="btn-toggle-delete-icon-mode-text">حذف أيقونة</span>
+                            </button>
+                            <button type="button" id="btn-show-add-quick-icon" onclick="window.toggleAddQuickIconForm(true)" class="text-[10px] text-emerald-800 bg-emerald-50 hover:bg-emerald-100 border border-emerald-300 px-2.5 py-1 rounded-lg font-bold transition cursor-pointer flex items-center gap-1" title="إضافة أيقونة جديدة">
+                                <span>＋</span>
+                                <span>إضافة جديدة</span>
+                            </button>
+                        </div>
                     </div>
-                    <div id="quick-icons-container" class="flex items-center gap-1.5 flex-wrap">
-                        <button type="button" onclick="setNewCatIcon('✨')" class="w-7 h-7 rounded-lg bg-stone-100 hover:bg-stone-200 text-sm flex items-center justify-center transition">✨</button>
-                        <button type="button" onclick="setNewCatIcon('🪞')" class="w-7 h-7 rounded-lg bg-stone-100 hover:bg-stone-200 text-sm flex items-center justify-center transition">🪞</button>
-                        <button type="button" onclick="setNewCatIcon('🧵')" class="w-7 h-7 rounded-lg bg-stone-100 hover:bg-stone-200 text-sm flex items-center justify-center transition">🧵</button>
-                        <button type="button" onclick="setNewCatIcon('👑')" class="w-7 h-7 rounded-lg bg-stone-100 hover:bg-stone-200 text-sm flex items-center justify-center transition">👑</button>
-                        <button type="button" onclick="setNewCatIcon('🏛️')" class="w-7 h-7 rounded-lg bg-stone-100 hover:bg-stone-200 text-sm flex items-center justify-center transition">🏛️</button>
-                        <button type="button" onclick="setNewCatIcon('🎨')" class="w-7 h-7 rounded-lg bg-stone-100 hover:bg-stone-200 text-sm flex items-center justify-center transition">🎨</button>
-                        <button type="button" onclick="setNewCatIcon('💎')" class="w-7 h-7 rounded-lg bg-stone-100 hover:bg-stone-200 text-sm flex items-center justify-center transition">💎</button>
-                        <button type="button" onclick="setNewCatIcon('🪡')" class="w-7 h-7 rounded-lg bg-stone-100 hover:bg-stone-200 text-sm flex items-center justify-center transition">🪡</button>
-                        <button type="button" id="btn-add-quick-icon" onclick="toggleAddQuickIconForm()" class="w-7 h-7 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-300 flex items-center justify-center text-xs font-black transition active:scale-95 shadow-2xs cursor-pointer" title="إضافة أيقونة جديدة من كيبورد الجوال">＋</button>
+                    
+                    <!-- حاوية الأيقونات التفاعلية السريعة (تحقن برمجياً) -->
+                    <div id="quick-icons-container" class="flex items-center gap-1.5 flex-wrap min-h-[40px] p-2 bg-stone-50/90 rounded-xl border border-stone-200/80">
+                        <!-- تحقن الأيقونات برمجياً مع دعم الحذف والإضافة -->
                     </div>
 
-                    <!-- نموذج سريع لإضافة أيقونة جديدة من كيبورد الجوال -->
-                    <div id="add-quick-icon-inline" class="hidden mt-2 p-2.5 bg-emerald-50/70 rounded-xl border border-emerald-200/90 space-y-1.5 transition-all">
+                    <!-- نموذج إضافة أيقونة جديدة من كيبورد الجوال -->
+                    <div id="add-quick-icon-form" class="hidden mt-2 p-2.5 bg-emerald-50/80 rounded-xl border border-emerald-200 space-y-2 transition-all">
                         <div class="flex items-center justify-between">
                             <span class="text-[11px] font-bold text-emerald-950 flex items-center gap-1">
                                 <span>✨</span>
                                 <span>إضافة أيقونة جديدة من كيبورد الجوال:</span>
                             </span>
-                            <span class="text-[10px] text-emerald-700 font-medium">اكتب أي إيموجي (مثال: ⚽ 🏋️ 🧶 🌺 🕌)</span>
+                            <span class="text-[10px] text-emerald-700 font-medium">اكتب أي إيموجي (مثال: ⚽ 🏋️ 🧶 🌺 🕌 📿)</span>
                         </div>
                         <div class="flex items-center gap-1.5">
-                            <input type="text" id="new-custom-emoji-input" placeholder="اضغط هنا واختر الإيموجي من الكيبورد" maxlength="8" class="flex-1 text-center text-base bg-white border border-emerald-300 rounded-lg px-2 py-1.5 outline-none focus:ring-2 focus:ring-emerald-500/20 font-emoji">
-                            <button type="button" onclick="confirmAddQuickIcon()" class="btn-liquid-emerald font-display text-white text-xs font-bold px-3 py-1.5 rounded-lg shrink-0 shadow-2xs cursor-pointer">حفظ وتثبيت</button>
-                            <button type="button" onclick="toggleAddQuickIconForm(false)" class="text-xs text-stone-500 hover:text-stone-700 px-2 py-1.5 shrink-0 cursor-pointer">إلغاء</button>
+                            <input type="text" id="new-quick-icon-input" placeholder="اكتب أو الصق الإيموجي هنا" maxlength="8" class="flex-1 text-center text-base bg-white border border-emerald-300 rounded-lg px-2 py-1.5 outline-none focus:ring-2 focus:ring-emerald-500/20 font-emoji">
+                            <button type="button" onclick="window.submitNewQuickIcon(event)" class="btn-liquid-emerald font-display text-white text-xs font-bold px-3 py-1.5 rounded-lg shrink-0 shadow-2xs cursor-pointer">حفظ وتثبيت</button>
+                            <button type="button" onclick="window.toggleAddQuickIconForm(false)" class="text-xs text-stone-500 hover:text-stone-700 px-2 py-1.5 shrink-0 cursor-pointer">إلغاء</button>
                         </div>
                     </div>
                 </div>
             </form>
 
-            <!-- قائمة التصنيفات الحالية مع خيار الحذف المباشر -->
+            <!-- قائمة التصنيفات الحالية مع خيار الحذف المباشر وعرض الكود -->
             <div class="pt-3 border-t border-stone-200/80 space-y-2">
                 <div class="flex items-center justify-between">
                     <span class="text-xs font-bold text-stone-800 flex items-center gap-1.5">
                         <span>📋</span>
-                        <span>التصنيفات المعروضة حالياً:</span>
+                        <span>التصنيفات المعروضة حالياً وكود كل تصنيف:</span>
                     </span>
-                    <span class="text-[10px] text-stone-400 font-medium">حذف أي تصنيف لا تحتاجه</span>
+                    <button type="button" onclick="window.restoreDefaultCategories()" class="text-[10px] text-stone-500 hover:text-stone-800 underline font-medium cursor-pointer">
+                        استعادة التصنيفات الافتراضية
+                    </button>
                 </div>
                 
-                <div id="existing-custom-categories" class="space-y-1.5 max-h-56 overflow-y-auto pr-0.5">
+                <div id="categories-management-list" class="space-y-1.5 max-h-56 overflow-y-auto pr-0.5">
                     <!-- تحقن التصنيفات ديناميكياً مع حماية قسم الكل -->
                 </div>
+                <div id="existing-custom-categories" class="hidden"></div>
             </div>
         </div>
     </div>

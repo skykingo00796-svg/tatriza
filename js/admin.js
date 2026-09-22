@@ -57,14 +57,31 @@ import {
 // مثال: TATR-001A (أجمي)، TATR-002S (حرير)، TATR-003T (تراثي)
 // ==========================================
 export function getCategoryCode(category) {
-    const map = {
+    if (!category) return 'A';
+
+    // 1. فحص التصنيفات المخصصة المحفوظة
+    try {
+        const customCats = JSON.parse(localStorage.getItem('tatr_custom_categories') || '[]');
+        const found = customCats.find(c => c.id === category || c.code === category || c.name === category);
+        if (found && found.code) {
+            return String(found.code).trim();
+        }
+    } catch (e) {}
+
+    // 2. فحص التصنيفات الافتراضية
+    const defaultMap = {
         ajami: 'A',
         silk: 'S',
         traditional: 'T',
         modern: 'M',
         wool: 'W'
     };
-    return map[category] || (category ? category.charAt(0).toUpperCase() : 'A');
+
+    if (defaultMap[category]) {
+        return defaultMap[category];
+    }
+
+    return String(category).trim().slice(0, 3).toUpperCase();
 }
 
 export function generateNextProductId(category, allCarpets = []) {
@@ -78,9 +95,9 @@ export function generateNextProductId(category, allCarpets = []) {
             maxNum = carpet.itemNumber;
         }
         
-        // 2. فحص نمط TATR-###X
+        // 2. فحص نمط TATR-####X أو TATR-####Sp (حروف وأرقام في نهاية الكود)
         if (carpet.id && typeof carpet.id === 'string') {
-            const match = carpet.id.match(/^TATR-(\d+)[A-Za-z]?$/i);
+            const match = carpet.id.match(/^TATR-(\d+)([A-Za-z0-9_-]*)$/i);
             if (match) {
                 const num = parseInt(match[1], 10);
                 if (num > maxNum) maxNum = num;
@@ -98,7 +115,8 @@ export function generateNextProductId(category, allCarpets = []) {
     });
 
     const nextNum = maxNum + 1;
-    const padded = String(nextNum).padStart(3, '0');
+    // تنسيق الـ SKU ليكون TATR- متبوعاً بالرقم من 4 خانات (مثل 0010) ثم رمز التصنيف (مثل Sp)
+    const padded = String(nextNum).padStart(4, '0');
     const catCode = getCategoryCode(category);
     return {
         id: `TATR-${padded}${catCode}`,
