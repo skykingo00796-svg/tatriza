@@ -548,25 +548,21 @@ function renderPortalProductsTable() {
                         <!-- لمعة الانعكاس الضوئي الفاخرة -->
                         <div class="card-light-glare"></div>
 
-                        <!-- رمز السجادة SKU في أعلى اليسار -->
-                        <span class="absolute top-1.5 left-1.5 bg-stone-900/85 backdrop-blur-md text-amber-200 text-[8px] sm:text-[9px] md:text-[10px] font-mono font-bold px-1.5 py-0.5 rounded-md shadow-2xs z-30 pointer-events-none border border-stone-700/50 leading-tight">
-                            ${c.id || 'TATR'}
-                        </span>
-
-                        <!-- أبعاد السجادة في أعلى اليمين -->
-                        <span class="absolute top-1.5 right-1.5 bg-white/95 backdrop-blur-md text-stone-900 text-[8px] sm:text-[9px] md:text-[10px] font-bold px-1.5 py-0.5 rounded-md shadow-2xs z-30 pointer-events-none border border-stone-200/80 leading-tight">
+                        <!-- أبعاد السجادة في أعلى اليمين بارتفاع متناسق ومحاذاة رأسية دقيقة -->
+                        <span class="absolute top-1.5 right-1.5 sm:top-2 sm:right-2 h-6 sm:h-6.5 px-2 bg-white/95 backdrop-blur-md text-stone-900 text-[8.5px] sm:text-[9.5px] font-bold rounded-lg shadow-2xs border border-stone-200/80 inline-flex items-center justify-center leading-none z-30 pointer-events-none select-none">
                             ${c.dimensions || ''}
                         </span>
 
-                        <!-- شارة تبديل التوفر السريعة والتفاعلية للمسؤول -->
-                        <button type="button" onclick="event.stopPropagation(); window.portalToggleStock('${c.id}')" class="absolute top-7 sm:top-8 right-1.5 z-30 px-1.5 sm:px-2 py-0.5 rounded-md text-[7.5px] sm:text-[8.5px] md:text-[9.5px] font-bold shadow-xs transition flex items-center gap-0.5 cursor-pointer backdrop-blur-md ${isOutOfStock ? 'bg-rose-600/90 hover:bg-rose-700 text-white' : 'bg-emerald-600/90 hover:bg-emerald-700 text-white'}" title="انقر للتبديل الفوري لحالة التوفر">
-                            <span>${isOutOfStock ? '⏳ نفدت' : '✅ متوفر'}</span>
+                        <!-- شارة حالة التوفر في أعلى اليسار بمواجهة الأبعاد بنفس الارتفاع والمحاذاة -->
+                        <button type="button" onclick="event.stopPropagation(); window.portalToggleStock('${c.id}')" class="absolute top-1.5 left-1.5 sm:top-2 sm:left-2 h-6 sm:h-6.5 px-2 rounded-lg text-[8.5px] sm:text-[9.5px] font-bold shadow-xs transition inline-flex items-center justify-center gap-1 cursor-pointer backdrop-blur-md leading-none z-30 select-none ${isOutOfStock ? 'bg-rose-600/90 hover:bg-rose-700 text-white' : 'bg-emerald-600/90 hover:bg-emerald-700 text-white'}" title="انقر للتبديل الفوري لحالة التوفر">
+                            <span class="text-[9px]">${isOutOfStock ? '⏳' : '✅'}</span>
+                            <span class="whitespace-nowrap">${isOutOfStock ? 'نفدت' : 'متوفرة'}</span>
                         </button>
 
                         <!-- طبقة تغطية شبه شفافة إن كانت نافدة -->
                         ${isOutOfStock ? `
                             <div class="absolute inset-0 bg-stone-950/40 backdrop-blur-[1px] flex items-center justify-center z-20 pointer-events-none p-1">
-                                <span class="bg-stone-900/95 text-amber-300 border border-amber-300/30 text-[8.5px] sm:text-[9.5px] font-bold px-2 py-0.5 rounded-lg shadow-lg text-center leading-tight">
+                                <span class="h-7 px-3 bg-stone-900/95 text-amber-300 border border-amber-300/30 text-[9px] sm:text-[10px] font-bold rounded-lg shadow-lg inline-flex items-center justify-center leading-none">
                                     نفدت الكمية
                                 </span>
                             </div>
@@ -574,14 +570,14 @@ function renderPortalProductsTable() {
 
                         <!-- عداد الوسائط في أسفل اليسار -->
                         ${imagesCount > 1 ? `
-                            <div class="absolute bottom-1.5 left-1.5 bg-black/65 backdrop-blur-md text-white text-[7.5px] sm:text-[8.5px] font-bold px-1.5 py-0.5 rounded-md pointer-events-none z-30 leading-tight">
+                            <div class="absolute bottom-1.5 left-1.5 h-5 px-1.5 bg-black/65 backdrop-blur-md text-white text-[8px] sm:text-[8.5px] font-bold rounded-md inline-flex items-center justify-center leading-none pointer-events-none z-30">
                                 <span>📷 ${imagesCount}</span>
                             </div>
                         ` : ''}
 
                         <!-- زر الفيديو في أسفل اليمين (يفتح مشغل الفيديو للمسؤول فوراً بحجم المتصفح) -->
                         ${hasVideo ? `
-                            <button type="button" onclick="event.stopPropagation(); window.portalPlayCardVideo('${c.id}')" class="absolute bottom-1.5 right-1.5 bg-stone-900/85 hover:bg-stone-900 backdrop-blur-md text-amber-300 text-[7.5px] sm:text-[8.5px] font-bold px-1.5 py-0.5 rounded-md pointer-events-auto z-30 border border-amber-300/30 flex items-center gap-0.5 shadow-xs transition cursor-pointer leading-tight" title="مشاهدة وتكبير الفيديو">
+                            <button type="button" onclick="event.stopPropagation(); window.portalPlayCardVideo('${c.id}')" class="absolute bottom-1.5 right-1.5 h-5 px-1.5 bg-stone-900/85 hover:bg-stone-900 backdrop-blur-md text-amber-300 text-[8px] sm:text-[8.5px] font-bold rounded-md inline-flex items-center justify-center gap-0.5 pointer-events-auto z-30 border border-amber-300/30 leading-none shadow-xs transition cursor-pointer" title="مشاهدة وتكبير الفيديو">
                                 <span class="text-[8.5px]">🎬</span>
                                 <span>فيديو</span>
                             </button>
@@ -589,13 +585,13 @@ function renderPortalProductsTable() {
                     </div>
                 </div>
 
-                <!-- الكتلة السفلية: خطوط تبدأ بحجم كبير وتصغر بمرونة متجاوبة مع كل شاشة -->
+                <!-- الكتلة السفلية: خطوط وأزرار بمحاذاة مركزية تامة وارتفاعات متساوية -->
                 <div class="p-2 sm:p-2.5 flex-1 flex flex-col justify-between bg-stone-50/70 border-t border-stone-200/60 relative z-10">
                     <div class="mb-1">
-                        <div class="text-[8px] sm:text-[9px] md:text-[10px] text-stone-500 font-medium mb-0.5 truncate">
-                            <span>${c.category || 'تراثي'}</span>
-                        </div>
-                        <h4 class="font-display font-semibold text-stone-900 text-[10px] sm:text-xs md:text-sm leading-snug truncate group-hover:text-brand transition" title="${c.title}">${c.title}</h4>
+                        <span class="text-[8.5px] sm:text-[9.5px] md:text-[10px] text-stone-500 font-medium leading-none block truncate">
+                            ${c.category || 'تراثي'}
+                        </span>
+                        <h4 class="font-display font-semibold text-stone-900 text-[10.5px] sm:text-xs md:text-sm leading-snug truncate group-hover:text-brand transition mt-1" title="${c.title}">${c.title}</h4>
                     </div>
 
                     <div class="flex items-center justify-between gap-1 mt-auto pb-1.5">
@@ -603,20 +599,20 @@ function renderPortalProductsTable() {
                             <span class="font-display text-xs sm:text-sm md:text-base font-black text-brand leading-none">${Number(c.price || 0).toLocaleString()}</span>
                             <span class="font-display text-brand text-[7.5px] sm:text-[8.5px] md:text-[9.5px] font-bold leading-none">ر.ع.</span>
                         </div>
-                        <button type="button" onclick="event.stopPropagation(); window.portalOpenProductModal('${c.id}')" class="btn-liquid-metal font-display text-white text-[7.5px] sm:text-[8.5px] md:text-[9.5px] font-bold px-1.5 sm:px-2 py-0.5 rounded-md transition shadow-2xs cursor-pointer whitespace-nowrap shrink-0 flex items-center gap-0.5" title="معاينة بكامل الشاشة">
+                        <button type="button" onclick="event.stopPropagation(); window.portalOpenProductModal('${c.id}')" class="btn-liquid-metal font-display text-white text-[8px] sm:text-[9px] md:text-[9.5px] font-bold h-6 sm:h-6.5 px-2 sm:px-2.5 rounded-lg transition shadow-2xs cursor-pointer whitespace-nowrap shrink-0 inline-flex items-center justify-center gap-1 leading-none" title="معاينة بكامل الشاشة">
                             <span>👁️</span>
                             <span>معاينة</span>
                         </button>
                     </div>
 
-                    <!-- شريط أدوات المسؤول المصغر والمتجاوب -->
-                    <div class="pt-1.5 border-t border-stone-200/70 grid grid-cols-2 gap-1 text-[8px] sm:text-[9px] md:text-[10px]">
-                        <button type="button" onclick="event.stopPropagation(); window.portalOpenEdit('${c.id}')" class="bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200/80 font-bold py-1 px-1 rounded-md transition flex items-center justify-center gap-0.5 cursor-pointer shadow-2xs" title="تعديل بيانات السجادة">
-                            <span>✏️</span>
+                    <!-- شريط أدوات المسؤول المصغر بارتفاع موحد ومحاذاة رأسية متساوية -->
+                    <div class="pt-1.5 border-t border-stone-200/70 grid grid-cols-2 gap-1.5">
+                        <button type="button" onclick="event.stopPropagation(); window.portalOpenEdit('${c.id}')" class="h-7 sm:h-7.5 w-full bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200/80 font-bold rounded-lg transition inline-flex items-center justify-center gap-1 cursor-pointer shadow-2xs text-[8.5px] sm:text-[9.5px] leading-none" title="تعديل بيانات السجادة">
+                            <span class="text-[9px]">✏️</span>
                             <span class="truncate">تعديل</span>
                         </button>
-                        <button type="button" onclick="event.stopPropagation(); window.portalDeleteCarpet('${c.id}')" class="bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200/80 font-bold py-1 px-1 rounded-md transition flex items-center justify-center gap-0.5 cursor-pointer shadow-2xs" title="حذف السجادة نهائياً">
-                            <span>🗑️</span>
+                        <button type="button" onclick="event.stopPropagation(); window.portalDeleteCarpet('${c.id}')" class="h-7 sm:h-7.5 w-full bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200/80 font-bold rounded-lg transition inline-flex items-center justify-center gap-1 cursor-pointer shadow-2xs text-[8.5px] sm:text-[9.5px] leading-none" title="حذف السجادة نهائياً">
+                            <span class="text-[9px]">🗑️</span>
                             <span class="truncate">حذف</span>
                         </button>
                     </div>
