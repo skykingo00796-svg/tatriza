@@ -1830,15 +1830,35 @@ button[type="submit"]:active {
         font-size: 0.48rem !important; /* ~7.5px */
         line-height: 1 !important;
     }
-    .card-btn-preview,
+    .card-btn-preview {
+        width: auto !important;
+        min-width: 52px !important;
+        height: 1.55rem !important; /* ~25px */
+        font-size: 0.56rem !important; /* ~9px */
+        padding: 0 0.35rem !important;
+        border-radius: 0.45rem !important;
+        gap: 0.25rem !important;
+        white-space: nowrap !important;
+    }
+    .card-btn-preview span {
+        white-space: nowrap !important;
+        overflow: visible !important;
+        text-overflow: clip !important;
+    }
     .card-btn-delete {
-        width: 44px !important;
-        min-width: 44px !important;
-        height: 1.45rem !important; /* ~23px */
-        font-size: 0.52rem !important; /* ~8.5px */
-        padding: 0 0.2rem !important;
+        width: 50px !important;
+        min-width: 50px !important;
+        height: 1.55rem !important; /* ~25px */
+        font-size: 0.56rem !important;
+        padding: 0 0.25rem !important;
         border-radius: 0.45rem !important;
         gap: 0.2rem !important;
+        white-space: nowrap !important;
+    }
+    .card-btn-delete span {
+        white-space: nowrap !important;
+        overflow: visible !important;
+        text-overflow: clip !important;
     }
     .card-btn-edit {
         height: 1.45rem !important;

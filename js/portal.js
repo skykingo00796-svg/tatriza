@@ -269,12 +269,16 @@ function updatePortalAuthUI(user) {
             console.warn("Session expired while away");
             stopAdminSessionWatcher();
             adminLogoutFromCloud().catch(() => {});
+            document.documentElement.classList.remove('admin-session-active');
+            document.documentElement.classList.add('admin-session-anonymous');
             if (loginGate) loginGate.classList.remove('hidden');
             if (dashboard) dashboard.classList.add('hidden');
             showToast("انتهت جلسة المسؤول السابقة لعدم النشاط. يرجى تسجيل الدخول مجدداً.", "info", "انتهت الجلسة", 5000);
             return;
         }
 
+        document.documentElement.classList.add('admin-session-active');
+        document.documentElement.classList.remove('admin-session-anonymous');
         if (loginGate) loginGate.classList.add('hidden');
         if (dashboard) dashboard.classList.remove('hidden');
         if (userEmailEl) userEmailEl.innerText = user.email || 'مسؤول معتمد';
@@ -314,6 +318,10 @@ export async function executePortalLogin(e) {
 
     try {
         const user = await adminLoginWithCloud(email, pass);
+        localStorage.setItem('tatr_admin_last_activity', Date.now().toString());
+        sessionStorage.setItem('tatr_admin_session_start', Date.now().toString());
+        document.documentElement.classList.add('admin-session-active');
+        document.documentElement.classList.remove('admin-session-anonymous');
         showToast(`مرحباً بك! تم التحقق السحابي وتفعيل صلاحيات الإدارة (${user.email}).`, "success", "المسؤول المعتمد", 3000);
         updatePortalAuthUI(user);
     } catch (authErr) {
@@ -599,7 +607,7 @@ function renderPortalProductsTable() {
                             <span class="card-price-val font-display text-xs sm:text-[13px] font-black text-brand leading-none">${Number(c.price || 0).toLocaleString()}</span>
                             <span class="card-price-curr font-display text-brand text-[7.5px] sm:text-[8px] font-bold leading-none">ر.ع.</span>
                         </div>
-                        <button type="button" onclick="event.stopPropagation(); window.portalOpenProductModal('${c.id}')" class="card-btn-preview btn-liquid-metal font-display text-white text-[8px] sm:text-[8.5px] font-bold h-6.5 sm:h-7 w-[52px] sm:w-[58px] shrink-0 rounded-lg transition shadow-2xs cursor-pointer whitespace-nowrap inline-flex items-center justify-center gap-1 leading-none select-none" title="معاينة بكامل الشاشة"><span class="text-[8.5px]">👁️</span><span class="truncate">معاينة</span></button>
+                        <button type="button" onclick="event.stopPropagation(); window.portalOpenProductModal('${c.id}')" class="card-btn-preview btn-liquid-metal font-display text-white text-[8px] sm:text-[8.5px] font-bold h-6.5 sm:h-7 px-2 sm:px-2.5 shrink-0 rounded-lg transition shadow-2xs cursor-pointer whitespace-nowrap inline-flex items-center justify-center gap-1 leading-none select-none" title="معاينة بكامل الشاشة"><span class="text-[8.5px] shrink-0">👁️</span><span class="whitespace-nowrap font-bold">معاينة</span></button>
                     </div>
 
                     <!-- شريط أدوات المسؤول: زر الحذف بنفس حجم زر المعاينة تماماً والتعديل يأخذ باقي المساحة -->

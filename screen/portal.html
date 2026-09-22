@@ -11,6 +11,30 @@
     <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Tajawal:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     
     <link rel="stylesheet" href="../css/style.css">
+    <!-- محرك التوثيق الفوري لمنع وميض شاشة تسجيل الدخول نهائياً (Zero-Flicker Admin Auth Engine) -->
+    <script>
+        (function() {
+            try {
+                var hasFbUser = false;
+                for (var i = 0; i < localStorage.length; i++) {
+                    var k = localStorage.key(i);
+                    if (k && k.indexOf('firebase:authUser:') === 0) {
+                        hasFbUser = true;
+                        break;
+                    }
+                }
+                var lastAct = localStorage.getItem('tatr_admin_last_activity');
+                var isSessionValid = hasFbUser && lastAct && (Date.now() - parseInt(lastAct, 10) < 60 * 60 * 1000);
+
+                if (isSessionValid) {
+                    document.documentElement.classList.add('admin-session-active');
+                } else {
+                    document.documentElement.classList.add('admin-session-anonymous');
+                }
+            } catch(e) {}
+        })();
+    </script>
+
     <!-- TailwindCSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     
@@ -44,6 +68,21 @@
         .bg-brand {
             background-color: var(--brand-color);
         }
+        /* محرك منع وميض شاشة تسجيل الدخول نهائياً */
+        html.admin-session-active #portal-login-gate {
+            display: none !important;
+        }
+        html.admin-session-active #portal-dashboard {
+            display: flex !important;
+        }
+
+        html.admin-session-anonymous #portal-login-gate {
+            display: flex !important;
+        }
+        html.admin-session-anonymous #portal-dashboard {
+            display: none !important;
+        }
+
 
         .border-brand {
             border-color: var(--brand-color);
