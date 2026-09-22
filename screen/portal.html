@@ -238,32 +238,40 @@
                 </div>
             </div>
 
-            <!-- شريط الأدوات وإجراءات الإدارة السريعة -->
-            <div class="bg-white p-4 sm:p-5 rounded-3xl border border-stone-200 shadow-xs flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
-                <div class="flex items-center gap-2">
-                    <button type="button" onclick="openAddModal()" class="btn-liquid-metal text-white font-bold text-xs sm:text-sm px-4 py-2.5 rounded-xl shadow-xs transition flex items-center gap-2 cursor-pointer">
-                        <span>＋</span>
-                        <span>إضافة سجادة جديدة</span>
+            <!-- شريط الأدوات وإجراءات الإدارة والبحث (بدون خلفية أو بطاقة، شفاف ومباشر على أرضية المعرض) -->
+            <div class="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3 sm:gap-4 my-1 sm:my-2">
+                
+                <!-- أزرار الإجراءات الإدارية المباشرة (في سطر واحد متجاور بدون انقسام لسطرين) -->
+                <div class="flex items-center gap-2 sm:gap-2.5 shrink-0 flex-nowrap">
+                    <button type="button" onclick="openAddModal()" class="btn-liquid-metal text-white font-bold text-xs sm:text-sm h-10 sm:h-11 px-3.5 sm:px-4 rounded-xl shadow-xs transition flex items-center justify-center gap-1.5 cursor-pointer whitespace-nowrap shrink-0">
+                        <span class="text-sm">＋</span>
+                        <span class="whitespace-nowrap">إضافة سجادة جديدة</span>
                     </button>
-                    <button type="button" onclick="openAddCategoryModal()" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-900 border border-emerald-300 font-bold text-xs sm:text-sm px-3.5 py-2.5 rounded-xl transition flex items-center gap-1.5 cursor-pointer">
-                        <span>🏷️</span>
-                        <span>إدارة التصنيفات</span>
+                    <button type="button" onclick="openAddCategoryModal()" class="bg-white hover:bg-stone-100 text-stone-800 border border-stone-300/80 font-bold text-xs sm:text-sm h-10 sm:h-11 px-3.5 sm:px-4 rounded-xl shadow-2xs transition flex items-center justify-center gap-1.5 cursor-pointer whitespace-nowrap shrink-0">
+                        <span>📁</span>
+                        <span class="whitespace-nowrap">إدارة التصنيفات</span>
                     </button>
                 </div>
 
-                <!-- أدوات الفرز والبحث الداخلي -->
-                <div class="flex flex-col sm:flex-row items-center gap-2 flex-1 max-w-xl md:justify-end">
-                    <div class="relative w-full sm:w-60">
-                        <input type="text" oninput="handlePortalSearch(this.value)" placeholder="ابحث برمز القطعة، الاسم..." class="w-full bg-stone-50 border border-stone-300 rounded-xl px-3 py-2 text-xs text-stone-900 outline-none focus:border-brand">
+                <!-- أدوات الفرز والبحث الداخلي المتجاوبة (حقل النص فوق الخيارات في الشاشات المتوسطة والصغيرة) -->
+                <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-2.5 flex-1 lg:max-w-2xl lg:justify-end">
+                    <!-- حقل إدخال نص البحث -->
+                    <div class="relative w-full sm:flex-1 min-w-[160px]">
+                        <input type="text" oninput="handlePortalSearch(this.value)" placeholder="ابحث برمز القطعة، الاسم..." class="w-full h-10 sm:h-11 bg-white border border-stone-300/90 rounded-xl pr-3.5 pl-9 text-xs sm:text-sm text-stone-900 outline-none focus:border-brand shadow-2xs transition">
+                        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-stone-400 text-xs pointer-events-none">🔍</span>
                     </div>
-                    <select id="portal-filter-category" onchange="handlePortalCategoryFilter(this.value)" class="w-full sm:w-44 bg-stone-50 border border-stone-300 rounded-xl px-3 py-2 text-xs text-stone-800 outline-none cursor-pointer">
-                        <option value="all">جميع التصنيفات</option>
-                    </select>
-                    <select onchange="handlePortalStockFilter(this.value)" class="w-full sm:w-36 bg-stone-50 border border-stone-300 rounded-xl px-3 py-2 text-xs text-stone-800 outline-none cursor-pointer">
-                        <option value="all">جميع الحالات</option>
-                        <option value="available">متوفرة فقط</option>
-                        <option value="out_of_stock">نفدت فقط</option>
-                    </select>
+
+                    <!-- قوائم اختيار التصنيف والحالة متجاورة في سطر واحد -->
+                    <div class="grid grid-cols-2 sm:flex sm:items-center gap-2 shrink-0">
+                        <select id="portal-filter-category" onchange="handlePortalCategoryFilter(this.value)" class="w-full sm:w-40 h-10 sm:h-11 bg-white border border-stone-300/90 rounded-xl px-3 text-xs text-stone-800 outline-none cursor-pointer shadow-2xs transition">
+                            <option value="all">جميع التصنيفات</option>
+                        </select>
+                        <select onchange="handlePortalStockFilter(this.value)" class="w-full sm:w-32 h-10 sm:h-11 bg-white border border-stone-300/90 rounded-xl px-3 text-xs text-stone-800 outline-none cursor-pointer shadow-2xs transition">
+                            <option value="all">جميع الحالات</option>
+                            <option value="available">متوفرة فقط</option>
+                            <option value="out_of_stock">نفدت فقط</option>
+                        </select>
+                    </div>
                 </div>
             </div>
 
