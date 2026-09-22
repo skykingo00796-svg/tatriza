@@ -205,6 +205,8 @@ function stopAdminSessionWatcher() {
     }
     sessionStorage.removeItem('tatr_admin_session_start');
     localStorage.removeItem('tatr_admin_last_activity');
+    localStorage.removeItem('tatr_admin_logged_in');
+    localStorage.removeItem('tatr_admin_email');
 }
 
 function checkAdminSessionExpiration() {
@@ -269,6 +271,10 @@ function updatePortalAuthUI(user) {
             console.warn("Session expired while away");
             stopAdminSessionWatcher();
             adminLogoutFromCloud().catch(() => {});
+            localStorage.removeItem('tatr_admin_logged_in');
+            localStorage.removeItem('tatr_admin_last_activity');
+            localStorage.removeItem('tatr_admin_email');
+            sessionStorage.removeItem('tatr_admin_session_start');
             document.documentElement.classList.remove('admin-session-active');
             document.documentElement.classList.add('admin-session-anonymous');
             if (loginGate) loginGate.classList.remove('hidden');
@@ -276,6 +282,16 @@ function updatePortalAuthUI(user) {
             showToast("انتهت جلسة المسؤول السابقة لعدم النشاط. يرجى تسجيل الدخول مجدداً.", "info", "انتهت الجلسة", 5000);
             return;
         }
+
+        // تثبيت علامات الجلسة النشطة فوراً في المتصفح لمنع وميض شاشة تسجيل الدخول نهائياً عند أي ريفريش
+        try {
+            localStorage.setItem('tatr_admin_logged_in', 'true');
+            localStorage.setItem('tatr_admin_last_activity', now.toString());
+            localStorage.setItem('tatr_admin_email', user.email || '');
+            if (!sessionStorage.getItem('tatr_admin_session_start')) {
+                sessionStorage.setItem('tatr_admin_session_start', now.toString());
+            }
+        } catch(e) {}
 
         document.documentElement.classList.add('admin-session-active');
         document.documentElement.classList.remove('admin-session-anonymous');
@@ -287,10 +303,18 @@ function updatePortalAuthUI(user) {
         // بدء مراقبة الجلسة والنشاط
         startAdminSessionWatcher();
 
-        // تحميل المعروضات والتصنيفات
+        // تحميل وتحديث المعروضات داخل الصفحة
         initPortalSubscriptions();
     } else {
         stopAdminSessionWatcher();
+        try {
+            localStorage.removeItem('tatr_admin_logged_in');
+            localStorage.removeItem('tatr_admin_last_activity');
+            localStorage.removeItem('tatr_admin_email');
+            sessionStorage.removeItem('tatr_admin_session_start');
+        } catch(e) {}
+        document.documentElement.classList.remove('admin-session-active');
+        document.documentElement.classList.add('admin-session-anonymous');
         if (loginGate) loginGate.classList.remove('hidden');
         if (dashboard) dashboard.classList.add('hidden');
         if (drawerEmailEl) drawerEmailEl.innerText = 'admin';
@@ -318,7 +342,9 @@ export async function executePortalLogin(e) {
 
     try {
         const user = await adminLoginWithCloud(email, pass);
+        localStorage.setItem('tatr_admin_logged_in', 'true');
         localStorage.setItem('tatr_admin_last_activity', Date.now().toString());
+        localStorage.setItem('tatr_admin_email', user.email || email);
         sessionStorage.setItem('tatr_admin_session_start', Date.now().toString());
         document.documentElement.classList.add('admin-session-active');
         document.documentElement.classList.remove('admin-session-anonymous');
@@ -353,6 +379,10 @@ window.executePortalLogin = executePortalLogin;
 export async function executePortalLogout() {
     stopAdminSessionWatcher();
     try {
+        localStorage.removeItem('tatr_admin_logged_in');
+        localStorage.removeItem('tatr_admin_last_activity');
+        localStorage.removeItem('tatr_admin_email');
+        sessionStorage.removeItem('tatr_admin_session_start');
         await adminLogoutFromCloud();
     } catch (e) {
         console.warn("Portal logout error:", e);

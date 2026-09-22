@@ -12,26 +12,72 @@
     
     <link rel="stylesheet" href="../css/style.css">
     <!-- محرك التوثيق الفوري لمنع وميض شاشة تسجيل الدخول نهائياً (Zero-Flicker Admin Auth Engine) -->
+    <style id="zero-flicker-pre-style">
+        /* إخفاء شاشة تسجيل الدخول فورياً وبشكل قطعي لمنع أي وميض */
+        #portal-login-gate {
+            display: none !important;
+        }
+        #portal-dashboard {
+            display: none;
+        }
+
+        html.admin-session-active #portal-login-gate {
+            display: none !important;
+        }
+        html.admin-session-active #portal-dashboard {
+            display: flex !important;
+        }
+
+        html.admin-session-anonymous #portal-login-gate {
+            display: flex !important;
+        }
+        html.admin-session-anonymous #portal-dashboard {
+            display: none !important;
+        }
+    </style>
     <script>
         (function() {
             try {
-                var hasFbUser = false;
-                for (var i = 0; i < localStorage.length; i++) {
-                    var k = localStorage.key(i);
-                    if (k && k.indexOf('firebase:authUser:') === 0) {
-                        hasFbUser = true;
-                        break;
+                var maxIdle = 60 * 60 * 1000;
+                var now = Date.now();
+                var lastAct = localStorage.getItem('tatr_admin_last_activity');
+                var isExpired = lastAct ? (now - parseInt(lastAct, 10) > maxIdle) : false;
+
+                // التحقق الشامل من كل العلامات الممكنة لجلسة الأدمن
+                var isLoggedIn = localStorage.getItem('tatr_admin_logged_in') === 'true' ||
+                                 sessionStorage.getItem('tatr_admin_session_start') !== null ||
+                                 Boolean(localStorage.getItem('tatr_admin_email'));
+
+                // فحص أي بقايا مصادقة لـ Firebase في التخزين المحلي
+                if (!isLoggedIn) {
+                    for (var i = 0; i < localStorage.length; i++) {
+                        var k = localStorage.key(i);
+                        if (k && (k.indexOf('firebase:authUser') === 0 || k.indexOf('tatr_admin') === 0)) {
+                            isLoggedIn = true;
+                            break;
+                        }
                     }
                 }
-                var lastAct = localStorage.getItem('tatr_admin_last_activity');
-                var isSessionValid = hasFbUser && lastAct && (Date.now() - parseInt(lastAct, 10) < 60 * 60 * 1000);
 
-                if (isSessionValid) {
+                if (isLoggedIn && !isExpired) {
                     document.documentElement.classList.add('admin-session-active');
+                    document.documentElement.classList.remove('admin-session-anonymous');
+                    localStorage.setItem('tatr_admin_last_activity', now.toString());
+                    localStorage.setItem('tatr_admin_logged_in', 'true');
+                } else if (isExpired && isLoggedIn) {
+                    localStorage.removeItem('tatr_admin_logged_in');
+                    localStorage.removeItem('tatr_admin_last_activity');
+                    localStorage.removeItem('tatr_admin_email');
+                    sessionStorage.removeItem('tatr_admin_session_start');
+                    document.documentElement.classList.add('admin-session-anonymous');
+                    document.documentElement.classList.remove('admin-session-active');
                 } else {
                     document.documentElement.classList.add('admin-session-anonymous');
+                    document.documentElement.classList.remove('admin-session-active');
                 }
-            } catch(e) {}
+            } catch(e) {
+                document.documentElement.classList.add('admin-session-anonymous');
+            }
         })();
     </script>
 
@@ -146,7 +192,7 @@
     <!-- شاشة تسجيل الدخول السحابية (Login Gate) -->
     <!-- تظهر فقط عندما لا يكون هناك مسؤول مسجل -->
     <!-- ========================================== -->
-    <div id="portal-login-gate" class="min-h-screen flex items-center justify-center p-4">
+    <div id="portal-login-gate" class="hidden min-h-screen flex items-center justify-center p-4">
         <div class="w-full max-w-md bg-[#fffbf7] rounded-3xl p-6 sm:p-8 shadow-2xl border border-stone-300 relative text-center">
             
             <div class="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 text-2xl shadow-xs" style="background-color: rgba(124, 29, 60, 0.1); color: var(--brand-color);">
@@ -333,7 +379,61 @@
 
             <!-- شبكة عرض وإدارة السجاد (متجاوبة بتسلسل فاخر: 2 للجوال ثم 3 ثم 4 ثم 5 وأقصى حجم 6) -->
             <div id="carpets-grid" class="grid gap-2 sm:gap-2.5 md:gap-3">
-                <!-- تحقن المنتجات برمجياً عبر portal.js -->
+                <!-- هياكل تحميل فاخرة (Shimmer Skeletons) تظهر لحظياً أثناء تحديث المنتجات داخل الصفحة -->
+                <div class="carpet-card bg-[#fffbf7] rounded-xl sm:rounded-2xl overflow-hidden border border-stone-200/80 p-2 sm:p-2.5 animate-pulse space-y-2.5">
+                    <div class="w-full aspect-square bg-stone-200/80 rounded-lg"></div>
+                    <div class="h-3 bg-stone-200/80 rounded w-3/4"></div>
+                    <div class="flex justify-between items-center pt-1">
+                        <div class="h-2.5 bg-stone-200/60 rounded w-1/3"></div>
+                        <div class="h-2.5 bg-stone-200/60 rounded w-1/4"></div>
+                    </div>
+                    <div class="h-7 bg-stone-200/50 rounded-lg"></div>
+                </div>
+                <div class="carpet-card bg-[#fffbf7] rounded-xl sm:rounded-2xl overflow-hidden border border-stone-200/80 p-2 sm:p-2.5 animate-pulse space-y-2.5">
+                    <div class="w-full aspect-square bg-stone-200/80 rounded-lg"></div>
+                    <div class="h-3 bg-stone-200/80 rounded w-3/4"></div>
+                    <div class="flex justify-between items-center pt-1">
+                        <div class="h-2.5 bg-stone-200/60 rounded w-1/3"></div>
+                        <div class="h-2.5 bg-stone-200/60 rounded w-1/4"></div>
+                    </div>
+                    <div class="h-7 bg-stone-200/50 rounded-lg"></div>
+                </div>
+                <div class="carpet-card bg-[#fffbf7] rounded-xl sm:rounded-2xl overflow-hidden border border-stone-200/80 p-2 sm:p-2.5 animate-pulse space-y-2.5">
+                    <div class="w-full aspect-square bg-stone-200/80 rounded-lg"></div>
+                    <div class="h-3 bg-stone-200/80 rounded w-3/4"></div>
+                    <div class="flex justify-between items-center pt-1">
+                        <div class="h-2.5 bg-stone-200/60 rounded w-1/3"></div>
+                        <div class="h-2.5 bg-stone-200/60 rounded w-1/4"></div>
+                    </div>
+                    <div class="h-7 bg-stone-200/50 rounded-lg"></div>
+                </div>
+                <div class="carpet-card bg-[#fffbf7] rounded-xl sm:rounded-2xl overflow-hidden border border-stone-200/80 p-2 sm:p-2.5 animate-pulse space-y-2.5">
+                    <div class="w-full aspect-square bg-stone-200/80 rounded-lg"></div>
+                    <div class="h-3 bg-stone-200/80 rounded w-3/4"></div>
+                    <div class="flex justify-between items-center pt-1">
+                        <div class="h-2.5 bg-stone-200/60 rounded w-1/3"></div>
+                        <div class="h-2.5 bg-stone-200/60 rounded w-1/4"></div>
+                    </div>
+                    <div class="h-7 bg-stone-200/50 rounded-lg"></div>
+                </div>
+                <div class="carpet-card bg-[#fffbf7] rounded-xl sm:rounded-2xl overflow-hidden border border-stone-200/80 p-2 sm:p-2.5 animate-pulse space-y-2.5">
+                    <div class="w-full aspect-square bg-stone-200/80 rounded-lg"></div>
+                    <div class="h-3 bg-stone-200/80 rounded w-3/4"></div>
+                    <div class="flex justify-between items-center pt-1">
+                        <div class="h-2.5 bg-stone-200/60 rounded w-1/3"></div>
+                        <div class="h-2.5 bg-stone-200/60 rounded w-1/4"></div>
+                    </div>
+                    <div class="h-7 bg-stone-200/50 rounded-lg"></div>
+                </div>
+                <div class="carpet-card bg-[#fffbf7] rounded-xl sm:rounded-2xl overflow-hidden border border-stone-200/80 p-2 sm:p-2.5 animate-pulse space-y-2.5">
+                    <div class="w-full aspect-square bg-stone-200/80 rounded-lg"></div>
+                    <div class="h-3 bg-stone-200/80 rounded w-3/4"></div>
+                    <div class="flex justify-between items-center pt-1">
+                        <div class="h-2.5 bg-stone-200/60 rounded w-1/3"></div>
+                        <div class="h-2.5 bg-stone-200/60 rounded w-1/4"></div>
+                    </div>
+                    <div class="h-7 bg-stone-200/50 rounded-lg"></div>
+                </div>
             </div>
 
         </main>
