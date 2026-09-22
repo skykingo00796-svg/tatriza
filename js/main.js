@@ -355,7 +355,7 @@ function displayCarpets(carpetsToDisplay) {
                     <div class="card-light-glare"></div>
                     
                     <!-- أبعاد السجادة في أعلى اليمين (فوق اللمعة بوضوح تام z-30) -->
-                    <span class="absolute top-1.5 right-1.5 bg-black/30 hover:bg-black/45 backdrop-blur-md text-white text-[9px] sm:text-[10px] font-bold px-2 py-0.5 rounded-md shadow-xs z-30 pointer-events-none border border-white/20 leading-tight transition">
+                    <span class="card-badge-dimensions absolute top-1.5 right-1.5 bg-black/30 hover:bg-black/45 backdrop-blur-md text-white text-[8px] sm:text-[9px] font-bold px-2 py-0.5 rounded-md shadow-xs z-30 pointer-events-none border border-white/20 leading-tight transition">
                         ${carpet.dimensions}
                     </span>
 
@@ -369,7 +369,7 @@ function displayCarpets(carpetsToDisplay) {
                         </div>
                     ` : ''}
 
-                    <div id="counter-wrapper-${carpet.id}" class="absolute bottom-1.5 left-1.5 bg-black/30 backdrop-blur-md text-white/90 text-[8px] sm:text-[9px] font-bold px-1.5 py-0.5 rounded-md pointer-events-none border border-white/15 z-10 ${hasMultipleMedia && !isOutOfStock ? '' : 'hidden'} leading-tight">
+                    <div id="counter-wrapper-${carpet.id}" class="card-badge-media absolute bottom-1.5 left-1.5 bg-black/30 backdrop-blur-md text-white/90 text-[7.5px] sm:text-[8px] font-bold px-1.5 py-0.5 rounded-md pointer-events-none border border-white/15 z-10 ${hasMultipleMedia && !isOutOfStock ? '' : 'hidden'} leading-tight">
                         <span id="counter-${carpet.id}">1</span>/<span id="total-${carpet.id}">${totalMedia}</span>
                     </div>
 
@@ -389,24 +389,24 @@ function displayCarpets(carpetsToDisplay) {
             </div>
 
             <!-- الكتلة السفلية: مصغرة ومتناسقة لتثبيت السعر والزر في الأسفل -->
-            <div class="p-2 sm:p-2.5 flex-1 flex flex-col justify-between bg-white border-t border-stone-200/70 relative z-20">
+            <div class="card-content-wrap p-2 sm:p-2.5 flex-1 flex flex-col justify-between bg-white border-t border-stone-200/70 relative z-20">
                 <div class="mb-1.5">
-                    <h4 class="font-display font-semibold text-stone-900 text-[9.5px] sm:text-[10.5px] leading-snug truncate group-hover:text-brand transition" title="${carpet.title}">${carpet.title}</h4>
+                    <h4 class="card-title-text font-display font-semibold text-stone-900 text-[10px] sm:text-[11px] leading-snug truncate group-hover:text-brand transition" title="${carpet.title}">${carpet.title}</h4>
                 </div>
 
-                <div class="flex items-center justify-between gap-1 mt-auto">
+                <div class="card-price-row flex items-center justify-between gap-1 mt-auto">
                     <div class="flex items-baseline gap-0.5 shrink-0">
-                        <span class="font-display text-xs sm:text-sm font-black text-brand leading-none">${carpet.price}</span>
-                        <span class="font-display text-brand text-[8px] sm:text-[9px] font-bold leading-none">ر.ع.</span>
+                        <span class="card-price-val font-display text-xs sm:text-[13px] font-black text-brand leading-none">${carpet.price}</span>
+                        <span class="card-price-curr font-display text-brand text-[7.5px] sm:text-[8px] font-bold leading-none">ر.ع.</span>
                     </div>
                     
                     ${isOutOfStock ? `
-                        <button onclick="event.stopPropagation(); openModal('${carpet.id}')" class="btn-liquid-metal font-display text-white text-[9px] sm:text-[10px] font-bold px-2 sm:px-2.5 py-1 rounded-lg transition shadow-2xs flex items-center gap-1 cursor-pointer whitespace-nowrap shrink-0" title="طلب المنتج">
+                        <button onclick="event.stopPropagation(); openModal('${carpet.id}')" class="card-btn-preview btn-liquid-metal font-display text-white text-[8px] sm:text-[9px] font-bold px-2 sm:px-2.5 h-6.5 sm:h-7 rounded-lg transition shadow-2xs flex items-center justify-center gap-1 cursor-pointer whitespace-nowrap shrink-0 leading-none" title="طلب المنتج">
                             <span class="whitespace-nowrap">طلب</span>
                             <span class="text-[8px] shrink-0">🔄</span>
                         </button>
                     ` : `
-                        <button onclick="event.stopPropagation(); openModal('${carpet.id}')" class="btn-liquid-metal font-display text-white text-[9px] sm:text-[10px] font-bold px-2 sm:px-2.5 py-1 rounded-lg transition shadow-2xs cursor-pointer whitespace-nowrap shrink-0">
+                        <button onclick="event.stopPropagation(); openModal('${carpet.id}')" class="card-btn-preview btn-liquid-metal font-display text-white text-[8px] sm:text-[9px] font-bold px-2 sm:px-2.5 h-6.5 sm:h-7 rounded-lg transition shadow-2xs cursor-pointer whitespace-nowrap shrink-0 inline-flex items-center justify-center leading-none">
                             التفاصيل
                         </button>
                     `}

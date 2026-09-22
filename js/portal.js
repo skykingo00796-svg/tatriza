@@ -549,13 +549,13 @@ function renderPortalProductsTable() {
                         <div class="card-light-glare"></div>
 
                         <!-- أبعاد السجادة في أعلى اليمين (زجاجي فائق الشفافية لإبراز تفاصيل السجادة) -->
-                        <span class="absolute top-1.5 right-1.5 sm:top-2 sm:right-2 h-6 sm:h-6.5 px-2 bg-black/30 hover:bg-black/45 backdrop-blur-md text-white text-[8.5px] sm:text-[9.5px] font-bold rounded-lg shadow-xs border border-white/20 inline-flex items-center justify-center leading-none z-30 pointer-events-none select-none transition">
+                        <span class="card-badge-dimensions absolute top-1.5 right-1.5 px-2 bg-black/30 hover:bg-black/45 backdrop-blur-md text-white text-[8px] sm:text-[9px] font-bold rounded-lg shadow-xs border border-white/20 inline-flex items-center justify-center leading-none z-30 pointer-events-none select-none transition">
                             ${c.dimensions || ''}
                         </span>
 
                         <!-- شارة حالة التوفر في أعلى اليسار (زجاجي كريستالي شفاف وملون فاخر) -->
-                        <button type="button" onclick="event.stopPropagation(); window.portalToggleStock('${c.id}')" class="absolute top-1.5 left-1.5 sm:top-2 sm:left-2 h-6 sm:h-6.5 px-2 rounded-lg text-[8.5px] sm:text-[9.5px] font-bold shadow-xs transition inline-flex items-center justify-center gap-1 cursor-pointer backdrop-blur-md leading-none z-30 select-none ${isOutOfStock ? 'bg-rose-950/40 hover:bg-rose-950/60 text-rose-200 border border-rose-400/30' : 'bg-emerald-950/40 hover:bg-emerald-950/60 text-emerald-200 border border-emerald-400/30'}" title="انقر للتبديل الفوري لحالة التوفر">
-                            <span class="w-1.5 h-1.5 rounded-full ${isOutOfStock ? 'bg-rose-400' : 'bg-emerald-400'} shrink-0 shadow-2xs"></span>
+                        <button type="button" onclick="event.stopPropagation(); window.portalToggleStock('${c.id}')" class="card-badge-stock absolute top-1.5 left-1.5 px-2 rounded-lg text-[8px] sm:text-[9px] font-bold shadow-xs transition inline-flex items-center justify-center gap-1 cursor-pointer backdrop-blur-md leading-none z-30 select-none ${isOutOfStock ? 'bg-rose-950/40 hover:bg-rose-950/60 text-rose-200 border border-rose-400/30' : 'bg-emerald-950/40 hover:bg-emerald-950/60 text-emerald-200 border border-emerald-400/30'}" title="انقر للتبديل الفوري لحالة التوفر">
+                            <span class="stock-dot w-1.5 h-1.5 rounded-full ${isOutOfStock ? 'bg-rose-400' : 'bg-emerald-400'} shrink-0 shadow-2xs"></span>
                             <span class="whitespace-nowrap">${isOutOfStock ? 'نفدت' : 'متوفرة'}</span>
                         </button>
 
@@ -570,14 +570,14 @@ function renderPortalProductsTable() {
 
                         <!-- عداد الوسائط في أسفل اليسار (زجاجي شفاف وخفيف) -->
                         ${imagesCount > 1 ? `
-                            <div class="absolute bottom-1.5 left-1.5 h-5 px-1.5 bg-black/30 backdrop-blur-md text-white/90 text-[8px] sm:text-[8.5px] font-bold rounded-md inline-flex items-center justify-center leading-none pointer-events-none border border-white/15 z-30">
+                            <div class="card-badge-media absolute bottom-1.5 left-1.5 px-1.5 bg-black/30 backdrop-blur-md text-white/90 text-[7.5px] sm:text-[8px] font-bold rounded-md inline-flex items-center justify-center leading-none pointer-events-none border border-white/15 z-30">
                                 <span>📷 ${imagesCount}</span>
                             </div>
                         ` : ''}
 
                         <!-- زر الفيديو في أسفل اليمين (زجاجي شفاف وراقي) -->
                         ${hasVideo ? `
-                            <button type="button" onclick="event.stopPropagation(); window.portalPlayCardVideo('${c.id}')" class="absolute bottom-1.5 right-1.5 h-5 px-1.5 bg-black/35 hover:bg-black/55 backdrop-blur-md text-amber-300 text-[8px] sm:text-[8.5px] font-bold rounded-md inline-flex items-center justify-center gap-0.5 pointer-events-auto z-30 border border-white/20 leading-none shadow-xs transition cursor-pointer" title="مشاهدة وتكبير الفيديو">
+                            <button type="button" onclick="event.stopPropagation(); window.portalPlayCardVideo('${c.id}')" class="card-badge-video absolute bottom-1.5 right-1.5 px-1.5 bg-black/35 hover:bg-black/55 backdrop-blur-md text-amber-300 text-[7.5px] sm:text-[8px] font-bold rounded-md inline-flex items-center justify-center gap-0.5 pointer-events-auto z-30 border border-white/20 leading-none shadow-xs transition cursor-pointer" title="مشاهدة وتكبير الفيديو">
                                 <span class="text-[8.5px]">🎬</span>
                                 <span>فيديو</span>
                             </button>
@@ -586,35 +586,26 @@ function renderPortalProductsTable() {
                 </div>
 
                 <!-- الكتلة السفلية: خطوط وأزرار بمحاذاة مركزية تامة وارتفاعات متساوية -->
-                <div class="p-2 sm:p-2.5 flex-1 flex flex-col justify-between bg-white border-t border-stone-200/70 relative z-20">
+                <div class="card-content-wrap p-2 sm:p-2.5 flex-1 flex flex-col justify-between bg-white border-t border-stone-200/70 relative z-20">
                     <div class="mb-1">
-                        <span class="text-[8.5px] sm:text-[9.5px] md:text-[10px] text-stone-500 font-medium leading-none block truncate">
+                        <span class="card-category-label text-[8px] sm:text-[9px] text-stone-500 font-medium leading-none block truncate">
                             ${c.category || 'تراثي'}
                         </span>
-                        <h4 class="font-display font-semibold text-stone-900 text-[10.5px] sm:text-xs md:text-sm leading-snug truncate group-hover:text-brand transition mt-1" title="${c.title}">${c.title}</h4>
+                        <h4 class="card-title-text font-display font-semibold text-stone-900 text-[10px] sm:text-[11px] leading-snug truncate group-hover:text-brand transition mt-1" title="${c.title}">${c.title}</h4>
                     </div>
 
-                    <div class="flex items-center justify-between gap-1 mt-auto pb-1.5">
+                    <div class="card-price-row flex items-center justify-between gap-1 mt-auto pb-1.5">
                         <div class="flex items-baseline gap-0.5 shrink-0">
-                            <span class="font-display text-xs sm:text-sm md:text-base font-black text-brand leading-none">${Number(c.price || 0).toLocaleString()}</span>
-                            <span class="font-display text-brand text-[7.5px] sm:text-[8.5px] md:text-[9.5px] font-bold leading-none">ر.ع.</span>
+                            <span class="card-price-val font-display text-xs sm:text-[13px] font-black text-brand leading-none">${Number(c.price || 0).toLocaleString()}</span>
+                            <span class="card-price-curr font-display text-brand text-[7.5px] sm:text-[8px] font-bold leading-none">ر.ع.</span>
                         </div>
-                        <button type="button" onclick="event.stopPropagation(); window.portalOpenProductModal('${c.id}')" class="btn-liquid-metal font-display text-white text-[8px] sm:text-[9px] md:text-[9.5px] font-bold h-7 sm:h-7.5 w-[58px] sm:w-[66px] shrink-0 rounded-lg transition shadow-2xs cursor-pointer whitespace-nowrap inline-flex items-center justify-center gap-1 leading-none select-none" title="معاينة بكامل الشاشة">
-                            <span class="text-[9px]">👁️</span>
-                            <span class="truncate">معاينة</span>
-                        </button>
+                        <button type="button" onclick="event.stopPropagation(); window.portalOpenProductModal('${c.id}')" class="card-btn-preview btn-liquid-metal font-display text-white text-[8px] sm:text-[8.5px] font-bold h-6.5 sm:h-7 w-[52px] sm:w-[58px] shrink-0 rounded-lg transition shadow-2xs cursor-pointer whitespace-nowrap inline-flex items-center justify-center gap-1 leading-none select-none" title="معاينة بكامل الشاشة"><span class="text-[8.5px]">👁️</span><span class="truncate">معاينة</span></button>
                     </div>
 
                     <!-- شريط أدوات المسؤول: زر الحذف بنفس حجم زر المعاينة تماماً والتعديل يأخذ باقي المساحة -->
-                    <div class="pt-1.5 border-t border-stone-200/70 flex items-center gap-1.5">
-                        <button type="button" onclick="event.stopPropagation(); window.portalOpenEdit('${c.id}')" class="h-7 sm:h-7.5 flex-1 min-w-0 bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200/80 font-bold rounded-lg transition inline-flex items-center justify-center gap-1 cursor-pointer shadow-2xs text-[8.5px] sm:text-[9.5px] leading-none select-none" title="تعديل بيانات السجادة">
-                            <span class="text-[9px] shrink-0">✏️</span>
-                            <span class="truncate">تعديل</span>
-                        </button>
-                        <button type="button" onclick="event.stopPropagation(); window.portalDeleteCarpet('${c.id}')" class="h-7 sm:h-7.5 w-[58px] sm:w-[66px] shrink-0 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200/80 font-bold rounded-lg transition inline-flex items-center justify-center gap-1 cursor-pointer shadow-2xs text-[8.5px] sm:text-[9.5px] leading-none select-none" title="حذف السجادة نهائياً">
-                            <span class="text-[9px] shrink-0">🗑️</span>
-                            <span class="truncate">حذف</span>
-                        </button>
+                    <div class="card-actions-row pt-1.5 border-t border-stone-200/70 flex items-center gap-1.5">
+                        <button type="button" onclick="event.stopPropagation(); window.portalOpenEdit('${c.id}')" class="card-btn-edit h-6.5 sm:h-7 flex-1 min-w-0 bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200/80 font-bold rounded-lg transition inline-flex items-center justify-center gap-1 cursor-pointer shadow-2xs text-[8px] sm:text-[8.5px] leading-none select-none" title="تعديل بيانات السجادة"><span class="text-[8.5px] shrink-0">✏️</span><span class="truncate">تعديل</span></button>
+                        <button type="button" onclick="event.stopPropagation(); window.portalDeleteCarpet('${c.id}')" class="card-btn-delete h-6.5 sm:h-7 w-[52px] sm:w-[58px] shrink-0 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200/80 font-bold rounded-lg transition inline-flex items-center justify-center gap-1 cursor-pointer shadow-2xs text-[8px] sm:text-[8.5px] leading-none select-none" title="حذف السجادة نهائياً"><span class="text-[8.5px] shrink-0">🗑️</span><span class="truncate">حذف</span></button>
                     </div>
                 </div>
             </div>
