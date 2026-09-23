@@ -228,6 +228,9 @@ if (typeof window !== 'undefined') {
     window.showVideoProgressToast = showVideoProgressToast;
     window.openOptionsDrawer = openOptionsDrawer;
     window.closeOptionsDrawer = closeOptionsDrawer;
+    window.addCurrentModalToCart = addCurrentModalToCart;
+    window.inquireCurrentModalWhatsApp = inquireCurrentModalWhatsApp;
+    window.addToCart = addToCart;
 }
 
 // ==========================================
@@ -256,9 +259,63 @@ export function closeOptionsDrawer() {
     }
 }
 
+// ==========================================
+// إدارة نافذة تفاصيل المنتج وسلة المشتريات والاستفسار
+// ==========================================
+let currentActiveModalCarpet = null;
+
+export function addCurrentModalToCart() {
+    if (!currentActiveModalCarpet) return;
+    const carpet = currentActiveModalCarpet;
+    const isOutOfStock = carpet.status === 'out_of_stock';
+    const defaultImg = (carpet.images && carpet.images.length > 0) ? carpet.images[0] : (carpet.image || '');
+    const note = isOutOfStock ? 'طلب تفصيل' : '';
+
+    addToCart(carpet.id, carpet.title, carpet.price, carpet.dimensions, note, defaultImg);
+
+    const addBtn = document.getElementById('modal-add-btn');
+    if (addBtn) {
+        const origContent = addBtn.innerHTML;
+        addBtn.innerHTML = `<span>تمت الإضافة للسلة بنجاح ✓</span><span class="text-xs shrink-0">🛍️</span>`;
+        setTimeout(() => {
+            if (addBtn) {
+                if (isOutOfStock) {
+                    addBtn.innerHTML = `<span>طلب تفصيل قطعة مماثلة</span><span class="text-xs shrink-0">🔄</span>`;
+                } else {
+                    addBtn.innerHTML = `<span>إضافة للسلة</span><span class="text-xs shrink-0">🛍️</span>`;
+                }
+            }
+        }, 1600);
+    }
+}
+
+export function inquireCurrentModalWhatsApp() {
+    if (!currentActiveModalCarpet) return;
+    const carpet = currentActiveModalCarpet;
+    const isOutOfStock = carpet.status === 'out_of_stock';
+    const storePhone = "96890000000";
+
+    let message = `مرحباً دار تطريز 🏛️\n`;
+    message += `أود الاستفسار عن هذه التحفة المعروضة في متجركم:\n\n`;
+    message += `▪️ *اسم القطعة:* ${carpet.title}\n`;
+    if (carpet.id) message += `▪️ *رمز القطعة (SKU):* ${carpet.id}\n`;
+    if (carpet.dimensions) message += `▪️ *الأبعاد:* ${carpet.dimensions}\n`;
+    if (carpet.material) message += `▪️ *الخامات:* ${carpet.material}\n`;
+    if (carpet.price) message += `▪️ *السعر الإجمالي:* ${carpet.price} ر.ع.\n`;
+    if (isOutOfStock) {
+        message += `▪️ *الحالة:* نفدت الكمية (أرغب في الاستفسار عن إمكانية حياكة أو توفير قطعة مشابهة)\n`;
+    }
+    message += `\n✨ هل القطعة متوفرة حالياً للمعاينة أو الشحن؟ شكراً لكم!`;
+
+    const encoded = encodeURIComponent(message);
+    window.open(`https://wa.me/${storePhone}?text=${encoded}`, '_blank');
+}
+
 export function openModal(carpetId, allCarpets) {
     const carpet = allCarpets.find(c => c.id === carpetId);
     if (!carpet) return;
+
+    currentActiveModalCarpet = carpet;
 
     const modal = document.getElementById('product-modal');
     if (!modal) return;
@@ -413,6 +470,24 @@ export function openModal(carpetId, allCarpets) {
             if (videoBadge) {
                 videoBadge.classList.remove('hidden');
             }
+        }
+
+        // تفعيل وربط زري "إضافة للسلة" و "الاستفسار المباشر عبر الواتساب"
+        const addBtn = document.getElementById('modal-add-btn');
+        if (addBtn) {
+            if (isOutOfStock) {
+                addBtn.innerHTML = `<span>طلب تفصيل قطعة مماثلة</span><span class="text-xs shrink-0">🔄</span>`;
+                addBtn.title = "طلب تفصيل سجادة يدوية مماثلة بمقاساتك";
+            } else {
+                addBtn.innerHTML = `<span>إضافة للسلة</span><span class="text-xs shrink-0">🛍️</span>`;
+                addBtn.title = "إضافة هذه القطعة إلى سلة المشتريات";
+            }
+            addBtn.onclick = () => addCurrentModalToCart();
+        }
+
+        const inquireBtn = document.getElementById('modal-whatsapp-inquire-btn');
+        if (inquireBtn) {
+            inquireBtn.onclick = () => inquireCurrentModalWhatsApp();
         }
 
         modal.classList.remove('hidden');
@@ -689,6 +764,13 @@ window.toggleProductVideoAudio = (btnEl) => {
 // إدارة سلة المشتريات
 // ==========================================
 export function addToCart(id, title, price, dimensions, note = '', image = '') {
+    const existingIndex = cart.findIndex(item => item.id === id && item.note === note);
+    if (existingIndex !== -1) {
+        showToast(`القطعة «${title}» مضافة مسبقاً في سلة مشترياتك.`, 'info', 'سلة المشتريات');
+        updateCartBadges(true);
+        return;
+    }
+
     cart.push({
         id: id,
         title: title,

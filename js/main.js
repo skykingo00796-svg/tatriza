@@ -7,6 +7,7 @@ import { initTheme, openThemeModal, closeThemeModal, selectThemeOption, applyThe
 import { 
     openModal, closeModal, handleModalScroll, 
     addToCart, openCartModal, closeCartModal, removeFromCart, sendCartToWhatsApp, 
+    addCurrentModalToCart, inquireCurrentModalWhatsApp,
     openCustomOrderModal, closeCustomOrderModal, submitCustomOrder, 
     openLightboxFromModal, openCurrentLogoLightbox, closeLightbox, handleLightboxScroll,
     openOptionsDrawer, closeOptionsDrawer
@@ -68,6 +69,9 @@ window.closeModal = closeModal;
 window.handleModalScroll = handleModalScroll;
 window.openCartModal = openCartModal;
 window.closeCartModal = closeCartModal;
+window.addToCart = addToCart;
+window.addCurrentModalToCart = addCurrentModalToCart;
+window.inquireCurrentModalWhatsApp = inquireCurrentModalWhatsApp;
 window.removeFromCartGlobal = removeFromCart;
 window.sendCartToWhatsApp = sendCartToWhatsApp;
 window.openCustomOrderModal = openCustomOrderModal;
