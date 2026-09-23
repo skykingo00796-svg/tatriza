@@ -420,11 +420,15 @@ export async function uploadCarpetVideo(carpetId, videoFile, onProgress) {
                 contentType: videoFile.type || 'video/mp4'
             });
 
+            let lastPercent = -1;
             const downloadUrl = await new Promise((resolve, reject) => {
                 uploadTask.on('state_changed', 
                     (snapshot) => {
                         const progress = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
-                        if (onProgress) onProgress(`جاري رفع الفيديو السحابي: ${progress}%...`);
+                        if (progress !== lastPercent && (progress % 4 === 0 || progress === 100 || progress <= 4)) {
+                            lastPercent = progress;
+                            if (onProgress) onProgress(`جاري رفع الفيديو السحابي: ${progress}%...`);
+                        }
                     },
                     (error) => reject(error),
                     async () => {

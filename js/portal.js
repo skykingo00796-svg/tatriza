@@ -1744,11 +1744,14 @@ export async function handleCinemaFormSubmit(e) {
 
         // إذا اختار المسؤول ملف فيديو جديد من جهازه:
         if (pendingCinemaVideoFile) {
-            showToast('جاري حفظ وتشفير مقطع الفيديو من جهازك...', 'info', 'حفظ الفيديو');
+            showToast('جاري حفظ وتشفير مقطع الفيديو من جهازك...', 'info', 'معالجة الفيديو', 15000, 'cinema-video-progress');
             const savedVidUrl = await uploadCarpetVideo(vidId, pendingCinemaVideoFile, (msg) => {
-                showToast(msg, 'info', 'معالجة الفيديو');
+                showToast(msg, 'info', 'معالجة الفيديو', 15000, 'cinema-video-progress');
             });
-            if (savedVidUrl) videoUrl = savedVidUrl;
+            if (savedVidUrl) {
+                videoUrl = savedVidUrl;
+                showToast('تم حفظ وتجهيز الفيديو بنجاح! 100%', 'success', 'معالجة الفيديو', 2200, 'cinema-video-progress');
+            }
         }
 
         // إذا اختار صورة غلاف جديدة من جهازه:
