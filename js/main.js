@@ -401,12 +401,12 @@ function displayCarpets(carpetsToDisplay) {
                     </div>
                     
                     ${isOutOfStock ? `
-                        <button onclick="event.stopPropagation(); openModal('${carpet.id}')" class="card-btn-preview btn-liquid-metal font-display text-white text-[8px] sm:text-[9px] font-bold px-2 sm:px-2.5 h-6.5 sm:h-7 rounded-lg transition shadow-2xs flex items-center justify-center gap-1 cursor-pointer whitespace-nowrap shrink-0 leading-none" title="طلب المنتج">
+                        <button onclick="event.stopPropagation(); openModal('${carpet.id}')" class="card-btn-preview btn-liquid-metal text-white text-[8px] sm:text-[9px] font-bold px-2 sm:px-2.5 h-6.5 sm:h-7 rounded-lg transition shadow-2xs flex items-center justify-center gap-1 cursor-pointer whitespace-nowrap shrink-0 leading-none" title="طلب المنتج">
                             <span class="whitespace-nowrap">طلب</span>
                             <span class="text-[8px] shrink-0">🔄</span>
                         </button>
                     ` : `
-                        <button onclick="event.stopPropagation(); openModal('${carpet.id}')" class="card-btn-preview btn-liquid-metal font-display text-white text-[8px] sm:text-[9px] font-bold px-2 sm:px-2.5 h-6.5 sm:h-7 rounded-lg transition shadow-2xs cursor-pointer whitespace-nowrap shrink-0 inline-flex items-center justify-center leading-none">
+                        <button onclick="event.stopPropagation(); openModal('${carpet.id}')" class="card-btn-preview btn-liquid-metal text-white text-[8px] sm:text-[9px] font-bold px-2 sm:px-2.5 h-6.5 sm:h-7 rounded-lg transition shadow-2xs cursor-pointer whitespace-nowrap shrink-0 inline-flex items-center justify-center leading-none">
                             التفاصيل
                         </button>
                     `}

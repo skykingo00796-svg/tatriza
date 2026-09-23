@@ -637,7 +637,7 @@ function renderPortalProductsTable() {
                             <span class="card-price-val font-display text-xs sm:text-[13px] font-black text-brand leading-none">${Number(c.price || 0).toLocaleString()}</span>
                             <span class="card-price-curr font-display text-brand text-[7.5px] sm:text-[8px] font-bold leading-none">ر.ع.</span>
                         </div>
-                        <button type="button" onclick="event.stopPropagation(); window.portalOpenProductModal('${c.id}')" class="card-btn-preview btn-liquid-metal font-display text-white text-[8px] sm:text-[8.5px] font-bold h-6.5 sm:h-7 px-2 sm:px-2.5 shrink-0 rounded-lg transition shadow-2xs cursor-pointer whitespace-nowrap inline-flex items-center justify-center gap-1 leading-none select-none" title="معاينة بكامل الشاشة"><span class="text-[8.5px] shrink-0">👁️</span><span class="whitespace-nowrap font-bold">معاينة</span></button>
+                        <button type="button" onclick="event.stopPropagation(); window.portalOpenProductModal('${c.id}')" class="card-btn-preview btn-liquid-metal text-white text-[8px] sm:text-[8.5px] font-bold h-6.5 sm:h-7 px-2 sm:px-2.5 shrink-0 rounded-lg transition shadow-2xs cursor-pointer whitespace-nowrap inline-flex items-center justify-center gap-1 leading-none select-none" title="معاينة بكامل الشاشة"><span class="text-[8.5px] shrink-0">👁️</span><span class="whitespace-nowrap font-bold">معاينة</span></button>
                     </div>
 
                     <!-- شريط أدوات المسؤول: زر الحذف بنفس حجم زر المعاينة تماماً والتعديل يأخذ باقي المساحة -->

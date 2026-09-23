@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Alexandria:wght@300;400;600;700;800;900&family=Amiri:ital,wght@0,400;0,700;1,400&family=Cairo:wght@300;400;600;700;900&family=El+Messiri:wght@400;500;600;700&family=Kufam:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Noto+Serif+Arabic:wght@400;600;700;800;900&family=Tajawal:wght@400;500;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Alexandria:wght@300;400;600;700;800;900&family=Almarai:wght@400;700;800&family=Amiri:ital,wght@0,400;0,700;1,400&family=Cairo:wght@400;600;700;800;900&family=El+Messiri:wght@400;500;600;700&family=Kufam:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Noto+Serif+Arabic:wght@400;600;700;800;900&family=Tajawal:wght@400;500;700;800&display=swap');
 
 :root {
     --brand-burgundy: #7c1d3c;
@@ -2022,13 +2022,38 @@ button[type="submit"]:active {
     }
 }
 
-/* وضوح وتغميق نصوص أزرار التعديل والحذف (Bold Typography for Action Buttons) */
+/* ==========================================================================
+   نظام خطوط الأزرار الفائق الوضوح والحدة (Ultra-Clear High-Contrast Button Typography)
+   ========================================================================== */
+button,
+input[type="button"],
+input[type="submit"],
+.btn-liquid-metal,
+.card-btn-preview,
 .card-btn-edit,
 .card-btn-delete,
+.card-badge-video,
+#options-toggle-btn,
+.btn-ui-action {
+    font-family: 'Cairo', 'Almarai', sans-serif !important;
+    letter-spacing: 0 !important;
+}
+
+.card-btn-edit,
+.card-btn-delete,
+.card-btn-preview,
 .card-btn-edit span,
-.card-btn-delete span {
+.card-btn-delete span,
+.card-btn-preview span,
+.card-btn-edit *,
+.card-btn-delete *,
+.card-btn-preview * {
+    font-family: 'Cairo', 'Almarai', sans-serif !important;
     font-weight: 800 !important;
-    letter-spacing: 0.015em;
+    letter-spacing: 0 !important;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
 }
 
 /* ==========================================================================
