@@ -1114,3 +1114,51 @@ window.addEventListener('DOMContentLoaded', () => {
 
     loadCarpets();
 });
+
+// ==========================================
+// التحكم في مشغل سينما الحرفة اليدوية (Atelier Cinema)
+// ==========================================
+window.toggleCinemaVideoPlay = function() {
+    const video = document.getElementById('atelier-cinema-video');
+    const icon = document.getElementById('cinema-play-icon');
+    const text = document.getElementById('cinema-play-text');
+    if (!video) return;
+
+    if (video.paused) {
+        video.play().catch(() => {});
+        if (icon) icon.innerText = '⏸';
+        if (text) text.innerText = 'إيقاف مؤقت';
+    } else {
+        video.pause();
+        if (icon) icon.innerText = '▶';
+        if (text) text.innerText = 'مشاهدة الحرفة';
+    }
+};
+
+window.toggleCinemaVideoAudio = function() {
+    const video = document.getElementById('atelier-cinema-video');
+    const icon = document.getElementById('cinema-audio-icon');
+    if (!video) return;
+
+    video.muted = !video.muted;
+    if (icon) {
+        icon.innerText = video.muted ? '🔇' : '🔊';
+    }
+};
+
+window.toggleCinemaVideoFullscreen = function() {
+    const video = document.getElementById('atelier-cinema-video');
+    if (!video) return;
+
+    if (!document.fullscreenElement) {
+        if (video.requestFullscreen) {
+            video.requestFullscreen();
+        } else if (video.webkitRequestFullscreen) {
+            video.webkitRequestFullscreen();
+        }
+    } else {
+        if (document.exitFullscreen) {
+            document.exitFullscreen();
+        }
+    }
+};
