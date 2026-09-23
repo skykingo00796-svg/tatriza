@@ -391,7 +391,7 @@ function displayCarpets(carpetsToDisplay) {
             <!-- الكتلة السفلية: مصغرة ومتناسقة لتثبيت السعر والزر في الأسفل -->
             <div class="card-content-wrap p-2 sm:p-2.5 flex-1 flex flex-col justify-between bg-white border-t border-stone-200/70 relative z-20">
                 <div class="mb-1.5">
-                    <h4 class="card-title-text font-display font-semibold text-stone-900 text-[10px] sm:text-[11px] leading-snug truncate group-hover:text-brand transition" title="${carpet.title}">${carpet.title}</h4>
+                    <h4 class="card-title-text font-royal-carpet font-bold text-stone-900 text-[10px] sm:text-[11px] leading-snug truncate group-hover:text-brand transition" title="${carpet.title}">${carpet.title}</h4>
                 </div>
 
                 <div class="card-price-row flex items-center justify-between gap-1 mt-auto">

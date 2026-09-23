@@ -629,7 +629,7 @@ function renderPortalProductsTable() {
                         <span class="card-category-label text-[8px] sm:text-[9px] text-stone-500 font-medium leading-none block truncate">
                             ${c.category || 'تراثي'}
                         </span>
-                        <h4 class="card-title-text font-display font-semibold text-stone-900 text-[10px] sm:text-[11px] leading-snug truncate group-hover:text-brand transition mt-1" title="${c.title}">${c.title}</h4>
+                        <h4 class="card-title-text font-royal-carpet font-bold text-stone-900 text-[10px] sm:text-[11px] leading-snug truncate group-hover:text-brand transition mt-1" title="${c.title}">${c.title}</h4>
                     </div>
 
                     <div class="card-price-row flex items-center justify-between gap-1 mt-auto pb-1.5">

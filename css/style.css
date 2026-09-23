@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Alexandria:wght@300;400;600;700;800;900&family=Amiri:ital,wght@0,400;0,700;1,400&family=Cairo:wght@300;400;600;700;900&family=Tajawal:wght@400;500;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Alexandria:wght@300;400;600;700;800;900&family=Amiri:ital,wght@0,400;0,700;1,400&family=Cairo:wght@300;400;600;700;900&family=El+Messiri:wght@400;500;600;700&family=Kufam:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Noto+Serif+Arabic:wght@400;600;700;800;900&family=Tajawal:wght@400;500;700;800&display=swap');
 
 :root {
     --brand-burgundy: #7c1d3c;
@@ -947,6 +947,31 @@ button[type="submit"]:active {
 }
 .font-interface {
     font-family: 'Tajawal', 'Cairo', sans-serif !important;
+}
+
+/* خط الحياكة والتطريز الفاخر المعتمد لبطاقات السجاد والتحف الملكية (El Messiri) */
+.font-royal-carpet,
+.font-exclusive-art,
+.card-title-text,
+#modal-title {
+    font-family: 'El Messiri', 'Amiri', serif !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.012em;
+}
+
+/* بطاقة المنتج: تصنيف السجادة بنمط راقٍ متناسق مع فن الحياكة */
+.card-category-label {
+    font-family: 'El Messiri', 'Tajawal', sans-serif !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.02em;
+}
+
+/* خطوط بديلة حصرية متوفرة للاختيار */
+.font-carpet-kufi {
+    font-family: 'Kufam', 'Reem Kufi', sans-serif !important;
+}
+.font-carpet-serif {
+    font-family: 'Noto Serif Arabic', 'Amiri', serif !important;
 }
 
 /* حاوية الـ 3D Canvas للجزيئات الذهبية */
