@@ -23,7 +23,9 @@ import {
     subscribeToShowcaseSettings,
     getDefaultShowcaseSettings,
     compressImage,
-    fileToBase64
+    fileToBase64,
+    uploadCarpetVideo,
+    uploadShowcaseImage
 } from './firebase-admin.js';
 
 import { 
@@ -1273,6 +1275,10 @@ window.portalExportBackup = function() {
 // ==========================================
 let showcaseState = null;
 let currentShowcaseTab = 'marquee';
+let pendingCinemaVideoFile = null;
+let pendingCinemaPosterFile = null;
+let pendingJourneyImgFile = null;
+let pendingLookbookImgFile = null;
 
 export function getLocalShowcaseSettings() {
     try {
@@ -1561,6 +1567,7 @@ function renderCinemaTab() {
 
     listEl.innerHTML = videos.map((vid, idx) => {
         const isActive = Boolean(vid.isActive);
+        const isDeviceStored = vid.videoUrl && vid.videoUrl.startsWith('idb://video_');
         return `
             <div class="flex flex-col sm:flex-row sm:items-center justify-between p-3.5 bg-white hover:bg-stone-50 border ${isActive ? 'border-amber-400 bg-amber-50/20 ring-1 ring-amber-300' : 'border-stone-200'} rounded-2xl transition gap-3 shadow-2xs">
                 <div class="flex items-center gap-3 min-w-0 flex-1">
@@ -1574,10 +1581,12 @@ function renderCinemaTab() {
                             <span class="font-bold text-stone-900 text-xs sm:text-sm truncate">${vid.title}</span>
                             ${isActive ? '<span class="px-2 py-0.5 rounded-full text-[9px] font-bold bg-amber-100 text-amber-900 border border-amber-300">🌟 النشط حالياً في المشغل</span>' : ''}
                         </div>
-                        <div class="flex items-center gap-2 text-[10px] text-stone-500 mt-0.5">
+                        <div class="flex items-center gap-2 text-[10px] text-stone-500 mt-0.5 flex-wrap">
                             <span>${vid.subtitle || '✨ أصالة المشغل'}</span>
                             <span>•</span>
-                            <span class="font-mono text-stone-400 truncate max-w-[140px] sm:max-w-xs" dir="ltr">${vid.videoUrl}</span>
+                            ${isDeviceStored 
+                                ? '<span class="px-2 py-0.5 rounded text-[9px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">📹 مقطع من جهاز الإدارة</span>' 
+                                : '<span class="px-2 py-0.5 rounded text-[9px] font-bold bg-stone-100 text-stone-700 border border-stone-200">☁️ مقطع سحابي معتمد</span>'}
                         </div>
                         <div class="flex items-center gap-3 text-[10px] text-stone-600 mt-1 font-bold">
                             <span>⏱️ ${vid.stats ? vid.stats.hours : '+500'} ساعة</span>
@@ -1604,7 +1613,79 @@ function renderCinemaTab() {
     }).join('');
 }
 
-export function handleCinemaFormSubmit(e) {
+// ------------------------------------------
+// معالجات اختيار ملفات الفيديو والصور من أجهزة الكمبيوتر أو استوديو الجوال
+// ------------------------------------------
+export function handleCinemaVideoSelect(event) {
+    const file = event.target.files && event.target.files[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('video/') && !file.name.match(/\.(mp4|webm|mov|m4v)$/i)) {
+        showToast('يرجى اختيار ملف فيديو صالح (MP4 أو WebM أو MOV).', 'error', 'صيغة غير مدعومة');
+        return;
+    }
+
+    pendingCinemaVideoFile = file;
+
+    const previewBox = document.getElementById('cinema-video-preview-box');
+    const previewPlayer = document.getElementById('cinema-video-preview-player');
+    const noPreviewBox = document.getElementById('cinema-video-no-preview');
+    const videoInfo = document.getElementById('cinema-video-info');
+    const btnText = document.getElementById('cinema-video-btn-text');
+
+    const sizeMB = (file.size / (1024 * 1024)).toFixed(1);
+
+    if (previewPlayer) {
+        previewPlayer.src = URL.createObjectURL(file);
+        previewPlayer.load();
+    }
+    if (previewBox) previewBox.classList.remove('hidden');
+    if (noPreviewBox) noPreviewBox.classList.add('hidden');
+    if (videoInfo) videoInfo.innerText = `🎥 ${file.name} (${sizeMB} ميجابايت)`;
+    if (btnText) btnText.innerText = 'تغيير مقطع الفيديو';
+
+    showToast(`تم اختيار الفيديو: «${file.name}» (${sizeMB} MB) من جهازك بنجاح.`, 'success', 'مقطع محدد');
+}
+
+export function clearCinemaVideoSelection() {
+    pendingCinemaVideoFile = null;
+    const fileInput = document.getElementById('cinema-file-video');
+    if (fileInput) fileInput.value = '';
+
+    const previewBox = document.getElementById('cinema-video-preview-box');
+    const previewPlayer = document.getElementById('cinema-video-preview-player');
+    const noPreviewBox = document.getElementById('cinema-video-no-preview');
+    const btnText = document.getElementById('cinema-video-btn-text');
+    const videoUrlInput = document.getElementById('cinema-input-videourl');
+
+    if (previewPlayer) {
+        previewPlayer.pause();
+        previewPlayer.removeAttribute('src');
+        previewPlayer.load();
+    }
+    if (previewBox) previewBox.classList.add('hidden');
+    if (noPreviewBox) noPreviewBox.classList.remove('hidden');
+    if (btnText) btnText.innerText = 'اختيار مقطع من الجهاز / الاستوديو';
+    if (videoUrlInput) videoUrlInput.value = '';
+}
+
+export function handleCinemaPosterSelect(event) {
+    const file = event.target.files && event.target.files[0];
+    if (!file) return;
+
+    pendingCinemaPosterFile = file;
+    const previewImg = document.getElementById('cinema-poster-preview');
+    const statusText = document.getElementById('cinema-poster-status');
+
+    if (previewImg) previewImg.src = URL.createObjectURL(file);
+    if (statusText) {
+        const sizeKB = Math.round(file.size / 1024);
+        statusText.innerText = `📸 ${file.name} (${sizeKB} KB)`;
+    }
+    showToast('تم تحديد صورة الغلاف من جهازك بنجاح.', 'success', 'غلاف الفيديو');
+}
+
+export async function handleCinemaFormSubmit(e) {
     e.preventDefault();
     const idInput = document.getElementById('cinema-edit-id');
     const titleInput = document.getElementById('cinema-input-title');
@@ -1620,8 +1701,6 @@ export function handleCinemaFormSubmit(e) {
 
     const title = (titleInput.value || '').trim();
     const subtitle = (subtitleInput.value || '✨ أصالة المشغل اليدوي').trim();
-    const videoUrl = (videoUrlInput.value || '').trim();
-    const posterUrl = (posterUrlInput.value || '../images/craft_video_poster.jpg').trim();
     const quote = (quoteInput.value || '').trim();
     const caption = (captionInput.value || '').trim();
     const hours = (hoursInput.value || '+500').trim();
@@ -1629,54 +1708,103 @@ export function handleCinemaFormSubmit(e) {
     const knots = (knotsInput.value || '120K').trim();
     const shouldBeActive = activeInput ? activeInput.checked : false;
 
-    if (!title || !videoUrl) {
-        showToast('يرجى إدخال عنوان ورابط الفيديو.', 'warning', 'حقل مطلوب');
+    const editId = idInput ? idInput.value : '';
+    let videoUrl = (videoUrlInput ? videoUrlInput.value : '').trim();
+    let posterUrl = (posterUrlInput ? posterUrlInput.value : '../images/craft_video_poster.jpg').trim();
+
+    if (!title) {
+        showToast('يرجى إدخال عنوان الفيديو البارز.', 'warning', 'حقل مطلوب');
         return;
     }
 
-    const editId = idInput ? idInput.value : '';
-    let updatedVideos = [...(showcaseState.cinemaVideos || [])];
-
-    if (shouldBeActive) {
-        updatedVideos = updatedVideos.map(v => ({ ...v, isActive: false }));
+    if (!editId && !pendingCinemaVideoFile && !videoUrl) {
+        showToast('يرجى اختيار مقطع فيديو للمشغل من ملفات جهازك أو استوديو الجوال.', 'warning', 'مقطع الفيديو مطلوب');
+        return;
     }
 
-    if (editId) {
-        updatedVideos = updatedVideos.map(v => {
-            if (v.id === editId) {
-                return {
-                    ...v,
-                    title,
-                    subtitle,
-                    videoUrl,
-                    posterUrl,
-                    quote,
-                    caption,
-                    stats: { hours, material, knots },
-                    isActive: shouldBeActive ? true : v.isActive
-                };
-            }
-            return v;
-        });
-        syncShowcaseState({ ...showcaseState, cinemaVideos: updatedVideos }, 'تم تعديل فيديو المشغل بنجاح');
-    } else {
-        const isFirst = updatedVideos.length === 0;
-        const newVid = {
-            id: 'vid-' + Date.now(),
-            title,
-            subtitle,
-            videoUrl,
-            posterUrl,
-            quote,
-            caption,
-            stats: { hours, material, knots },
-            isActive: shouldBeActive || isFirst
-        };
-        updatedVideos.push(newVid);
-        syncShowcaseState({ ...showcaseState, cinemaVideos: updatedVideos }, 'تمت إضافة الفيديو الجديد للمشغل');
+    const submitBtn = document.getElementById('cinema-submit-btn');
+    const origBtnHtml = submitBtn ? submitBtn.innerHTML : '';
+    if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span>⏳</span><span>جاري حفظ المقطع...</span>';
     }
 
-    cancelCinemaEdit();
+    try {
+        const vidId = editId || ('vid-' + Date.now());
+
+        // إذا اختار المسؤول ملف فيديو جديد من جهازه:
+        if (pendingCinemaVideoFile) {
+            showToast('جاري حفظ وتشفير مقطع الفيديو من جهازك...', 'info', 'حفظ الفيديو');
+            const savedVidUrl = await uploadCarpetVideo(vidId, pendingCinemaVideoFile, (msg) => {
+                showToast(msg, 'info', 'معالجة الفيديو');
+            });
+            if (savedVidUrl) videoUrl = savedVidUrl;
+        }
+
+        // إذا اختار صورة غلاف جديدة من جهازه:
+        if (pendingCinemaPosterFile) {
+            showToast('جاري معالجة صورة الغلاف...', 'info', 'غلاف الفيديو');
+            const savedPoster = await uploadShowcaseImage(pendingCinemaPosterFile, 'cinema_posters');
+            if (savedPoster) posterUrl = savedPoster;
+        }
+
+        if (!videoUrl) {
+            showToast('تعذر حفظ مقطع الفيديو، يرجى إعادة المحاولة.', 'error', 'خطأ');
+            if (submitBtn) { submitBtn.disabled = false; submitBtn.innerHTML = origBtnHtml; }
+            return;
+        }
+
+        let updatedVideos = [...(showcaseState.cinemaVideos || [])];
+
+        if (shouldBeActive) {
+            updatedVideos = updatedVideos.map(v => ({ ...v, isActive: false }));
+        }
+
+        if (editId) {
+            updatedVideos = updatedVideos.map(v => {
+                if (v.id === editId) {
+                    return {
+                        ...v,
+                        title,
+                        subtitle,
+                        videoUrl,
+                        posterUrl,
+                        quote,
+                        caption,
+                        stats: { hours, material, knots },
+                        isActive: shouldBeActive ? true : v.isActive
+                    };
+                }
+                return v;
+            });
+            await syncShowcaseState({ ...showcaseState, cinemaVideos: updatedVideos }, 'تم تعديل فيديو المشغل بنجاح');
+        } else {
+            const isFirst = updatedVideos.length === 0;
+            const newVid = {
+                id: vidId,
+                title,
+                subtitle,
+                videoUrl,
+                posterUrl,
+                quote,
+                caption,
+                stats: { hours, material, knots },
+                isActive: shouldBeActive || isFirst
+            };
+            updatedVideos.push(newVid);
+            await syncShowcaseState({ ...showcaseState, cinemaVideos: updatedVideos }, 'تمت إضافة الفيديو الجديد للمشغل من جهازك');
+        }
+
+        cancelCinemaEdit();
+    } catch (err) {
+        console.error("Error saving cinema video:", err);
+        showToast('حدث خطأ أثناء حفظ الفيديو.', 'error', 'خطأ');
+    } finally {
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = origBtnHtml;
+        }
+    }
 }
 
 export function setActiveCinemaVideo(id) {
@@ -1691,12 +1819,16 @@ export function startCinemaEdit(id) {
     const vid = (showcaseState.cinemaVideos || []).find(v => v.id === id);
     if (!vid) return;
 
+    pendingCinemaVideoFile = null;
+    pendingCinemaPosterFile = null;
+
     const idInput = document.getElementById('cinema-edit-id');
     const titleInput = document.getElementById('cinema-input-title');
     const subtitleInput = document.getElementById('cinema-input-subtitle');
     const videoUrlInput = document.getElementById('cinema-input-videourl');
     const posterUrlInput = document.getElementById('cinema-input-posterurl');
     const posterImg = document.getElementById('cinema-poster-preview');
+    const posterStatus = document.getElementById('cinema-poster-status');
     const quoteInput = document.getElementById('cinema-input-quote');
     const captionInput = document.getElementById('cinema-input-caption');
     const hoursInput = document.getElementById('cinema-input-hours');
@@ -1707,18 +1839,48 @@ export function startCinemaEdit(id) {
     const submitText = document.getElementById('cinema-submit-text');
     const cancelBtn = document.getElementById('cinema-cancel-edit-btn');
 
+    const previewBox = document.getElementById('cinema-video-preview-box');
+    const previewPlayer = document.getElementById('cinema-video-preview-player');
+    const noPreviewBox = document.getElementById('cinema-video-no-preview');
+    const videoInfo = document.getElementById('cinema-video-info');
+    const btnText = document.getElementById('cinema-video-btn-text');
+
     if (idInput) idInput.value = vid.id;
     if (titleInput) titleInput.value = vid.title || '';
     if (subtitleInput) subtitleInput.value = vid.subtitle || '';
     if (videoUrlInput) videoUrlInput.value = vid.videoUrl || '';
     if (posterUrlInput) posterUrlInput.value = vid.posterUrl || '';
     if (posterImg && vid.posterUrl) posterImg.src = vid.posterUrl;
+    if (posterStatus) posterStatus.innerText = 'صورة الغلاف الحالية';
     if (quoteInput) quoteInput.value = vid.quote || '';
     if (captionInput) captionInput.value = vid.caption || '';
     if (hoursInput && vid.stats) hoursInput.value = vid.stats.hours || '+500';
     if (materialInput && vid.stats) materialInput.value = vid.stats.material || '100%';
     if (knotsInput && vid.stats) knotsInput.value = vid.stats.knots || '120K';
     if (activeInput) activeInput.checked = Boolean(vid.isActive);
+
+    // تجهيز معاينة الفيديو الحالي
+    if (vid.videoUrl) {
+        if (previewBox) previewBox.classList.remove('hidden');
+        if (noPreviewBox) noPreviewBox.classList.add('hidden');
+        if (btnText) btnText.innerText = 'استبدال المقطع من الجهاز';
+
+        if (vid.videoUrl.startsWith('idb://video_')) {
+            getVideoFromIndexedDB(vid.videoUrl).then(blobUrl => {
+                if (blobUrl && previewPlayer) {
+                    previewPlayer.src = blobUrl;
+                    previewPlayer.load();
+                }
+            }).catch(() => {});
+            if (videoInfo) videoInfo.innerText = '📹 مقطع محفوظ من جهاز الإدارة';
+        } else {
+            if (previewPlayer) {
+                previewPlayer.src = vid.videoUrl;
+                previewPlayer.load();
+            }
+            if (videoInfo) videoInfo.innerText = '☁️ مقطع فيديو سحابي معتمد';
+        }
+    }
 
     if (formTitle) formTitle.innerText = `تعديل فيديو: «${vid.title}»`;
     if (submitText) submitText.innerText = 'حفظ التعديل';
@@ -1728,11 +1890,16 @@ export function startCinemaEdit(id) {
 }
 
 export function cancelCinemaEdit() {
+    clearCinemaVideoSelection();
+    pendingCinemaPosterFile = null;
+
     const idInput = document.getElementById('cinema-edit-id');
     const titleInput = document.getElementById('cinema-input-title');
     const subtitleInput = document.getElementById('cinema-input-subtitle');
     const videoUrlInput = document.getElementById('cinema-input-videourl');
     const posterUrlInput = document.getElementById('cinema-input-posterurl');
+    const posterImg = document.getElementById('cinema-poster-preview');
+    const posterStatus = document.getElementById('cinema-poster-status');
     const quoteInput = document.getElementById('cinema-input-quote');
     const captionInput = document.getElementById('cinema-input-caption');
     const hoursInput = document.getElementById('cinema-input-hours');
@@ -1748,6 +1915,8 @@ export function cancelCinemaEdit() {
     if (subtitleInput) subtitleInput.value = '✨ أصالة المشغل اليدوي';
     if (videoUrlInput) videoUrlInput.value = '';
     if (posterUrlInput) posterUrlInput.value = '../images/craft_video_poster.jpg';
+    if (posterImg) posterImg.src = '../images/craft_video_poster.jpg';
+    if (posterStatus) posterStatus.innerText = 'صورة الغلاف الافتراضية';
     if (quoteInput) quoteInput.value = '';
     if (captionInput) captionInput.value = '';
     if (hoursInput) hoursInput.value = '+500';
@@ -1822,7 +1991,23 @@ function renderJourneyTab() {
     `).join('');
 }
 
-export function handleJourneyFormSubmit(e) {
+export function handleJourneyImgSelect(event) {
+    const file = event.target.files && event.target.files[0];
+    if (!file) return;
+
+    pendingJourneyImgFile = file;
+    const previewImg = document.getElementById('journey-img-preview');
+    const statusText = document.getElementById('journey-img-status');
+
+    if (previewImg) previewImg.src = URL.createObjectURL(file);
+    if (statusText) {
+        const sizeKB = Math.round(file.size / 1024);
+        statusText.innerText = `🖼️ ${file.name} (${sizeKB} KB)`;
+    }
+    showToast('تم تحديد صورة المرحلة بنجاح.', 'success', 'صورة الخطوة');
+}
+
+export async function handleJourneyFormSubmit(e) {
     e.preventDefault();
     const idInput = document.getElementById('journey-edit-id');
     const numInput = document.getElementById('journey-input-num');
@@ -1835,43 +2020,68 @@ export function handleJourneyFormSubmit(e) {
     const title = (titleInput.value || '').trim();
     const desc = (descInput.value || '').trim();
     const tag = (tagInput.value || '').trim();
-    const imgUrl = (imgInput.value || '../images/step1_sketch.jpg').trim();
+    let imgUrl = (imgInput ? imgInput.value : '../images/step1_sketch.jpg').trim();
 
     if (!title || !desc) {
         showToast('يرجى إدخال عنوان الخطوة والشرح.', 'warning', 'حقل مطلوب');
         return;
     }
 
-    const editId = idInput ? idInput.value : '';
-    let updatedSteps = [...(showcaseState.journeySteps || [])];
-
-    if (editId) {
-        updatedSteps = updatedSteps.map(s => {
-            if (s.id === editId) {
-                return { ...s, stepNum, title, desc, tag, imgUrl };
-            }
-            return s;
-        });
-        syncShowcaseState({ ...showcaseState, journeySteps: updatedSteps }, `تم تعديل الخطوة «${title}»`);
-    } else {
-        const newStep = {
-            id: 'step-' + Date.now(),
-            stepNum,
-            title,
-            desc,
-            tag,
-            imgUrl
-        };
-        updatedSteps.push(newStep);
-        syncShowcaseState({ ...showcaseState, journeySteps: updatedSteps }, `تمت إضافة الخطوة «${title}» لمسار الحرفة`);
+    const submitBtn = document.getElementById('journey-submit-btn');
+    const origBtnHtml = submitBtn ? submitBtn.innerHTML : '';
+    if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span>⏳</span><span>جاري حفظ الخطوة...</span>';
     }
 
-    cancelJourneyEdit();
+    try {
+        if (pendingJourneyImgFile) {
+            showToast('جاري معالجة صورة الخطوة من جهازك...', 'info', 'صورة الخطوة');
+            const savedImg = await uploadShowcaseImage(pendingJourneyImgFile, 'journey_steps');
+            if (savedImg) imgUrl = savedImg;
+        }
+
+        const editId = idInput ? idInput.value : '';
+        let updatedSteps = [...(showcaseState.journeySteps || [])];
+
+        if (editId) {
+            updatedSteps = updatedSteps.map(s => {
+                if (s.id === editId) {
+                    return { ...s, stepNum, title, desc, tag, imgUrl };
+                }
+                return s;
+            });
+            await syncShowcaseState({ ...showcaseState, journeySteps: updatedSteps }, `تم تعديل الخطوة «${title}»`);
+        } else {
+            const newStep = {
+                id: 'step-' + Date.now(),
+                stepNum,
+                title,
+                desc,
+                tag,
+                imgUrl
+            };
+            updatedSteps.push(newStep);
+            await syncShowcaseState({ ...showcaseState, journeySteps: updatedSteps }, `تمت إضافة الخطوة «${title}» لمسار الحرفة`);
+        }
+
+        cancelJourneyEdit();
+    } catch (err) {
+        console.error("Error saving journey step:", err);
+        showToast('حدث خطأ أثناء حفظ الخطوة.', 'error', 'خطأ');
+    } finally {
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = origBtnHtml;
+        }
+    }
 }
 
 export function startJourneyEdit(id) {
     const step = (showcaseState.journeySteps || []).find(s => s.id === id);
     if (!step) return;
+
+    pendingJourneyImgFile = null;
 
     const idInput = document.getElementById('journey-edit-id');
     const numInput = document.getElementById('journey-input-num');
@@ -1880,6 +2090,7 @@ export function startJourneyEdit(id) {
     const tagInput = document.getElementById('journey-input-tag');
     const imgInput = document.getElementById('journey-input-img');
     const imgPreview = document.getElementById('journey-img-preview');
+    const imgStatus = document.getElementById('journey-img-status');
     const formTitle = document.getElementById('journey-form-title');
     const submitText = document.getElementById('journey-submit-text');
     const cancelBtn = document.getElementById('journey-cancel-edit-btn');
@@ -1891,6 +2102,7 @@ export function startJourneyEdit(id) {
     if (tagInput) tagInput.value = step.tag || '';
     if (imgInput) imgInput.value = step.imgUrl || '';
     if (imgPreview && step.imgUrl) imgPreview.src = step.imgUrl;
+    if (imgStatus) imgStatus.innerText = 'صورة الخطوة الحالية';
 
     if (formTitle) formTitle.innerText = `تعديل الخطوة: «${step.title}»`;
     if (submitText) submitText.innerText = 'حفظ التعديل';
@@ -1900,12 +2112,18 @@ export function startJourneyEdit(id) {
 }
 
 export function cancelJourneyEdit() {
+    pendingJourneyImgFile = null;
+    const fileInput = document.getElementById('journey-file-img');
+    if (fileInput) fileInput.value = '';
+
     const idInput = document.getElementById('journey-edit-id');
     const numInput = document.getElementById('journey-input-num');
     const titleInput = document.getElementById('journey-input-title');
     const descInput = document.getElementById('journey-input-desc');
     const tagInput = document.getElementById('journey-input-tag');
     const imgInput = document.getElementById('journey-input-img');
+    const imgPreview = document.getElementById('journey-img-preview');
+    const imgStatus = document.getElementById('journey-img-status');
     const formTitle = document.getElementById('journey-form-title');
     const submitText = document.getElementById('journey-submit-text');
     const cancelBtn = document.getElementById('journey-cancel-edit-btn');
@@ -1916,6 +2134,8 @@ export function cancelJourneyEdit() {
     if (descInput) descInput.value = '';
     if (tagInput) tagInput.value = '';
     if (imgInput) imgInput.value = '../images/step1_sketch.jpg';
+    if (imgPreview) imgPreview.src = '../images/step1_sketch.jpg';
+    if (imgStatus) imgStatus.innerText = 'صورة الخطوة الافتراضية';
 
     if (formTitle) formTitle.innerText = 'إضافة / تعديل خطوة في مسار الإنتاج:';
     if (submitText) submitText.innerText = 'إضافة الخطوة للمسار';
@@ -1981,7 +2201,23 @@ function renderLookbookTab() {
     `).join('');
 }
 
-export function handleLookbookFormSubmit(e) {
+export function handleLookbookImgSelect(event) {
+    const file = event.target.files && event.target.files[0];
+    if (!file) return;
+
+    pendingLookbookImgFile = file;
+    const previewImg = document.getElementById('lookbook-img-preview');
+    const statusText = document.getElementById('lookbook-img-status');
+
+    if (previewImg) previewImg.src = URL.createObjectURL(file);
+    if (statusText) {
+        const sizeKB = Math.round(file.size / 1024);
+        statusText.innerText = `📸 ${file.name} (${sizeKB} KB)`;
+    }
+    showToast('تم تحديد صورة توثيق العميل بنجاح.', 'success', 'صورة التسليم');
+}
+
+export async function handleLookbookFormSubmit(e) {
     e.preventDefault();
     const idInput = document.getElementById('lookbook-edit-id');
     const clientInput = document.getElementById('lookbook-input-client');
@@ -1998,45 +2234,70 @@ export function handleLookbookFormSubmit(e) {
     const orderType = (orderTypeInput.value || 'طلب تفصيل خاص').trim();
     const rating = Number(ratingInput ? ratingInput.value : 5) || 5;
     const reviewText = (reviewInput.value || '').trim();
-    const imgUrl = (imgInput.value || '../images/client_room1.jpg').trim();
+    let imgUrl = (imgInput ? imgInput.value : '../images/client_room1.jpg').trim();
 
     if (!clientName || !reviewText) {
         showToast('يرجى إدخال اسم العميل والتعليق.', 'warning', 'حقل مطلوب');
         return;
     }
 
-    const editId = idInput ? idInput.value : '';
-    let updatedLookbook = [...(showcaseState.lookbookItems || [])];
-
-    if (editId) {
-        updatedLookbook = updatedLookbook.map(it => {
-            if (it.id === editId) {
-                return { ...it, clientName, location, carpetTitle, orderType, rating, reviewText, imgUrl };
-            }
-            return it;
-        });
-        syncShowcaseState({ ...showcaseState, lookbookItems: updatedLookbook }, `تم تعديل توثيق تسليم العميل «${clientName}»`);
-    } else {
-        const newItem = {
-            id: 'look-' + Date.now(),
-            clientName,
-            location,
-            carpetTitle,
-            orderType,
-            rating,
-            reviewText,
-            imgUrl
-        };
-        updatedLookbook.push(newItem);
-        syncShowcaseState({ ...showcaseState, lookbookItems: updatedLookbook }, `تم توثيق تسليم القطعة للعميل «${clientName}»`);
+    const submitBtn = document.getElementById('lookbook-submit-btn');
+    const origBtnHtml = submitBtn ? submitBtn.innerHTML : '';
+    if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span>⏳</span><span>جاري حفظ التوثيق...</span>';
     }
 
-    cancelLookbookEdit();
+    try {
+        if (pendingLookbookImgFile) {
+            showToast('جاري معالجة صورة التسليم من جهازك...', 'info', 'صورة التوثيق');
+            const savedImg = await uploadShowcaseImage(pendingLookbookImgFile, 'lookbook_clients');
+            if (savedImg) imgUrl = savedImg;
+        }
+
+        const editId = idInput ? idInput.value : '';
+        let updatedLookbook = [...(showcaseState.lookbookItems || [])];
+
+        if (editId) {
+            updatedLookbook = updatedLookbook.map(it => {
+                if (it.id === editId) {
+                    return { ...it, clientName, location, carpetTitle, orderType, rating, reviewText, imgUrl };
+                }
+                return it;
+            });
+            await syncShowcaseState({ ...showcaseState, lookbookItems: updatedLookbook }, `تم تعديل توثيق تسليم العميل «${clientName}»`);
+        } else {
+            const newItem = {
+                id: 'look-' + Date.now(),
+                clientName,
+                location,
+                carpetTitle,
+                orderType,
+                rating,
+                reviewText,
+                imgUrl
+            };
+            updatedLookbook.push(newItem);
+            await syncShowcaseState({ ...showcaseState, lookbookItems: updatedLookbook }, `تم توثيق تسليم القطعة للعميل «${clientName}»`);
+        }
+
+        cancelLookbookEdit();
+    } catch (err) {
+        console.error("Error saving lookbook item:", err);
+        showToast('حدث خطأ أثناء حفظ التوثيق.', 'error', 'خطأ');
+    } finally {
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = origBtnHtml;
+        }
+    }
 }
 
 export function startLookbookEdit(id) {
     const item = (showcaseState.lookbookItems || []).find(it => it.id === id);
     if (!item) return;
+
+    pendingLookbookImgFile = null;
 
     const idInput = document.getElementById('lookbook-edit-id');
     const clientInput = document.getElementById('lookbook-input-client');
@@ -2047,6 +2308,7 @@ export function startLookbookEdit(id) {
     const reviewInput = document.getElementById('lookbook-input-review');
     const imgInput = document.getElementById('lookbook-input-img');
     const imgPreview = document.getElementById('lookbook-img-preview');
+    const imgStatus = document.getElementById('lookbook-img-status');
     const formTitle = document.getElementById('lookbook-form-title');
     const submitText = document.getElementById('lookbook-submit-text');
     const cancelBtn = document.getElementById('lookbook-cancel-edit-btn');
@@ -2060,6 +2322,7 @@ export function startLookbookEdit(id) {
     if (reviewInput) reviewInput.value = item.reviewText || '';
     if (imgInput) imgInput.value = item.imgUrl || '';
     if (imgPreview && item.imgUrl) imgPreview.src = item.imgUrl;
+    if (imgStatus) imgStatus.innerText = 'صورة التسليم الحالية';
 
     if (formTitle) formTitle.innerText = `تعديل توثيق: «${item.clientName}»`;
     if (submitText) submitText.innerText = 'حفظ التعديل';
@@ -2069,6 +2332,10 @@ export function startLookbookEdit(id) {
 }
 
 export function cancelLookbookEdit() {
+    pendingLookbookImgFile = null;
+    const fileInput = document.getElementById('lookbook-file-img');
+    if (fileInput) fileInput.value = '';
+
     const idInput = document.getElementById('lookbook-edit-id');
     const clientInput = document.getElementById('lookbook-input-client');
     const locationInput = document.getElementById('lookbook-input-location');
@@ -2077,6 +2344,8 @@ export function cancelLookbookEdit() {
     const ratingInput = document.getElementById('lookbook-input-rating');
     const reviewInput = document.getElementById('lookbook-input-review');
     const imgInput = document.getElementById('lookbook-input-img');
+    const imgPreview = document.getElementById('lookbook-img-preview');
+    const imgStatus = document.getElementById('lookbook-img-status');
     const formTitle = document.getElementById('lookbook-form-title');
     const submitText = document.getElementById('lookbook-submit-text');
     const cancelBtn = document.getElementById('lookbook-cancel-edit-btn');
@@ -2089,6 +2358,8 @@ export function cancelLookbookEdit() {
     if (ratingInput) ratingInput.value = '5';
     if (reviewInput) reviewInput.value = '';
     if (imgInput) imgInput.value = '../images/client_room1.jpg';
+    if (imgPreview) imgPreview.src = '../images/client_room1.jpg';
+    if (imgStatus) imgStatus.innerText = 'صورة توثيق تسليم القطعة الافتراضية';
 
     if (formTitle) formTitle.innerText = 'توثيق قطعة جديدة تخرج من المتجر (مع الرأي والتقييم):';
     if (submitText) submitText.innerText = 'توثيق وحفظ القطعة';
@@ -2176,6 +2447,12 @@ window.openShowcaseManagerModal = openShowcaseManagerModal;
 window.closeShowcaseManagerModal = closeShowcaseManagerModal;
 window.switchShowcaseTab = switchShowcaseTab;
 window.handleShowcaseFileUpload = handleShowcaseFileUpload;
+
+window.handleCinemaVideoSelect = handleCinemaVideoSelect;
+window.clearCinemaVideoSelection = clearCinemaVideoSelection;
+window.handleCinemaPosterSelect = handleCinemaPosterSelect;
+window.handleJourneyImgSelect = handleJourneyImgSelect;
+window.handleLookbookImgSelect = handleLookbookImgSelect;
 
 window.handleMarqueeFormSubmit = handleMarqueeFormSubmit;
 window.startMarqueeEdit = startMarqueeEdit;

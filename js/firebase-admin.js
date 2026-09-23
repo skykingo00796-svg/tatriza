@@ -873,3 +873,36 @@ export async function saveShowcaseSettingsToCloud(settingsObj) {
     }
 }
 
+// ==========================================
+// رفع ومعالجة صور البنرات الترويجية (سحابياً أو مضغوطة محلياً)
+// ==========================================
+export async function uploadShowcaseImage(file, subfolder = 'showcase', onProgress) {
+    if (!file) return null;
+
+    if (onProgress) onProgress('جاري تحسين وضغط الصورة المرفوعة...');
+    const compressed = await compressImage(file, 1200, 1200, 0.78);
+
+    const { storage, isReady } = initFirebaseServices();
+    const hasStorage = isReady && storage ? await isStorageBucketReady() : false;
+
+    if (hasStorage && storage) {
+        try {
+            if (onProgress) onProgress('جاري رفع الصورة إلى التخزين السحابي...');
+            const fileExt = compressed.name.split('.').pop() || 'jpg';
+            const fileName = `${subfolder}_${Date.now()}.${fileExt}`;
+            const storageRef = ref(storage, `showcase/${subfolder}/${fileName}`);
+            const snapshot = await uploadBytes(storageRef, compressed, {
+                contentType: 'image/jpeg'
+            });
+            const downloadUrl = await getDownloadURL(snapshot.ref);
+            if (downloadUrl) return downloadUrl;
+        } catch (e) {
+            console.warn('Storage image upload error for showcase, falling back to base64:', e);
+        }
+    }
+
+    if (onProgress) onProgress('جاري حفظ الصورة بجودة فائقة...');
+    return await fileToBase64(compressed);
+}
+
+

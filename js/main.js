@@ -1229,20 +1229,36 @@ function applyActiveCinemaVideo(autoPlay = false) {
     if (materialEl && vid.stats) materialEl.innerText = vid.stats.material || '100%';
     if (knotsEl && vid.stats) knotsEl.innerText = vid.stats.knots || '120K';
 
-    // تحديث الفيديو والمصدر
+    // تحديث الفيديو والمصدر مع دعم الفيديوهات المحفوظة محلياً عبر IndexedDB
     if (videoEl) {
         if (vid.posterUrl) videoEl.poster = vid.posterUrl;
         const sourceEl = document.getElementById('cinema-video-source');
-        if (sourceEl && sourceEl.src !== vid.videoUrl) {
-            sourceEl.src = vid.videoUrl;
-            videoEl.load();
-            if (autoPlay) {
-                videoEl.play().catch(() => {});
-                const playIcon = document.getElementById('cinema-play-icon');
-                const playText = document.getElementById('cinema-play-text');
-                if (playIcon) playIcon.innerText = '⏸';
-                if (playText) playText.innerText = 'إيقاف مؤقت';
+
+        const loadVideoWithUrl = (targetUrl) => {
+            if (!targetUrl) return;
+            const currentSrc = sourceEl ? sourceEl.src : videoEl.src;
+            if (currentSrc !== targetUrl) {
+                if (sourceEl) sourceEl.src = targetUrl;
+                videoEl.src = targetUrl;
+                videoEl.load();
+                if (autoPlay) {
+                    videoEl.play().catch(() => {});
+                    const playIcon = document.getElementById('cinema-play-icon');
+                    const playText = document.getElementById('cinema-play-text');
+                    if (playIcon) playIcon.innerText = '⏸';
+                    if (playText) playText.innerText = 'إيقاف مؤقت';
+                }
             }
+        };
+
+        if (vid.videoUrl && vid.videoUrl.startsWith('idb://video_')) {
+            getVideoFromIndexedDB(vid.videoUrl).then(blobUrl => {
+                if (blobUrl) {
+                    loadVideoWithUrl(blobUrl);
+                }
+            }).catch(() => {});
+        } else if (vid.videoUrl) {
+            loadVideoWithUrl(vid.videoUrl);
         }
     }
 
