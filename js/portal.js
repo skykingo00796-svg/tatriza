@@ -71,6 +71,10 @@ let portalSearchQuery = '';
 let portalCategoryFilter = 'all';
 let portalStockFilter = 'all';
 
+// إعدادات الترقيم المدمجة الفاخرة للوحة الإدارة (18 قطعة لكل صفحة - متناسقة مع شبكة العرض)
+const PORTAL_ITEMS_PER_PAGE = 18;
+let portalCurrentPage = 1;
+
 // ==========================================
 // التصنيفات الافتراضية وإدارتها في البوابة
 // ==========================================
@@ -527,8 +531,9 @@ window.portalPlayCardVideo = async (carpetId) => {
     }
 };
 
-function renderPortalProductsTable() {
+function renderPortalProductsTable(shouldScroll = false) {
     const container = document.getElementById('carpets-grid') || document.getElementById('portal-products-grid');
+    const paginationContainer = document.getElementById('portal-pagination');
     if (!container) return;
 
     let list = [...allPortalCarpets];
@@ -556,7 +561,13 @@ function renderPortalProductsTable() {
         list = list.filter(c => c.status === 'out_of_stock');
     }
 
-    if (list.length === 0) {
+    const totalItems = list.length;
+    const totalPages = Math.ceil(totalItems / PORTAL_ITEMS_PER_PAGE) || 1;
+
+    if (portalCurrentPage > totalPages) portalCurrentPage = totalPages;
+    if (portalCurrentPage < 1) portalCurrentPage = 1;
+
+    if (totalItems === 0) {
         container.innerHTML = `
             <div class="col-span-full text-center py-16 px-4 bg-white/80 rounded-3xl border border-stone-200 shadow-2xs" dir="rtl">
                 <div class="w-14 h-14 rounded-full bg-amber-50 text-amber-700 flex items-center justify-center mx-auto text-2xl mb-3 shadow-2xs border border-amber-200/60">
@@ -566,10 +577,15 @@ function renderPortalProductsTable() {
                 <p class="text-xs text-stone-500 mt-1">جرّب مسح حقل البحث أو إضافة سجادة جديدة للمتجر.</p>
             </div>
         `;
+        if (paginationContainer) paginationContainer.innerHTML = '';
         return;
     }
 
-    container.innerHTML = list.map((c, index) => {
+    const startIndex = (portalCurrentPage - 1) * PORTAL_ITEMS_PER_PAGE;
+    const endIndex = Math.min(startIndex + PORTAL_ITEMS_PER_PAGE, totalItems);
+    const paginatedList = list.slice(startIndex, endIndex);
+
+    container.innerHTML = paginatedList.map((c, index) => {
         const isOutOfStock = c.status === 'out_of_stock';
         const imgUrl = (c.images && c.images[0]) || c.image || 'https://placehold.co/400x400/7c1d3c/ffffff?text=Tatriza';
         const imagesCount = (c.images && c.images.length) || 1;
@@ -649,7 +665,111 @@ function renderPortalProductsTable() {
             </div>
         `;
     }).join('');
+
+    renderPortalPagination(totalItems, portalCurrentPage, totalPages);
+
+    if (shouldScroll) {
+        const offset = 100;
+        const bodyRect = document.body.getBoundingClientRect().top;
+        const elementRect = container.getBoundingClientRect().top;
+        const offsetPosition = elementRect - bodyRect - offset;
+        window.scrollTo({
+            top: offsetPosition,
+            behavior: 'smooth'
+        });
+    }
 }
+
+function renderPortalPagination(totalItems, currentPage, totalPages) {
+    const container = document.getElementById('portal-pagination');
+    if (!container) return;
+
+    if (totalItems <= PORTAL_ITEMS_PER_PAGE || totalPages <= 1) {
+        container.innerHTML = '';
+        return;
+    }
+
+    const startItem = (currentPage - 1) * PORTAL_ITEMS_PER_PAGE + 1;
+    const endItem = Math.min(currentPage * PORTAL_ITEMS_PER_PAGE, totalItems);
+
+    let pages = [];
+    if (totalPages <= 7) {
+        for (let i = 1; i <= totalPages; i++) pages.push(i);
+    } else {
+        if (currentPage <= 4) {
+            pages = [1, 2, 3, 4, 5, '...', totalPages];
+        } else if (currentPage >= totalPages - 3) {
+            pages = [1, '...', totalPages - 4, totalPages - 3, totalPages - 2, totalPages - 1, totalPages];
+        } else {
+            pages = [1, '...', currentPage - 1, currentPage, currentPage + 1, '...', totalPages];
+        }
+    }
+
+    const pageButtonsHtml = pages.map(p => {
+        if (p === '...') {
+            return `<span class="px-1.5 text-stone-400 font-bold select-none text-xs">•••</span>`;
+        }
+        const isActive = p === currentPage;
+        return `
+            <button 
+                type="button" 
+                onclick="window.changePortalPage(${p})" 
+                class="pagination-btn ${isActive ? 'active' : ''}" 
+                ${isActive ? 'aria-current="page"' : ''}
+                title="الانتقال إلى صفحة ${p}">
+                ${p}
+            </button>
+        `;
+    }).join('');
+
+    container.innerHTML = `
+        <div class="flex flex-col items-center gap-2.5">
+            <nav aria-label="ترقيم صفحات إدارة المعروضات" class="pagination-capsule" dir="rtl">
+                <!-- زر السابق -->
+                <button 
+                    type="button" 
+                    onclick="window.changePortalPage(${currentPage - 1})" 
+                    class="pagination-nav-btn" 
+                    ${currentPage === 1 ? 'disabled' : ''} 
+                    title="الصفحة السابقة">
+                    <span class="text-sm">→</span>
+                    <span class="hidden sm:inline">السابق</span>
+                </button>
+
+                <!-- الأرقام للكمبيوتر والتابلت -->
+                <div class="hidden sm:flex items-center gap-1 px-1">
+                    ${pageButtonsHtml}
+                </div>
+
+                <!-- عداد ملموم ومريح للجوال -->
+                <div class="sm:hidden px-2 py-0.5 text-xs font-bold text-stone-800">
+                    صفحة <span class="text-brand font-black">${currentPage}</span> من <span>${totalPages}</span>
+                </div>
+
+                <!-- زر التالي -->
+                <button 
+                    type="button" 
+                    onclick="window.changePortalPage(${currentPage + 1})" 
+                    class="pagination-nav-btn" 
+                    ${currentPage === totalPages ? 'disabled' : ''} 
+                    title="الصفحة التالية">
+                    <span class="hidden sm:inline">التالي</span>
+                    <span class="text-sm">←</span>
+                </button>
+            </nav>
+
+            <!-- سطر التوضيح الإحصائي الملموم -->
+            <span class="pagination-info-badge">
+                عرض القطع من ${startItem} إلى ${endItem} (إجمالي ${totalItems} قطعة مسجلة)
+            </span>
+        </div>
+    `;
+}
+
+window.changePortalPage = function(page) {
+    portalCurrentPage = page;
+    renderPortalProductsTable(true);
+};
 
 
 // تبديل حالة توفر القطعة
@@ -702,16 +822,19 @@ window.portalOpenEdit = function(carpetId) {
 // فلترة وبحث
 window.handlePortalSearch = function(query) {
     portalSearchQuery = query.trim();
+    portalCurrentPage = 1;
     renderPortalProductsTable();
 };
 
 window.handlePortalCategoryFilter = function(cat) {
     portalCategoryFilter = cat;
+    portalCurrentPage = 1;
     renderPortalProductsTable();
 };
 
 window.handlePortalStockFilter = function(stock) {
     portalStockFilter = stock;
+    portalCurrentPage = 1;
     renderPortalProductsTable();
 };
 

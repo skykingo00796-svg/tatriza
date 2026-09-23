@@ -50,6 +50,11 @@ let currentFilter = 'all';
 let currentSearchQuery = '';
 let currentSortOption = 'default';
 
+// إعدادات الترقيم المدمجة الفاخرة (18 قطعة لكل صفحة - متناسقة مع شبكة العرض)
+const CARPETS_PER_PAGE = 18;
+let currentCarpetPage = 1;
+let filteredCarpetsList = [];
+
 // ربط الدوال بالـ window لتعمل عبر الأحداث المباشرة في ملفات الـ HTML
 window.getAllCarpetsGlobal = () => allCarpets;
 window.isProductNew = isProductNew;
@@ -608,7 +613,10 @@ function updateCategoryCounts() {
     } catch(e) {}
 }
 
-function filterAndDisplayCarpets() {
+function filterAndDisplayCarpets(resetPage = true) {
+    if (resetPage) {
+        currentCarpetPage = 1;
+    }
     let result = [...allCarpets];
 
     // 1. تصفية حسب التصنيف
@@ -645,8 +653,129 @@ function filterAndDisplayCarpets() {
         result.sort((a, b) => a.title.localeCompare(b.title, 'ar'));
     }
 
-    displayCarpets(result);
+    filteredCarpetsList = result;
+    renderPaginatedCarpets(false);
 }
+
+function renderPaginatedCarpets(shouldScroll = false) {
+    const totalItems = filteredCarpetsList.length;
+    const totalPages = Math.ceil(totalItems / CARPETS_PER_PAGE) || 1;
+
+    if (currentCarpetPage > totalPages) currentCarpetPage = totalPages;
+    if (currentCarpetPage < 1) currentCarpetPage = 1;
+
+    const startIndex = (currentCarpetPage - 1) * CARPETS_PER_PAGE;
+    const endIndex = Math.min(startIndex + CARPETS_PER_PAGE, totalItems);
+    const paginatedItems = filteredCarpetsList.slice(startIndex, endIndex);
+
+    displayCarpets(paginatedItems);
+    renderPaginationControls(totalItems, currentCarpetPage, totalPages);
+
+    if (shouldScroll) {
+        const grid = document.getElementById('carpets-grid');
+        if (grid) {
+            const offset = 100;
+            const bodyRect = document.body.getBoundingClientRect().top;
+            const elementRect = grid.getBoundingClientRect().top;
+            const offsetPosition = elementRect - bodyRect - offset;
+            window.scrollTo({
+                top: offsetPosition,
+                behavior: 'smooth'
+            });
+        }
+    }
+}
+
+function renderPaginationControls(totalItems, currentPage, totalPages) {
+    const container = document.getElementById('carpets-pagination');
+    if (!container) return;
+
+    if (totalItems <= CARPETS_PER_PAGE || totalPages <= 1) {
+        container.innerHTML = '';
+        return;
+    }
+
+    const startItem = (currentPage - 1) * CARPETS_PER_PAGE + 1;
+    const endItem = Math.min(currentPage * CARPETS_PER_PAGE, totalItems);
+
+    let pages = [];
+    if (totalPages <= 7) {
+        for (let i = 1; i <= totalPages; i++) pages.push(i);
+    } else {
+        if (currentPage <= 4) {
+            pages = [1, 2, 3, 4, 5, '...', totalPages];
+        } else if (currentPage >= totalPages - 3) {
+            pages = [1, '...', totalPages - 4, totalPages - 3, totalPages - 2, totalPages - 1, totalPages];
+        } else {
+            pages = [1, '...', currentPage - 1, currentPage, currentPage + 1, '...', totalPages];
+        }
+    }
+
+    const pageButtonsHtml = pages.map(p => {
+        if (p === '...') {
+            return `<span class="px-1.5 text-stone-400 font-bold select-none text-xs">•••</span>`;
+        }
+        const isActive = p === currentPage;
+        return `
+            <button 
+                type="button" 
+                onclick="window.changeCarpetPage(${p})" 
+                class="pagination-btn ${isActive ? 'active' : ''}" 
+                ${isActive ? 'aria-current="page"' : ''}
+                title="الانتقال إلى صفحة ${p}">
+                ${p}
+            </button>
+        `;
+    }).join('');
+
+    container.innerHTML = `
+        <div class="flex flex-col items-center gap-2.5">
+            <nav aria-label="ترقيم صفحات المعرض" class="pagination-capsule" dir="rtl">
+                <!-- زر السابق -->
+                <button 
+                    type="button" 
+                    onclick="window.changeCarpetPage(${currentPage - 1})" 
+                    class="pagination-nav-btn" 
+                    ${currentPage === 1 ? 'disabled' : ''} 
+                    title="الصفحة السابقة">
+                    <span class="text-sm">→</span>
+                    <span class="hidden sm:inline">السابق</span>
+                </button>
+
+                <!-- الأرقام للكمبيوتر والتابلت -->
+                <div class="hidden sm:flex items-center gap-1 px-1">
+                    ${pageButtonsHtml}
+                </div>
+
+                <!-- عداد ملموم ومريح للجوال -->
+                <div class="sm:hidden px-2 py-0.5 text-xs font-bold text-stone-800">
+                    صفحة <span class="text-brand font-black">${currentPage}</span> من <span>${totalPages}</span>
+                </div>
+
+                <!-- زر التالي -->
+                <button 
+                    type="button" 
+                    onclick="window.changeCarpetPage(${currentPage + 1})" 
+                    class="pagination-nav-btn" 
+                    ${currentPage === totalPages ? 'disabled' : ''} 
+                    title="الصفحة التالية">
+                    <span class="hidden sm:inline">التالي</span>
+                    <span class="text-sm">←</span>
+                </button>
+            </nav>
+
+            <!-- سطر التوضيح الإحصائي الملموم -->
+            <span class="pagination-info-badge">
+                عرض القطع من ${startItem} إلى ${endItem} (إجمالي ${totalItems} قطعة في المعرض)
+            </span>
+        </div>
+    `;
+}
+
+window.changeCarpetPage = function(page) {
+    currentCarpetPage = page;
+    renderPaginatedCarpets(true);
+};
 
 function setupSearchAndSort() {
     const searchInput = document.getElementById('search-input');
