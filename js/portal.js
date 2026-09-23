@@ -18,7 +18,12 @@ import {
     deleteCarpetFromCloud, 
     updateCarpetStatusInCloud, 
     exportCarpetsBackup, 
-    formatReadableDate 
+    formatReadableDate,
+    saveShowcaseSettingsToCloud,
+    subscribeToShowcaseSettings,
+    getDefaultShowcaseSettings,
+    compressImage,
+    fileToBase64
 } from './firebase-admin.js';
 
 import { 
@@ -1262,6 +1267,868 @@ window.portalExportBackup = function() {
     showToast("تم بدء تنزيل النسخة الاحتياطية (JSON) لجميع المعروضات.", "success", "نسخة احتياطية");
 };
 
+// ==========================================
+// محرك إدارة الأقسام الترويجية والبنرات (Showcase CMS Engine)
+// دار تطريز TATRIZA - تحكم كامل للمسؤول مع مزامنة سحابية
+// ==========================================
+let showcaseState = null;
+let currentShowcaseTab = 'marquee';
+
+export function getLocalShowcaseSettings() {
+    try {
+        const stored = localStorage.getItem('tatr_showcase_settings');
+        if (stored) {
+            const parsed = JSON.parse(stored);
+            if (parsed && Array.isArray(parsed.marqueeItems) && parsed.marqueeItems.length > 0) {
+                return parsed;
+            }
+        }
+    } catch (e) {
+        console.warn("Could not read local showcase settings:", e);
+    }
+    const defaultData = getDefaultShowcaseSettings();
+    saveLocalShowcaseSettings(defaultData);
+    return defaultData;
+}
+
+export function saveLocalShowcaseSettings(data) {
+    try {
+        localStorage.setItem('tatr_showcase_settings', JSON.stringify(data));
+    } catch (e) {
+        console.warn("Could not save showcase settings locally:", e);
+    }
+}
+
+export function updateShowcaseSyncStatus(isCloud) {
+    const statusEl = document.getElementById('showcase-sync-status');
+    if (!statusEl) return;
+    if (isCloud) {
+        statusEl.className = 'px-2.5 py-1 rounded-full text-[10px] sm:text-[11px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200/80 flex items-center gap-1.5 shadow-2xs';
+        statusEl.innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span><span>مزامنة Firebase السحابية</span>';
+    } else {
+        statusEl.className = 'px-2.5 py-1 rounded-full text-[10px] sm:text-[11px] font-bold bg-amber-50 text-amber-900 border border-amber-300 flex items-center gap-1.5 shadow-2xs';
+        statusEl.innerHTML = '<span class="w-2 h-2 rounded-full bg-amber-500"></span><span>تخزين محلي مؤمن</span>';
+    }
+}
+
+export async function syncShowcaseState(newState, toastMsg = 'تم الحفظ بنجاح') {
+    showcaseState = { ...newState };
+    saveLocalShowcaseSettings(showcaseState);
+    renderShowcaseUI();
+
+    let cloudSaved = false;
+    if (isFirebaseConfigured()) {
+        try {
+            await saveShowcaseSettingsToCloud(showcaseState);
+            cloudSaved = true;
+            updateShowcaseSyncStatus(true);
+        } catch (err) {
+            console.warn("Could not sync showcase to Firebase:", err);
+            updateShowcaseSyncStatus(false);
+        }
+    } else {
+        updateShowcaseSyncStatus(false);
+    }
+
+    if (toastMsg) {
+        showToast(
+            cloudSaved ? `${toastMsg} (تم التحديث السحابي فوراً)` : `${toastMsg} (حُفظ محلياً)`,
+            'success',
+            'إدارة المعرض والترويج'
+        );
+    }
+}
+
+export function initShowcaseCMS() {
+    showcaseState = getLocalShowcaseSettings();
+    
+    // المزامنة اللحظية من Firebase
+    if (isFirebaseConfigured()) {
+        try {
+            subscribeToShowcaseSettings((cloudData) => {
+                if (cloudData && Array.isArray(cloudData.marqueeItems)) {
+                    showcaseState = cloudData;
+                    saveLocalShowcaseSettings(cloudData);
+                    renderShowcaseUI();
+                    updateShowcaseSyncStatus(true);
+                }
+            });
+        } catch (e) {
+            console.warn("Showcase subscription init error:", e);
+        }
+    }
+}
+
+export function openShowcaseManagerModal() {
+    const modal = document.getElementById('showcase-manager-modal');
+    if (!modal) return;
+    if (!showcaseState) showcaseState = getLocalShowcaseSettings();
+    renderShowcaseUI();
+    switchShowcaseTab(currentShowcaseTab || 'marquee');
+    modal.classList.remove('hidden');
+}
+
+export function closeShowcaseManagerModal() {
+    const modal = document.getElementById('showcase-manager-modal');
+    if (modal) modal.classList.add('hidden');
+    cancelMarqueeEdit();
+    cancelCinemaEdit();
+    cancelJourneyEdit();
+    cancelLookbookEdit();
+}
+
+export function switchShowcaseTab(tabName) {
+    currentShowcaseTab = tabName;
+    const tabBtns = document.querySelectorAll('.showcase-tab-btn');
+    tabBtns.forEach(btn => {
+        btn.classList.remove('active', 'bg-stone-900', 'text-white', 'shadow-xs');
+        btn.classList.add('bg-stone-100', 'text-stone-700', 'hover:bg-stone-200');
+    });
+
+    const activeBtn = document.getElementById(`tab-btn-${tabName}`);
+    if (activeBtn) {
+        activeBtn.classList.add('active', 'bg-stone-900', 'text-white', 'shadow-xs');
+        activeBtn.classList.remove('bg-stone-100', 'text-stone-700', 'hover:bg-stone-200');
+    }
+
+    const panes = document.querySelectorAll('.showcase-tab-pane');
+    panes.forEach(p => p.classList.add('hidden'));
+
+    const activePane = document.getElementById(`tab-content-${tabName}`);
+    if (activePane) activePane.classList.remove('hidden');
+}
+
+export function renderShowcaseUI() {
+    if (!showcaseState) return;
+
+    // تحديث أرقام الشارات في التبويبات
+    const badgeMq = document.getElementById('badge-count-marquee');
+    const badgeCin = document.getElementById('badge-count-cinema');
+    const badgeJrn = document.getElementById('badge-count-journey');
+    const badgeLkb = document.getElementById('badge-count-lookbook');
+
+    if (badgeMq) badgeMq.innerText = showcaseState.marqueeItems ? showcaseState.marqueeItems.length : 0;
+    if (badgeCin) badgeCin.innerText = showcaseState.cinemaVideos ? showcaseState.cinemaVideos.length : 0;
+    if (badgeJrn) badgeJrn.innerText = showcaseState.journeySteps ? showcaseState.journeySteps.length : 0;
+    if (badgeLkb) badgeLkb.innerText = showcaseState.lookbookItems ? showcaseState.lookbookItems.length : 0;
+
+    renderMarqueeTab();
+    renderCinemaTab();
+    renderJourneyTab();
+    renderLookbookTab();
+}
+
+// ------------------------------------------
+// 1. إدارة شريط العبارات المتحركة (Marquee)
+// ------------------------------------------
+function renderMarqueeTab() {
+    const listEl = document.getElementById('marquee-items-list');
+    if (!listEl) return;
+    const items = showcaseState.marqueeItems || [];
+
+    if (items.length === 0) {
+        listEl.innerHTML = '<div class="p-4 text-center text-xs text-stone-500 bg-stone-50 rounded-xl">لا توجد عبارات حالياً في الشريط. يمكنك إضافة عبارة جديدة أعلاه.</div>';
+        return;
+    }
+
+    listEl.innerHTML = items.map((item, idx) => `
+        <div class="flex items-center justify-between p-3 bg-white hover:bg-stone-50 border border-stone-200 rounded-xl transition shadow-2xs">
+            <div class="flex items-center gap-3 min-w-0 flex-1">
+                <span class="w-8 h-8 rounded-lg bg-amber-50 text-amber-800 border border-amber-200/60 flex items-center justify-center text-base shrink-0 select-none">${item.icon || '⚜️'}</span>
+                <div class="min-w-0 flex-1">
+                    <div class="flex items-center gap-2">
+                        <span class="font-bold text-stone-900 text-xs sm:text-sm truncate">${item.title}</span>
+                        <span class="text-[10px] text-stone-400 font-number">#${idx + 1}</span>
+                    </div>
+                    <p class="text-[11px] text-stone-600 truncate mt-0.5">${item.desc}</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-1.5 shrink-0 mr-2">
+                <button type="button" onclick="startMarqueeEdit('${item.id}')" class="px-2.5 py-1 text-xs font-bold text-stone-700 bg-stone-100 hover:bg-stone-200 rounded-lg transition cursor-pointer" title="تعديل العبارة">
+                    ✏️ تعديل
+                </button>
+                <button type="button" onclick="deleteMarqueeItem('${item.id}')" class="px-2 py-1 text-xs font-bold text-rose-600 bg-rose-50 hover:bg-rose-100 rounded-lg transition cursor-pointer" title="حذف العبارة">
+                    🗑️
+                </button>
+            </div>
+        </div>
+    `).join('');
+}
+
+export function handleMarqueeFormSubmit(e) {
+    e.preventDefault();
+    const idInput = document.getElementById('marquee-edit-id');
+    const iconInput = document.getElementById('marquee-input-icon');
+    const titleInput = document.getElementById('marquee-input-title');
+    const descInput = document.getElementById('marquee-input-desc');
+
+    const icon = (iconInput.value || '⚜️').trim();
+    const title = (titleInput.value || '').trim();
+    const desc = (descInput.value || '').trim();
+
+    if (!title || !desc) {
+        showToast('يرجى كتابة العنوان والشرح للعبارة.', 'warning', 'حقل مطلوب');
+        return;
+    }
+
+    const editId = idInput ? idInput.value : '';
+    let updatedItems = [...(showcaseState.marqueeItems || [])];
+
+    if (editId) {
+        updatedItems = updatedItems.map(item => {
+            if (item.id === editId) {
+                return { ...item, icon, title, desc };
+            }
+            return item;
+        });
+        syncShowcaseState({ ...showcaseState, marqueeItems: updatedItems }, 'تم تعديل العبارة في الشريط المتحرك بنجاح');
+    } else {
+        const newItem = {
+            id: 'mq-' + Date.now(),
+            icon,
+            title,
+            desc
+        };
+        updatedItems.push(newItem);
+        syncShowcaseState({ ...showcaseState, marqueeItems: updatedItems }, 'تمت إضافة العبارة الجديدة للشريط المتحرك');
+    }
+
+    cancelMarqueeEdit();
+}
+
+export function startMarqueeEdit(id) {
+    const item = (showcaseState.marqueeItems || []).find(it => it.id === id);
+    if (!item) return;
+
+    const idInput = document.getElementById('marquee-edit-id');
+    const iconInput = document.getElementById('marquee-input-icon');
+    const titleInput = document.getElementById('marquee-input-title');
+    const descInput = document.getElementById('marquee-input-desc');
+    const formTitle = document.getElementById('marquee-form-title');
+    const submitText = document.getElementById('marquee-submit-text');
+    const cancelBtn = document.getElementById('marquee-cancel-edit-btn');
+
+    if (idInput) idInput.value = item.id;
+    if (iconInput) iconInput.value = item.icon || '⚜️';
+    if (titleInput) titleInput.value = item.title || '';
+    if (descInput) descInput.value = item.desc || '';
+    if (formTitle) formTitle.innerText = `تعديل العبارة: «${item.title}»`;
+    if (submitText) submitText.innerText = 'حفظ التعديل';
+    if (cancelBtn) cancelBtn.classList.remove('hidden');
+
+    if (titleInput) titleInput.focus();
+}
+
+export function cancelMarqueeEdit() {
+    const idInput = document.getElementById('marquee-edit-id');
+    const iconInput = document.getElementById('marquee-input-icon');
+    const titleInput = document.getElementById('marquee-input-title');
+    const descInput = document.getElementById('marquee-input-desc');
+    const formTitle = document.getElementById('marquee-form-title');
+    const submitText = document.getElementById('marquee-submit-text');
+    const cancelBtn = document.getElementById('marquee-cancel-edit-btn');
+
+    if (idInput) idInput.value = '';
+    if (iconInput) iconInput.value = '⚜️';
+    if (titleInput) titleInput.value = '';
+    if (descInput) descInput.value = '';
+    if (formTitle) formTitle.innerText = 'إضافة عبارة جديدة للشريط المتحرك:';
+    if (submitText) submitText.innerText = 'إضافة العبارة للشريط';
+    if (cancelBtn) cancelBtn.classList.add('hidden');
+}
+
+export function deleteMarqueeItem(id) {
+    const item = (showcaseState.marqueeItems || []).find(it => it.id === id);
+    const itemTitle = item ? item.title : 'هذه العبارة';
+    if (!confirm(`هل أنت متأكد من حذف عبارة «${itemTitle}» من الشريط المتحرك؟`)) return;
+
+    const updated = (showcaseState.marqueeItems || []).filter(it => it.id !== id);
+    syncShowcaseState({ ...showcaseState, marqueeItems: updated }, `تم حذف عبارة «${itemTitle}» من الشريط`);
+}
+
+// ------------------------------------------
+// 2. إدارة سينما وفيديوهات المشغل (Cinema)
+// ------------------------------------------
+function renderCinemaTab() {
+    const listEl = document.getElementById('cinema-videos-list');
+    if (!listEl) return;
+    const videos = showcaseState.cinemaVideos || [];
+
+    if (videos.length === 0) {
+        listEl.innerHTML = '<div class="p-4 text-center text-xs text-stone-500 bg-stone-50 rounded-xl">لا توجد فيديوهات حالياً. أضف فيديو المشغل الأول أعلاه.</div>';
+        return;
+    }
+
+    listEl.innerHTML = videos.map((vid, idx) => {
+        const isActive = Boolean(vid.isActive);
+        return `
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between p-3.5 bg-white hover:bg-stone-50 border ${isActive ? 'border-amber-400 bg-amber-50/20 ring-1 ring-amber-300' : 'border-stone-200'} rounded-2xl transition gap-3 shadow-2xs">
+                <div class="flex items-center gap-3 min-w-0 flex-1">
+                    <div class="relative w-20 h-14 rounded-xl overflow-hidden bg-stone-900 shrink-0 border border-stone-300 shadow-2xs">
+                        <img src="${vid.posterUrl || '../images/craft_video_poster.jpg'}" alt="${vid.title}" class="w-full h-full object-cover">
+                        <span class="absolute inset-0 bg-black/30 flex items-center justify-center text-white text-xs">▶</span>
+                        <span class="absolute bottom-1 right-1 text-[9px] font-number font-black bg-black/70 text-amber-300 px-1 rounded">#${idx + 1}</span>
+                    </div>
+                    <div class="min-w-0 flex-1">
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <span class="font-bold text-stone-900 text-xs sm:text-sm truncate">${vid.title}</span>
+                            ${isActive ? '<span class="px-2 py-0.5 rounded-full text-[9px] font-bold bg-amber-100 text-amber-900 border border-amber-300">🌟 النشط حالياً في المشغل</span>' : ''}
+                        </div>
+                        <div class="flex items-center gap-2 text-[10px] text-stone-500 mt-0.5">
+                            <span>${vid.subtitle || '✨ أصالة المشغل'}</span>
+                            <span>•</span>
+                            <span class="font-mono text-stone-400 truncate max-w-[140px] sm:max-w-xs" dir="ltr">${vid.videoUrl}</span>
+                        </div>
+                        <div class="flex items-center gap-3 text-[10px] text-stone-600 mt-1 font-bold">
+                            <span>⏱️ ${vid.stats ? vid.stats.hours : '+500'} ساعة</span>
+                            <span>🧵 ${vid.stats ? vid.stats.material : '100%'} خامات</span>
+                            <span>🪢 ${vid.stats ? vid.stats.knots : '120K'} عقدة</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex items-center gap-1.5 shrink-0 self-end sm:self-auto">
+                    ${!isActive ? `
+                        <button type="button" onclick="setActiveCinemaVideo('${vid.id}')" class="px-2.5 py-1 text-xs font-bold text-amber-900 bg-amber-100 hover:bg-amber-200 border border-amber-300 rounded-lg transition cursor-pointer" title="تنشيط هذا الفيديو ليكون المعروض حالياً">
+                            🌟 تنشيط للعرض
+                        </button>
+                    ` : ''}
+                    <button type="button" onclick="startCinemaEdit('${vid.id}')" class="px-2.5 py-1 text-xs font-bold text-stone-700 bg-stone-100 hover:bg-stone-200 rounded-lg transition cursor-pointer" title="تعديل الفيديو">
+                        ✏️ تعديل
+                    </button>
+                    <button type="button" onclick="deleteCinemaVideo('${vid.id}')" class="px-2 py-1 text-xs font-bold text-rose-600 bg-rose-50 hover:bg-rose-100 rounded-lg transition cursor-pointer" title="حذف الفيديو">
+                        🗑️
+                    </button>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+export function handleCinemaFormSubmit(e) {
+    e.preventDefault();
+    const idInput = document.getElementById('cinema-edit-id');
+    const titleInput = document.getElementById('cinema-input-title');
+    const subtitleInput = document.getElementById('cinema-input-subtitle');
+    const videoUrlInput = document.getElementById('cinema-input-videourl');
+    const posterUrlInput = document.getElementById('cinema-input-posterurl');
+    const quoteInput = document.getElementById('cinema-input-quote');
+    const captionInput = document.getElementById('cinema-input-caption');
+    const hoursInput = document.getElementById('cinema-input-hours');
+    const materialInput = document.getElementById('cinema-input-material');
+    const knotsInput = document.getElementById('cinema-input-knots');
+    const activeInput = document.getElementById('cinema-input-active');
+
+    const title = (titleInput.value || '').trim();
+    const subtitle = (subtitleInput.value || '✨ أصالة المشغل اليدوي').trim();
+    const videoUrl = (videoUrlInput.value || '').trim();
+    const posterUrl = (posterUrlInput.value || '../images/craft_video_poster.jpg').trim();
+    const quote = (quoteInput.value || '').trim();
+    const caption = (captionInput.value || '').trim();
+    const hours = (hoursInput.value || '+500').trim();
+    const material = (materialInput.value || '100%').trim();
+    const knots = (knotsInput.value || '120K').trim();
+    const shouldBeActive = activeInput ? activeInput.checked : false;
+
+    if (!title || !videoUrl) {
+        showToast('يرجى إدخال عنوان ورابط الفيديو.', 'warning', 'حقل مطلوب');
+        return;
+    }
+
+    const editId = idInput ? idInput.value : '';
+    let updatedVideos = [...(showcaseState.cinemaVideos || [])];
+
+    if (shouldBeActive) {
+        updatedVideos = updatedVideos.map(v => ({ ...v, isActive: false }));
+    }
+
+    if (editId) {
+        updatedVideos = updatedVideos.map(v => {
+            if (v.id === editId) {
+                return {
+                    ...v,
+                    title,
+                    subtitle,
+                    videoUrl,
+                    posterUrl,
+                    quote,
+                    caption,
+                    stats: { hours, material, knots },
+                    isActive: shouldBeActive ? true : v.isActive
+                };
+            }
+            return v;
+        });
+        syncShowcaseState({ ...showcaseState, cinemaVideos: updatedVideos }, 'تم تعديل فيديو المشغل بنجاح');
+    } else {
+        const isFirst = updatedVideos.length === 0;
+        const newVid = {
+            id: 'vid-' + Date.now(),
+            title,
+            subtitle,
+            videoUrl,
+            posterUrl,
+            quote,
+            caption,
+            stats: { hours, material, knots },
+            isActive: shouldBeActive || isFirst
+        };
+        updatedVideos.push(newVid);
+        syncShowcaseState({ ...showcaseState, cinemaVideos: updatedVideos }, 'تمت إضافة الفيديو الجديد للمشغل');
+    }
+
+    cancelCinemaEdit();
+}
+
+export function setActiveCinemaVideo(id) {
+    const updated = (showcaseState.cinemaVideos || []).map(v => ({
+        ...v,
+        isActive: v.id === id
+    }));
+    syncShowcaseState({ ...showcaseState, cinemaVideos: updated }, 'تم تعيين الفيديو كفيديو رئيسي معروض في الواجهة');
+}
+
+export function startCinemaEdit(id) {
+    const vid = (showcaseState.cinemaVideos || []).find(v => v.id === id);
+    if (!vid) return;
+
+    const idInput = document.getElementById('cinema-edit-id');
+    const titleInput = document.getElementById('cinema-input-title');
+    const subtitleInput = document.getElementById('cinema-input-subtitle');
+    const videoUrlInput = document.getElementById('cinema-input-videourl');
+    const posterUrlInput = document.getElementById('cinema-input-posterurl');
+    const posterImg = document.getElementById('cinema-poster-preview');
+    const quoteInput = document.getElementById('cinema-input-quote');
+    const captionInput = document.getElementById('cinema-input-caption');
+    const hoursInput = document.getElementById('cinema-input-hours');
+    const materialInput = document.getElementById('cinema-input-material');
+    const knotsInput = document.getElementById('cinema-input-knots');
+    const activeInput = document.getElementById('cinema-input-active');
+    const formTitle = document.getElementById('cinema-form-title');
+    const submitText = document.getElementById('cinema-submit-text');
+    const cancelBtn = document.getElementById('cinema-cancel-edit-btn');
+
+    if (idInput) idInput.value = vid.id;
+    if (titleInput) titleInput.value = vid.title || '';
+    if (subtitleInput) subtitleInput.value = vid.subtitle || '';
+    if (videoUrlInput) videoUrlInput.value = vid.videoUrl || '';
+    if (posterUrlInput) posterUrlInput.value = vid.posterUrl || '';
+    if (posterImg && vid.posterUrl) posterImg.src = vid.posterUrl;
+    if (quoteInput) quoteInput.value = vid.quote || '';
+    if (captionInput) captionInput.value = vid.caption || '';
+    if (hoursInput && vid.stats) hoursInput.value = vid.stats.hours || '+500';
+    if (materialInput && vid.stats) materialInput.value = vid.stats.material || '100%';
+    if (knotsInput && vid.stats) knotsInput.value = vid.stats.knots || '120K';
+    if (activeInput) activeInput.checked = Boolean(vid.isActive);
+
+    if (formTitle) formTitle.innerText = `تعديل فيديو: «${vid.title}»`;
+    if (submitText) submitText.innerText = 'حفظ التعديل';
+    if (cancelBtn) cancelBtn.classList.remove('hidden');
+
+    if (titleInput) titleInput.focus();
+}
+
+export function cancelCinemaEdit() {
+    const idInput = document.getElementById('cinema-edit-id');
+    const titleInput = document.getElementById('cinema-input-title');
+    const subtitleInput = document.getElementById('cinema-input-subtitle');
+    const videoUrlInput = document.getElementById('cinema-input-videourl');
+    const posterUrlInput = document.getElementById('cinema-input-posterurl');
+    const quoteInput = document.getElementById('cinema-input-quote');
+    const captionInput = document.getElementById('cinema-input-caption');
+    const hoursInput = document.getElementById('cinema-input-hours');
+    const materialInput = document.getElementById('cinema-input-material');
+    const knotsInput = document.getElementById('cinema-input-knots');
+    const activeInput = document.getElementById('cinema-input-active');
+    const formTitle = document.getElementById('cinema-form-title');
+    const submitText = document.getElementById('cinema-submit-text');
+    const cancelBtn = document.getElementById('cinema-cancel-edit-btn');
+
+    if (idInput) idInput.value = '';
+    if (titleInput) titleInput.value = '';
+    if (subtitleInput) subtitleInput.value = '✨ أصالة المشغل اليدوي';
+    if (videoUrlInput) videoUrlInput.value = '';
+    if (posterUrlInput) posterUrlInput.value = '../images/craft_video_poster.jpg';
+    if (quoteInput) quoteInput.value = '';
+    if (captionInput) captionInput.value = '';
+    if (hoursInput) hoursInput.value = '+500';
+    if (materialInput) materialInput.value = '100%';
+    if (knotsInput) knotsInput.value = '120K';
+    if (activeInput) activeInput.checked = false;
+
+    if (formTitle) formTitle.innerText = 'إضافة فيديو جديد لمشغل الحرفة:';
+    if (submitText) submitText.innerText = 'إضافة الفيديو للمشغل';
+    if (cancelBtn) cancelBtn.classList.add('hidden');
+}
+
+export function deleteCinemaVideo(id) {
+    const list = showcaseState.cinemaVideos || [];
+    if (list.length <= 1) {
+        showToast('يجب الاحتفاظ بفيديو واحد على الأقل في سينما المشغل.', 'warning', 'لا يمكن الحذف');
+        return;
+    }
+
+    const vid = list.find(v => v.id === id);
+    const title = vid ? vid.title : 'الفيديو';
+    if (!confirm(`هل أنت متأكد من حذف فيديو «${title}» من سينما الحرفة؟`)) return;
+
+    let updated = list.filter(v => v.id !== id);
+    // إذا كان المحذوف هو النشط، نفعّل أول فيديو في القائمة
+    if (vid && vid.isActive && updated.length > 0) {
+        updated[0].isActive = true;
+    }
+
+    syncShowcaseState({ ...showcaseState, cinemaVideos: updated }, `تم حذف فيديو «${title}»`);
+}
+
+// ------------------------------------------
+// 3. إدارة خطوات ومراحل الحرفة (Journey Steps)
+// ------------------------------------------
+function renderJourneyTab() {
+    const listEl = document.getElementById('journey-steps-list');
+    if (!listEl) return;
+    const steps = showcaseState.journeySteps || [];
+
+    if (steps.length === 0) {
+        listEl.innerHTML = '<div class="p-4 text-center text-xs text-stone-500 bg-stone-50 rounded-xl col-span-2">لا توجد خطوات حالياً. أضف الخطوة الأولى أعلاه.</div>';
+        return;
+    }
+
+    listEl.innerHTML = steps.map(step => `
+        <div class="flex flex-col bg-white border border-stone-200 rounded-2xl overflow-hidden shadow-2xs hover:shadow-xs transition">
+            <div class="relative w-full aspect-16/9 bg-stone-100 overflow-hidden">
+                <img src="${step.imgUrl || '../images/step1_sketch.jpg'}" alt="${step.title}" class="w-full h-full object-cover">
+                <span class="absolute top-2 right-2 px-2.5 py-0.5 bg-black/70 text-amber-300 text-[11px] font-number font-black rounded-lg backdrop-blur-md">
+                    خطوة ${step.stepNum || '01'}
+                </span>
+            </div>
+            <div class="p-3.5 flex-1 flex flex-col justify-between gap-2">
+                <div>
+                    <h4 class="font-bold text-stone-900 text-xs sm:text-sm mb-1">${step.title}</h4>
+                    <p class="text-[11px] text-stone-600 line-clamp-2 leading-relaxed">${step.desc}</p>
+                </div>
+                <div class="pt-2 border-t border-stone-100 flex items-center justify-between">
+                    <span class="text-[10px] font-bold text-amber-800 bg-amber-50 px-2 py-0.5 rounded">${step.tag || ''}</span>
+                    <div class="flex items-center gap-1.5">
+                        <button type="button" onclick="startJourneyEdit('${step.id}')" class="px-2 py-0.5 text-xs font-bold text-stone-700 bg-stone-100 hover:bg-stone-200 rounded transition cursor-pointer">
+                            ✏️
+                        </button>
+                        <button type="button" onclick="deleteJourneyStep('${step.id}')" class="px-2 py-0.5 text-xs font-bold text-rose-600 bg-rose-50 hover:bg-rose-100 rounded transition cursor-pointer">
+                            🗑️
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
+export function handleJourneyFormSubmit(e) {
+    e.preventDefault();
+    const idInput = document.getElementById('journey-edit-id');
+    const numInput = document.getElementById('journey-input-num');
+    const titleInput = document.getElementById('journey-input-title');
+    const descInput = document.getElementById('journey-input-desc');
+    const tagInput = document.getElementById('journey-input-tag');
+    const imgInput = document.getElementById('journey-input-img');
+
+    const stepNum = (numInput.value || '01').trim();
+    const title = (titleInput.value || '').trim();
+    const desc = (descInput.value || '').trim();
+    const tag = (tagInput.value || '').trim();
+    const imgUrl = (imgInput.value || '../images/step1_sketch.jpg').trim();
+
+    if (!title || !desc) {
+        showToast('يرجى إدخال عنوان الخطوة والشرح.', 'warning', 'حقل مطلوب');
+        return;
+    }
+
+    const editId = idInput ? idInput.value : '';
+    let updatedSteps = [...(showcaseState.journeySteps || [])];
+
+    if (editId) {
+        updatedSteps = updatedSteps.map(s => {
+            if (s.id === editId) {
+                return { ...s, stepNum, title, desc, tag, imgUrl };
+            }
+            return s;
+        });
+        syncShowcaseState({ ...showcaseState, journeySteps: updatedSteps }, `تم تعديل الخطوة «${title}»`);
+    } else {
+        const newStep = {
+            id: 'step-' + Date.now(),
+            stepNum,
+            title,
+            desc,
+            tag,
+            imgUrl
+        };
+        updatedSteps.push(newStep);
+        syncShowcaseState({ ...showcaseState, journeySteps: updatedSteps }, `تمت إضافة الخطوة «${title}» لمسار الحرفة`);
+    }
+
+    cancelJourneyEdit();
+}
+
+export function startJourneyEdit(id) {
+    const step = (showcaseState.journeySteps || []).find(s => s.id === id);
+    if (!step) return;
+
+    const idInput = document.getElementById('journey-edit-id');
+    const numInput = document.getElementById('journey-input-num');
+    const titleInput = document.getElementById('journey-input-title');
+    const descInput = document.getElementById('journey-input-desc');
+    const tagInput = document.getElementById('journey-input-tag');
+    const imgInput = document.getElementById('journey-input-img');
+    const imgPreview = document.getElementById('journey-img-preview');
+    const formTitle = document.getElementById('journey-form-title');
+    const submitText = document.getElementById('journey-submit-text');
+    const cancelBtn = document.getElementById('journey-cancel-edit-btn');
+
+    if (idInput) idInput.value = step.id;
+    if (numInput) numInput.value = step.stepNum || '01';
+    if (titleInput) titleInput.value = step.title || '';
+    if (descInput) descInput.value = step.desc || '';
+    if (tagInput) tagInput.value = step.tag || '';
+    if (imgInput) imgInput.value = step.imgUrl || '';
+    if (imgPreview && step.imgUrl) imgPreview.src = step.imgUrl;
+
+    if (formTitle) formTitle.innerText = `تعديل الخطوة: «${step.title}»`;
+    if (submitText) submitText.innerText = 'حفظ التعديل';
+    if (cancelBtn) cancelBtn.classList.remove('hidden');
+
+    if (titleInput) titleInput.focus();
+}
+
+export function cancelJourneyEdit() {
+    const idInput = document.getElementById('journey-edit-id');
+    const numInput = document.getElementById('journey-input-num');
+    const titleInput = document.getElementById('journey-input-title');
+    const descInput = document.getElementById('journey-input-desc');
+    const tagInput = document.getElementById('journey-input-tag');
+    const imgInput = document.getElementById('journey-input-img');
+    const formTitle = document.getElementById('journey-form-title');
+    const submitText = document.getElementById('journey-submit-text');
+    const cancelBtn = document.getElementById('journey-cancel-edit-btn');
+
+    if (idInput) idInput.value = '';
+    if (numInput) numInput.value = String((showcaseState.journeySteps || []).length + 1).padStart(2, '0');
+    if (titleInput) titleInput.value = '';
+    if (descInput) descInput.value = '';
+    if (tagInput) tagInput.value = '';
+    if (imgInput) imgInput.value = '../images/step1_sketch.jpg';
+
+    if (formTitle) formTitle.innerText = 'إضافة / تعديل خطوة في مسار الإنتاج:';
+    if (submitText) submitText.innerText = 'إضافة الخطوة للمسار';
+    if (cancelBtn) cancelBtn.classList.add('hidden');
+}
+
+export function deleteJourneyStep(id) {
+    const step = (showcaseState.journeySteps || []).find(s => s.id === id);
+    const title = step ? step.title : 'الخطوة';
+    if (!confirm(`هل أنت متأكد من حذف «${title}» من مسار الإنتاج؟`)) return;
+
+    const updated = (showcaseState.journeySteps || []).filter(s => s.id !== id);
+    syncShowcaseState({ ...showcaseState, journeySteps: updated }, `تم حذف «${title}» بنجاح`);
+}
+
+// ------------------------------------------
+// 4. إدارة توثيق القطع وآراء العملاء (Lookbook)
+// ------------------------------------------
+function renderLookbookTab() {
+    const listEl = document.getElementById('lookbook-items-list');
+    if (!listEl) return;
+    const items = showcaseState.lookbookItems || [];
+
+    if (items.length === 0) {
+        listEl.innerHTML = '<div class="p-4 text-center text-xs text-stone-500 bg-stone-50 rounded-xl col-span-2">لا توجد توثيقات حالياً. أضف توثيق تسليم القطعة الأولى أعلاه.</div>';
+        return;
+    }
+
+    listEl.innerHTML = items.map(item => `
+        <div class="flex flex-col bg-white border border-stone-200 rounded-2xl overflow-hidden shadow-2xs hover:shadow-xs transition">
+            <div class="relative w-full aspect-16/9 bg-stone-100 overflow-hidden">
+                <img src="${item.imgUrl || '../images/client_room1.jpg'}" alt="${item.carpetTitle}" class="w-full h-full object-cover">
+                <span class="absolute top-2 right-2 px-2.5 py-0.5 bg-black/70 text-white text-[10px] font-bold rounded-full backdrop-blur-md">
+                    ${item.location || 'مسقط'}
+                </span>
+                <span class="absolute bottom-2 left-2 px-2.5 py-0.5 bg-amber-950/80 text-amber-200 text-[10px] font-bold rounded-full backdrop-blur-md">
+                    ${item.carpetTitle || 'سجادة ملكية'}
+                </span>
+            </div>
+            <div class="p-3.5 flex-1 flex flex-col justify-between gap-2.5">
+                <div>
+                    <div class="flex items-center justify-between mb-1.5">
+                        <span class="font-bold text-stone-900 text-xs sm:text-sm">${item.clientName}</span>
+                        <div class="text-amber-500 text-xs">
+                            ${'★'.repeat(Number(item.rating) || 5)}
+                        </div>
+                    </div>
+                    <p class="text-[11px] text-stone-600 italic line-clamp-3 leading-relaxed">"${item.reviewText}"</p>
+                </div>
+                <div class="pt-2 border-t border-stone-100 flex items-center justify-between">
+                    <span class="text-[10px] font-medium text-stone-500">${item.orderType || 'طلب تفصيل خاص'}</span>
+                    <div class="flex items-center gap-1.5">
+                        <button type="button" onclick="startLookbookEdit('${item.id}')" class="px-2 py-0.5 text-xs font-bold text-stone-700 bg-stone-100 hover:bg-stone-200 rounded transition cursor-pointer">
+                            ✏️
+                        </button>
+                        <button type="button" onclick="deleteLookbookItem('${item.id}')" class="px-2 py-0.5 text-xs font-bold text-rose-600 bg-rose-50 hover:bg-rose-100 rounded transition cursor-pointer">
+                            🗑️
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
+export function handleLookbookFormSubmit(e) {
+    e.preventDefault();
+    const idInput = document.getElementById('lookbook-edit-id');
+    const clientInput = document.getElementById('lookbook-input-client');
+    const locationInput = document.getElementById('lookbook-input-location');
+    const carpetInput = document.getElementById('lookbook-input-carpet');
+    const orderTypeInput = document.getElementById('lookbook-input-ordertype');
+    const ratingInput = document.getElementById('lookbook-input-rating');
+    const reviewInput = document.getElementById('lookbook-input-review');
+    const imgInput = document.getElementById('lookbook-input-img');
+
+    const clientName = (clientInput.value || '').trim();
+    const location = (locationInput.value || '').trim();
+    const carpetTitle = (carpetInput.value || '').trim();
+    const orderType = (orderTypeInput.value || 'طلب تفصيل خاص').trim();
+    const rating = Number(ratingInput ? ratingInput.value : 5) || 5;
+    const reviewText = (reviewInput.value || '').trim();
+    const imgUrl = (imgInput.value || '../images/client_room1.jpg').trim();
+
+    if (!clientName || !reviewText) {
+        showToast('يرجى إدخال اسم العميل والتعليق.', 'warning', 'حقل مطلوب');
+        return;
+    }
+
+    const editId = idInput ? idInput.value : '';
+    let updatedLookbook = [...(showcaseState.lookbookItems || [])];
+
+    if (editId) {
+        updatedLookbook = updatedLookbook.map(it => {
+            if (it.id === editId) {
+                return { ...it, clientName, location, carpetTitle, orderType, rating, reviewText, imgUrl };
+            }
+            return it;
+        });
+        syncShowcaseState({ ...showcaseState, lookbookItems: updatedLookbook }, `تم تعديل توثيق تسليم العميل «${clientName}»`);
+    } else {
+        const newItem = {
+            id: 'look-' + Date.now(),
+            clientName,
+            location,
+            carpetTitle,
+            orderType,
+            rating,
+            reviewText,
+            imgUrl
+        };
+        updatedLookbook.push(newItem);
+        syncShowcaseState({ ...showcaseState, lookbookItems: updatedLookbook }, `تم توثيق تسليم القطعة للعميل «${clientName}»`);
+    }
+
+    cancelLookbookEdit();
+}
+
+export function startLookbookEdit(id) {
+    const item = (showcaseState.lookbookItems || []).find(it => it.id === id);
+    if (!item) return;
+
+    const idInput = document.getElementById('lookbook-edit-id');
+    const clientInput = document.getElementById('lookbook-input-client');
+    const locationInput = document.getElementById('lookbook-input-location');
+    const carpetInput = document.getElementById('lookbook-input-carpet');
+    const orderTypeInput = document.getElementById('lookbook-input-ordertype');
+    const ratingInput = document.getElementById('lookbook-input-rating');
+    const reviewInput = document.getElementById('lookbook-input-review');
+    const imgInput = document.getElementById('lookbook-input-img');
+    const imgPreview = document.getElementById('lookbook-img-preview');
+    const formTitle = document.getElementById('lookbook-form-title');
+    const submitText = document.getElementById('lookbook-submit-text');
+    const cancelBtn = document.getElementById('lookbook-cancel-edit-btn');
+
+    if (idInput) idInput.value = item.id;
+    if (clientInput) clientInput.value = item.clientName || '';
+    if (locationInput) locationInput.value = item.location || '';
+    if (carpetInput) carpetInput.value = item.carpetTitle || '';
+    if (orderTypeInput) orderTypeInput.value = item.orderType || '';
+    if (ratingInput) ratingInput.value = String(item.rating || 5);
+    if (reviewInput) reviewInput.value = item.reviewText || '';
+    if (imgInput) imgInput.value = item.imgUrl || '';
+    if (imgPreview && item.imgUrl) imgPreview.src = item.imgUrl;
+
+    if (formTitle) formTitle.innerText = `تعديل توثيق: «${item.clientName}»`;
+    if (submitText) submitText.innerText = 'حفظ التعديل';
+    if (cancelBtn) cancelBtn.classList.remove('hidden');
+
+    if (clientInput) clientInput.focus();
+}
+
+export function cancelLookbookEdit() {
+    const idInput = document.getElementById('lookbook-edit-id');
+    const clientInput = document.getElementById('lookbook-input-client');
+    const locationInput = document.getElementById('lookbook-input-location');
+    const carpetInput = document.getElementById('lookbook-input-carpet');
+    const orderTypeInput = document.getElementById('lookbook-input-ordertype');
+    const ratingInput = document.getElementById('lookbook-input-rating');
+    const reviewInput = document.getElementById('lookbook-input-review');
+    const imgInput = document.getElementById('lookbook-input-img');
+    const formTitle = document.getElementById('lookbook-form-title');
+    const submitText = document.getElementById('lookbook-submit-text');
+    const cancelBtn = document.getElementById('lookbook-cancel-edit-btn');
+
+    if (idInput) idInput.value = '';
+    if (clientInput) clientInput.value = '';
+    if (locationInput) locationInput.value = '';
+    if (carpetInput) carpetInput.value = '';
+    if (orderTypeInput) orderTypeInput.value = 'طلب تفصيل خاص';
+    if (ratingInput) ratingInput.value = '5';
+    if (reviewInput) reviewInput.value = '';
+    if (imgInput) imgInput.value = '../images/client_room1.jpg';
+
+    if (formTitle) formTitle.innerText = 'توثيق قطعة جديدة تخرج من المتجر (مع الرأي والتقييم):';
+    if (submitText) submitText.innerText = 'توثيق وحفظ القطعة';
+    if (cancelBtn) cancelBtn.classList.add('hidden');
+}
+
+export function deleteLookbookItem(id) {
+    const item = (showcaseState.lookbookItems || []).find(it => it.id === id);
+    const name = item ? item.clientName : 'التوثيق';
+    if (!confirm(`هل أنت متأكد من حذف توثيق العميل «${name}»؟`)) return;
+
+    const updated = (showcaseState.lookbookItems || []).filter(it => it.id !== id);
+    syncShowcaseState({ ...showcaseState, lookbookItems: updated }, `تم حذف توثيق العميل «${name}»`);
+}
+
+// ------------------------------------------
+// معالج رفع وضغط صور البنرات تلقائياً
+// ------------------------------------------
+export async function handleShowcaseFileUpload(event, targetInputId, targetPreviewImgId) {
+    const file = event.target.files && event.target.files[0];
+    if (!file) return;
+
+    showToast('جاري ضغط ومعالجة الصورة المرفوعة...', 'info', 'رفع وسائط');
+    try {
+        const compressed = await compressImage(file, 1400, 1400, 0.82);
+        const base64Data = await fileToBase64(compressed);
+        
+        const inputEl = document.getElementById(targetInputId);
+        if (inputEl) inputEl.value = base64Data;
+
+        const previewEl = document.getElementById(targetPreviewImgId);
+        if (previewEl) previewEl.src = base64Data;
+
+        showToast('تم إعداد الصورة بجودة عالية وحجم مخفف بنجاح.', 'success', 'اكتمل الرفع');
+    } catch (err) {
+        console.error("Showcase file upload error:", err);
+        showToast('حدث خطأ أثناء معالجة الصورة المرفوعة.', 'error', 'خطأ');
+    }
+}
+
 // تهيئة أولية عند تحميل الصفحة
 window.addEventListener('DOMContentLoaded', () => {
     initTheme();
@@ -1269,6 +2136,7 @@ window.addEventListener('DOMContentLoaded', () => {
     initImageUploadPreview();
     initEditImageManager();
     initVideoUploadHandlers();
+    initShowcaseCMS();
 
     // مراقبة حالة جلسة Firebase Auth
     subscribeToAdminAuth((user) => {
@@ -1302,3 +2170,31 @@ window.updateDimensionsPreview = updateDimensionsPreview;
 window.openFirebaseConfigModal = openFirebaseConfigModal;
 window.closeFirebaseConfigModal = closeFirebaseConfigModal;
 window.saveFirebaseConfigHandler = saveFirebaseConfigHandler;
+
+// ربط دوال إدارة البنرات والأقسام الترويجية بالـ window
+window.openShowcaseManagerModal = openShowcaseManagerModal;
+window.closeShowcaseManagerModal = closeShowcaseManagerModal;
+window.switchShowcaseTab = switchShowcaseTab;
+window.handleShowcaseFileUpload = handleShowcaseFileUpload;
+
+window.handleMarqueeFormSubmit = handleMarqueeFormSubmit;
+window.startMarqueeEdit = startMarqueeEdit;
+window.cancelMarqueeEdit = cancelMarqueeEdit;
+window.deleteMarqueeItem = deleteMarqueeItem;
+
+window.handleCinemaFormSubmit = handleCinemaFormSubmit;
+window.startCinemaEdit = startCinemaEdit;
+window.cancelCinemaEdit = cancelCinemaEdit;
+window.deleteCinemaVideo = deleteCinemaVideo;
+window.setActiveCinemaVideo = setActiveCinemaVideo;
+
+window.handleJourneyFormSubmit = handleJourneyFormSubmit;
+window.startJourneyEdit = startJourneyEdit;
+window.cancelJourneyEdit = cancelJourneyEdit;
+window.deleteJourneyStep = deleteJourneyStep;
+
+window.handleLookbookFormSubmit = handleLookbookFormSubmit;
+window.startLookbookEdit = startLookbookEdit;
+window.cancelLookbookEdit = cancelLookbookEdit;
+window.deleteLookbookItem = deleteLookbookItem;
+

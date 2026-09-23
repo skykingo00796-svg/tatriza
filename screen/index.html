@@ -232,7 +232,7 @@
         <!-- ========================================== -->
         <section class="w-full mt-10 sm:mt-14 mb-4" dir="rtl" aria-label="مزايا دار تطريز الحصرية">
             <div class="marquee-wrapper">
-                <div class="marquee-track">
+                <div class="marquee-track" id="dynamic-marquee-track">
                     <!-- المجموعة 1 -->
                     <div class="marquee-item">
                         <span class="text-base text-amber-500">⚜️</span>
@@ -317,7 +317,7 @@
                             poster="../images/craft_video_poster.jpg" 
                             preload="metadata"
                             class="w-full h-full object-cover">
-                            <source src="https://upload.wikimedia.org/wikipedia/commons/1/13/Weaving_Carpet_at_Lachen.webm" type="video/webm">
+                            <source id="cinema-video-source" src="https://upload.wikimedia.org/wikipedia/commons/1/13/Weaving_Carpet_at_Lachen.webm" type="video/webm">
                             متصفحك لا يدعم تشغيل الفيديو.
                         </video>
 
@@ -328,7 +328,7 @@
                         <div class="absolute top-3 right-3 sm:top-4 sm:right-4 z-20 flex items-center gap-2">
                             <span class="px-3 py-1 bg-black/60 backdrop-blur-md rounded-full text-amber-300 border border-amber-500/30 text-[11px] sm:text-xs font-bold flex items-center gap-1.5 shadow-md">
                                 <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                                <span>حياكة يدوية • مشغل دار تطريز</span>
+                                <span id="cinema-display-livebadge">حياكة يدوية • مشغل دار تطريز</span>
                             </span>
                         </div>
 
@@ -366,11 +366,29 @@
                         </div>
                     </div>
 
+                    <!-- شريط التنقل والترقيم المريح بين فيديوهات المشغل -->
+                    <div id="cinema-video-nav" class="flex items-center justify-between px-3 py-2 rounded-xl bg-black/40 backdrop-blur-md border border-white/10 text-white text-xs">
+                        <button type="button" onclick="window.prevCinemaVideo()" class="px-3 py-1 rounded-lg bg-white/10 hover:bg-white/25 text-amber-200 text-xs font-bold transition flex items-center gap-1.5 cursor-pointer" title="الفيديو السابق">
+                            <span>◀</span>
+                            <span class="hidden sm:inline">السابق</span>
+                        </button>
+                        <div class="flex items-center gap-2">
+                            <span id="cinema-video-page-indicator" class="font-number font-black text-amber-300 text-xs sm:text-sm">فيديو 1 من 1</span>
+                            <div id="cinema-video-indicators" class="flex items-center gap-1.5">
+                                <!-- أزرار المؤشرات الدائرية التفاعلية -->
+                            </div>
+                        </div>
+                        <button type="button" onclick="window.nextCinemaVideo()" class="px-3 py-1 rounded-lg bg-white/10 hover:bg-white/25 text-amber-200 text-xs font-bold transition flex items-center gap-1.5 cursor-pointer" title="الفيديو التالي">
+                            <span class="hidden sm:inline">التالي</span>
+                            <span>▶</span>
+                        </button>
+                    </div>
+
                     <!-- سطر توضيحي أسفل الفيديو -->
                     <div class="flex items-center justify-between text-[11px] sm:text-xs text-stone-400 px-1">
                         <span class="flex items-center gap-1">
                             <span class="text-amber-400">🧵</span>
-                            <span>توثيق حي لحركات الأنامل وشد الغرز اليدوية على الأنوال التقليدية</span>
+                            <span id="cinema-display-caption">توثيق حي لحركات الأنامل وشد الغرز اليدوية على الأنوال التقليدية</span>
                         </span>
                         <span class="text-stone-400 hidden sm:inline">جودة عالية HD</span>
                     </div>
@@ -379,17 +397,17 @@
                 <!-- الطرف الأيسر: بطاقة القيمة الحرفية والأرقام القياسية -->
                 <div class="lg:col-span-5 xl:col-span-4 flex flex-col gap-4">
                     <div>
-                        <span class="text-[11px] sm:text-xs font-black text-amber-400 tracking-wider uppercase bg-amber-950/60 border border-amber-500/30 px-2.5 py-1 rounded-full inline-block mb-2">
+                        <span id="cinema-display-subtitle" class="text-[11px] sm:text-xs font-black text-amber-400 tracking-wider uppercase bg-amber-950/60 border border-amber-500/30 px-2.5 py-1 rounded-full inline-block mb-2">
                             ✨ أصالة المشغل اليدوي
                         </span>
-                        <h2 class="font-royal-carpet text-xl sm:text-2xl md:text-3xl font-bold text-amber-100 leading-tight">
+                        <h2 id="cinema-display-title" class="font-royal-carpet text-xl sm:text-2xl md:text-3xl font-bold text-amber-100 leading-tight">
                             حكاية كل خيط تحفة.. <br class="hidden sm:inline">وصبر يصنع الفخامة
                         </h2>
                     </div>
 
                     <!-- بطاقة الاقتباس الفاخرة -->
                     <div class="cinema-glass-card p-4 sm:p-5 relative">
-                        <p class="text-stone-200 text-xs sm:text-sm leading-relaxed font-medium">
+                        <p id="cinema-display-quote" class="text-stone-200 text-xs sm:text-sm leading-relaxed font-medium">
                             «كل سجادة تخرج من دار تطريز ليست مجرد غطاء للأرضية، بل لوحة فنية عريقة استغرقت مئات الساعات من الدقة والشغف لتمنح مساحتك روحاً دافئة ومتميزة لا تتكرر في أي مكان آخر.»
                         </p>
                     </div>
@@ -397,15 +415,15 @@
                     <!-- أرقام المشغل القياسية -->
                     <div class="grid grid-cols-3 gap-2 sm:gap-2.5 text-center">
                         <div class="cinema-glass-card p-2.5 sm:p-3 flex flex-col items-center justify-center">
-                            <span class="text-amber-400 font-number text-base sm:text-lg font-black">+500</span>
+                            <span id="cinema-stat-hours" class="text-amber-400 font-number text-base sm:text-lg font-black">+500</span>
                             <span class="text-stone-300 text-[10px] sm:text-[11px] font-bold">ساعة حياكة</span>
                         </div>
                         <div class="cinema-glass-card p-2.5 sm:p-3 flex flex-col items-center justify-center">
-                            <span class="text-amber-400 font-number text-base sm:text-lg font-black">100%</span>
+                            <span id="cinema-stat-material" class="text-amber-400 font-number text-base sm:text-lg font-black">100%</span>
                             <span class="text-stone-300 text-[10px] sm:text-[11px] font-bold">صوف وحرير</span>
                         </div>
                         <div class="cinema-glass-card p-2.5 sm:p-3 flex flex-col items-center justify-center">
-                            <span class="text-amber-400 font-number text-base sm:text-lg font-black">120K</span>
+                            <span id="cinema-stat-knots" class="text-amber-400 font-number text-base sm:text-lg font-black">120K</span>
                             <span class="text-stone-300 text-[10px] sm:text-[11px] font-bold">عقدة متراصة</span>
                         </div>
                     </div>
@@ -442,7 +460,7 @@
             </div>
 
             <!-- شبكة الكروت الأربعة -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 md:gap-6">
+            <div id="dynamic-journey-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 md:gap-6">
                 
                 <!-- الخطوة 1 -->
                 <div class="journey-step-card flex flex-col">
@@ -557,7 +575,7 @@
             </div>
 
             <!-- شبكة المعرض المصغر -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
+            <div id="dynamic-lookbook-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
                 
                 <!-- الكرت 1: سجاد المرايا المعاصر -->
                 <div class="lookbook-card flex flex-col group">

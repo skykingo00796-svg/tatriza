@@ -2377,3 +2377,22 @@ button[type="submit"] *,
     background: radial-gradient(circle, rgba(245, 158, 11, 0.22) 0%, transparent 70%);
     pointer-events: none;
 }
+
+/* ==========================================================================
+   لوحة إدارة وتخصيص البنرات الترويجية (Showcase CMS Modal Styles)
+   ========================================================================== */
+.showcase-tab-btn {
+    border: 1px solid rgba(214, 202, 188, 0.6);
+    user-select: none;
+}
+
+.showcase-tab-btn.active {
+    border-color: #1c1917;
+    box-shadow: 0 4px 12px -2px rgba(28, 25, 23, 0.2);
+}
+
+#cinema-video-indicators button {
+    outline: none;
+    border: none;
+}
+

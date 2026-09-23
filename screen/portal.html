@@ -343,6 +343,10 @@
                         <span>📁</span>
                         <span class="whitespace-nowrap">إدارة التصنيفات</span>
                     </button>
+                    <button type="button" onclick="openShowcaseManagerModal()" class="bg-gradient-to-r from-amber-50 to-amber-100/80 hover:from-amber-100 hover:to-amber-200/90 text-amber-950 border border-amber-300 font-bold text-xs sm:text-sm h-10 sm:h-11 px-3.5 sm:px-4 rounded-xl shadow-2xs transition flex items-center justify-center gap-1.5 cursor-pointer whitespace-nowrap shrink-0" title="إدارة وتعديل محتوى البنرات الترويجية">
+                        <span>✨</span>
+                        <span class="whitespace-nowrap">إدارة بنرات المعرض والترويج</span>
+                    </button>
                 </div>
 
                 <!-- أدوات الفرز والبحث الداخلي المتجاوبة (حقل النص فوق الخيارات في الشاشات المتوسطة والصغيرة) -->
@@ -580,6 +584,407 @@
                     <!-- تحقن التصنيفات ديناميكياً مع حماية قسم الكل -->
                 </div>
                 <div id="existing-custom-categories" class="hidden"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- نافذة إدارة وتخصيص بنرات وأقسام المعرض الترويجية (Showcase CMS Modal) -->
+    <!-- ========================================== -->
+    <div id="showcase-manager-modal" class="hidden fixed inset-0 z-50 modal-glass-backdrop flex items-center justify-center p-2 sm:p-4">
+        <div class="lux-modal-box w-full max-w-4xl rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-7 shadow-2xl relative max-h-[92vh] flex flex-col bg-white">
+            
+            <!-- زر الإغلاق السريع -->
+            <button type="button" onclick="closeShowcaseManagerModal()" class="absolute top-4 left-4 bg-stone-100 hover:bg-stone-200 text-stone-600 hover:text-stone-900 w-8 h-8 rounded-full flex items-center justify-center transition text-sm font-bold cursor-pointer z-10" title="إغلاق">
+                ✕
+            </button>
+            
+            <!-- ترويسة النافذة الفاخرة -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3.5 border-b border-stone-200/80 shrink-0">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-11 h-11 rounded-2xl bg-amber-100 text-amber-900 flex items-center justify-center text-2xl shadow-xs shrink-0">
+                        ✨
+                    </div>
+                    <div>
+                        <h3 class="font-display font-black text-stone-900 text-base sm:text-lg">إدارة بنرات وأقسام المعرض والترويج</h3>
+                        <p class="text-[11px] sm:text-xs text-stone-500 font-medium">التحكم في شريط العبارات، سينما المشغل، خطوات الحرفة، وتوثيق تسليم القطع</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span id="showcase-sync-status" class="px-2.5 py-1 rounded-full text-[10px] sm:text-[11px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200/80 flex items-center gap-1.5 shadow-2xs">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                        <span>مزامنة Firebase السحابية</span>
+                    </span>
+                </div>
+            </div>
+
+            <!-- أشرطة التبويبات الأربعة الفاخرة -->
+            <div class="flex items-center gap-1.5 sm:gap-2 border-b border-stone-200 overflow-x-auto py-2 scrollbar-none shrink-0" role="tablist">
+                <button type="button" onclick="switchShowcaseTab('marquee')" id="tab-btn-marquee" class="showcase-tab-btn active px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-1.5 transition cursor-pointer whitespace-nowrap bg-stone-900 text-white shadow-xs">
+                    <span>🏷️</span>
+                    <span>شريط العبارات</span>
+                    <span id="badge-count-marquee" class="text-[10px] px-1.5 py-0.2 rounded-full bg-white/20 text-white font-number font-bold">0</span>
+                </button>
+                <button type="button" onclick="switchShowcaseTab('cinema')" id="tab-btn-cinema" class="showcase-tab-btn px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-1.5 transition cursor-pointer whitespace-nowrap bg-stone-100 text-stone-700 hover:bg-stone-200">
+                    <span>🎬</span>
+                    <span>سينما المشغل وفيديوهاته</span>
+                    <span id="badge-count-cinema" class="text-[10px] px-1.5 py-0.2 rounded-full bg-stone-300 text-stone-800 font-number font-bold">0</span>
+                </button>
+                <button type="button" onclick="switchShowcaseTab('journey')" id="tab-btn-journey" class="showcase-tab-btn px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-1.5 transition cursor-pointer whitespace-nowrap bg-stone-100 text-stone-700 hover:bg-stone-200">
+                    <span>🪜</span>
+                    <span>مسار وخطوات الحرفة</span>
+                    <span id="badge-count-journey" class="text-[10px] px-1.5 py-0.2 rounded-full bg-stone-300 text-stone-800 font-number font-bold">0</span>
+                </button>
+                <button type="button" onclick="switchShowcaseTab('lookbook')" id="tab-btn-lookbook" class="showcase-tab-btn px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-1.5 transition cursor-pointer whitespace-nowrap bg-stone-100 text-stone-700 hover:bg-stone-200">
+                    <span>📸</span>
+                    <span>توثيق القطع والآراء</span>
+                    <span id="badge-count-lookbook" class="text-[10px] px-1.5 py-0.2 rounded-full bg-stone-300 text-stone-800 font-number font-bold">0</span>
+                </button>
+            </div>
+
+            <!-- جسم التبويبات القابل للتمرير -->
+            <div class="flex-1 overflow-y-auto pr-1 py-1 space-y-4">
+                
+                <!-- ========================================== -->
+                <!-- 1. تبويب شريط العبارات المتحركة (Marquee) -->
+                <!-- ========================================== -->
+                <div id="tab-content-marquee" class="showcase-tab-pane space-y-4">
+                    <!-- نموذج إضافة / تعديل عبارة -->
+                    <div class="p-3.5 sm:p-4 rounded-2xl bg-amber-50/60 border border-amber-200/70 space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-amber-950 flex items-center gap-1.5">
+                                <span class="text-amber-700 font-black">＋</span>
+                                <span id="marquee-form-title">إضافة عبارة جديدة للشريط المتحرك:</span>
+                            </span>
+                            <span class="text-[10px] text-amber-800 font-medium">أيقونة + عنوان بارز + نص شرح توضيحي</span>
+                        </div>
+                        <form id="marquee-item-form" onsubmit="handleMarqueeFormSubmit(event)" class="space-y-3">
+                            <input type="hidden" id="marquee-edit-id" value="">
+                            <div class="grid grid-cols-1 sm:grid-cols-12 gap-2.5">
+                                <div class="sm:col-span-2">
+                                    <label class="block text-[10px] font-bold text-stone-600 mb-1">الأيقونة</label>
+                                    <input type="text" id="marquee-input-icon" value="⚜️" maxlength="4" required class="w-full h-10 text-center text-lg bg-white border border-stone-300 rounded-xl outline-none focus:border-brand shadow-2xs">
+                                </div>
+                                <div class="sm:col-span-4">
+                                    <label class="block text-[10px] font-bold text-stone-600 mb-1">العنوان الرئيسي</label>
+                                    <input type="text" id="marquee-input-title" placeholder="مثال: حياكة يدوية 100%" required class="w-full h-10 bg-white border border-stone-300 rounded-xl px-3 text-xs sm:text-sm text-stone-900 outline-none focus:border-brand shadow-2xs">
+                                </div>
+                                <div class="sm:col-span-6">
+                                    <label class="block text-[10px] font-bold text-stone-600 mb-1">نص الشرح والتوضيح</label>
+                                    <input type="text" id="marquee-input-desc" placeholder="مثال: صوف طبيعي وحرير خالص" required class="w-full h-10 bg-white border border-stone-300 rounded-xl px-3 text-xs sm:text-sm text-stone-900 outline-none focus:border-brand shadow-2xs">
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-2 justify-end">
+                                <button type="button" id="marquee-cancel-edit-btn" onclick="cancelMarqueeEdit()" class="hidden px-3.5 h-9 rounded-xl bg-stone-200 hover:bg-stone-300 text-stone-700 text-xs font-bold transition cursor-pointer">
+                                    إلغاء التعديل
+                                </button>
+                                <button type="submit" id="marquee-submit-btn" class="btn-liquid-metal text-white font-bold text-xs h-9 px-4 rounded-xl shadow-xs transition flex items-center gap-1.5 cursor-pointer">
+                                    <span>＋</span>
+                                    <span id="marquee-submit-text">إضافة العبارة للشريط</span>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- قائمة العبارات المعروضة حالياً -->
+                    <div class="space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-stone-800">قائمة العبارات في الشريط المتحرك:</span>
+                            <span class="text-[10px] text-stone-500 font-medium">تتدفق بانسيابية لانهائية وتتوقف عند مرور الماوس</span>
+                        </div>
+                        <div id="marquee-items-list" class="space-y-2">
+                            <!-- تحقن العبارات هنا ديناميكياً -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ========================================== -->
+                <!-- 2. تبويب سينما المشغل وفيديوهاته (Cinema) -->
+                <!-- ========================================== -->
+                <div id="tab-content-cinema" class="showcase-tab-pane space-y-4 hidden">
+                    <!-- تنبيه توضيحي لميزة الترقيم وتنشيط الفيديوهات -->
+                    <div class="p-3 bg-amber-50 border border-amber-200/90 rounded-2xl flex items-start gap-2.5 text-xs text-amber-900">
+                        <span class="text-base shrink-0">💡</span>
+                        <div class="leading-relaxed">
+                            <strong class="font-bold">ميزة ترقيم الفيديوهات للزوار:</strong> 
+                            يمكنك إضافة أكثر من فيديو لتوثيق المشغل. يظهر للزوار في واجهة المتجر نظام ترقيم مريح وسهل مع أزرار تنقل (السابق / التالي ومؤشرات مرقمة)، كما يمكنك تنشيط أي فيديو ليكون هو المعروض افتراضياً.
+                        </div>
+                    </div>
+
+                    <!-- نموذج إضافة / تعديل فيديو -->
+                    <div class="p-3.5 sm:p-4 rounded-2xl bg-stone-50 border border-stone-200 space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-stone-900 flex items-center gap-1.5">
+                                <span class="text-amber-700 font-black">🎬</span>
+                                <span id="cinema-form-title">إضافة فيديو جديد لمشغل الحرفة:</span>
+                            </span>
+                            <span class="text-[10px] text-stone-500 font-medium">رابط الفيديو + بوستر + العنوان والإحصائيات</span>
+                        </div>
+
+                        <form id="cinema-item-form" onsubmit="handleCinemaFormSubmit(event)" class="space-y-3">
+                            <input type="hidden" id="cinema-edit-id" value="">
+                            
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-[10px] font-bold text-stone-600 mb-1">عنوان الفيديو البارز</label>
+                                    <input type="text" id="cinema-input-title" placeholder="مثال: حكاية كل خيط تحفة.. وصبر يصنع الفخامة" required class="w-full h-10 bg-white border border-stone-300 rounded-xl px-3 text-xs sm:text-sm text-stone-900 outline-none focus:border-brand shadow-2xs">
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-bold text-stone-600 mb-1">الشارة الترويجية (Badge)</label>
+                                    <input type="text" id="cinema-input-subtitle" placeholder="مثال: ✨ أصالة المشغل اليدوي" required class="w-full h-10 bg-white border border-stone-300 rounded-xl px-3 text-xs sm:text-sm text-stone-900 outline-none focus:border-brand shadow-2xs">
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-[10px] font-bold text-stone-600 mb-1">رابط ملف الفيديو (MP4 / WebM)</label>
+                                    <input type="text" id="cinema-input-videourl" placeholder="https://... فيديو مباشر أو رابط يوتيوب/ويب" required class="w-full h-10 bg-white border border-stone-300 rounded-xl px-3 text-xs text-stone-900 outline-none focus:border-brand shadow-2xs" dir="ltr">
+                                </div>
+                                <div>
+                                    <div class="flex items-center justify-between mb-1">
+                                        <label class="block text-[10px] font-bold text-stone-600">صورة غلاف الفيديو (Poster)</label>
+                                        <label class="text-[10px] font-bold text-amber-800 bg-amber-100 hover:bg-amber-200 px-2 py-0.5 rounded cursor-pointer transition">
+                                            <span>📁 رفع صورة</span>
+                                            <input type="file" accept="image/*" class="hidden" onchange="handleShowcaseFileUpload(event, 'cinema-input-posterurl', 'cinema-poster-preview')">
+                                        </label>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <input type="text" id="cinema-input-posterurl" placeholder="../images/craft_video_poster.jpg أو رابط مباشر" required class="w-full h-10 bg-white border border-stone-300 rounded-xl px-3 text-xs text-stone-900 outline-none focus:border-brand shadow-2xs" dir="ltr">
+                                        <img id="cinema-poster-preview" src="../images/craft_video_poster.jpg" alt="معاينة" class="w-10 h-10 rounded-lg object-cover border border-stone-300 shrink-0">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-[10px] font-bold text-stone-600 mb-1">الاقتباس البلاغي عن المشغل</label>
+                                <textarea id="cinema-input-quote" rows="2" placeholder="«كل سجادة تخرج من دار تطريز ليست مجرد غطاء للأرضية...»" required class="w-full bg-white border border-stone-300 rounded-xl p-2.5 text-xs text-stone-900 outline-none focus:border-brand shadow-2xs"></textarea>
+                            </div>
+
+                            <div>
+                                <label class="block text-[10px] font-bold text-stone-600 mb-1">سطر التوثيق التوضيحي أسفل المشغل</label>
+                                <input type="text" id="cinema-input-caption" placeholder="مثال: توثيق حي لحركات الأنامل وشد الغرز اليدوية على الأنوال التقليدية" required class="w-full h-10 bg-white border border-stone-300 rounded-xl px-3 text-xs text-stone-900 outline-none focus:border-brand shadow-2xs">
+                            </div>
+
+                            <!-- إحصائيات المشغل الثلاثة -->
+                            <div class="p-3 bg-stone-100/80 rounded-xl border border-stone-200 space-y-2">
+                                <span class="text-[11px] font-bold text-stone-700 block">إحصائيات الحرفة المصاحبة للفيديو:</span>
+                                <div class="grid grid-cols-3 gap-2">
+                                    <div>
+                                        <label class="block text-[10px] text-stone-500 mb-1">ساعات الحياكة</label>
+                                        <input type="text" id="cinema-input-hours" value="+500" class="w-full h-9 bg-white border border-stone-300 rounded-lg text-center text-xs font-bold text-stone-900">
+                                    </div>
+                                    <div>
+                                        <label class="block text-[10px] text-stone-500 mb-1">الخامات</label>
+                                        <input type="text" id="cinema-input-material" value="100%" class="w-full h-9 bg-white border border-stone-300 rounded-lg text-center text-xs font-bold text-stone-900">
+                                    </div>
+                                    <div>
+                                        <label class="block text-[10px] text-stone-500 mb-1">عُقد الحياكة</label>
+                                        <input type="text" id="cinema-input-knots" value="120K" class="w-full h-9 bg-white border border-stone-300 rounded-lg text-center text-xs font-bold text-stone-900">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- تعيين كفيديو نشط -->
+                            <div class="flex items-center gap-2 pt-1">
+                                <input type="checkbox" id="cinema-input-active" class="w-4 h-4 text-amber-600 rounded cursor-pointer accent-[#7c1d3c]">
+                                <label for="cinema-input-active" class="text-xs font-bold text-stone-800 cursor-pointer">
+                                    تنشيط هذا الفيديو كفيديو معروض حالياً في سينما الحرفة
+                                </label>
+                            </div>
+
+                            <div class="flex items-center gap-2 justify-end pt-1">
+                                <button type="button" id="cinema-cancel-edit-btn" onclick="cancelCinemaEdit()" class="hidden px-3.5 h-9 rounded-xl bg-stone-200 hover:bg-stone-300 text-stone-700 text-xs font-bold transition cursor-pointer">
+                                    إلغاء التعديل
+                                </button>
+                                <button type="submit" id="cinema-submit-btn" class="btn-liquid-metal text-white font-bold text-xs h-9 px-4 rounded-xl shadow-xs transition flex items-center gap-1.5 cursor-pointer">
+                                    <span>＋</span>
+                                    <span id="cinema-submit-text">إضافة الفيديو للمشغل</span>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- قائمة الفيديوهات الحالية -->
+                    <div class="space-y-2">
+                        <span class="text-xs font-bold text-stone-800 block">فيديوهات المشغل المتاحة:</span>
+                        <div id="cinema-videos-list" class="space-y-2.5">
+                            <!-- تحقن الفيديوهات ديناميكياً -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ========================================== -->
+                <!-- 3. تبويب مسار وخطوات الحرفة (Journey Steps) -->
+                <!-- ========================================== -->
+                <div id="tab-content-journey" class="showcase-tab-pane space-y-4 hidden">
+                    <!-- نموذج إضافة / تعديل خطوة -->
+                    <div class="p-3.5 sm:p-4 rounded-2xl bg-amber-50/60 border border-amber-200/70 space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-amber-950 flex items-center gap-1.5">
+                                <span class="text-amber-700 font-black">🪜</span>
+                                <span id="journey-form-title">إضافة / تعديل خطوة في مسار الإنتاج:</span>
+                            </span>
+                            <span class="text-[10px] text-amber-800 font-medium">الرقم + العنوان + الشرح + الوسم + الصورة</span>
+                        </div>
+
+                        <form id="journey-item-form" onsubmit="handleJourneyFormSubmit(event)" class="space-y-3">
+                            <input type="hidden" id="journey-edit-id" value="">
+                            
+                            <div class="grid grid-cols-1 sm:grid-cols-12 gap-2.5">
+                                <div class="sm:col-span-3">
+                                    <label class="block text-[10px] font-bold text-stone-600 mb-1">رقم الخطوة</label>
+                                    <input type="text" id="journey-input-num" placeholder="01" required class="w-full h-10 text-center font-number font-black text-sm bg-white border border-stone-300 rounded-xl outline-none focus:border-brand shadow-2xs">
+                                </div>
+                                <div class="sm:col-span-9">
+                                    <label class="block text-[10px] font-bold text-stone-600 mb-1">عنوان الخطوة</label>
+                                    <input type="text" id="journey-input-title" placeholder="مثال: الرسم والتخطيط الرقمي" required class="w-full h-10 bg-white border border-stone-300 rounded-xl px-3 text-xs sm:text-sm text-stone-900 outline-none focus:border-brand shadow-2xs">
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-[10px] font-bold text-stone-600 mb-1">شرح وتفاصيل ما يحدث في هذه المرحلة</label>
+                                <textarea id="journey-input-desc" rows="2" placeholder="تحويل رؤيتك الخاصة أو الزخارف التراثية إلى مخطط خيوط دقيق..." required class="w-full bg-white border border-stone-300 rounded-xl p-2.5 text-xs text-stone-900 outline-none focus:border-brand shadow-2xs"></textarea>
+                            </div>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-[10px] font-bold text-stone-600 mb-1">الوسم السفلي (Tag)</label>
+                                    <input type="text" id="journey-input-tag" placeholder="مثال: 📐 دقة هندسية ومطابقة تامة" required class="w-full h-10 bg-white border border-stone-300 rounded-xl px-3 text-xs text-stone-900 outline-none focus:border-brand shadow-2xs">
+                                </div>
+                                <div>
+                                    <div class="flex items-center justify-between mb-1">
+                                        <label class="block text-[10px] font-bold text-stone-600">صورة الخطوة (رابط أو رفع ملف)</label>
+                                        <label class="text-[10px] font-bold text-amber-800 bg-amber-100 hover:bg-amber-200 px-2 py-0.5 rounded cursor-pointer transition">
+                                            <span>📁 رفع صورة</span>
+                                            <input type="file" accept="image/*" class="hidden" onchange="handleShowcaseFileUpload(event, 'journey-input-img', 'journey-img-preview')">
+                                        </label>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <input type="text" id="journey-input-img" placeholder="../images/step1_sketch.jpg أو رابط مباشر" required class="w-full h-10 bg-white border border-stone-300 rounded-xl px-3 text-xs text-stone-900 outline-none focus:border-brand shadow-2xs" dir="ltr">
+                                        <img id="journey-img-preview" src="../images/step1_sketch.jpg" alt="معاينة" class="w-10 h-10 rounded-lg object-cover border border-stone-300 shrink-0">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center gap-2 justify-end pt-1">
+                                <button type="button" id="journey-cancel-edit-btn" onclick="cancelJourneyEdit()" class="hidden px-3.5 h-9 rounded-xl bg-stone-200 hover:bg-stone-300 text-stone-700 text-xs font-bold transition cursor-pointer">
+                                    إلغاء التعديل
+                                </button>
+                                <button type="submit" id="journey-submit-btn" class="btn-liquid-metal text-white font-bold text-xs h-9 px-4 rounded-xl shadow-xs transition flex items-center gap-1.5 cursor-pointer">
+                                    <span>＋</span>
+                                    <span id="journey-submit-text">إضافة الخطوة للمسار</span>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- قائمة الخطوات الحالية -->
+                    <div class="space-y-2">
+                        <span class="text-xs font-bold text-stone-800 block">خطوات الحرفة المعروضة حالياً:</span>
+                        <div id="journey-steps-list" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <!-- تحقن الخطوات ديناميكياً -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ========================================== -->
+                <!-- 4. تبويب توثيق القطع وآراء العملاء (Lookbook) -->
+                <!-- ========================================== -->
+                <div id="tab-content-lookbook" class="showcase-tab-pane space-y-4 hidden">
+                    <!-- نموذج توثيق قطعة جديدة -->
+                    <div class="p-3.5 sm:p-4 rounded-2xl bg-amber-50/60 border border-amber-200/70 space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-amber-950 flex items-center gap-1.5">
+                                <span class="text-amber-700 font-black">📸</span>
+                                <span id="lookbook-form-title">توثيق قطعة جديدة تخرج من المتجر (مع الرأي والتقييم):</span>
+                            </span>
+                            <span class="text-[10px] text-amber-800 font-medium">صورة في المجلس/الفيلا + تفاصيل العميل والطلب</span>
+                        </div>
+
+                        <form id="lookbook-item-form" onsubmit="handleLookbookFormSubmit(event)" class="space-y-3">
+                            <input type="hidden" id="lookbook-edit-id" value="">
+                            
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                <div>
+                                    <label class="block text-[10px] font-bold text-stone-600 mb-1">اسم العميل / اللقب</label>
+                                    <input type="text" id="lookbook-input-client" placeholder="مثال: م. ريم البلوشية أو الشيخ أحمد" required class="w-full h-10 bg-white border border-stone-300 rounded-xl px-3 text-xs sm:text-sm text-stone-900 outline-none focus:border-brand shadow-2xs">
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-bold text-stone-600 mb-1">الموقع / البيئة (Location)</label>
+                                    <input type="text" id="lookbook-input-location" placeholder="مثال: فيلا عصرية • مسقط" required class="w-full h-10 bg-white border border-stone-300 rounded-xl px-3 text-xs sm:text-sm text-stone-900 outline-none focus:border-brand shadow-2xs">
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-bold text-stone-600 mb-1">اسم القطعة أو السجادة</label>
+                                    <input type="text" id="lookbook-input-carpet" placeholder="مثال: سجاد مرايا جداري متموج" required class="w-full h-10 bg-white border border-stone-300 rounded-xl px-3 text-xs sm:text-sm text-stone-900 outline-none focus:border-brand shadow-2xs">
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-[10px] font-bold text-stone-600 mb-1">كيف تم طلب القطعة (نوع الطلب)</label>
+                                    <input type="text" id="lookbook-input-ordertype" placeholder="مثال: طلب تفصيل خاص أو عميل دار تطريز الدائم" required class="w-full h-10 bg-white border border-stone-300 rounded-xl px-3 text-xs sm:text-sm text-stone-900 outline-none focus:border-brand shadow-2xs">
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-bold text-stone-600 mb-1">التقييم بالنجوم</label>
+                                    <select id="lookbook-input-rating" class="w-full h-10 bg-white border border-stone-300 rounded-xl px-3 text-xs font-bold text-amber-700 outline-none focus:border-brand shadow-2xs">
+                                        <option value="5">★★★★★ (5 نجوم - ممتاز ومرتفع جداً)</option>
+                                        <option value="4">★★★★☆ (4 نجوم - جيد جداً)</option>
+                                        <option value="3">★★★☆☆ (3 نجوم)</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-[10px] font-bold text-stone-600 mb-1">تعليق وانطباع العميل الإيجابي</label>
+                                <textarea id="lookbook-input-review" rows="2" placeholder="القطعة تفوق كل التوقعات! ملمس الصوف المخملي مع الإطار..." required class="w-full bg-white border border-stone-300 rounded-xl p-2.5 text-xs text-stone-900 outline-none focus:border-brand shadow-2xs"></textarea>
+                            </div>
+
+                            <div>
+                                <div class="flex items-center justify-between mb-1">
+                                    <label class="block text-[10px] font-bold text-stone-600">صورة توثيق تسليم القطعة في المجلس أو الفيلا</label>
+                                    <label class="text-[10px] font-bold text-amber-800 bg-amber-100 hover:bg-amber-200 px-2 py-0.5 rounded cursor-pointer transition">
+                                        <span>📁 رفع صورة القطعة</span>
+                                        <input type="file" accept="image/*" class="hidden" onchange="handleShowcaseFileUpload(event, 'lookbook-input-img', 'lookbook-img-preview')">
+                                    </label>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <input type="text" id="lookbook-input-img" placeholder="../images/client_room1.jpg أو رابط صورة مباشر" required class="w-full h-10 bg-white border border-stone-300 rounded-xl px-3 text-xs text-stone-900 outline-none focus:border-brand shadow-2xs" dir="ltr">
+                                    <img id="lookbook-img-preview" src="../images/client_room1.jpg" alt="معاينة" class="w-10 h-10 rounded-lg object-cover border border-stone-300 shrink-0">
+                                </div>
+                            </div>
+
+                            <div class="flex items-center gap-2 justify-end pt-1">
+                                <button type="button" id="lookbook-cancel-edit-btn" onclick="cancelLookbookEdit()" class="hidden px-3.5 h-9 rounded-xl bg-stone-200 hover:bg-stone-300 text-stone-700 text-xs font-bold transition cursor-pointer">
+                                    إلغاء التعديل
+                                </button>
+                                <button type="submit" id="lookbook-submit-btn" class="btn-liquid-metal text-white font-bold text-xs h-9 px-4 rounded-xl shadow-xs transition flex items-center gap-1.5 cursor-pointer">
+                                    <span>📸</span>
+                                    <span id="lookbook-submit-text">توثيق وحفظ القطعة</span>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- قائمة التوثيقات الحالية -->
+                    <div class="space-y-2">
+                        <span class="text-xs font-bold text-stone-800 block">التوثيقات وآراء العملاء المعروضة:</span>
+                        <div id="lookbook-items-list" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <!-- تحقن التوثيقات ديناميكياً -->
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- ذيل النافذة الإدارية -->
+            <div class="pt-3 border-t border-stone-200/80 flex items-center justify-between text-xs text-stone-500 shrink-0">
+                <span class="flex items-center gap-1.5 font-medium">
+                    <span>✨</span>
+                    <span>كافة التغييرات تنعكس وتُحفظ سحابياً على Firebase فوراً وتصل لكل الزوار لحظياً.</span>
+                </span>
+                <button type="button" onclick="closeShowcaseManagerModal()" class="px-4 py-1.5 rounded-xl bg-stone-200 hover:bg-stone-300 text-stone-800 font-bold transition cursor-pointer">
+                    إغلاق
+                </button>
             </div>
         </div>
     </div>
@@ -1208,6 +1613,18 @@
                         <div class="flex flex-col text-right min-w-0 flex-1 overflow-hidden">
                             <span class="font-display text-[11.5px] sm:text-xs md:text-sm font-black text-stone-900 group-hover:text-emerald-700 transition whitespace-nowrap truncate block">إدارة وتخصيص التصنيفات</span>
                             <span class="text-[9px] sm:text-[9.5px] md:text-[10px] text-stone-500 font-medium whitespace-nowrap truncate block mt-1">تخصيص الأقسام ورموز الكود والأيقونات</span>
+                        </div>
+                    </div>
+                    <div class="drawer-action-arrow">&gt;</div>
+                </button>
+
+                <!-- 2.5 إدارة بنرات وأقسام المعرض الترويجية -->
+                <button type="button" onclick="closeOptionsDrawer(); openShowcaseManagerModal();" class="drawer-lux-card group w-full text-right cursor-pointer">
+                    <div class="flex items-center gap-2.5 sm:gap-3 min-w-0 flex-1">
+                        <div class="drawer-icon-orb bg-amber-50 text-amber-800 border-amber-300/60 shrink-0">✨</div>
+                        <div class="flex flex-col text-right min-w-0 flex-1 overflow-hidden">
+                            <span class="font-display text-[11.5px] sm:text-xs md:text-sm font-black text-stone-900 group-hover:text-amber-700 transition whitespace-nowrap truncate block">إدارة بنرات المعرض والترويج</span>
+                            <span class="text-[9px] sm:text-[9.5px] md:text-[10px] text-stone-500 font-medium whitespace-nowrap truncate block mt-1">شريط العبارات، فيديوهات المشغل، الخطوات، والآراء</span>
                         </div>
                     </div>
                     <div class="drawer-action-arrow">&gt;</div>

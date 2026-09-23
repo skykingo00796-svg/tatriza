@@ -758,3 +758,118 @@ export async function saveCategorySettingsToCloud(settingsObj) {
         console.warn("Could not save category settings to Firestore:", e);
     }
 }
+
+// ==========================================
+// إدارة إعدادات وتخصيص البنرات الترويجية سحابياً (Showcase CMS)
+// ==========================================
+export function getDefaultShowcaseSettings() {
+    return {
+        marqueeItems: [
+            { id: "mq-1", icon: "⚜️", title: "حياكة يدوية 100%", desc: "صوف طبيعي وحرير خالص" },
+            { id: "mq-2", icon: "🚚", title: "شحن وتوصيل مؤمن", desc: "لكافة محافظات سلطنة عُمان والخليج" },
+            { id: "mq-3", icon: "🎨", title: "تفصيل حصري على الطلب", desc: "ألوان ومقاسات وزخارف خاصة بك" },
+            { id: "mq-4", icon: "💎", title: "شهادة أصالة وضمان", desc: "توثيق دقيق واعتماد لكل قطعة" },
+            { id: "mq-5", icon: "🪄", title: "مرايا وسجاد جداري", desc: "تحف معلقة تزين أفخم الصالات" },
+            { id: "mq-6", icon: "🎁", title: "تغليف ملكي فاخر", desc: "جاهز للإهداء في كبرى المناسبات" }
+        ],
+        cinemaVideos: [
+            {
+                id: "vid-1",
+                title: "حكاية كل خيط تحفة.. وصبر يصنع الفخامة",
+                subtitle: "✨ أصالة المشغل اليدوي",
+                quote: "«كل سجادة تخرج من دار تطريز ليست مجرد غطاء للأرضية، بل لوحة فنية عريقة استغرقت مئات الساعات من الدقة والشغف لتمنح مساحتك روحاً دافئة ومتميزة لا تتكرر في أي مكان آخر.»",
+                videoUrl: "https://upload.wikimedia.org/wikipedia/commons/1/13/Weaving_Carpet_at_Lachen.webm",
+                posterUrl: "../images/craft_video_poster.jpg",
+                caption: "توثيق حي لحركات الأنامل وشد الغرز اليدوية على الأنوال التقليدية",
+                stats: { hours: "+500", material: "100%", knots: "120K" },
+                isActive: true
+            }
+        ],
+        journeySteps: [
+            {
+                id: "step-1",
+                stepNum: "01",
+                title: "الرسم والتخطيط الرقمي",
+                desc: "تحويل رؤيتك الخاصة أو الزخارف التراثية إلى مخطط خيوط دقيق يحدد درجات الألوان وتوزيع العُقد وسماكة الحياكة.",
+                tag: "📐 دقة هندسية ومطابقة تامة",
+                imgUrl: "../images/step1_sketch.jpg"
+            },
+            {
+                id: "step-2",
+                stepNum: "02",
+                title: "انتقاء الخامات الطبيعية",
+                desc: "غزل يدوي لأجود أنواع الصوف الطبيعي 100% وخيوط الحرير المختارة بعناية بأصباغ نباتية ثابتة لبريق يدوم لأجيال.",
+                tag: "🧶 صوف طبيعي وحرير نقي",
+                imgUrl: "../images/step2_materials.jpg"
+            },
+            {
+                id: "step-3",
+                stepNum: "03",
+                title: "الحياكة والعقد اليدوي",
+                desc: "شد الخيوط آلاف المرات بإبر الغزل اليدوي على أنوال مخصصة، لبناء طبقة صوفية كثيفة وثقيلة تمنح دفئاً وفخامة حقيقية.",
+                tag: "🪡 مئات الساعات من الصبر",
+                imgUrl: "../images/step3_weaving.jpg"
+            },
+            {
+                id: "step-4",
+                stepNum: "04",
+                title: "الصقل والتشطيب الملكي",
+                desc: "حلاقة دقيقة ونحت الحواف بالمقصات المنحنية لإبراز الأبعاد ثلاثية الأبعاد، وتثبيت المرايا والفحص النهائي لشهادة الأصالة.",
+                tag: "✨ بروز ثلاثي الأبعاد وشهادة جودة",
+                imgUrl: "../images/step4_finishing.jpg"
+            }
+        ],
+        lookbookItems: [
+            {
+                id: "look-1",
+                clientName: "م. ريم البلوشية",
+                location: "فيلا عصرية • مسقط",
+                carpetTitle: "سجاد مرايا جداري متموج",
+                orderType: "طلب تفصيل خاص",
+                rating: 5,
+                reviewText: "القطعة تفوق كل التوقعات! ملمس الصوف المخملي مع تموجات الإطار وانعكاس المرآة جعل مدخل المنزل يبدو وكأنه متحف فني معاصر. حرفية متقنة ترفع الرأس.",
+                imgUrl: "../images/client_room1.jpg"
+            },
+            {
+                id: "look-2",
+                clientName: "الشيخ أحمد الحوسني",
+                location: "مجلس ضيافة رسمي • صحار",
+                carpetTitle: "سجادة عجمية ملكية كبرى",
+                orderType: "عميل دار تطريز الدائم",
+                rating: 5,
+                reviewText: "طلبنا سجادة بمقاس 4 × 3 متر لتتوسط المجلس الرئيسي، كثافة الصوف وثبات الألوان أضفت هيبة تاريخية ودفئاً استثنائياً للمكان. شكراً لاهتمامكم بأدق التفاصيل.",
+                imgUrl: "../images/client_room2.jpg"
+            }
+        ]
+    };
+}
+
+export function subscribeToShowcaseSettings(onSuccess) {
+    const { db, isReady } = initFirebaseServices();
+    if (!isReady || !db) return () => {};
+    try {
+        const settingsRef = doc(db, "settings", "showcase");
+        return onSnapshot(settingsRef, (snap) => {
+            if (snap.exists()) {
+                onSuccess(snap.data());
+            }
+        }, (err) => console.warn("Showcase settings sync error:", err));
+    } catch (e) {
+        return () => {};
+    }
+}
+
+export async function saveShowcaseSettingsToCloud(settingsObj) {
+    const { db, isReady } = initFirebaseServices();
+    if (!isReady || !db) return;
+    try {
+        const settingsRef = doc(db, "settings", "showcase");
+        await setDoc(settingsRef, {
+            ...settingsObj,
+            updatedAt: Date.now()
+        }, { merge: true });
+    } catch (e) {
+        console.warn("Could not save showcase settings to Firestore:", e);
+    }
+}
+

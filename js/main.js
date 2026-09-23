@@ -18,7 +18,9 @@ import {
     formatReadableDate, 
     getVideoFromIndexedDB,
     subscribeToCategories,
-    subscribeToCategorySettings
+    subscribeToCategorySettings,
+    subscribeToShowcaseSettings,
+    getDefaultShowcaseSettings
 } from './firebase-public.js';
 import { initAmbient3D } from './ambient-3d.js';
 
@@ -1113,7 +1115,238 @@ window.addEventListener('DOMContentLoaded', () => {
     });
 
     loadCarpets();
+    initDynamicShowcase();
 });
+
+// ==========================================
+// محرك عرض الأقسام الترويجية اللحظي (Dynamic Showcase Engine)
+// مزامنة حية لجميع الزوار مع دعم ترقيم وتبديل الفيديوهات
+// ==========================================
+let activeCinemaIndex = 0;
+let currentCinemaVideos = [];
+
+export function getPublicShowcaseSettings() {
+    try {
+        const stored = localStorage.getItem('tatr_showcase_settings');
+        if (stored) {
+            const parsed = JSON.parse(stored);
+            if (parsed && Array.isArray(parsed.marqueeItems) && parsed.marqueeItems.length > 0) {
+                return parsed;
+            }
+        }
+    } catch (e) {
+        console.warn("Could not parse showcase settings for public view:", e);
+    }
+    return getDefaultShowcaseSettings();
+}
+
+export function initDynamicShowcase() {
+    const initialSettings = getPublicShowcaseSettings();
+    renderAllShowcaseSections(initialSettings);
+
+    // الاستماع للتحديثات اللحظية من Firebase Firestore
+    if (isFirebaseConfigured()) {
+        try {
+            subscribeToShowcaseSettings((cloudSettings) => {
+                if (cloudSettings && Array.isArray(cloudSettings.marqueeItems)) {
+                    try {
+                        localStorage.setItem('tatr_showcase_settings', JSON.stringify(cloudSettings));
+                    } catch (e) {}
+                    renderAllShowcaseSections(cloudSettings);
+                }
+            });
+        } catch (err) {
+            console.warn("Could not subscribe to showcase cloud updates:", err);
+        }
+    }
+}
+
+function renderAllShowcaseSections(settings) {
+    if (!settings) return;
+    if (Array.isArray(settings.marqueeItems)) renderDynamicMarquee(settings.marqueeItems);
+    if (Array.isArray(settings.cinemaVideos)) renderDynamicCinema(settings.cinemaVideos);
+    if (Array.isArray(settings.journeySteps)) renderDynamicJourney(settings.journeySteps);
+    if (Array.isArray(settings.lookbookItems)) renderDynamicLookbook(settings.lookbookItems);
+}
+
+// 1. بناء شريط العبارات المتحركة ديناميكياً
+function renderDynamicMarquee(items) {
+    const track = document.getElementById('dynamic-marquee-track');
+    if (!track || !items || items.length === 0) return;
+
+    const buildItemsHtml = (list) => list.map(it => `
+        <div class="marquee-item">
+            <span class="text-base text-amber-500">${it.icon || '⚜️'}</span>
+            <span class="font-bold text-stone-800 text-xs sm:text-sm">${it.title}</span>
+            <span class="text-[11px] text-stone-600 hidden sm:inline">• ${it.desc}</span>
+        </div>
+    `).join('');
+
+    // تكرار القائمة مرتين لضمان التدفق السلس اللانهائي بدون انقطاع
+    track.innerHTML = buildItemsHtml(items) + buildItemsHtml(items);
+}
+
+// 2. بناء وإدارة سينما وفيديوهات المشغل وترقيمها
+function renderDynamicCinema(videos) {
+    currentCinemaVideos = videos || [];
+    if (currentCinemaVideos.length === 0) return;
+
+    // العثور على الفيديو النشط أو الأول
+    const activeIdx = currentCinemaVideos.findIndex(v => v.isActive);
+    activeCinemaIndex = activeIdx >= 0 ? activeIdx : 0;
+
+    applyActiveCinemaVideo(false);
+}
+
+function applyActiveCinemaVideo(autoPlay = false) {
+    if (!currentCinemaVideos || currentCinemaVideos.length === 0) return;
+    if (activeCinemaIndex >= currentCinemaVideos.length) activeCinemaIndex = 0;
+    if (activeCinemaIndex < 0) activeCinemaIndex = currentCinemaVideos.length - 1;
+
+    const vid = currentCinemaVideos[activeCinemaIndex];
+    if (!vid) return;
+
+    const videoEl = document.getElementById('atelier-cinema-video');
+    const liveBadge = document.getElementById('cinema-display-livebadge');
+    const subtitleEl = document.getElementById('cinema-display-subtitle');
+    const titleEl = document.getElementById('cinema-display-title');
+    const quoteEl = document.getElementById('cinema-display-quote');
+    const captionEl = document.getElementById('cinema-display-caption');
+    const hoursEl = document.getElementById('cinema-stat-hours');
+    const materialEl = document.getElementById('cinema-stat-material');
+    const knotsEl = document.getElementById('cinema-stat-knots');
+
+    const pageIndicator = document.getElementById('cinema-video-page-indicator');
+    const indicatorsContainer = document.getElementById('cinema-video-indicators');
+
+    if (liveBadge) liveBadge.innerText = vid.subtitle || 'حياكة يدوية • مشغل دار تطريز';
+    if (subtitleEl) subtitleEl.innerText = vid.subtitle || '✨ أصالة المشغل اليدوي';
+    if (titleEl) titleEl.innerText = vid.title || 'حكاية كل خيط تحفة.. وصبر يصنع الفخامة';
+    if (quoteEl) quoteEl.innerText = vid.quote || '«كل سجادة تخرج من دار تطريز ليست مجرد غطاء للأرضية...»';
+    if (captionEl) captionEl.innerText = vid.caption || 'توثيق حي لحركات الأنامل وشد الغرز اليدوية على الأنوال التقليدية';
+
+    if (hoursEl && vid.stats) hoursEl.innerText = vid.stats.hours || '+500';
+    if (materialEl && vid.stats) materialEl.innerText = vid.stats.material || '100%';
+    if (knotsEl && vid.stats) knotsEl.innerText = vid.stats.knots || '120K';
+
+    // تحديث الفيديو والمصدر
+    if (videoEl) {
+        if (vid.posterUrl) videoEl.poster = vid.posterUrl;
+        const sourceEl = document.getElementById('cinema-video-source');
+        if (sourceEl && sourceEl.src !== vid.videoUrl) {
+            sourceEl.src = vid.videoUrl;
+            videoEl.load();
+            if (autoPlay) {
+                videoEl.play().catch(() => {});
+                const playIcon = document.getElementById('cinema-play-icon');
+                const playText = document.getElementById('cinema-play-text');
+                if (playIcon) playIcon.innerText = '⏸';
+                if (playText) playText.innerText = 'إيقاف مؤقت';
+            }
+        }
+    }
+
+    // تحديث الترقيم والمؤشرات للزائر بكل أريحية
+    if (pageIndicator) {
+        pageIndicator.innerText = `فيديو ${activeCinemaIndex + 1} من ${currentCinemaVideos.length}`;
+    }
+
+    if (indicatorsContainer) {
+        indicatorsContainer.innerHTML = currentCinemaVideos.map((_, idx) => `
+            <button type="button" onclick="window.selectCinemaVideo(${idx})" class="h-2 rounded-full transition-all cursor-pointer ${idx === activeCinemaIndex ? 'w-6 bg-amber-400' : 'w-2 bg-white/40 hover:bg-white/70'}" title="الانتقال إلى فيديو ${idx + 1}"></button>
+        `).join('');
+    }
+}
+
+window.selectCinemaVideo = function(idx) {
+    activeCinemaIndex = idx;
+    applyActiveCinemaVideo(true);
+};
+
+window.prevCinemaVideo = function() {
+    if (currentCinemaVideos.length <= 1) return;
+    activeCinemaIndex = (activeCinemaIndex - 1 + currentCinemaVideos.length) % currentCinemaVideos.length;
+    applyActiveCinemaVideo(true);
+};
+
+window.nextCinemaVideo = function() {
+    if (currentCinemaVideos.length <= 1) return;
+    activeCinemaIndex = (activeCinemaIndex + 1) % currentCinemaVideos.length;
+    applyActiveCinemaVideo(true);
+};
+
+// 3. بناء كروت مراحل الحرفة ديناميكياً
+function renderDynamicJourney(steps) {
+    const grid = document.getElementById('dynamic-journey-grid');
+    if (!grid || !steps || steps.length === 0) return;
+
+    // ضبط أعمدة الشبكة بحسب عدد الخطوات
+    const colsClass = steps.length <= 3 ? 'lg:grid-cols-3' : 'lg:grid-cols-4';
+    grid.className = `grid grid-cols-1 sm:grid-cols-2 ${colsClass} gap-4 sm:gap-5 md:gap-6`;
+
+    grid.innerHTML = steps.map(step => `
+        <div class="journey-step-card flex flex-col">
+            <div class="relative w-full aspect-4/3 overflow-hidden bg-stone-100">
+                <img src="${step.imgUrl || '../images/step1_sketch.jpg'}" alt="${step.title}" class="journey-step-img w-full h-full object-cover" loading="lazy">
+                <span class="absolute top-2.5 right-2.5 px-2.5 py-1 bg-black/60 backdrop-blur-md text-amber-300 font-number font-black text-xs rounded-lg border border-white/20 shadow-xs">
+                    خطوة ${step.stepNum || '01'}
+                </span>
+            </div>
+            <div class="p-4 sm:p-5 flex-1 flex flex-col justify-between gap-2">
+                <div>
+                    <h3 class="font-bold text-stone-900 text-sm sm:text-base mb-1">
+                        ${step.title}
+                    </h3>
+                    <p class="text-stone-600 text-xs leading-relaxed">
+                        ${step.desc}
+                    </p>
+                </div>
+                ${step.tag ? `
+                <span class="text-[11px] font-bold text-brand flex items-center gap-1 mt-1">
+                    <span>${step.tag}</span>
+                </span>
+                ` : ''}
+            </div>
+        </div>
+    `).join('');
+}
+
+// 4. بناء كروت توثيق تسليم القطع وآراء العملاء ديناميكياً
+function renderDynamicLookbook(items) {
+    const grid = document.getElementById('dynamic-lookbook-grid');
+    if (!grid || !items || items.length === 0) return;
+
+    grid.innerHTML = items.map(it => {
+        const ratingNum = Number(it.rating) || 5;
+        const starsHtml = '★'.repeat(ratingNum);
+        return `
+            <div class="lookbook-card flex flex-col group">
+                <div class="relative w-full aspect-4/3 overflow-hidden bg-stone-100">
+                    <img src="${it.imgUrl || '../images/client_room1.jpg'}" alt="${it.carpetTitle}" class="w-full h-full object-cover group-hover:scale-105 transition duration-700" loading="lazy">
+                    <span class="absolute top-3 right-3 px-3 py-1 bg-black/65 backdrop-blur-md text-white font-bold text-xs rounded-full border border-white/20 shadow-md">
+                        ${it.location || 'مسقط'}
+                    </span>
+                    <span class="absolute bottom-3 left-3 px-3 py-1 bg-amber-950/70 backdrop-blur-md text-amber-200 font-bold text-xs rounded-full border border-amber-400/30">
+                        ${it.carpetTitle || 'سجادة ملكية'}
+                    </span>
+                </div>
+                <div class="p-5 sm:p-6 flex-1 flex flex-col justify-between gap-3 bg-[#fffbf7]">
+                    <div class="flex items-center gap-1 text-amber-400 text-sm">
+                        <span>${starsHtml}</span>
+                        <span class="text-xs font-bold text-stone-700 mr-2">تقييم معتمد ${ratingNum.toFixed(1)}</span>
+                    </div>
+                    <p class="text-stone-700 text-xs sm:text-sm leading-relaxed italic font-medium">
+                        "${it.reviewText}"
+                    </p>
+                    <div class="pt-3 border-t border-stone-200/70 flex items-center justify-between">
+                        <span class="font-bold text-stone-900 text-xs sm:text-sm">${it.clientName}</span>
+                        <span class="text-[11px] text-stone-600">${it.orderType || 'طلب تفصيل خاص'}</span>
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
 
 // ==========================================
 // التحكم في مشغل سينما الحرفة اليدوية (Atelier Cinema)
