@@ -689,9 +689,6 @@ function renderPortalPagination(totalItems, currentPage, totalPages) {
         return;
     }
 
-    const startItem = (currentPage - 1) * PORTAL_ITEMS_PER_PAGE + 1;
-    const endItem = Math.min(currentPage * PORTAL_ITEMS_PER_PAGE, totalItems);
-
     let pages = [];
     if (totalPages <= 7) {
         for (let i = 1; i <= totalPages; i++) pages.push(i);
@@ -723,46 +720,50 @@ function renderPortalPagination(totalItems, currentPage, totalPages) {
     }).join('');
 
     container.innerHTML = `
-        <div class="flex flex-col items-center gap-2.5">
-            <nav aria-label="ترقيم صفحات إدارة المعروضات" class="pagination-capsule" dir="rtl">
-                <!-- زر السابق -->
-                <button 
-                    type="button" 
-                    onclick="window.changePortalPage(${currentPage - 1})" 
-                    class="pagination-nav-btn" 
-                    ${currentPage === 1 ? 'disabled' : ''} 
-                    title="الصفحة السابقة">
-                    <span class="text-sm">→</span>
-                    <span class="hidden sm:inline">السابق</span>
-                </button>
+        <nav aria-label="ترقيم صفحات إدارة المعروضات" class="pagination-capsule" dir="rtl">
+            <!-- زر السابق -->
+            <button 
+                type="button" 
+                onclick="window.changePortalPage(${currentPage - 1})" 
+                class="pagination-nav-btn" 
+                ${currentPage === 1 ? 'disabled' : ''} 
+                title="الصفحة السابقة">
+                <span class="text-sm">→</span>
+                <span class="hidden sm:inline">السابق</span>
+            </button>
 
-                <!-- الأرقام للكمبيوتر والتابلت -->
-                <div class="hidden sm:flex items-center gap-1 px-1">
-                    ${pageButtonsHtml}
-                </div>
+            <!-- الأرقام للكمبيوتر والتابلت -->
+            <div class="hidden sm:flex items-center gap-1 px-0.5">
+                ${pageButtonsHtml}
+            </div>
 
-                <!-- عداد ملموم ومريح للجوال -->
-                <div class="sm:hidden px-2 py-0.5 text-xs font-bold text-stone-800">
-                    صفحة <span class="text-brand font-black">${currentPage}</span> من <span>${totalPages}</span>
-                </div>
+            <!-- عداد ملموم ومريح للجوال -->
+            <div class="sm:hidden px-2 py-0.5 text-xs font-bold text-stone-800 whitespace-nowrap">
+                صفحة <span class="text-brand font-black">${currentPage}</span> من <span>${totalPages}</span>
+            </div>
 
-                <!-- زر التالي -->
-                <button 
-                    type="button" 
-                    onclick="window.changePortalPage(${currentPage + 1})" 
-                    class="pagination-nav-btn" 
-                    ${currentPage === totalPages ? 'disabled' : ''} 
-                    title="الصفحة التالية">
-                    <span class="hidden sm:inline">التالي</span>
-                    <span class="text-sm">←</span>
-                </button>
-            </nav>
+            <!-- زر التالي -->
+            <button 
+                type="button" 
+                onclick="window.changePortalPage(${currentPage + 1})" 
+                class="pagination-nav-btn" 
+                ${currentPage === totalPages ? 'disabled' : ''} 
+                title="الصفحة التالية">
+                <span class="hidden sm:inline">التالي</span>
+                <span class="text-sm">←</span>
+            </button>
 
-            <!-- سطر التوضيح الإحصائي الملموم -->
-            <span class="pagination-info-badge">
-                عرض القطع من ${startItem} إلى ${endItem} (إجمالي ${totalItems} قطعة مسجلة)
-            </span>
-        </div>
+            <!-- فاصل أنيق على نفس السطر -->
+            <span class="pagination-divider"></span>
+
+            <!-- إجمالي عدد القطع والصفحات بنفس السطر -->
+            <div class="pagination-summary-pill" title="إجمالي ${totalItems} قطعة مسجلة مقسمة على ${totalPages} صفحات">
+                <span class="font-extrabold text-brand">${totalItems}</span>
+                <span class="text-[11px] sm:text-xs">قطعة</span>
+                <span class="opacity-30 font-light">•</span>
+                <span class="text-[11px] sm:text-xs font-bold text-stone-700">${totalPages} صفحات</span>
+            </div>
+        </nav>
     `;
 }
 
