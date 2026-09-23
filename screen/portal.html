@@ -280,46 +280,60 @@
         <!-- المحتوى الرئيسي للوحة التحكم -->
         <main class="flex-1 w-full px-3 sm:px-6 md:px-12 py-6 sm:py-8 space-y-6">
             
-            <!-- بطاقات الإحصائيات السريعة -->
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
-                <div class="p-4 rounded-2xl bg-white border border-stone-200 shadow-xs flex items-center gap-3">
-                    <div class="w-12 h-12 rounded-xl bg-amber-50 border border-amber-200 text-amber-700 flex items-center justify-center text-xl">
-                        👑
+            <!-- بطاقات الإحصائيات السريعة بتصميم رأسي فاخر وأبعاد متناسقة -->
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4.5">
+                <!-- 1. إجمالي القطع المعروضة (ذهب ملكي عتيق) -->
+                <div class="portal-stat-card group relative p-4 sm:p-5 md:py-6 rounded-2xl sm:rounded-3xl bg-white/95 border border-stone-200/90 hover:border-amber-300/80 shadow-[0_4px_20px_-4px_rgba(44,30,20,0.05)] hover:shadow-[0_8px_25px_-4px_rgba(44,30,20,0.1)] transition-all duration-300 flex flex-col items-center justify-center text-center select-none">
+                    <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br from-[#fdf8ee] to-[#f7eed4] border border-[#e8d7a7]/80 text-[#977017] shadow-xs shadow-amber-900/5 flex items-center justify-center mb-2.5 sm:mb-3 transition-transform duration-300 group-hover:scale-105 shrink-0">
+                        <svg class="w-6 h-6 sm:w-6.5 sm:h-6.5 block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M3 7l4 4 5-7 5 7 4-4-1 11H4L3 7z"/>
+                            <circle cx="12" cy="4" r="1" fill="currentColor"/>
+                            <circle cx="3" cy="7" r="1" fill="currentColor"/>
+                            <circle cx="21" cy="7" r="1" fill="currentColor"/>
+                        </svg>
                     </div>
-                    <div>
-                        <span class="text-[11px] text-stone-500 font-bold block">إجمالي القطع المعروضة</span>
-                        <span id="stat-total-carpets" class="font-display font-black text-xl sm:text-2xl text-stone-900">0</span>
-                    </div>
+                    <span class="text-[11px] sm:text-xs text-stone-500 font-bold block mb-1 tracking-wide leading-none">إجمالي القطع المعروضة</span>
+                    <span id="stat-total-carpets" class="font-display font-black text-2xl sm:text-3xl text-stone-900 leading-tight">0</span>
                 </div>
 
-                <div class="p-4 rounded-2xl bg-white border border-stone-200 shadow-xs flex items-center gap-3">
-                    <div class="w-12 h-12 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 flex items-center justify-center text-xl">
-                        ✅
+                <!-- 2. القطع المتوفرة (زمرد ملكي فاخر) -->
+                <div class="portal-stat-card group relative p-4 sm:p-5 md:py-6 rounded-2xl sm:rounded-3xl bg-white/95 border border-stone-200/90 hover:border-emerald-300/80 shadow-[0_4px_20px_-4px_rgba(44,30,20,0.05)] hover:shadow-[0_8px_25px_-4px_rgba(44,30,20,0.1)] transition-all duration-300 flex flex-col items-center justify-center text-center select-none">
+                    <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br from-[#edfbf4] to-[#dbf5e6] border border-[#b2e5cc]/80 text-[#158052] shadow-xs shadow-emerald-900/5 flex items-center justify-center mb-2.5 sm:mb-3 transition-transform duration-300 group-hover:scale-105 shrink-0">
+                        <svg class="w-6 h-6 sm:w-6.5 sm:h-6.5 block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="9"/>
+                            <polyline points="8.5 12.5 11 15 16 9.5"/>
+                        </svg>
                     </div>
-                    <div>
-                        <span class="text-[11px] text-stone-500 font-bold block">القطع المتوفرة</span>
-                        <span id="stat-available-carpets" class="font-display font-black text-xl sm:text-2xl text-emerald-700">0</span>
-                    </div>
+                    <span class="text-[11px] sm:text-xs text-stone-500 font-bold block mb-1 tracking-wide leading-none">القطع المتوفرة</span>
+                    <span id="stat-available-carpets" class="font-display font-black text-2xl sm:text-3xl text-emerald-700 leading-tight">0</span>
                 </div>
 
-                <div class="p-4 rounded-2xl bg-white border border-stone-200 shadow-xs flex items-center gap-3">
-                    <div class="w-12 h-12 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 flex items-center justify-center text-xl">
-                        ⏳
+                <!-- 3. نفدت الكمية (ياقوت عتيق ملكي) -->
+                <div class="portal-stat-card group relative p-4 sm:p-5 md:py-6 rounded-2xl sm:rounded-3xl bg-white/95 border border-stone-200/90 hover:border-rose-300/80 shadow-[0_4px_20px_-4px_rgba(44,30,20,0.05)] hover:shadow-[0_8px_25px_-4px_rgba(44,30,20,0.1)] transition-all duration-300 flex flex-col items-center justify-center text-center select-none">
+                    <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br from-[#fdf2f4] to-[#fde5e8] border border-[#f4c6ce]/80 text-[#be123c] shadow-xs shadow-rose-900/5 flex items-center justify-center mb-2.5 sm:mb-3 transition-transform duration-300 group-hover:scale-105 shrink-0">
+                        <svg class="w-6 h-6 sm:w-6.5 sm:h-6.5 block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M5 22h14"/>
+                            <path d="M5 2h14"/>
+                            <path d="M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22"/>
+                            <path d="M7 2v4.172a2 2 0 0 0 .586 1.414L12 12l4.414-4.414A2 2 0 0 0 17 6.172V2"/>
+                        </svg>
                     </div>
-                    <div>
-                        <span class="text-[11px] text-stone-500 font-bold block">نفدت الكمية</span>
-                        <span id="stat-out-carpets" class="font-display font-black text-xl sm:text-2xl text-rose-700">0</span>
-                    </div>
+                    <span class="text-[11px] sm:text-xs text-stone-500 font-bold block mb-1 tracking-wide leading-none">نفدت الكمية</span>
+                    <span id="stat-out-carpets" class="font-display font-black text-2xl sm:text-3xl text-rose-700 leading-tight">0</span>
                 </div>
 
-                <div class="p-4 rounded-2xl bg-white border border-stone-200 shadow-xs flex items-center gap-3">
-                    <div class="w-12 h-12 rounded-xl bg-purple-50 border border-purple-200 text-purple-700 flex items-center justify-center text-xl">
-                        🏷️
+                <!-- 4. أقسام الكاتلوج النشطة (عنابي دار تطريز الفاخر) -->
+                <div class="portal-stat-card group relative p-4 sm:p-5 md:py-6 rounded-2xl sm:rounded-3xl bg-white/95 border border-stone-200/90 hover:border-[#7c1d3c]/40 shadow-[0_4px_20px_-4px_rgba(44,30,20,0.05)] hover:shadow-[0_8px_25px_-4px_rgba(44,30,20,0.1)] transition-all duration-300 flex flex-col items-center justify-center text-center select-none">
+                    <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br from-[#faf2f5] to-[#f5e3e8] border border-[#e2bec7]/80 text-[#7c1d3c] shadow-xs shadow-[#7c1d3c]/5 flex items-center justify-center mb-2.5 sm:mb-3 transition-transform duration-300 group-hover:scale-105 shrink-0">
+                        <svg class="w-6 h-6 sm:w-6.5 sm:h-6.5 block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="3" width="7" height="7" rx="1.5"/>
+                            <rect x="14" y="3" width="7" height="7" rx="1.5"/>
+                            <rect x="14" y="14" width="7" height="7" rx="1.5"/>
+                            <rect x="3" y="14" width="7" height="7" rx="1.5"/>
+                        </svg>
                     </div>
-                    <div>
-                        <span class="text-[11px] text-stone-500 font-bold block">أقسام الكاتلوج النشطة</span>
-                        <span id="stat-total-categories" class="font-display font-black text-xl sm:text-2xl text-stone-900">0</span>
-                    </div>
+                    <span class="text-[11px] sm:text-xs text-stone-500 font-bold block mb-1 tracking-wide leading-none">أقسام الكاتلوج النشطة</span>
+                    <span id="stat-total-categories" class="font-display font-black text-2xl sm:text-3xl text-[#7c1d3c] leading-tight">0</span>
                 </div>
             </div>
 

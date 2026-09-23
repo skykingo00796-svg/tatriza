@@ -2005,3 +2005,22 @@ button[type="submit"]:active {
     font-weight: 800 !important;
     letter-spacing: 0.015em;
 }
+
+/* ==========================================================================
+   بطاقات إحصائيات لوحة الإدارة الفاخرة (Portal Stat Cards - Vertical Centered)
+   ========================================================================== */
+.portal-stat-card {
+    min-height: 148px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+@media (min-width: 640px) {
+    .portal-stat-card {
+        min-height: 168px;
+    }
+}
