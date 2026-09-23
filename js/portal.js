@@ -1383,6 +1383,13 @@ export function closeShowcaseManagerModal() {
     cancelLookbookEdit();
 }
 
+function scrollShowcaseToTop() {
+    const scrollContainer = document.querySelector('#showcase-manager-modal .overflow-y-auto');
+    if (scrollContainer) {
+        scrollContainer.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+}
+
 export function switchShowcaseTab(tabName) {
     currentShowcaseTab = tabName;
     const tabBtns = document.querySelectorAll('.showcase-tab-btn');
@@ -1402,6 +1409,8 @@ export function switchShowcaseTab(tabName) {
 
     const activePane = document.getElementById(`tab-content-${tabName}`);
     if (activePane) activePane.classList.remove('hidden');
+
+    scrollShowcaseToTop();
 }
 
 export function renderShowcaseUI() {
@@ -1433,27 +1442,27 @@ function renderMarqueeTab() {
     const items = showcaseState.marqueeItems || [];
 
     if (items.length === 0) {
-        listEl.innerHTML = '<div class="p-4 text-center text-xs text-stone-500 bg-stone-50 rounded-xl">لا توجد عبارات حالياً في الشريط. يمكنك إضافة عبارة جديدة أعلاه.</div>';
+        listEl.innerHTML = '<div class="p-3 text-center text-[11px] sm:text-xs text-stone-500 bg-stone-50 rounded-xl">لا توجد عبارات حالياً في الشريط. يمكنك إضافة عبارة جديدة أعلاه.</div>';
         return;
     }
 
     listEl.innerHTML = items.map((item, idx) => `
-        <div class="flex items-center justify-between p-3 bg-white hover:bg-stone-50 border border-stone-200 rounded-xl transition shadow-2xs">
-            <div class="flex items-center gap-3 min-w-0 flex-1">
-                <span class="w-8 h-8 rounded-lg bg-amber-50 text-amber-800 border border-amber-200/60 flex items-center justify-center text-base shrink-0 select-none">${item.icon || '⚜️'}</span>
+        <div class="flex items-center justify-between p-2.5 sm:p-3 bg-white hover:bg-stone-50 border border-stone-200 rounded-xl transition shadow-2xs gap-2">
+            <div class="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
+                <span class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-amber-50 text-amber-800 border border-amber-200/60 flex items-center justify-center text-sm sm:text-base shrink-0 select-none">${item.icon || '⚜️'}</span>
                 <div class="min-w-0 flex-1">
-                    <div class="flex items-center gap-2">
-                        <span class="font-bold text-stone-900 text-xs sm:text-sm truncate">${item.title}</span>
-                        <span class="text-[10px] text-stone-400 font-number">#${idx + 1}</span>
+                    <div class="flex items-center gap-1.5">
+                        <span class="font-bold text-stone-900 text-[11.5px] sm:text-sm truncate">${item.title}</span>
+                        <span class="text-[9px] sm:text-[10px] text-stone-400 font-number">#${idx + 1}</span>
                     </div>
-                    <p class="text-[11px] text-stone-600 truncate mt-0.5">${item.desc}</p>
+                    <p class="text-[10px] sm:text-[11px] text-stone-600 truncate mt-0.5">${item.desc}</p>
                 </div>
             </div>
-            <div class="flex items-center gap-1.5 shrink-0 mr-2">
-                <button type="button" onclick="startMarqueeEdit('${item.id}')" class="px-2.5 py-1 text-xs font-bold text-stone-700 bg-stone-100 hover:bg-stone-200 rounded-lg transition cursor-pointer" title="تعديل العبارة">
-                    ✏️ تعديل
+            <div class="flex items-center gap-1 sm:gap-1.5 shrink-0">
+                <button type="button" onclick="startMarqueeEdit('${item.id}')" class="px-2 sm:px-2.5 py-1 text-[11px] sm:text-xs font-bold text-stone-700 bg-stone-100 hover:bg-stone-200 rounded-lg transition cursor-pointer" title="تعديل العبارة">
+                    ✏️<span class="hidden sm:inline"> تعديل</span>
                 </button>
-                <button type="button" onclick="deleteMarqueeItem('${item.id}')" class="px-2 py-1 text-xs font-bold text-rose-600 bg-rose-50 hover:bg-rose-100 rounded-lg transition cursor-pointer" title="حذف العبارة">
+                <button type="button" onclick="deleteMarqueeItem('${item.id}')" class="px-1.5 sm:px-2 py-1 text-[11px] sm:text-xs font-bold text-rose-600 bg-rose-50 hover:bg-rose-100 rounded-lg transition cursor-pointer" title="حذف العبارة">
                     🗑️
                 </button>
             </div>
@@ -1522,6 +1531,7 @@ export function startMarqueeEdit(id) {
     if (submitText) submitText.innerText = 'حفظ التعديل';
     if (cancelBtn) cancelBtn.classList.remove('hidden');
 
+    scrollShowcaseToTop();
     if (titleInput) titleInput.focus();
 }
 
@@ -1561,7 +1571,7 @@ function renderCinemaTab() {
     const videos = showcaseState.cinemaVideos || [];
 
     if (videos.length === 0) {
-        listEl.innerHTML = '<div class="p-4 text-center text-xs text-stone-500 bg-stone-50 rounded-xl">لا توجد فيديوهات حالياً. أضف فيديو المشغل الأول أعلاه.</div>';
+        listEl.innerHTML = '<div class="p-3 text-center text-[11px] sm:text-xs text-stone-500 bg-stone-50 rounded-xl">لا توجد فيديوهات حالياً. أضف فيديو المشغل الأول أعلاه.</div>';
         return;
     }
 
@@ -1569,42 +1579,42 @@ function renderCinemaTab() {
         const isActive = Boolean(vid.isActive);
         const isDeviceStored = vid.videoUrl && vid.videoUrl.startsWith('idb://video_');
         return `
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between p-3.5 bg-white hover:bg-stone-50 border ${isActive ? 'border-amber-400 bg-amber-50/20 ring-1 ring-amber-300' : 'border-stone-200'} rounded-2xl transition gap-3 shadow-2xs">
-                <div class="flex items-center gap-3 min-w-0 flex-1">
-                    <div class="relative w-20 h-14 rounded-xl overflow-hidden bg-stone-900 shrink-0 border border-stone-300 shadow-2xs">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between p-2.5 sm:p-3.5 bg-white hover:bg-stone-50 border ${isActive ? 'border-amber-400 bg-amber-50/20 ring-1 ring-amber-300' : 'border-stone-200'} rounded-xl sm:rounded-2xl transition gap-2.5 sm:gap-3 shadow-2xs">
+                <div class="flex items-start sm:items-center gap-2.5 sm:gap-3 min-w-0 flex-1">
+                    <div class="relative w-16 h-12 sm:w-20 sm:h-14 rounded-lg sm:rounded-xl overflow-hidden bg-stone-900 shrink-0 border border-stone-300 shadow-2xs">
                         <img src="${vid.posterUrl || '../images/craft_video_poster.jpg'}" alt="${vid.title}" class="w-full h-full object-cover">
-                        <span class="absolute inset-0 bg-black/30 flex items-center justify-center text-white text-xs">▶</span>
-                        <span class="absolute bottom-1 right-1 text-[9px] font-number font-black bg-black/70 text-amber-300 px-1 rounded">#${idx + 1}</span>
+                        <span class="absolute inset-0 bg-black/30 flex items-center justify-center text-white text-[10px] sm:text-xs">▶</span>
+                        <span class="absolute bottom-0.5 right-0.5 text-[8.5px] font-number font-black bg-black/70 text-amber-300 px-1 rounded">#${idx + 1}</span>
                     </div>
                     <div class="min-w-0 flex-1">
-                        <div class="flex items-center gap-2 flex-wrap">
+                        <div class="flex items-center gap-1.5 flex-wrap">
                             <span class="font-bold text-stone-900 text-xs sm:text-sm truncate">${vid.title}</span>
-                            ${isActive ? '<span class="px-2 py-0.5 rounded-full text-[9px] font-bold bg-amber-100 text-amber-900 border border-amber-300">🌟 النشط حالياً في المشغل</span>' : ''}
+                            ${isActive ? '<span class="px-1.5 sm:px-2 py-0.2 rounded-full text-[8.5px] sm:text-[9px] font-bold bg-amber-100 text-amber-900 border border-amber-300">🌟 النشط</span>' : ''}
                         </div>
-                        <div class="flex items-center gap-2 text-[10px] text-stone-500 mt-0.5 flex-wrap">
+                        <div class="flex items-center gap-1.5 text-[9.5px] sm:text-[10px] text-stone-500 mt-0.5 flex-wrap">
                             <span>${vid.subtitle || '✨ أصالة المشغل'}</span>
                             <span>•</span>
                             ${isDeviceStored 
-                                ? '<span class="px-2 py-0.5 rounded text-[9px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">📹 مقطع من جهاز الإدارة</span>' 
-                                : '<span class="px-2 py-0.5 rounded text-[9px] font-bold bg-stone-100 text-stone-700 border border-stone-200">☁️ مقطع سحابي معتمد</span>'}
+                                ? '<span class="px-1.5 py-0.2 rounded text-[8.5px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">📹 ملف من الجهاز</span>' 
+                                : '<span class="px-1.5 py-0.2 rounded text-[8.5px] font-bold bg-stone-100 text-stone-700 border border-stone-200">☁️ مقطع سحابي</span>'}
                         </div>
-                        <div class="flex items-center gap-3 text-[10px] text-stone-600 mt-1 font-bold">
-                            <span>⏱️ ${vid.stats ? vid.stats.hours : '+500'} ساعة</span>
-                            <span>🧵 ${vid.stats ? vid.stats.material : '100%'} خامات</span>
-                            <span>🪢 ${vid.stats ? vid.stats.knots : '120K'} عقدة</span>
+                        <div class="flex items-center gap-2 sm:gap-3 text-[9.5px] sm:text-[10px] text-stone-600 mt-0.5 font-bold">
+                            <span>⏱️ ${vid.stats ? vid.stats.hours : '+500'} س</span>
+                            <span>🧵 ${vid.stats ? vid.stats.material : '100%'}</span>
+                            <span>🪢 ${vid.stats ? vid.stats.knots : '120K'}</span>
                         </div>
                     </div>
                 </div>
-                <div class="flex items-center gap-1.5 shrink-0 self-end sm:self-auto">
+                <div class="flex items-center gap-1.5 shrink-0 self-end sm:self-auto pt-1 sm:pt-0 border-t sm:border-t-0 border-stone-100 w-full sm:w-auto justify-end">
                     ${!isActive ? `
-                        <button type="button" onclick="setActiveCinemaVideo('${vid.id}')" class="px-2.5 py-1 text-xs font-bold text-amber-900 bg-amber-100 hover:bg-amber-200 border border-amber-300 rounded-lg transition cursor-pointer" title="تنشيط هذا الفيديو ليكون المعروض حالياً">
+                        <button type="button" onclick="setActiveCinemaVideo('${vid.id}')" class="px-2 sm:px-2.5 py-1 text-[10.5px] sm:text-xs font-bold text-amber-900 bg-amber-100 hover:bg-amber-200 border border-amber-300 rounded-lg transition cursor-pointer" title="تنشيط هذا الفيديو ليكون المعروض حالياً">
                             🌟 تنشيط للعرض
                         </button>
                     ` : ''}
-                    <button type="button" onclick="startCinemaEdit('${vid.id}')" class="px-2.5 py-1 text-xs font-bold text-stone-700 bg-stone-100 hover:bg-stone-200 rounded-lg transition cursor-pointer" title="تعديل الفيديو">
+                    <button type="button" onclick="startCinemaEdit('${vid.id}')" class="px-2 sm:px-2.5 py-1 text-[10.5px] sm:text-xs font-bold text-stone-700 bg-stone-100 hover:bg-stone-200 rounded-lg transition cursor-pointer" title="تعديل الفيديو">
                         ✏️ تعديل
                     </button>
-                    <button type="button" onclick="deleteCinemaVideo('${vid.id}')" class="px-2 py-1 text-xs font-bold text-rose-600 bg-rose-50 hover:bg-rose-100 rounded-lg transition cursor-pointer" title="حذف الفيديو">
+                    <button type="button" onclick="deleteCinemaVideo('${vid.id}')" class="px-1.5 sm:px-2 py-1 text-[10.5px] sm:text-xs font-bold text-rose-600 bg-rose-50 hover:bg-rose-100 rounded-lg transition cursor-pointer" title="حذف الفيديو">
                         🗑️
                     </button>
                 </div>
@@ -1886,6 +1896,7 @@ export function startCinemaEdit(id) {
     if (submitText) submitText.innerText = 'حفظ التعديل';
     if (cancelBtn) cancelBtn.classList.remove('hidden');
 
+    scrollShowcaseToTop();
     if (titleInput) titleInput.focus();
 }
 
@@ -1958,30 +1969,30 @@ function renderJourneyTab() {
     const steps = showcaseState.journeySteps || [];
 
     if (steps.length === 0) {
-        listEl.innerHTML = '<div class="p-4 text-center text-xs text-stone-500 bg-stone-50 rounded-xl col-span-2">لا توجد خطوات حالياً. أضف الخطوة الأولى أعلاه.</div>';
+        listEl.innerHTML = '<div class="p-3 text-center text-[11px] sm:text-xs text-stone-500 bg-stone-50 rounded-xl col-span-2">لا توجد خطوات حالياً. أضف الخطوة الأولى أعلاه.</div>';
         return;
     }
 
     listEl.innerHTML = steps.map(step => `
-        <div class="flex flex-col bg-white border border-stone-200 rounded-2xl overflow-hidden shadow-2xs hover:shadow-xs transition">
+        <div class="flex flex-col bg-white border border-stone-200 rounded-xl sm:rounded-2xl overflow-hidden shadow-2xs hover:shadow-xs transition">
             <div class="relative w-full aspect-16/9 bg-stone-100 overflow-hidden">
                 <img src="${step.imgUrl || '../images/step1_sketch.jpg'}" alt="${step.title}" class="w-full h-full object-cover">
-                <span class="absolute top-2 right-2 px-2.5 py-0.5 bg-black/70 text-amber-300 text-[11px] font-number font-black rounded-lg backdrop-blur-md">
+                <span class="absolute top-1.5 right-1.5 px-2 py-0.5 bg-black/70 text-amber-300 text-[10px] font-number font-black rounded-md backdrop-blur-md">
                     خطوة ${step.stepNum || '01'}
                 </span>
             </div>
-            <div class="p-3.5 flex-1 flex flex-col justify-between gap-2">
+            <div class="p-2.5 sm:p-3.5 flex-1 flex flex-col justify-between gap-1.5 sm:gap-2">
                 <div>
-                    <h4 class="font-bold text-stone-900 text-xs sm:text-sm mb-1">${step.title}</h4>
-                    <p class="text-[11px] text-stone-600 line-clamp-2 leading-relaxed">${step.desc}</p>
+                    <h4 class="font-bold text-stone-900 text-xs sm:text-sm mb-0.5 sm:mb-1">${step.title}</h4>
+                    <p class="text-[10.5px] sm:text-[11px] text-stone-600 line-clamp-2 leading-relaxed">${step.desc}</p>
                 </div>
-                <div class="pt-2 border-t border-stone-100 flex items-center justify-between">
-                    <span class="text-[10px] font-bold text-amber-800 bg-amber-50 px-2 py-0.5 rounded">${step.tag || ''}</span>
-                    <div class="flex items-center gap-1.5">
-                        <button type="button" onclick="startJourneyEdit('${step.id}')" class="px-2 py-0.5 text-xs font-bold text-stone-700 bg-stone-100 hover:bg-stone-200 rounded transition cursor-pointer">
+                <div class="pt-1.5 sm:pt-2 border-t border-stone-100 flex items-center justify-between">
+                    <span class="text-[9.5px] sm:text-[10px] font-bold text-amber-800 bg-amber-50 px-1.5 py-0.5 rounded truncate max-w-[140px]">${step.tag || ''}</span>
+                    <div class="flex items-center gap-1">
+                        <button type="button" onclick="startJourneyEdit('${step.id}')" class="px-2 py-0.5 text-xs font-bold text-stone-700 bg-stone-100 hover:bg-stone-200 rounded transition cursor-pointer" title="تعديل">
                             ✏️
                         </button>
-                        <button type="button" onclick="deleteJourneyStep('${step.id}')" class="px-2 py-0.5 text-xs font-bold text-rose-600 bg-rose-50 hover:bg-rose-100 rounded transition cursor-pointer">
+                        <button type="button" onclick="deleteJourneyStep('${step.id}')" class="px-2 py-0.5 text-xs font-bold text-rose-600 bg-rose-50 hover:bg-rose-100 rounded transition cursor-pointer" title="حذف">
                             🗑️
                         </button>
                     </div>
@@ -2108,6 +2119,7 @@ export function startJourneyEdit(id) {
     if (submitText) submitText.innerText = 'حفظ التعديل';
     if (cancelBtn) cancelBtn.classList.remove('hidden');
 
+    scrollShowcaseToTop();
     if (titleInput) titleInput.focus();
 }
 
@@ -2160,38 +2172,38 @@ function renderLookbookTab() {
     const items = showcaseState.lookbookItems || [];
 
     if (items.length === 0) {
-        listEl.innerHTML = '<div class="p-4 text-center text-xs text-stone-500 bg-stone-50 rounded-xl col-span-2">لا توجد توثيقات حالياً. أضف توثيق تسليم القطعة الأولى أعلاه.</div>';
+        listEl.innerHTML = '<div class="p-3 text-center text-[11px] sm:text-xs text-stone-500 bg-stone-50 rounded-xl col-span-2">لا توجد توثيقات حالياً. أضف توثيق تسليم القطعة الأولى أعلاه.</div>';
         return;
     }
 
     listEl.innerHTML = items.map(item => `
-        <div class="flex flex-col bg-white border border-stone-200 rounded-2xl overflow-hidden shadow-2xs hover:shadow-xs transition">
+        <div class="flex flex-col bg-white border border-stone-200 rounded-xl sm:rounded-2xl overflow-hidden shadow-2xs hover:shadow-xs transition">
             <div class="relative w-full aspect-16/9 bg-stone-100 overflow-hidden">
                 <img src="${item.imgUrl || '../images/client_room1.jpg'}" alt="${item.carpetTitle}" class="w-full h-full object-cover">
-                <span class="absolute top-2 right-2 px-2.5 py-0.5 bg-black/70 text-white text-[10px] font-bold rounded-full backdrop-blur-md">
+                <span class="absolute top-1.5 right-1.5 px-2 py-0.5 bg-black/70 text-white text-[9.5px] font-bold rounded-full backdrop-blur-md">
                     ${item.location || 'مسقط'}
                 </span>
-                <span class="absolute bottom-2 left-2 px-2.5 py-0.5 bg-amber-950/80 text-amber-200 text-[10px] font-bold rounded-full backdrop-blur-md">
+                <span class="absolute bottom-1.5 left-1.5 px-2 py-0.5 bg-amber-950/80 text-amber-200 text-[9.5px] font-bold rounded-full backdrop-blur-md truncate max-w-[130px]">
                     ${item.carpetTitle || 'سجادة ملكية'}
                 </span>
             </div>
-            <div class="p-3.5 flex-1 flex flex-col justify-between gap-2.5">
+            <div class="p-2.5 sm:p-3.5 flex-1 flex flex-col justify-between gap-1.5 sm:gap-2.5">
                 <div>
-                    <div class="flex items-center justify-between mb-1.5">
+                    <div class="flex items-center justify-between mb-1">
                         <span class="font-bold text-stone-900 text-xs sm:text-sm">${item.clientName}</span>
-                        <div class="text-amber-500 text-xs">
+                        <div class="text-amber-500 text-[11px] sm:text-xs">
                             ${'★'.repeat(Number(item.rating) || 5)}
                         </div>
                     </div>
-                    <p class="text-[11px] text-stone-600 italic line-clamp-3 leading-relaxed">"${item.reviewText}"</p>
+                    <p class="text-[10.5px] sm:text-[11px] text-stone-600 italic line-clamp-2 sm:line-clamp-3 leading-relaxed">"${item.reviewText}"</p>
                 </div>
-                <div class="pt-2 border-t border-stone-100 flex items-center justify-between">
-                    <span class="text-[10px] font-medium text-stone-500">${item.orderType || 'طلب تفصيل خاص'}</span>
-                    <div class="flex items-center gap-1.5">
-                        <button type="button" onclick="startLookbookEdit('${item.id}')" class="px-2 py-0.5 text-xs font-bold text-stone-700 bg-stone-100 hover:bg-stone-200 rounded transition cursor-pointer">
+                <div class="pt-1.5 sm:pt-2 border-t border-stone-100 flex items-center justify-between">
+                    <span class="text-[9.5px] sm:text-[10px] font-medium text-stone-500 truncate max-w-[120px]">${item.orderType || 'طلب تفصيل خاص'}</span>
+                    <div class="flex items-center gap-1">
+                        <button type="button" onclick="startLookbookEdit('${item.id}')" class="px-2 py-0.5 text-xs font-bold text-stone-700 bg-stone-100 hover:bg-stone-200 rounded transition cursor-pointer" title="تعديل">
                             ✏️
                         </button>
-                        <button type="button" onclick="deleteLookbookItem('${item.id}')" class="px-2 py-0.5 text-xs font-bold text-rose-600 bg-rose-50 hover:bg-rose-100 rounded transition cursor-pointer">
+                        <button type="button" onclick="deleteLookbookItem('${item.id}')" class="px-2 py-0.5 text-xs font-bold text-rose-600 bg-rose-50 hover:bg-rose-100 rounded transition cursor-pointer" title="حذف">
                             🗑️
                         </button>
                     </div>
@@ -2328,6 +2340,7 @@ export function startLookbookEdit(id) {
     if (submitText) submitText.innerText = 'حفظ التعديل';
     if (cancelBtn) cancelBtn.classList.remove('hidden');
 
+    scrollShowcaseToTop();
     if (clientInput) clientInput.focus();
 }
 

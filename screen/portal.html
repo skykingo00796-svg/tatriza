@@ -592,93 +592,93 @@
     <!-- نافذة إدارة وتخصيص بنرات وأقسام المعرض الترويجية (Showcase CMS Modal) -->
     <!-- ========================================== -->
     <div id="showcase-manager-modal" class="hidden fixed inset-0 z-50 modal-glass-backdrop flex items-center justify-center p-2 sm:p-4">
-        <div class="lux-modal-box w-full max-w-4xl rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-7 shadow-2xl relative max-h-[92vh] flex flex-col bg-white">
+        <div class="lux-modal-box w-full max-w-4xl rounded-2xl sm:rounded-3xl p-3 sm:p-6 md:p-7 shadow-2xl relative max-h-[94vh] sm:max-h-[92vh] flex flex-col bg-white">
             
-            <!-- زر الإغلاق السريع -->
-            <button type="button" onclick="closeShowcaseManagerModal()" class="absolute top-4 left-4 bg-stone-100 hover:bg-stone-200 text-stone-600 hover:text-stone-900 w-8 h-8 rounded-full flex items-center justify-center transition text-sm font-bold cursor-pointer z-10" title="إغلاق">
+            <!-- زر الإغلاق السريع (متناسق مع ترويسة الجوال وبدون تداخل) -->
+            <button type="button" onclick="closeShowcaseManagerModal()" class="absolute top-3 left-3 sm:top-4 sm:left-4 bg-stone-100 hover:bg-stone-200 text-stone-600 hover:text-stone-900 w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center transition text-xs sm:text-sm font-bold cursor-pointer z-10" title="إغلاق">
                 ✕
             </button>
             
-            <!-- ترويسة النافذة الفاخرة -->
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3.5 border-b border-stone-200/80 shrink-0">
-                <div class="flex items-center gap-2.5">
-                    <div class="w-11 h-11 rounded-2xl bg-amber-100 text-amber-900 flex items-center justify-center text-2xl shadow-xs shrink-0">
+            <!-- ترويسة النافذة الفاخرة (خطوط أصغر ومتناسقة تماماً لشاشة الجوال) -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-3 pb-2.5 sm:pb-3.5 border-b border-stone-200/80 shrink-0 pl-8 sm:pl-0">
+                <div class="flex items-center gap-2 sm:gap-2.5">
+                    <div class="w-8 h-8 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl bg-amber-100 text-amber-900 flex items-center justify-center text-lg sm:text-2xl shadow-xs shrink-0">
                         ✨
                     </div>
                     <div>
-                        <h3 class="font-display font-black text-stone-900 text-base sm:text-lg">إدارة بنرات وأقسام المعرض والترويج</h3>
-                        <p class="text-[11px] sm:text-xs text-stone-500 font-medium">التحكم في شريط العبارات، سينما المشغل، خطوات الحرفة، وتوثيق تسليم القطع</p>
+                        <div class="flex items-center gap-1.5 sm:gap-2 flex-wrap">
+                            <h3 class="font-bold text-stone-900 text-xs sm:text-base md:text-lg">إدارة بنرات وأقسام المعرض</h3>
+                            <span id="showcase-sync-status" class="px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200/80 inline-flex items-center gap-1 shadow-2xs">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                                <span>مزامنة سحابية</span>
+                            </span>
+                        </div>
+                        <p class="text-[10px] sm:text-xs text-stone-500 font-medium leading-snug mt-0.5">تخصيص محتوى البنرات الترويجية وسينما الحرفة ووسائطها</p>
                     </div>
                 </div>
-                <div class="flex items-center gap-2">
-                    <span id="showcase-sync-status" class="px-2.5 py-1 rounded-full text-[10px] sm:text-[11px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200/80 flex items-center gap-1.5 shadow-2xs">
-                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                        <span>مزامنة Firebase السحابية</span>
-                    </span>
-                </div>
             </div>
 
-            <!-- أشرطة التبويبات الأربعة الفاخرة -->
-            <div class="flex items-center gap-1.5 sm:gap-2 border-b border-stone-200 overflow-x-auto py-2 scrollbar-none shrink-0" role="tablist">
-                <button type="button" onclick="switchShowcaseTab('marquee')" id="tab-btn-marquee" class="showcase-tab-btn active px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-1.5 transition cursor-pointer whitespace-nowrap bg-stone-900 text-white shadow-xs">
-                    <span>🏷️</span>
-                    <span>شريط العبارات</span>
-                    <span id="badge-count-marquee" class="text-[10px] px-1.5 py-0.2 rounded-full bg-white/20 text-white font-number font-bold">0</span>
+            <!-- أشرطة التبويبات الأربعة الفاخرة (متجاوبة بانسيابية مع شريط تمرير ناعم وألقاب مدمجة على الجوال) -->
+            <div class="flex items-center gap-1 sm:gap-2 border-b border-stone-200 overflow-x-auto py-1.5 sm:py-2 no-scrollbar shrink-0" role="tablist">
+                <button type="button" onclick="switchShowcaseTab('marquee')" id="tab-btn-marquee" class="showcase-tab-btn active px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-xl text-[11px] sm:text-xs md:text-sm font-bold flex items-center gap-1 sm:gap-1.5 transition cursor-pointer whitespace-nowrap bg-stone-900 text-white shadow-xs">
+                    <span class="text-xs sm:text-sm">🏷️</span>
+                    <span>العبارات</span>
+                    <span id="badge-count-marquee" class="text-[9px] sm:text-[10px] px-1.5 py-0.2 rounded-full bg-white/20 text-white font-number font-bold">0</span>
                 </button>
-                <button type="button" onclick="switchShowcaseTab('cinema')" id="tab-btn-cinema" class="showcase-tab-btn px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-1.5 transition cursor-pointer whitespace-nowrap bg-stone-100 text-stone-700 hover:bg-stone-200">
-                    <span>🎬</span>
-                    <span>سينما المشغل وفيديوهاته</span>
-                    <span id="badge-count-cinema" class="text-[10px] px-1.5 py-0.2 rounded-full bg-stone-300 text-stone-800 font-number font-bold">0</span>
+                <button type="button" onclick="switchShowcaseTab('cinema')" id="tab-btn-cinema" class="showcase-tab-btn px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-xl text-[11px] sm:text-xs md:text-sm font-bold flex items-center gap-1 sm:gap-1.5 transition cursor-pointer whitespace-nowrap bg-stone-100 text-stone-700 hover:bg-stone-200">
+                    <span class="text-xs sm:text-sm">🎬</span>
+                    <span>سينما المشغل<span class="hidden sm:inline"> وفيديوهاته</span></span>
+                    <span id="badge-count-cinema" class="text-[9px] sm:text-[10px] px-1.5 py-0.2 rounded-full bg-stone-300 text-stone-800 font-number font-bold">0</span>
                 </button>
-                <button type="button" onclick="switchShowcaseTab('journey')" id="tab-btn-journey" class="showcase-tab-btn px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-1.5 transition cursor-pointer whitespace-nowrap bg-stone-100 text-stone-700 hover:bg-stone-200">
-                    <span>🪜</span>
-                    <span>مسار وخطوات الحرفة</span>
-                    <span id="badge-count-journey" class="text-[10px] px-1.5 py-0.2 rounded-full bg-stone-300 text-stone-800 font-number font-bold">0</span>
+                <button type="button" onclick="switchShowcaseTab('journey')" id="tab-btn-journey" class="showcase-tab-btn px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-xl text-[11px] sm:text-xs md:text-sm font-bold flex items-center gap-1 sm:gap-1.5 transition cursor-pointer whitespace-nowrap bg-stone-100 text-stone-700 hover:bg-stone-200">
+                    <span class="text-xs sm:text-sm">🪜</span>
+                    <span>خطوات الحرفة</span>
+                    <span id="badge-count-journey" class="text-[9px] sm:text-[10px] px-1.5 py-0.2 rounded-full bg-stone-300 text-stone-800 font-number font-bold">0</span>
                 </button>
-                <button type="button" onclick="switchShowcaseTab('lookbook')" id="tab-btn-lookbook" class="showcase-tab-btn px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-1.5 transition cursor-pointer whitespace-nowrap bg-stone-100 text-stone-700 hover:bg-stone-200">
-                    <span>📸</span>
-                    <span>توثيق القطع والآراء</span>
-                    <span id="badge-count-lookbook" class="text-[10px] px-1.5 py-0.2 rounded-full bg-stone-300 text-stone-800 font-number font-bold">0</span>
+                <button type="button" onclick="switchShowcaseTab('lookbook')" id="tab-btn-lookbook" class="showcase-tab-btn px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-xl text-[11px] sm:text-xs md:text-sm font-bold flex items-center gap-1 sm:gap-1.5 transition cursor-pointer whitespace-nowrap bg-stone-100 text-stone-700 hover:bg-stone-200">
+                    <span class="text-xs sm:text-sm">📸</span>
+                    <span>توثيق القطع<span class="hidden sm:inline"> والآراء</span></span>
+                    <span id="badge-count-lookbook" class="text-[9px] sm:text-[10px] px-1.5 py-0.2 rounded-full bg-stone-300 text-stone-800 font-number font-bold">0</span>
                 </button>
             </div>
 
-            <!-- جسم التبويبات القابل للتمرير -->
-            <div class="flex-1 overflow-y-auto pr-1 py-1 space-y-4">
+            <!-- جسم التبويبات القابل للتمرير الناعم -->
+            <div class="flex-1 overflow-y-auto pr-0.5 sm:pr-1 py-1.5 space-y-3 sm:space-y-4">
                 
                 <!-- ========================================== -->
                 <!-- 1. تبويب شريط العبارات المتحركة (Marquee) -->
                 <!-- ========================================== -->
-                <div id="tab-content-marquee" class="showcase-tab-pane space-y-4">
+                <div id="tab-content-marquee" class="showcase-tab-pane space-y-3 sm:space-y-4">
                     <!-- نموذج إضافة / تعديل عبارة -->
-                    <div class="p-3.5 sm:p-4 rounded-2xl bg-amber-50/60 border border-amber-200/70 space-y-3">
+                    <div class="p-3 sm:p-4 rounded-2xl bg-amber-50/50 border border-amber-200/70 space-y-2.5 sm:space-y-3">
                         <div class="flex items-center justify-between">
-                            <span class="text-xs font-bold text-amber-950 flex items-center gap-1.5">
+                            <span class="text-[11px] sm:text-xs font-bold text-amber-950 flex items-center gap-1.5">
                                 <span class="text-amber-700 font-black">＋</span>
-                                <span id="marquee-form-title">إضافة عبارة جديدة للشريط المتحرك:</span>
+                                <span id="marquee-form-title">إضافة عبارة للشريط المتحرك:</span>
                             </span>
-                            <span class="text-[10px] text-amber-800 font-medium">أيقونة + عنوان بارز + نص شرح توضيحي</span>
+                            <span class="hidden sm:inline text-[10px] text-amber-800 font-medium">أيقونة + عنوان بارز + نص توضيحي</span>
                         </div>
-                        <form id="marquee-item-form" onsubmit="handleMarqueeFormSubmit(event)" class="space-y-3">
+                        <form id="marquee-item-form" onsubmit="handleMarqueeFormSubmit(event)" class="space-y-2.5 sm:space-y-3">
                             <input type="hidden" id="marquee-edit-id" value="">
-                            <div class="grid grid-cols-1 sm:grid-cols-12 gap-2.5">
-                                <div class="sm:col-span-2">
-                                    <label class="block text-[10px] font-bold text-stone-600 mb-1">الأيقونة</label>
-                                    <input type="text" id="marquee-input-icon" value="⚜️" maxlength="4" required class="w-full h-10 text-center text-lg bg-white border border-stone-300 rounded-xl outline-none focus:border-brand shadow-2xs">
+                            <div class="grid grid-cols-12 gap-2 sm:gap-2.5">
+                                <div class="col-span-3 sm:col-span-2">
+                                    <label class="block text-[9.5px] sm:text-[10px] font-bold text-stone-600 mb-0.5 sm:mb-1">الأيقونة</label>
+                                    <input type="text" id="marquee-input-icon" value="⚜️" maxlength="4" required class="w-full h-9 sm:h-10 text-center text-base sm:text-lg bg-white border border-stone-300 rounded-xl outline-none focus:border-brand shadow-2xs">
                                 </div>
-                                <div class="sm:col-span-4">
-                                    <label class="block text-[10px] font-bold text-stone-600 mb-1">العنوان الرئيسي</label>
-                                    <input type="text" id="marquee-input-title" placeholder="مثال: حياكة يدوية 100%" required class="w-full h-10 bg-white border border-stone-300 rounded-xl px-3 text-xs sm:text-sm text-stone-900 outline-none focus:border-brand shadow-2xs">
+                                <div class="col-span-9 sm:col-span-4">
+                                    <label class="block text-[9.5px] sm:text-[10px] font-bold text-stone-600 mb-0.5 sm:mb-1">العنوان الرئيسي</label>
+                                    <input type="text" id="marquee-input-title" placeholder="مثال: حياكة يدوية 100%" required class="w-full h-9 sm:h-10 bg-white border border-stone-300 rounded-xl px-2.5 sm:px-3 text-xs sm:text-sm text-stone-900 outline-none focus:border-brand shadow-2xs">
                                 </div>
-                                <div class="sm:col-span-6">
-                                    <label class="block text-[10px] font-bold text-stone-600 mb-1">نص الشرح والتوضيح</label>
-                                    <input type="text" id="marquee-input-desc" placeholder="مثال: صوف طبيعي وحرير خالص" required class="w-full h-10 bg-white border border-stone-300 rounded-xl px-3 text-xs sm:text-sm text-stone-900 outline-none focus:border-brand shadow-2xs">
+                                <div class="col-span-12 sm:col-span-6">
+                                    <label class="block text-[9.5px] sm:text-[10px] font-bold text-stone-600 mb-0.5 sm:mb-1">نص الشرح والتوضيح</label>
+                                    <input type="text" id="marquee-input-desc" placeholder="مثال: صوف طبيعي وحرير خالص" required class="w-full h-9 sm:h-10 bg-white border border-stone-300 rounded-xl px-2.5 sm:px-3 text-xs sm:text-sm text-stone-900 outline-none focus:border-brand shadow-2xs">
                                 </div>
                             </div>
-                            <div class="flex items-center gap-2 justify-end">
-                                <button type="button" id="marquee-cancel-edit-btn" onclick="cancelMarqueeEdit()" class="hidden px-3.5 h-9 rounded-xl bg-stone-200 hover:bg-stone-300 text-stone-700 text-xs font-bold transition cursor-pointer">
+                            <div class="flex items-center gap-2 justify-end pt-0.5">
+                                <button type="button" id="marquee-cancel-edit-btn" onclick="cancelMarqueeEdit()" class="hidden px-3 h-8 sm:h-9 rounded-xl bg-stone-200 hover:bg-stone-300 text-stone-700 text-[11px] sm:text-xs font-bold transition cursor-pointer">
                                     إلغاء التعديل
                                 </button>
-                                <button type="submit" id="marquee-submit-btn" class="btn-liquid-metal text-white font-bold text-xs h-9 px-4 rounded-xl shadow-xs transition flex items-center gap-1.5 cursor-pointer">
+                                <button type="submit" id="marquee-submit-btn" class="btn-liquid-metal text-white font-bold text-[11px] sm:text-xs h-8 sm:h-9 px-3.5 sm:px-4 rounded-xl shadow-xs transition flex items-center gap-1.5 cursor-pointer">
                                     <span>＋</span>
                                     <span id="marquee-submit-text">إضافة العبارة للشريط</span>
                                 </button>
@@ -687,12 +687,12 @@
                     </div>
 
                     <!-- قائمة العبارات المعروضة حالياً -->
-                    <div class="space-y-2">
+                    <div class="space-y-1.5 sm:space-y-2">
                         <div class="flex items-center justify-between">
-                            <span class="text-xs font-bold text-stone-800">قائمة العبارات في الشريط المتحرك:</span>
-                            <span class="text-[10px] text-stone-500 font-medium">تتدفق بانسيابية لانهائية وتتوقف عند مرور الماوس</span>
+                            <span class="text-[11px] sm:text-xs font-bold text-stone-800">قائمة العبارات في الشريط:</span>
+                            <span class="text-[9.5px] sm:text-[10px] text-stone-500 font-medium">تتدفق بانسيابية لانهائية</span>
                         </div>
-                        <div id="marquee-items-list" class="space-y-2">
+                        <div id="marquee-items-list" class="space-y-1.5 sm:space-y-2">
                             <!-- تحقن العبارات هنا ديناميكياً -->
                         </div>
                     </div>
@@ -701,63 +701,63 @@
                 <!-- ========================================== -->
                 <!-- 2. تبويب سينما المشغل وفيديوهاته (Cinema) -->
                 <!-- ========================================== -->
-                <div id="tab-content-cinema" class="showcase-tab-pane space-y-4 hidden">
+                <div id="tab-content-cinema" class="showcase-tab-pane space-y-3 sm:space-y-4 hidden">
                     <!-- تنبيه توضيحي لميزة الترقيم وتنشيط الفيديوهات -->
-                    <div class="p-3 bg-amber-50 border border-amber-200/90 rounded-2xl flex items-start gap-2.5 text-xs text-amber-900">
-                        <span class="text-base shrink-0">💡</span>
+                    <div class="p-2.5 sm:p-3 bg-amber-50/70 border border-amber-200/80 rounded-xl sm:rounded-2xl flex items-start gap-2 text-[10.5px] sm:text-xs text-amber-900">
+                        <span class="text-sm sm:text-base shrink-0">💡</span>
                         <div class="leading-relaxed">
-                            <strong class="font-bold">ميزة ترقيم الفيديوهات للزوار:</strong> 
-                            يمكنك إضافة أكثر من فيديو لتوثيق المشغل. يظهر للزوار في واجهة المتجر نظام ترقيم مريح وسهل مع أزرار تنقل (السابق / التالي ومؤشرات مرقمة)، كما يمكنك تنشيط أي فيديو ليكون هو المعروض افتراضياً.
+                            <strong class="font-bold">ترقيم الفيديوهات للزوار:</strong> 
+                            يمكنك إضافة أكثر من فيديو للمشغل وتنشيط أي مقطع ليكون الافتراضي، مع أزرار تنقل مرقمة ومريحة للزوار.
                         </div>
                     </div>
 
                     <!-- نموذج إضافة / تعديل فيديو -->
-                    <div class="p-3.5 sm:p-4 rounded-2xl bg-stone-50 border border-stone-200 space-y-3">
+                    <div class="p-3 sm:p-4 rounded-2xl bg-stone-50/80 border border-stone-200 space-y-2.5 sm:space-y-3">
                         <div class="flex items-center justify-between">
-                            <span class="text-xs font-bold text-stone-900 flex items-center gap-1.5">
+                            <span class="text-[11px] sm:text-xs font-bold text-stone-900 flex items-center gap-1.5">
                                 <span class="text-amber-700 font-black">🎬</span>
                                 <span id="cinema-form-title">إضافة فيديو جديد لمشغل الحرفة:</span>
                             </span>
-                            <span class="text-[10px] text-stone-500 font-medium">رفع فيديو وبوستر من الجهاز/الاستوديو + العنوان</span>
+                            <span class="hidden sm:inline text-[10px] text-stone-500 font-medium">رفع فيديو وبوستر من الجهاز/الاستوديو</span>
                         </div>
 
-                        <form id="cinema-item-form" onsubmit="handleCinemaFormSubmit(event)" class="space-y-3">
+                        <form id="cinema-item-form" onsubmit="handleCinemaFormSubmit(event)" class="space-y-2.5 sm:space-y-3">
                             <input type="hidden" id="cinema-edit-id" value="">
                             
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
                                 <div>
-                                    <label class="block text-[10px] font-bold text-stone-600 mb-1">عنوان الفيديو البارز</label>
-                                    <input type="text" id="cinema-input-title" placeholder="مثال: حكاية كل خيط تحفة.. وصبر يصنع الفخامة" required class="w-full h-10 bg-white border border-stone-300 rounded-xl px-3 text-xs sm:text-sm text-stone-900 outline-none focus:border-brand shadow-2xs">
+                                    <label class="block text-[9.5px] sm:text-[10px] font-bold text-stone-600 mb-0.5 sm:mb-1">عنوان الفيديو البارز</label>
+                                    <input type="text" id="cinema-input-title" placeholder="مثال: حكاية كل خيط تحفة.. وصبر يصنع الفخامة" required class="w-full h-9 sm:h-10 bg-white border border-stone-300 rounded-xl px-2.5 sm:px-3 text-xs sm:text-sm text-stone-900 outline-none focus:border-brand shadow-2xs">
                                 </div>
                                 <div>
-                                    <label class="block text-[10px] font-bold text-stone-600 mb-1">الشارة الترويجية (Badge)</label>
-                                    <input type="text" id="cinema-input-subtitle" placeholder="مثال: ✨ أصالة المشغل اليدوي" required class="w-full h-10 bg-white border border-stone-300 rounded-xl px-3 text-xs sm:text-sm text-stone-900 outline-none focus:border-brand shadow-2xs">
+                                    <label class="block text-[9.5px] sm:text-[10px] font-bold text-stone-600 mb-0.5 sm:mb-1">الشارة الترويجية (Badge)</label>
+                                    <input type="text" id="cinema-input-subtitle" placeholder="مثال: ✨ أصالة المشغل اليدوي" required class="w-full h-9 sm:h-10 bg-white border border-stone-300 rounded-xl px-2.5 sm:px-3 text-xs sm:text-sm text-stone-900 outline-none focus:border-brand shadow-2xs">
                                 </div>
                             </div>
 
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
                                 <!-- رفع مقطع الفيديو مباشرة من الجهاز أو الاستوديو -->
                                 <div>
-                                    <label class="block text-[10px] font-bold text-stone-700 mb-1 flex items-center justify-between">
-                                        <span>🎬 مقطع الفيديو (من ملفات الجهاز أو استوديو الجوال)</span>
-                                        <span id="cinema-video-file-badge" class="text-[9px] text-stone-500 font-medium">MP4, WebM, MOV</span>
+                                    <label class="block text-[9.5px] sm:text-[10px] font-bold text-stone-700 mb-0.5 sm:mb-1 flex items-center justify-between">
+                                        <span>🎬 مقطع الفيديو (من الجهاز أو استوديو الجوال)</span>
+                                        <span id="cinema-video-file-badge" class="text-[8.5px] sm:text-[9px] text-stone-500 font-medium">MP4, MOV</span>
                                     </label>
-                                    <div class="p-3 bg-white border border-stone-300 rounded-xl shadow-2xs space-y-2">
+                                    <div class="p-2.5 sm:p-3 bg-white border border-stone-300 rounded-xl shadow-2xs space-y-2">
                                         <div class="flex items-center gap-2">
-                                            <label class="flex-1 cursor-pointer flex items-center justify-center gap-2 bg-gradient-to-r from-stone-900 to-stone-800 hover:from-black hover:to-stone-900 text-white text-xs font-bold py-2.5 px-3 rounded-xl transition shadow-2xs">
+                                            <label class="flex-1 cursor-pointer flex items-center justify-center gap-1.5 sm:gap-2 bg-gradient-to-r from-stone-900 to-stone-800 hover:from-black hover:to-stone-900 text-white text-[11px] sm:text-xs font-bold py-2 sm:py-2.5 px-3 rounded-xl transition shadow-2xs">
                                                 <span>🎥</span>
                                                 <span id="cinema-video-btn-text">اختيار مقطع من الجهاز / الاستوديو</span>
                                                 <input type="file" id="cinema-file-video" accept="video/mp4,video/webm,video/quicktime,video/*" class="hidden" onchange="handleCinemaVideoSelect(event)">
                                             </label>
                                         </div>
                                         <div id="cinema-video-preview-box" class="hidden space-y-1.5 pt-1">
-                                            <video id="cinema-video-preview-player" controls playsinline muted class="w-full max-h-36 rounded-lg bg-black object-cover"></video>
-                                            <div class="flex items-center justify-between text-[10px] text-stone-600 font-bold px-1">
-                                                <span id="cinema-video-info" class="truncate max-w-[200px]">فيديو جاهز</span>
-                                                <button type="button" onclick="clearCinemaVideoSelection()" class="text-rose-600 hover:text-rose-800 cursor-pointer">إلغاء المقطع</button>
+                                            <video id="cinema-video-preview-player" controls playsinline muted class="w-full max-h-32 sm:max-h-36 rounded-lg bg-black object-cover"></video>
+                                            <div class="flex items-center justify-between text-[9.5px] sm:text-[10px] text-stone-600 font-bold px-1">
+                                                <span id="cinema-video-info" class="truncate max-w-[180px] sm:max-w-[200px]">فيديو جاهز</span>
+                                                <button type="button" onclick="clearCinemaVideoSelection()" class="text-rose-600 hover:text-rose-800 cursor-pointer text-[10px]">إلغاء المقطع</button>
                                             </div>
                                         </div>
-                                        <div id="cinema-video-no-preview" class="text-[10px] text-stone-500 flex items-center gap-1.5 px-1">
+                                        <div id="cinema-video-no-preview" class="text-[9.5px] sm:text-[10px] text-stone-500 flex items-center gap-1.5 px-1">
                                             <span class="text-amber-600">ℹ️</span>
                                             <span id="cinema-video-status-text">اختر ملف فيديو من الكمبيوتر أو الاستوديو بالجوال</span>
                                         </div>
@@ -767,22 +767,22 @@
 
                                 <!-- رفع صورة غلاف الفيديو (Poster) مباشرة من الجهاز أو الاستوديو -->
                                 <div>
-                                    <label class="block text-[10px] font-bold text-stone-700 mb-1 flex items-center justify-between">
+                                    <label class="block text-[9.5px] sm:text-[10px] font-bold text-stone-700 mb-0.5 sm:mb-1 flex items-center justify-between">
                                         <span>📸 صورة غلاف الفيديو (Poster)</span>
-                                        <span class="text-[9px] text-stone-500 font-medium">الاستوديو / الملفات</span>
+                                        <span class="text-[8.5px] sm:text-[9px] text-stone-500 font-medium">الاستوديو / الملفات</span>
                                     </label>
-                                    <div class="p-3 bg-white border border-stone-300 rounded-xl shadow-2xs">
-                                        <div class="flex items-center gap-3">
-                                            <div class="relative w-14 h-14 rounded-xl overflow-hidden border border-stone-200 bg-stone-100 shrink-0">
+                                    <div class="p-2.5 sm:p-3 bg-white border border-stone-300 rounded-xl shadow-2xs">
+                                        <div class="flex items-center gap-2.5 sm:gap-3">
+                                            <div class="relative w-12 h-12 sm:w-14 sm:h-14 rounded-xl overflow-hidden border border-stone-200 bg-stone-100 shrink-0">
                                                 <img id="cinema-poster-preview" src="../images/craft_video_poster.jpg" alt="معاينة الغلاف" class="w-full h-full object-cover">
                                             </div>
-                                            <div class="flex-1 space-y-1.5">
-                                                <label class="cursor-pointer inline-flex items-center gap-1.5 bg-amber-50 hover:bg-amber-100 text-amber-950 border border-amber-300 text-xs font-bold py-1.5 px-3 rounded-xl transition shadow-2xs">
+                                            <div class="flex-1 space-y-1 sm:space-y-1.5">
+                                                <label class="cursor-pointer inline-flex items-center gap-1.5 bg-amber-50 hover:bg-amber-100 text-amber-950 border border-amber-300 text-[11px] sm:text-xs font-bold py-1.5 px-2.5 sm:px-3 rounded-xl transition shadow-2xs">
                                                     <span>🖼️</span>
                                                     <span>اختيار صورة الغلاف</span>
                                                     <input type="file" id="cinema-file-poster" accept="image/*" class="hidden" onchange="handleCinemaPosterSelect(event)">
                                                 </label>
-                                                <div id="cinema-poster-status" class="text-[10px] text-stone-500 truncate">صورة الغلاف الافتراضية</div>
+                                                <div id="cinema-poster-status" class="text-[9.5px] sm:text-[10px] text-stone-500 truncate">صورة الغلاف الافتراضية</div>
                                             </div>
                                         </div>
                                         <input type="hidden" id="cinema-input-posterurl" value="../images/craft_video_poster.jpg">
@@ -791,47 +791,47 @@
                             </div>
 
                             <div>
-                                <label class="block text-[10px] font-bold text-stone-600 mb-1">الاقتباس البلاغي عن المشغل</label>
-                                <textarea id="cinema-input-quote" rows="2" placeholder="«كل سجادة تخرج من دار تطريز ليست مجرد غطاء للأرضية...»" required class="w-full bg-white border border-stone-300 rounded-xl p-2.5 text-xs text-stone-900 outline-none focus:border-brand shadow-2xs"></textarea>
+                                <label class="block text-[9.5px] sm:text-[10px] font-bold text-stone-600 mb-0.5 sm:mb-1">الاقتباس البلاغي عن المشغل</label>
+                                <textarea id="cinema-input-quote" rows="2" placeholder="«كل سجادة تخرج من دار تطريز ليست مجرد غطاء للأرضية...»" required class="w-full bg-white border border-stone-300 rounded-xl p-2 sm:p-2.5 text-xs text-stone-900 outline-none focus:border-brand shadow-2xs"></textarea>
                             </div>
 
                             <div>
-                                <label class="block text-[10px] font-bold text-stone-600 mb-1">سطر التوثيق التوضيحي أسفل المشغل</label>
-                                <input type="text" id="cinema-input-caption" placeholder="مثال: توثيق حي لحركات الأنامل وشد الغرز اليدوية على الأنوال التقليدية" required class="w-full h-10 bg-white border border-stone-300 rounded-xl px-3 text-xs text-stone-900 outline-none focus:border-brand shadow-2xs">
+                                <label class="block text-[9.5px] sm:text-[10px] font-bold text-stone-600 mb-0.5 sm:mb-1">سطر التوثيق التوضيحي أسفل المشغل</label>
+                                <input type="text" id="cinema-input-caption" placeholder="مثال: توثيق حي لحركات الأنامل وشد الغرز اليدوية على الأنوال التقليدية" required class="w-full h-9 sm:h-10 bg-white border border-stone-300 rounded-xl px-2.5 sm:px-3 text-xs sm:text-sm text-stone-900 outline-none focus:border-brand shadow-2xs">
                             </div>
 
                             <!-- إحصائيات المشغل الثلاثة -->
-                            <div class="p-3 bg-stone-100/80 rounded-xl border border-stone-200 space-y-2">
-                                <span class="text-[11px] font-bold text-stone-700 block">إحصائيات الحرفة المصاحبة للفيديو:</span>
-                                <div class="grid grid-cols-3 gap-2">
+                            <div class="p-2.5 sm:p-3 bg-stone-100/80 rounded-xl border border-stone-200 space-y-1.5 sm:space-y-2">
+                                <span class="text-[10px] sm:text-[11px] font-bold text-stone-700 block">إحصائيات الحرفة المصاحبة للفيديو:</span>
+                                <div class="grid grid-cols-3 gap-1.5 sm:gap-2">
                                     <div>
-                                        <label class="block text-[10px] text-stone-500 mb-1">ساعات الحياكة</label>
-                                        <input type="text" id="cinema-input-hours" value="+500" class="w-full h-9 bg-white border border-stone-300 rounded-lg text-center text-xs font-bold text-stone-900">
+                                        <label class="block text-[9px] sm:text-[10px] text-stone-500 mb-0.5 sm:mb-1">ساعات الحياكة</label>
+                                        <input type="text" id="cinema-input-hours" value="+500" class="w-full h-8 sm:h-9 bg-white border border-stone-300 rounded-lg text-center text-xs font-bold text-stone-900">
                                     </div>
                                     <div>
-                                        <label class="block text-[10px] text-stone-500 mb-1">الخامات</label>
-                                        <input type="text" id="cinema-input-material" value="100%" class="w-full h-9 bg-white border border-stone-300 rounded-lg text-center text-xs font-bold text-stone-900">
+                                        <label class="block text-[9px] sm:text-[10px] text-stone-500 mb-0.5 sm:mb-1">الخامات</label>
+                                        <input type="text" id="cinema-input-material" value="100%" class="w-full h-8 sm:h-9 bg-white border border-stone-300 rounded-lg text-center text-xs font-bold text-stone-900">
                                     </div>
                                     <div>
-                                        <label class="block text-[10px] text-stone-500 mb-1">عُقد الحياكة</label>
-                                        <input type="text" id="cinema-input-knots" value="120K" class="w-full h-9 bg-white border border-stone-300 rounded-lg text-center text-xs font-bold text-stone-900">
+                                        <label class="block text-[9px] sm:text-[10px] text-stone-500 mb-0.5 sm:mb-1">عُقد الحياكة</label>
+                                        <input type="text" id="cinema-input-knots" value="120K" class="w-full h-8 sm:h-9 bg-white border border-stone-300 rounded-lg text-center text-xs font-bold text-stone-900">
                                     </div>
                                 </div>
                             </div>
 
                             <!-- تعيين كفيديو نشط -->
-                            <div class="flex items-center gap-2 pt-1">
+                            <div class="flex items-center gap-2 pt-0.5">
                                 <input type="checkbox" id="cinema-input-active" class="w-4 h-4 text-amber-600 rounded cursor-pointer accent-[#7c1d3c]">
-                                <label for="cinema-input-active" class="text-xs font-bold text-stone-800 cursor-pointer">
+                                <label for="cinema-input-active" class="text-[11px] sm:text-xs font-bold text-stone-800 cursor-pointer">
                                     تنشيط هذا الفيديو كفيديو معروض حالياً في سينما الحرفة
                                 </label>
                             </div>
 
-                            <div class="flex items-center gap-2 justify-end pt-1">
-                                <button type="button" id="cinema-cancel-edit-btn" onclick="cancelCinemaEdit()" class="hidden px-3.5 h-9 rounded-xl bg-stone-200 hover:bg-stone-300 text-stone-700 text-xs font-bold transition cursor-pointer">
+                            <div class="flex items-center gap-2 justify-end pt-0.5">
+                                <button type="button" id="cinema-cancel-edit-btn" onclick="cancelCinemaEdit()" class="hidden px-3 h-8 sm:h-9 rounded-xl bg-stone-200 hover:bg-stone-300 text-stone-700 text-[11px] sm:text-xs font-bold transition cursor-pointer">
                                     إلغاء التعديل
                                 </button>
-                                <button type="submit" id="cinema-submit-btn" class="btn-liquid-metal text-white font-bold text-xs h-9 px-4 rounded-xl shadow-xs transition flex items-center gap-1.5 cursor-pointer">
+                                <button type="submit" id="cinema-submit-btn" class="btn-liquid-metal text-white font-bold text-[11px] sm:text-xs h-8 sm:h-9 px-3.5 sm:px-4 rounded-xl shadow-xs transition flex items-center gap-1.5 cursor-pointer">
                                     <span>＋</span>
                                     <span id="cinema-submit-text">إضافة الفيديو للمشغل</span>
                                 </button>
@@ -840,9 +840,9 @@
                     </div>
 
                     <!-- قائمة الفيديوهات الحالية -->
-                    <div class="space-y-2">
-                        <span class="text-xs font-bold text-stone-800 block">فيديوهات المشغل المتاحة:</span>
-                        <div id="cinema-videos-list" class="space-y-2.5">
+                    <div class="space-y-1.5 sm:space-y-2">
+                        <span class="text-[11px] sm:text-xs font-bold text-stone-800 block">فيديوهات المشغل المتاحة:</span>
+                        <div id="cinema-videos-list" class="space-y-2">
                             <!-- تحقن الفيديوهات ديناميكياً -->
                         </div>
                     </div>
@@ -851,58 +851,58 @@
                 <!-- ========================================== -->
                 <!-- 3. تبويب مسار وخطوات الحرفة (Journey Steps) -->
                 <!-- ========================================== -->
-                <div id="tab-content-journey" class="showcase-tab-pane space-y-4 hidden">
+                <div id="tab-content-journey" class="showcase-tab-pane space-y-3 sm:space-y-4 hidden">
                     <!-- نموذج إضافة / تعديل خطوة -->
-                    <div class="p-3.5 sm:p-4 rounded-2xl bg-amber-50/60 border border-amber-200/70 space-y-3">
+                    <div class="p-3 sm:p-4 rounded-2xl bg-amber-50/50 border border-amber-200/70 space-y-2.5 sm:space-y-3">
                         <div class="flex items-center justify-between">
-                            <span class="text-xs font-bold text-amber-950 flex items-center gap-1.5">
+                            <span class="text-[11px] sm:text-xs font-bold text-amber-950 flex items-center gap-1.5">
                                 <span class="text-amber-700 font-black">🪜</span>
                                 <span id="journey-form-title">إضافة / تعديل خطوة في مسار الإنتاج:</span>
                             </span>
-                            <span class="text-[10px] text-amber-800 font-medium">الرقم + العنوان + الشرح + رفع الصورة من الجهاز/الاستوديو</span>
+                            <span class="hidden sm:inline text-[10px] text-amber-800 font-medium">الرقم + العنوان + الشرح + الصورة</span>
                         </div>
 
-                        <form id="journey-item-form" onsubmit="handleJourneyFormSubmit(event)" class="space-y-3">
+                        <form id="journey-item-form" onsubmit="handleJourneyFormSubmit(event)" class="space-y-2.5 sm:space-y-3">
                             <input type="hidden" id="journey-edit-id" value="">
                             
-                            <div class="grid grid-cols-1 sm:grid-cols-12 gap-2.5">
-                                <div class="sm:col-span-3">
-                                    <label class="block text-[10px] font-bold text-stone-600 mb-1">رقم الخطوة</label>
-                                    <input type="text" id="journey-input-num" placeholder="01" required class="w-full h-10 text-center font-number font-black text-sm bg-white border border-stone-300 rounded-xl outline-none focus:border-brand shadow-2xs">
+                            <div class="grid grid-cols-12 gap-2 sm:gap-2.5">
+                                <div class="col-span-3 sm:col-span-3">
+                                    <label class="block text-[9.5px] sm:text-[10px] font-bold text-stone-600 mb-0.5 sm:mb-1">رقم الخطوة</label>
+                                    <input type="text" id="journey-input-num" placeholder="01" required class="w-full h-9 sm:h-10 text-center font-number font-black text-xs sm:text-sm bg-white border border-stone-300 rounded-xl outline-none focus:border-brand shadow-2xs">
                                 </div>
-                                <div class="sm:col-span-9">
-                                    <label class="block text-[10px] font-bold text-stone-600 mb-1">عنوان الخطوة</label>
-                                    <input type="text" id="journey-input-title" placeholder="مثال: الرسم والتخطيط الرقمي" required class="w-full h-10 bg-white border border-stone-300 rounded-xl px-3 text-xs sm:text-sm text-stone-900 outline-none focus:border-brand shadow-2xs">
+                                <div class="col-span-9 sm:col-span-9">
+                                    <label class="block text-[9.5px] sm:text-[10px] font-bold text-stone-600 mb-0.5 sm:mb-1">عنوان الخطوة</label>
+                                    <input type="text" id="journey-input-title" placeholder="مثال: الرسم والتخطيط الرقمي" required class="w-full h-9 sm:h-10 bg-white border border-stone-300 rounded-xl px-2.5 sm:px-3 text-xs sm:text-sm text-stone-900 outline-none focus:border-brand shadow-2xs">
                                 </div>
                             </div>
 
                             <div>
-                                <label class="block text-[10px] font-bold text-stone-600 mb-1">شرح وتفاصيل ما يحدث في هذه المرحلة</label>
-                                <textarea id="journey-input-desc" rows="2" placeholder="تحويل رؤيتك الخاصة أو الزخارف التراثية إلى مخطط خيوط دقيق..." required class="w-full bg-white border border-stone-300 rounded-xl p-2.5 text-xs text-stone-900 outline-none focus:border-brand shadow-2xs"></textarea>
+                                <label class="block text-[9.5px] sm:text-[10px] font-bold text-stone-600 mb-0.5 sm:mb-1">شرح وتفاصيل ما يحدث في هذه المرحلة</label>
+                                <textarea id="journey-input-desc" rows="2" placeholder="تحويل رؤيتك الخاصة أو الزخارف التراثية إلى مخطط خيوط دقيق..." required class="w-full bg-white border border-stone-300 rounded-xl p-2 sm:p-2.5 text-xs text-stone-900 outline-none focus:border-brand shadow-2xs"></textarea>
                             </div>
 
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
                                 <div>
-                                    <label class="block text-[10px] font-bold text-stone-600 mb-1">الوسم السفلي (Tag)</label>
-                                    <input type="text" id="journey-input-tag" placeholder="مثال: 📐 دقة هندسية ومطابقة تامة" required class="w-full h-10 bg-white border border-stone-300 rounded-xl px-3 text-xs text-stone-900 outline-none focus:border-brand shadow-2xs">
+                                    <label class="block text-[9.5px] sm:text-[10px] font-bold text-stone-600 mb-0.5 sm:mb-1">الوسم السفلي (Tag)</label>
+                                    <input type="text" id="journey-input-tag" placeholder="مثال: 📐 دقة هندسية ومطابقة تامة" required class="w-full h-9 sm:h-10 bg-white border border-stone-300 rounded-xl px-2.5 sm:px-3 text-xs sm:text-sm text-stone-900 outline-none focus:border-brand shadow-2xs">
                                 </div>
                                 <div>
-                                    <label class="block text-[10px] font-bold text-stone-700 mb-1 flex items-center justify-between">
+                                    <label class="block text-[9.5px] sm:text-[10px] font-bold text-stone-700 mb-0.5 sm:mb-1 flex items-center justify-between">
                                         <span>🖼️ صورة الخطوة (من الجهاز / الاستوديو)</span>
-                                        <span class="text-[9px] text-stone-500 font-medium">الاستوديو / الملفات</span>
+                                        <span class="text-[8.5px] sm:text-[9px] text-stone-500 font-medium">الاستوديو / الملفات</span>
                                     </label>
-                                    <div class="p-2.5 bg-white border border-stone-300 rounded-xl shadow-2xs">
-                                        <div class="flex items-center gap-3">
-                                            <div class="relative w-12 h-12 rounded-xl overflow-hidden border border-stone-200 bg-stone-100 shrink-0">
+                                    <div class="p-2 sm:p-2.5 bg-white border border-stone-300 rounded-xl shadow-2xs">
+                                        <div class="flex items-center gap-2.5 sm:gap-3">
+                                            <div class="relative w-11 h-11 sm:w-12 sm:h-12 rounded-xl overflow-hidden border border-stone-200 bg-stone-100 shrink-0">
                                                 <img id="journey-img-preview" src="../images/step1_sketch.jpg" alt="معاينة الخطوة" class="w-full h-full object-cover">
                                             </div>
                                             <div class="flex-1 space-y-1">
-                                                <label class="cursor-pointer inline-flex items-center gap-1.5 bg-amber-50 hover:bg-amber-100 text-amber-950 border border-amber-300 text-xs font-bold py-1.5 px-3 rounded-xl transition shadow-2xs">
+                                                <label class="cursor-pointer inline-flex items-center gap-1.5 bg-amber-50 hover:bg-amber-100 text-amber-950 border border-amber-300 text-[11px] sm:text-xs font-bold py-1 sm:py-1.5 px-2.5 sm:px-3 rounded-xl transition shadow-2xs">
                                                     <span>📁</span>
                                                     <span>اختيار صورة الخطوة</span>
                                                     <input type="file" id="journey-file-img" accept="image/*" class="hidden" onchange="handleJourneyImgSelect(event)">
                                                 </label>
-                                                <div id="journey-img-status" class="text-[10px] text-stone-500 truncate">صورة الخطوة الحالية</div>
+                                                <div id="journey-img-status" class="text-[9.5px] sm:text-[10px] text-stone-500 truncate">صورة الخطوة الحالية</div>
                                             </div>
                                         </div>
                                         <input type="hidden" id="journey-input-img" value="../images/step1_sketch.jpg">
@@ -910,11 +910,11 @@
                                 </div>
                             </div>
 
-                            <div class="flex items-center gap-2 justify-end pt-1">
-                                <button type="button" id="journey-cancel-edit-btn" onclick="cancelJourneyEdit()" class="hidden px-3.5 h-9 rounded-xl bg-stone-200 hover:bg-stone-300 text-stone-700 text-xs font-bold transition cursor-pointer">
+                            <div class="flex items-center gap-2 justify-end pt-0.5">
+                                <button type="button" id="journey-cancel-edit-btn" onclick="cancelJourneyEdit()" class="hidden px-3 h-8 sm:h-9 rounded-xl bg-stone-200 hover:bg-stone-300 text-stone-700 text-[11px] sm:text-xs font-bold transition cursor-pointer">
                                     إلغاء التعديل
                                 </button>
-                                <button type="submit" id="journey-submit-btn" class="btn-liquid-metal text-white font-bold text-xs h-9 px-4 rounded-xl shadow-xs transition flex items-center gap-1.5 cursor-pointer">
+                                <button type="submit" id="journey-submit-btn" class="btn-liquid-metal text-white font-bold text-[11px] sm:text-xs h-8 sm:h-9 px-3.5 sm:px-4 rounded-xl shadow-xs transition flex items-center gap-1.5 cursor-pointer">
                                     <span>＋</span>
                                     <span id="journey-submit-text">إضافة الخطوة للمسار</span>
                                 </button>
@@ -923,9 +923,9 @@
                     </div>
 
                     <!-- قائمة الخطوات الحالية -->
-                    <div class="space-y-2">
-                        <span class="text-xs font-bold text-stone-800 block">خطوات الحرفة المعروضة حالياً:</span>
-                        <div id="journey-steps-list" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div class="space-y-1.5 sm:space-y-2">
+                        <span class="text-[11px] sm:text-xs font-bold text-stone-800 block">خطوات الحرفة المعروضة حالياً:</span>
+                        <div id="journey-steps-list" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3">
                             <!-- تحقن الخطوات ديناميكياً -->
                         </div>
                     </div>
@@ -934,43 +934,43 @@
                 <!-- ========================================== -->
                 <!-- 4. تبويب توثيق القطع وآراء العملاء (Lookbook) -->
                 <!-- ========================================== -->
-                <div id="tab-content-lookbook" class="showcase-tab-pane space-y-4 hidden">
+                <div id="tab-content-lookbook" class="showcase-tab-pane space-y-3 sm:space-y-4 hidden">
                     <!-- نموذج توثيق قطعة جديدة -->
-                    <div class="p-3.5 sm:p-4 rounded-2xl bg-amber-50/60 border border-amber-200/70 space-y-3">
+                    <div class="p-3 sm:p-4 rounded-2xl bg-amber-50/50 border border-amber-200/70 space-y-2.5 sm:space-y-3">
                         <div class="flex items-center justify-between">
-                            <span class="text-xs font-bold text-amber-950 flex items-center gap-1.5">
+                            <span class="text-[11px] sm:text-xs font-bold text-amber-950 flex items-center gap-1.5">
                                 <span class="text-amber-700 font-black">📸</span>
-                                <span id="lookbook-form-title">توثيق قطعة جديدة تخرج من المتجر (مع الرأي والتقييم):</span>
+                                <span id="lookbook-form-title">توثيق قطعة جديدة تخرج من المتجر:</span>
                             </span>
-                            <span class="text-[10px] text-amber-800 font-medium">رفع صورة التسليم من الاستوديو/الجهاز + التفاصيل</span>
+                            <span class="hidden sm:inline text-[10px] text-amber-800 font-medium">صورة التسليم من الاستوديو + التفاصيل</span>
                         </div>
 
-                        <form id="lookbook-item-form" onsubmit="handleLookbookFormSubmit(event)" class="space-y-3">
+                        <form id="lookbook-item-form" onsubmit="handleLookbookFormSubmit(event)" class="space-y-2.5 sm:space-y-3">
                             <input type="hidden" id="lookbook-edit-id" value="">
                             
-                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3">
                                 <div>
-                                    <label class="block text-[10px] font-bold text-stone-600 mb-1">اسم العميل / اللقب</label>
-                                    <input type="text" id="lookbook-input-client" placeholder="مثال: م. ريم البلوشية أو الشيخ أحمد" required class="w-full h-10 bg-white border border-stone-300 rounded-xl px-3 text-xs sm:text-sm text-stone-900 outline-none focus:border-brand shadow-2xs">
+                                    <label class="block text-[9.5px] sm:text-[10px] font-bold text-stone-600 mb-0.5 sm:mb-1">اسم العميل / اللقب</label>
+                                    <input type="text" id="lookbook-input-client" placeholder="مثال: م. ريم البلوشية أو الشيخ أحمد" required class="w-full h-9 sm:h-10 bg-white border border-stone-300 rounded-xl px-2.5 sm:px-3 text-xs sm:text-sm text-stone-900 outline-none focus:border-brand shadow-2xs">
                                 </div>
                                 <div>
-                                    <label class="block text-[10px] font-bold text-stone-600 mb-1">الموقع / البيئة (Location)</label>
-                                    <input type="text" id="lookbook-input-location" placeholder="مثال: فيلا عصرية • مسقط" required class="w-full h-10 bg-white border border-stone-300 rounded-xl px-3 text-xs sm:text-sm text-stone-900 outline-none focus:border-brand shadow-2xs">
+                                    <label class="block text-[9.5px] sm:text-[10px] font-bold text-stone-600 mb-0.5 sm:mb-1">الموقع / البيئة (Location)</label>
+                                    <input type="text" id="lookbook-input-location" placeholder="مثال: فيلا عصرية • مسقط" required class="w-full h-9 sm:h-10 bg-white border border-stone-300 rounded-xl px-2.5 sm:px-3 text-xs sm:text-sm text-stone-900 outline-none focus:border-brand shadow-2xs">
                                 </div>
                                 <div>
-                                    <label class="block text-[10px] font-bold text-stone-600 mb-1">اسم القطعة أو السجادة</label>
-                                    <input type="text" id="lookbook-input-carpet" placeholder="مثال: سجاد مرايا جداري متموج" required class="w-full h-10 bg-white border border-stone-300 rounded-xl px-3 text-xs sm:text-sm text-stone-900 outline-none focus:border-brand shadow-2xs">
+                                    <label class="block text-[9.5px] sm:text-[10px] font-bold text-stone-600 mb-0.5 sm:mb-1">اسم القطعة أو السجادة</label>
+                                    <input type="text" id="lookbook-input-carpet" placeholder="مثال: سجاد مرايا جداري متموج" required class="w-full h-9 sm:h-10 bg-white border border-stone-300 rounded-xl px-2.5 sm:px-3 text-xs sm:text-sm text-stone-900 outline-none focus:border-brand shadow-2xs">
                                 </div>
                             </div>
 
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
                                 <div>
-                                    <label class="block text-[10px] font-bold text-stone-600 mb-1">كيف تم طلب القطعة (نوع الطلب)</label>
-                                    <input type="text" id="lookbook-input-ordertype" placeholder="مثال: طلب تفصيل خاص أو عميل دار تطريز الدائم" required class="w-full h-10 bg-white border border-stone-300 rounded-xl px-3 text-xs sm:text-sm text-stone-900 outline-none focus:border-brand shadow-2xs">
+                                    <label class="block text-[9.5px] sm:text-[10px] font-bold text-stone-600 mb-0.5 sm:mb-1">كيف تم طلب القطعة (نوع الطلب)</label>
+                                    <input type="text" id="lookbook-input-ordertype" placeholder="مثال: طلب تفصيل خاص أو عميل دار تطريز الدائم" required class="w-full h-9 sm:h-10 bg-white border border-stone-300 rounded-xl px-2.5 sm:px-3 text-xs sm:text-sm text-stone-900 outline-none focus:border-brand shadow-2xs">
                                 </div>
                                 <div>
-                                    <label class="block text-[10px] font-bold text-stone-600 mb-1">التقييم بالنجوم</label>
-                                    <select id="lookbook-input-rating" class="w-full h-10 bg-white border border-stone-300 rounded-xl px-3 text-xs font-bold text-amber-700 outline-none focus:border-brand shadow-2xs">
+                                    <label class="block text-[9.5px] sm:text-[10px] font-bold text-stone-600 mb-0.5 sm:mb-1">التقييم بالنجوم</label>
+                                    <select id="lookbook-input-rating" class="w-full h-9 sm:h-10 bg-white border border-stone-300 rounded-xl px-2.5 sm:px-3 text-xs font-bold text-amber-700 outline-none focus:border-brand shadow-2xs">
                                         <option value="5">★★★★★ (5 نجوم - ممتاز ومرتفع جداً)</option>
                                         <option value="4">★★★★☆ (4 نجوم - جيد جداً)</option>
                                         <option value="3">★★★☆☆ (3 نجوم)</option>
@@ -979,38 +979,38 @@
                             </div>
 
                             <div>
-                                <label class="block text-[10px] font-bold text-stone-600 mb-1">تعليق وانطباع العميل الإيجابي</label>
-                                <textarea id="lookbook-input-review" rows="2" placeholder="القطعة تفوق كل التوقعات! ملمس الصوف المخملي مع الإطار..." required class="w-full bg-white border border-stone-300 rounded-xl p-2.5 text-xs text-stone-900 outline-none focus:border-brand shadow-2xs"></textarea>
+                                <label class="block text-[9.5px] sm:text-[10px] font-bold text-stone-600 mb-0.5 sm:mb-1">تعليق وانطباع العميل الإيجابي</label>
+                                <textarea id="lookbook-input-review" rows="2" placeholder="القطعة تفوق كل التوقعات! ملمس الصوف المخملي مع الإطار..." required class="w-full bg-white border border-stone-300 rounded-xl p-2 sm:p-2.5 text-xs text-stone-900 outline-none focus:border-brand shadow-2xs"></textarea>
                             </div>
 
                             <div>
-                                <label class="block text-[10px] font-bold text-stone-700 mb-1 flex items-center justify-between">
-                                    <span>📸 صورة توثيق تسليم القطعة (من ملفات الجهاز أو استوديو الجوال)</span>
-                                    <span class="text-[9px] text-stone-500 font-medium">الاستوديو / الملفات</span>
+                                <label class="block text-[9.5px] sm:text-[10px] font-bold text-stone-700 mb-0.5 sm:mb-1 flex items-center justify-between">
+                                    <span>📸 صورة توثيق تسليم القطعة (من الجهاز / الاستوديو)</span>
+                                    <span class="text-[8.5px] sm:text-[9px] text-stone-500 font-medium">الاستوديو / الملفات</span>
                                 </label>
-                                <div class="p-3 bg-white border border-stone-300 rounded-xl shadow-2xs">
-                                    <div class="flex items-center gap-3">
-                                        <div class="relative w-14 h-14 rounded-xl overflow-hidden border border-stone-200 bg-stone-100 shrink-0">
+                                <div class="p-2.5 sm:p-3 bg-white border border-stone-300 rounded-xl shadow-2xs">
+                                    <div class="flex items-center gap-2.5 sm:gap-3">
+                                        <div class="relative w-12 h-12 sm:w-14 sm:h-14 rounded-xl overflow-hidden border border-stone-200 bg-stone-100 shrink-0">
                                             <img id="lookbook-img-preview" src="../images/client_room1.jpg" alt="معاينة صورة التسليم" class="w-full h-full object-cover">
                                         </div>
-                                        <div class="flex-1 space-y-1.5">
-                                            <label class="cursor-pointer inline-flex items-center gap-1.5 bg-amber-50 hover:bg-amber-100 text-amber-950 border border-amber-300 text-xs font-bold py-1.5 px-3 rounded-xl transition shadow-2xs">
+                                        <div class="flex-1 space-y-1 sm:space-y-1.5">
+                                            <label class="cursor-pointer inline-flex items-center gap-1.5 bg-amber-50 hover:bg-amber-100 text-amber-950 border border-amber-300 text-[11px] sm:text-xs font-bold py-1.5 px-2.5 sm:px-3 rounded-xl transition shadow-2xs">
                                                 <span>📸</span>
                                                 <span>اختيار صورة من الجهاز / الاستوديو</span>
                                                 <input type="file" id="lookbook-file-img" accept="image/*" class="hidden" onchange="handleLookbookImgSelect(event)">
                                             </label>
-                                            <div id="lookbook-img-status" class="text-[10px] text-stone-500 truncate">صورة توثيق تسليم القطعة الحالية</div>
+                                            <div id="lookbook-img-status" class="text-[9.5px] sm:text-[10px] text-stone-500 truncate">صورة توثيق تسليم القطعة الحالية</div>
                                         </div>
                                     </div>
                                     <input type="hidden" id="lookbook-input-img" value="../images/client_room1.jpg">
                                 </div>
                             </div>
 
-                            <div class="flex items-center gap-2 justify-end pt-1">
-                                <button type="button" id="lookbook-cancel-edit-btn" onclick="cancelLookbookEdit()" class="hidden px-3.5 h-9 rounded-xl bg-stone-200 hover:bg-stone-300 text-stone-700 text-xs font-bold transition cursor-pointer">
+                            <div class="flex items-center gap-2 justify-end pt-0.5">
+                                <button type="button" id="lookbook-cancel-edit-btn" onclick="cancelLookbookEdit()" class="hidden px-3 h-8 sm:h-9 rounded-xl bg-stone-200 hover:bg-stone-300 text-stone-700 text-[11px] sm:text-xs font-bold transition cursor-pointer">
                                     إلغاء التعديل
                                 </button>
-                                <button type="submit" id="lookbook-submit-btn" class="btn-liquid-metal text-white font-bold text-xs h-9 px-4 rounded-xl shadow-xs transition flex items-center gap-1.5 cursor-pointer">
+                                <button type="submit" id="lookbook-submit-btn" class="btn-liquid-metal text-white font-bold text-[11px] sm:text-xs h-8 sm:h-9 px-3.5 sm:px-4 rounded-xl shadow-xs transition flex items-center gap-1.5 cursor-pointer">
                                     <span>📸</span>
                                     <span id="lookbook-submit-text">توثيق وحفظ القطعة</span>
                                 </button>
@@ -1019,9 +1019,9 @@
                     </div>
 
                     <!-- قائمة التوثيقات الحالية -->
-                    <div class="space-y-2">
-                        <span class="text-xs font-bold text-stone-800 block">التوثيقات وآراء العملاء المعروضة:</span>
-                        <div id="lookbook-items-list" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div class="space-y-1.5 sm:space-y-2">
+                        <span class="text-[11px] sm:text-xs font-bold text-stone-800 block">التوثيقات وآراء العملاء المعروضة:</span>
+                        <div id="lookbook-items-list" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3">
                             <!-- تحقن التوثيقات ديناميكياً -->
                         </div>
                     </div>
@@ -1029,13 +1029,14 @@
 
             </div>
 
-            <!-- ذيل النافذة الإدارية -->
-            <div class="pt-3 border-t border-stone-200/80 flex items-center justify-between text-xs text-stone-500 shrink-0">
-                <span class="flex items-center gap-1.5 font-medium">
+            <!-- ذيل النافذة الإدارية (موجز وأنيق على الجوال) -->
+            <div class="pt-2.5 sm:pt-3 border-t border-stone-200/80 flex items-center justify-between text-xs text-stone-500 shrink-0">
+                <span class="flex items-center gap-1 sm:gap-1.5 font-medium text-[10px] sm:text-xs text-stone-500">
                     <span>✨</span>
-                    <span>كافة التغييرات تنعكس وتُحفظ سحابياً على Firebase فوراً وتصل لكل الزوار لحظياً.</span>
+                    <span class="hidden sm:inline">كافة التغييرات تنعكس وتُحفظ سحابياً على Firebase فوراً وتصل لكل الزوار لحظياً.</span>
+                    <span class="sm:hidden text-stone-400">مزامنة سحابية فورية ومباشرة</span>
                 </span>
-                <button type="button" onclick="closeShowcaseManagerModal()" class="px-4 py-1.5 rounded-xl bg-stone-200 hover:bg-stone-300 text-stone-800 font-bold transition cursor-pointer">
+                <button type="button" onclick="closeShowcaseManagerModal()" class="px-3.5 sm:px-4 py-1.5 rounded-xl bg-stone-200 hover:bg-stone-300 text-stone-800 text-xs font-bold transition cursor-pointer">
                     إغلاق
                 </button>
             </div>
