@@ -57,7 +57,8 @@ import {
     openCurrentLogoLightbox, 
     closeLightbox, 
     handleLightboxScroll, 
-    showToast 
+    showToast,
+    showVideoProgressToast 
 } from './modals.js';
 
 import { 
@@ -1276,6 +1277,7 @@ window.portalExportBackup = function() {
 let showcaseState = null;
 let currentShowcaseTab = 'marquee';
 let pendingCinemaVideoFile = null;
+let pendingCinemaVideoIsVertical = null;
 let pendingCinemaPosterFile = null;
 let pendingJourneyImgFile = null;
 let pendingLookbookImgFile = null;
@@ -1636,6 +1638,7 @@ export function handleCinemaVideoSelect(event) {
     }
 
     pendingCinemaVideoFile = file;
+    pendingCinemaVideoIsVertical = null;
 
     const previewBox = document.getElementById('cinema-video-preview-box');
     const previewPlayer = document.getElementById('cinema-video-preview-player');
@@ -1647,6 +1650,14 @@ export function handleCinemaVideoSelect(event) {
 
     if (previewPlayer) {
         previewPlayer.src = URL.createObjectURL(file);
+        previewPlayer.onloadedmetadata = () => {
+            const isVert = previewPlayer.videoHeight > previewPlayer.videoWidth;
+            pendingCinemaVideoIsVertical = isVert;
+            if (videoInfo) {
+                const ratioText = isVert ? '📱 تصوير عمودي (كامل)' : '🖥️ تصوير أفقي (عرض كامل)';
+                videoInfo.innerText = `🎥 ${file.name} (${sizeMB} MB) • ${ratioText}`;
+            }
+        };
         previewPlayer.load();
     }
     if (previewBox) previewBox.classList.remove('hidden');
@@ -1659,6 +1670,7 @@ export function handleCinemaVideoSelect(event) {
 
 export function clearCinemaVideoSelection() {
     pendingCinemaVideoFile = null;
+    pendingCinemaVideoIsVertical = null;
     const fileInput = document.getElementById('cinema-file-video');
     if (fileInput) fileInput.value = '';
 
@@ -1742,26 +1754,57 @@ export async function handleCinemaFormSubmit(e) {
     try {
         const vidId = editId || ('vid-' + Date.now());
 
+        let progressInterval = null;
+        let currentProgress = 10;
+
         // إذا اختار المسؤول ملف فيديو جديد من جهازه:
         if (pendingCinemaVideoFile) {
-            showToast('جاري حفظ وتشفير مقطع الفيديو من جهازك...', 'info', 'معالجة الفيديو', 15000, 'cinema-video-progress');
+            showVideoProgressToast(12, 'جاري قراءة وتجهيز الفيديو من الجهاز...');
+            progressInterval = setInterval(() => {
+                if (currentProgress < 85) {
+                    currentProgress += Math.floor(Math.random() * 6) + 3;
+                    showVideoProgressToast(Math.min(88, currentProgress), 'جاري معالجة وتشفير المقطع...');
+                }
+            }, 260);
+
             const savedVidUrl = await uploadCarpetVideo(vidId, pendingCinemaVideoFile, (msg) => {
-                showToast(msg, 'info', 'معالجة الفيديو', 15000, 'cinema-video-progress');
+                const match = msg.match(/(\d+)%/);
+                if (match) {
+                    const p = parseInt(match[1], 10);
+                    currentProgress = Math.max(currentProgress, Math.min(96, p));
+                    showVideoProgressToast(currentProgress, msg);
+                } else {
+                    showVideoProgressToast(currentProgress, msg);
+                }
             });
+
+            if (progressInterval) clearInterval(progressInterval);
+
             if (savedVidUrl) {
                 videoUrl = savedVidUrl;
-                showToast('تم حفظ وتجهيز الفيديو بنجاح! 100%', 'success', 'معالجة الفيديو', 2200, 'cinema-video-progress');
+                showVideoProgressToast(92, 'تم تجهيز المقطع، جاري حفظ البيانات...');
             }
+        } else if (editId) {
+            // في حال تعديل بيانات الفيديو القائم دون رفع ملف جديد
+            showVideoProgressToast(25, 'جاري تحديث بيانات المشهد والفيديو...');
+            progressInterval = setInterval(() => {
+                if (currentProgress < 88) {
+                    currentProgress += 15;
+                    showVideoProgressToast(currentProgress, 'جاري مزامنة بيانات الفيديو...');
+                }
+            }, 180);
         }
 
         // إذا اختار صورة غلاف جديدة من جهازه:
         if (pendingCinemaPosterFile) {
-            showToast('جاري معالجة صورة الغلاف...', 'info', 'غلاف الفيديو');
+            if (currentProgress < 90) currentProgress = 90;
+            showVideoProgressToast(currentProgress, 'جاري معالجة صورة الغلاف...');
             const savedPoster = await uploadShowcaseImage(pendingCinemaPosterFile, 'cinema_posters');
             if (savedPoster) posterUrl = savedPoster;
         }
 
         if (!videoUrl) {
+            if (progressInterval) clearInterval(progressInterval);
             showToast('تعذر حفظ مقطع الفيديو، يرجى إعادة المحاولة.', 'error', 'خطأ');
             if (submitBtn) { submitBtn.disabled = false; submitBtn.innerHTML = origBtnHtml; }
             return;
@@ -1776,6 +1819,7 @@ export async function handleCinemaFormSubmit(e) {
         if (editId) {
             updatedVideos = updatedVideos.map(v => {
                 if (v.id === editId) {
+                    const finalIsVertical = pendingCinemaVideoIsVertical !== null ? pendingCinemaVideoIsVertical : (v.isVertical !== undefined ? v.isVertical : false);
                     return {
                         ...v,
                         title,
@@ -1785,12 +1829,14 @@ export async function handleCinemaFormSubmit(e) {
                         quote,
                         caption,
                         stats: { hours, material, knots },
-                        isActive: shouldBeActive ? true : v.isActive
+                        isActive: shouldBeActive ? true : v.isActive,
+                        isVertical: finalIsVertical
                     };
                 }
                 return v;
             });
-            await syncShowcaseState({ ...showcaseState, cinemaVideos: updatedVideos }, 'تم تعديل فيديو المشغل بنجاح');
+            // نمرر null حتى لا يصدر syncShowcaseState أي تنبيه ثانٍ يتكدس على الشاشة
+            await syncShowcaseState({ ...showcaseState, cinemaVideos: updatedVideos }, null);
         } else {
             const isFirst = updatedVideos.length === 0;
             const newVid = {
@@ -1802,11 +1848,16 @@ export async function handleCinemaFormSubmit(e) {
                 quote,
                 caption,
                 stats: { hours, material, knots },
-                isActive: shouldBeActive || isFirst
+                isActive: shouldBeActive || isFirst,
+                isVertical: pendingCinemaVideoIsVertical === true
             };
             updatedVideos.push(newVid);
-            await syncShowcaseState({ ...showcaseState, cinemaVideos: updatedVideos }, 'تمت إضافة الفيديو الجديد للمشغل من جهازك');
+            await syncShowcaseState({ ...showcaseState, cinemaVideos: updatedVideos }, null);
         }
+
+        if (progressInterval) clearInterval(progressInterval);
+        // التنبيه الوحيد المتصاعد الذي يكتمل بنسبة 100% ويقفل المعالجة
+        showVideoProgressToast(100, editId ? 'تم تعديل وحفظ الفيديو بنجاح! 100%' : 'تمت إضافة ومعالجة الفيديو بنجاح! 100%', true);
 
         cancelCinemaEdit();
     } catch (err) {
@@ -1833,6 +1884,7 @@ export function startCinemaEdit(id) {
     if (!vid) return;
 
     pendingCinemaVideoFile = null;
+    pendingCinemaVideoIsVertical = vid.isVertical !== undefined ? vid.isVertical : null;
     pendingCinemaPosterFile = null;
 
     const idInput = document.getElementById('cinema-edit-id');
@@ -1906,6 +1958,7 @@ export function startCinemaEdit(id) {
 export function cancelCinemaEdit() {
     clearCinemaVideoSelection();
     pendingCinemaPosterFile = null;
+    pendingCinemaVideoIsVertical = null;
 
     const idInput = document.getElementById('cinema-edit-id');
     const titleInput = document.getElementById('cinema-input-title');

@@ -34,7 +34,100 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 // ==========================================
-// نظام الإشعارات الفاخرة المحدث (Luxury Toast Notifications with In-Place Progress)
+// نافذة تقدم معالجة الفيديو الحصرية (Single Video Progress HUD)
+// تضمن ظهور إشعار واحد فقط لا يتكرر أبداً وتتصاعد نسبته من 0% حتى 100%
+// ==========================================
+let _videoProgressToastEl = null;
+let _videoProgressTimeout = null;
+
+export function showVideoProgressToast(percent, message = '', isDone = false) {
+    let container = document.getElementById('toast-container');
+    if (!container) {
+        container = document.createElement('div');
+        container.id = 'toast-container';
+        document.body.appendChild(container);
+    }
+
+    window._isVideoProgressActive = !isDone;
+
+    const safePercent = Math.min(100, Math.max(0, Math.round(Number(percent) || 0)));
+    const defaultMsg = message || (isDone ? 'تم اكتمال معالجة وحفظ الفيديو بنجاح!' : 'جاري معالجة وتشفير الفيديو...');
+
+    // مسح أي إشعارات سابقة أخرى لتنظيف الشاشة وحصر التركيز في هذا الإشعار الفردي
+    const otherToasts = container.querySelectorAll('.tatr-toast:not([data-toast-id="cinema-video-progress"])');
+    otherToasts.forEach(t => {
+        try { container.removeChild(t); } catch (e) {}
+    });
+
+    if (!_videoProgressToastEl || !container.contains(_videoProgressToastEl)) {
+        _videoProgressToastEl = document.createElement('div');
+        _videoProgressToastEl.setAttribute('data-toast-id', 'cinema-video-progress');
+        _videoProgressToastEl.className = 'tatr-toast toast-info';
+        container.appendChild(_videoProgressToastEl);
+    }
+
+    if (isDone || safePercent >= 100) {
+        _videoProgressToastEl.className = 'tatr-toast toast-success';
+    } else {
+        _videoProgressToastEl.className = 'tatr-toast toast-info';
+    }
+
+    const iconSvg = (isDone || safePercent >= 100) 
+        ? `<svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>`
+        : `<svg class="w-5 h-5 text-amber-600 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>`;
+
+    const titleText = (isDone || safePercent >= 100) ? 'اكتملت معالجة الفيديو' : 'معالجة وتجهيز الفيديو';
+
+    _videoProgressToastEl.innerHTML = `
+        <div class="tatr-toast-icon-wrapper">
+            ${iconSvg}
+        </div>
+        <div class="tatr-toast-body flex-1 min-w-0">
+            <div class="flex items-center justify-between gap-2">
+                <span class="tatr-toast-title font-bold">${titleText}</span>
+                <span class="font-number font-black text-xs px-2 py-0.5 rounded-full ${isDone || safePercent >= 100 ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">${safePercent}%</span>
+            </div>
+            <span class="tatr-toast-msg block text-xs mt-0.5 text-stone-600 truncate">${defaultMsg}</span>
+            <div class="w-full bg-stone-200/80 rounded-full h-2 mt-2 overflow-hidden">
+                <div class="tatr-toast-live-bar ${isDone || safePercent >= 100 ? 'bg-emerald-500' : 'bg-amber-500'} h-full transition-all duration-200 rounded-full" style="width: ${safePercent}%;"></div>
+            </div>
+        </div>
+        <button class="tatr-toast-close" title="إغلاق">✕</button>
+    `;
+
+    const closeBtn = _videoProgressToastEl.querySelector('.tatr-toast-close');
+    if (closeBtn) {
+        closeBtn.onclick = () => {
+            window._isVideoProgressActive = false;
+            if (_videoProgressToastEl && _videoProgressToastEl.parentNode) {
+                _videoProgressToastEl.parentNode.removeChild(_videoProgressToastEl);
+            }
+            _videoProgressToastEl = null;
+        };
+    }
+
+    if (_videoProgressTimeout) {
+        clearTimeout(_videoProgressTimeout);
+    }
+
+    if (isDone || safePercent >= 100) {
+        _videoProgressTimeout = setTimeout(() => {
+            window._isVideoProgressActive = false;
+            if (_videoProgressToastEl) {
+                _videoProgressToastEl.classList.add('toast-hiding');
+                setTimeout(() => {
+                    if (_videoProgressToastEl && _videoProgressToastEl.parentNode) {
+                        _videoProgressToastEl.parentNode.removeChild(_videoProgressToastEl);
+                    }
+                    _videoProgressToastEl = null;
+                }, 300);
+            }
+        }, 1800);
+    }
+}
+
+// ==========================================
+// نظام الإشعارات الفاخرة المحدث (Luxury Toast Notifications)
 // ==========================================
 export function showToast(message, type = 'success', title = '', duration = 3500, toastId = null) {
     let container = document.getElementById('toast-container');
@@ -44,17 +137,24 @@ export function showToast(message, type = 'success', title = '', duration = 3500
         document.body.appendChild(container);
     }
 
-    // التعرف التلقائي على إشعارات رفع ومعالجة الفيديو لتوحيدها ومنع تكدسها على الجوال
+    // إذا كان تنبيه تقدم الفيديو نشطاً في الشاشة، نحجب أي إشعارات ثانوية أخرى حتى لا تتكدس إطلاقاً
+    if (window._isVideoProgressActive && !toastId) {
+        return;
+    }
+
+    // التعرف التلقائي على إشعارات رفع ومعالجة الفيديو وتوجيهها حصرياً لمؤشر التقدم الفردي
     const isVideoProgress = toastId === 'cinema-video-progress' || 
                             toastId === 'carpet-video-progress' || 
                             (title && (title.includes('معالجة الفيديو') || title.includes('حفظ الفيديو'))) ||
                             (message && (message.includes('رفع الفيديو') || message.includes('معالجة الفيديو')));
 
-    const finalToastId = toastId || (isVideoProgress ? 'video-upload-progress' : null);
-
-    // فحص ما إذا كان هناك نسبة مئوية في الرسالة (مثل 45%)
-    const percentMatch = message ? message.match(/(\d{1,3})%/) : null;
-    const progressPercent = percentMatch ? parseInt(percentMatch[1], 10) : null;
+    if (isVideoProgress) {
+        const percentMatch = message ? message.match(/(\d{1,3})%/) : null;
+        const progressPercent = percentMatch ? parseInt(percentMatch[1], 10) : (type === 'success' ? 100 : 0);
+        const isDone = type === 'success' || (progressPercent >= 100);
+        showVideoProgressToast(progressPercent, message, isDone);
+        return;
+    }
 
     let iconSvg = '';
     let defaultTitle = title;
@@ -69,62 +169,12 @@ export function showToast(message, type = 'success', title = '', duration = 3500
         defaultTitle = defaultTitle || 'خطأ';
         iconSvg = `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>`;
     } else {
-        defaultTitle = defaultTitle || (isVideoProgress ? 'معالجة الفيديو' : 'معلومة');
+        defaultTitle = defaultTitle || 'معلومة';
         iconSvg = `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`;
     }
 
-    // في حال وجود معرف مسبق للإشعار في الشاشة، نقوم بتحديثه في مكانه فوراً دون إضافة عنصر جديد
-    if (finalToastId) {
-        const existingToast = container.querySelector(`[data-toast-id="${finalToastId}"]`);
-        if (existingToast) {
-            existingToast.className = `tatr-toast toast-${type}`;
-            const iconWrapper = existingToast.querySelector('.tatr-toast-icon-wrapper');
-            if (iconWrapper) iconWrapper.innerHTML = iconSvg;
-            
-            const titleEl = existingToast.querySelector('.tatr-toast-title');
-            if (titleEl && defaultTitle) titleEl.innerText = defaultTitle;
-
-            const msgEl = existingToast.querySelector('.tatr-toast-msg');
-            if (msgEl) msgEl.innerText = message;
-
-            // تحديث شريط التقدم المرئي إن وُجد
-            let progressTrack = existingToast.querySelector('.tatr-toast-live-bar');
-            if (progressPercent !== null) {
-                if (!progressTrack) {
-                    const bodyEl = existingToast.querySelector('.tatr-toast-body');
-                    if (bodyEl) {
-                        const barContainer = document.createElement('div');
-                        barContainer.className = 'w-full bg-stone-200/80 rounded-full h-1.5 mt-2 overflow-hidden';
-                        barContainer.innerHTML = `<div class="tatr-toast-live-bar bg-amber-500 h-full transition-all duration-150" style="width: ${progressPercent}%;"></div>`;
-                        bodyEl.appendChild(barContainer);
-                    }
-                } else {
-                    progressTrack.style.width = `${progressPercent}%`;
-                }
-            }
-
-            // إعادة ضبط مؤقت الإزالة
-            if (existingToast._removeTimeout) {
-                clearTimeout(existingToast._removeTimeout);
-            }
-
-            // إذا كانت العملية قيد المعالجة (info ولم تصل لـ 100%)، نبقيها ظاهرة
-            // وإذا اكتملت أو حدث خطأ، نحدد مهلة مناسبة للاختفاء
-            if (type === 'success' || (progressPercent !== null && progressPercent >= 100)) {
-                existingToast._removeTimeout = setTimeout(() => {
-                    if (existingToast._removeFn) existingToast._removeFn();
-                }, 2200);
-            } else if (type === 'error') {
-                existingToast._removeTimeout = setTimeout(() => {
-                    if (existingToast._removeFn) existingToast._removeFn();
-                }, 4000);
-            }
-            return;
-        }
-    }
-
-    // التأكد من عدم تجاوز سقف الإشعارات (حد أقصى 3 إشعارات) لتجنب امتلاء شاشات الجوال
-    while (container.children.length >= 3) {
+    // التأكد من عدم تجاوز سقف الإشعارات (حد أقصى إشعارين عاديين) لمنع أي تراكم
+    while (container.children.length >= 2) {
         const oldest = container.firstElementChild;
         if (oldest && oldest._removeFn) {
             oldest._removeFn();
@@ -137,15 +187,9 @@ export function showToast(message, type = 'success', title = '', duration = 3500
 
     const toast = document.createElement('div');
     toast.className = `tatr-toast toast-${type}`;
-    if (finalToastId) {
-        toast.setAttribute('data-toast-id', finalToastId);
+    if (toastId) {
+        toast.setAttribute('data-toast-id', toastId);
     }
-
-    const progressBarHtml = progressPercent !== null ? `
-        <div class="w-full bg-stone-200/80 rounded-full h-1.5 mt-2 overflow-hidden">
-            <div class="tatr-toast-live-bar bg-amber-500 h-full transition-all duration-150" style="width: ${progressPercent}%;"></div>
-        </div>
-    ` : '';
 
     toast.innerHTML = `
         <div class="tatr-toast-icon-wrapper">
@@ -154,7 +198,6 @@ export function showToast(message, type = 'success', title = '', duration = 3500
         <div class="tatr-toast-body">
             <span class="tatr-toast-title">${defaultTitle}</span>
             <span class="tatr-toast-msg">${message}</span>
-            ${progressBarHtml}
         </div>
         <button class="tatr-toast-close" title="إغلاق">✕</button>
         <div class="tatr-toast-progress" style="animation-duration: ${duration}ms;"></div>
@@ -177,15 +220,12 @@ export function showToast(message, type = 'success', title = '', duration = 3500
     closeBtn.addEventListener('click', removeToast);
     container.appendChild(toast);
 
-    if (finalToastId && type === 'info' && (progressPercent === null || progressPercent < 100)) {
-        toast._removeTimeout = setTimeout(removeToast, 60000);
-    } else {
-        toast._removeTimeout = setTimeout(removeToast, duration);
-    }
+    toast._removeTimeout = setTimeout(removeToast, duration);
 }
 
 if (typeof window !== 'undefined') {
     window.showToast = showToast;
+    window.showVideoProgressToast = showVideoProgressToast;
     window.openOptionsDrawer = openOptionsDrawer;
     window.closeOptionsDrawer = closeOptionsDrawer;
 }

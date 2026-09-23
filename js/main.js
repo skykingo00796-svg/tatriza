@@ -1206,6 +1206,27 @@ function renderDynamicCinema(videos) {
     initCinemaSwipeGestures();
 }
 
+function checkAndUpdateVideoOrientation(videoEl) {
+    if (!videoEl) return;
+    const screenBox = document.getElementById('cinema-screen-box');
+    if (!screenBox) return;
+
+    const w = videoEl.videoWidth || 0;
+    const h = videoEl.videoHeight || 0;
+
+    if (w > 0 && h > 0) {
+        if (h > w) {
+            // تصوير عمودي (Vertical / Portrait) - يظهر بحجمه الطبيعي الكامل دون أي قص أو تمديد
+            screenBox.classList.add('is-vertical-cinema');
+            screenBox.classList.remove('aspect-video');
+        } else {
+            // تصوير أفقي اعتيادي (Landscape Widescreen 16:9)
+            screenBox.classList.remove('is-vertical-cinema');
+            screenBox.classList.add('aspect-video');
+        }
+    }
+}
+
 function setCinemaVideoSource(targetUrl, posterUrl, autoPlay = false) {
     const videoEl = document.getElementById('atelier-cinema-video');
     if (!videoEl) return;
@@ -1232,11 +1253,28 @@ function setCinemaVideoSource(targetUrl, posterUrl, autoPlay = false) {
 
     if (posterUrl) {
         videoEl.poster = posterUrl;
+        const ambientBackdrop = document.getElementById('cinema-ambient-backdrop');
+        if (ambientBackdrop) {
+            ambientBackdrop.src = posterUrl;
+        }
+    }
+
+    // مراقبة أبعاد الفيديو فور تحميل البيانات الوصفية (Metadata) لتحديد ما إذا كان عمودياً أو أفقياً
+    if (!videoEl._orientationBound) {
+        videoEl._orientationBound = true;
+        videoEl.addEventListener('loadedmetadata', () => {
+            checkAndUpdateVideoOrientation(videoEl);
+        });
     }
 
     if (targetUrl) {
         videoEl.src = targetUrl;
         videoEl.load();
+    }
+
+    // فحص فوري إن كانت الأبعاد متوفرة مسبقاً في الذاكرة المؤقتة
+    if (videoEl.videoWidth && videoEl.videoHeight) {
+        checkAndUpdateVideoOrientation(videoEl);
     }
 
     const playIcon = document.getElementById('cinema-play-icon');
@@ -1274,6 +1312,18 @@ function applyActiveCinemaContent(autoPlay = false) {
     const vid = currentCinemaVideos[activeCinemaIndex];
     if (!vid) return;
 
+    // إذا كان المقطع معرفاً مسبقاً بأنه عمودي أو أفقي نطبقه فوراً لتجنب أي وميض
+    const screenBox = document.getElementById('cinema-screen-box');
+    if (screenBox) {
+        if (vid.isVertical === true) {
+            screenBox.classList.add('is-vertical-cinema');
+            screenBox.classList.remove('aspect-video');
+        } else if (vid.isVertical === false) {
+            screenBox.classList.remove('is-vertical-cinema');
+            screenBox.classList.add('aspect-video');
+        }
+    }
+
     const liveBadge = document.getElementById('cinema-display-livebadge');
     const subtitleEl = document.getElementById('cinema-display-subtitle');
     const titleEl = document.getElementById('cinema-display-title');
@@ -1299,6 +1349,11 @@ function applyActiveCinemaContent(autoPlay = false) {
     // تحميل الفيديو والمصدر الصحيح دون أي وسوم source معارضة
     const defaultFallbackVideo = "https://upload.wikimedia.org/wikipedia/commons/1/13/Weaving_Carpet_at_Lachen.webm";
     const posterUrl = vid.posterUrl || '../images/craft_video_poster.jpg';
+
+    const ambientBackdrop = document.getElementById('cinema-ambient-backdrop');
+    if (ambientBackdrop && posterUrl) {
+        ambientBackdrop.src = posterUrl;
+    }
 
     if (vid.videoUrl && vid.videoUrl.startsWith('idb://video_')) {
         getVideoFromIndexedDB(vid.videoUrl).then(blobUrl => {
