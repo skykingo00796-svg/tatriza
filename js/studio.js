@@ -428,6 +428,131 @@ export function getMinimalHandlePreviewHtml() {
     `;
 }
 
+export function getStoryLogoPreviewHtml() {
+    if (!studioState.showLogo) return '';
+    const logoOption = STUDIO_LOGO_OPTIONS[studioState.logoVariant] || STUDIO_LOGO_OPTIONS['white'];
+    const sizeClasses = {
+        'small': 'w-12 h-12 sm:w-14 sm:h-14',
+        'medium': 'w-18 h-18 sm:w-22 sm:h-22',
+        'large': 'w-26 h-26 sm:w-30 sm:h-30'
+    };
+    const sizeClass = sizeClasses[studioState.logoSize || 'medium'] || sizeClasses['medium'];
+    const opacityStyle = `opacity: ${(studioState.logoOpacity || 100) / 100};`;
+    const topY = studioState.storyLogoOffsetY || 25;
+
+    let positionStyle = '';
+    if (studioState.storyLogoAlign === 'right') {
+        positionStyle = `top: ${topY}px; right: 24px;`;
+    } else if (studioState.storyLogoAlign === 'left') {
+        positionStyle = `top: ${topY}px; left: 24px;`;
+    } else {
+        const offsetPercent = studioState.storyLogoOffsetPercent || 0;
+        positionStyle = `top: ${topY}px; left: calc(50% + ${offsetPercent}%); transform: translateX(-50%);`;
+    }
+
+    if (studioState.logoVariant === 'custom') {
+        const color = studioState.logoCustomColor || '#fef08a';
+        return `
+            <div class="absolute z-20 pointer-events-none transition-all duration-150" style="${positionStyle}">
+                <div 
+                    class="${sizeClass} drop-shadow-md select-none" 
+                    style="background-color: ${color}; -webkit-mask-image: url('../images/logo_white.png'); -webkit-mask-size: contain; -webkit-mask-repeat: no-repeat; -webkit-mask-position: center; mask-image: url('../images/logo_white.png'); mask-size: contain; mask-repeat: no-repeat; mask-position: center; ${opacityStyle}">
+                </div>
+            </div>
+        `;
+    }
+
+    const blendStyle = studioState.logoVariant === 'original' ? 'mix-blend-mode: multiply;' : '';
+
+    return `
+        <div class="absolute z-20 pointer-events-none transition-all duration-150" style="${positionStyle}">
+            <img 
+                src="${logoOption.src}" 
+                class="${sizeClass} object-contain drop-shadow-md select-none" 
+                style="${blendStyle} ${opacityStyle}" 
+                alt="TATRIZA Logo">
+        </div>
+    `;
+}
+
+export function getStoryPhrasePreviewHtml(vig) {
+    if (!studioState.showStoryPhrase || !studioState.storyPhrase) return '';
+    const bottomY = studioState.storyPhraseOffsetY || 68;
+    const phraseColor = (studioState.storyPhraseColor && studioState.storyPhraseColor !== 'default') 
+        ? studioState.storyPhraseColor 
+        : (vig.phraseColor || '#ffffff');
+    const sizeMap = {
+        'sm': 'text-sm sm:text-base',
+        'md': 'text-base sm:text-lg',
+        'lg': 'text-lg sm:text-xl',
+        'xl': 'text-xl sm:text-2xl'
+    };
+    const sizeClass = sizeMap[studioState.storyPhraseSize || 'md'] || 'text-base sm:text-lg';
+
+    let positionStyle = '';
+    let alignClass = 'text-center';
+    if (studioState.storyPhraseAlign === 'right') {
+        positionStyle = `bottom: ${bottomY}px; right: 20px;`;
+        alignClass = 'text-right';
+    } else if (studioState.storyPhraseAlign === 'left') {
+        positionStyle = `bottom: ${bottomY}px; left: 20px;`;
+        alignClass = 'text-left';
+    } else {
+        const offsetPercent = studioState.storyPhraseOffsetPercent || 0;
+        positionStyle = `bottom: ${bottomY}px; left: calc(50% + ${offsetPercent}%); transform: translateX(-50%);`;
+        alignClass = 'text-center';
+    }
+
+    return `
+        <div class="absolute z-20 pointer-events-none transition-all duration-150 px-3 max-w-[88%] w-max" style="${positionStyle}">
+            <div class="font-royal-carpet font-bold ${sizeClass} tracking-wide select-none ${alignClass} drop-shadow-md" style="color: ${phraseColor}; text-shadow: ${vig.phraseShadow};">
+                ${studioState.storyPhrase}
+            </div>
+        </div>
+    `;
+}
+
+export function getStoryHandlePreviewHtml(vig) {
+    if (!studioState.showStoryHandle || !studioState.storyHandle) return '';
+    const bottomY = studioState.storyHandleOffsetY || 25;
+    const handleColor = (studioState.storyHandleColor && studioState.storyHandleColor !== 'default') 
+        ? studioState.storyHandleColor 
+        : (vig.handleColor || '#fde68a');
+    const handleText = studioState.storyHandle.trim();
+
+    let positionStyle = '';
+    let alignClass = 'text-center';
+    if (studioState.storyHandleAlign === 'right') {
+        positionStyle = `bottom: ${bottomY}px; right: 20px;`;
+        alignClass = 'text-right';
+    } else if (studioState.storyHandleAlign === 'left') {
+        positionStyle = `bottom: ${bottomY}px; left: 20px;`;
+        alignClass = 'text-left';
+    } else {
+        const offsetPercent = studioState.storyHandleOffsetPercent || 0;
+        positionStyle = `bottom: ${bottomY}px; left: calc(50% + ${offsetPercent}%); transform: translateX(-50%);`;
+        alignClass = 'text-center';
+    }
+
+    if (studioState.storyHandleStyle === 'pill') {
+        return `
+            <div class="absolute z-20 pointer-events-none transition-all duration-150" style="${positionStyle}">
+                <div class="px-3.5 py-1 rounded-full bg-black/45 backdrop-blur-md border border-white/20 shadow-lg font-mono uppercase font-bold text-[10px] sm:text-[11px] tracking-[0.25em] select-none text-center" style="color: ${handleColor};">
+                    ${handleText}
+                </div>
+            </div>
+        `;
+    }
+
+    return `
+        <div class="absolute z-20 pointer-events-none transition-all duration-150" style="${positionStyle}">
+            <div class="font-mono uppercase font-bold text-[11px] sm:text-[12px] tracking-[0.28em] select-none ${alignClass} drop-shadow-sm" style="color: ${handleColor}; text-shadow: 0 1px 3px rgba(0,0,0,0.8);">
+                ${handleText}
+            </div>
+        </div>
+    `;
+}
+
 // 2. ثيمات نمط كارت السجادة الملكي (Card Mode)
 export const STUDIO_THEMES = {
     'royal-burgundy': {
@@ -566,6 +691,23 @@ let studioState = {
     showBottomVignette: true,
     showStoryPhrase: true,
     showStoryHandle: true,
+
+    // إعدادات تموضع وألوان ومسافات نمط ستوري وريلز إنستقرام
+    storyLogoAlign: 'center', // 'right', 'center', 'left', 'custom'
+    storyLogoOffsetPercent: 0, // -45 to +45
+    storyLogoOffsetY: 25, // 10 to 140 px
+    storyPhraseAlign: 'center', // 'right', 'center', 'left', 'custom'
+    storyPhraseOffsetPercent: 0, // -40 to +40
+    storyPhraseOffsetY: 68, // 35 to 220 px
+    storyPhraseColor: 'default', // 'default' أو hex
+    storyPhraseSize: 'md', // 'sm', 'md', 'lg', 'xl'
+    storyHandleAlign: 'center', // 'right', 'center', 'left', 'custom'
+    storyHandleOffsetPercent: 0, // -40 to +40
+    storyHandleOffsetY: 25, // 10 to 120 px
+    storyHandleColor: 'default', // 'default' أو hex
+    storyHandleStyle: 'plain', // 'plain' أو 'pill'
+    storyFitMode: 'cover', // 'cover' أو 'contain'
+    storyBgColor: '#121214',
 
     // إعدادات قالب العرض النقي والعلامة المائية (المطابق لبوست الفراولة بدون شادو)
     minimalLogoAlign: 'center', // 'right', 'center', 'left', 'custom'
@@ -727,6 +869,7 @@ function syncStudioControlsFromState() {
     updateVignetteButtonStates();
     updateMediaButtonStates();
     updateMinimalControlStates();
+    updateStoryControlStates();
 
     // 5. مزامنة حقول نمط الكارت الملكي
     const titleIn = document.getElementById('studio-input-title');
@@ -985,6 +1128,145 @@ function updateMinimalControlStates() {
     });
 }
 
+function updateStoryControlStates() {
+    const alignNames = { 'right': 'محاذاة لليمين', 'center': 'بالمنتصف', 'left': 'محاذاة لليسار', 'custom': 'إزاحة دقيقة' };
+
+    // 1. موضع وإزاحة شعار الستوري
+    const storyLogoPosTitle = document.getElementById('studio-story-logo-pos-title');
+    if (storyLogoPosTitle) storyLogoPosTitle.innerText = alignNames[studioState.storyLogoAlign] || 'بالمنتصف';
+
+    document.querySelectorAll('.studio-story-logo-align-btn').forEach(btn => {
+        const align = btn.getAttribute('data-align');
+        if (align === studioState.storyLogoAlign) {
+            btn.classList.add('border-amber-500', 'bg-amber-50', 'text-amber-900', 'ring-2', 'ring-amber-400/30');
+            btn.classList.remove('border-stone-200', 'bg-white', 'text-stone-700');
+        } else {
+            btn.classList.remove('border-amber-500', 'bg-amber-50', 'text-amber-900', 'ring-2', 'ring-amber-400/30');
+            btn.classList.add('border-stone-200', 'bg-white', 'text-stone-700');
+        }
+    });
+
+    const storyLogoXIn = document.getElementById('studio-input-story-logo-x');
+    const storyLogoXVal = document.getElementById('studio-story-logo-x-val');
+    if (storyLogoXIn) storyLogoXIn.value = studioState.storyLogoOffsetPercent || 0;
+    if (storyLogoXVal) storyLogoXVal.innerText = `${(studioState.storyLogoOffsetPercent || 0) > 0 ? '+' : ''}${studioState.storyLogoOffsetPercent || 0}%`;
+
+    const storyLogoYIn = document.getElementById('studio-input-story-logo-y');
+    const storyLogoYVal = document.getElementById('studio-story-logo-y-val');
+    if (storyLogoYIn) storyLogoYIn.value = studioState.storyLogoOffsetY || 25;
+    if (storyLogoYVal) storyLogoYVal.innerText = `${studioState.storyLogoOffsetY || 25}px`;
+
+    // 2. موضع وإزاحة العبارة المميزة
+    const storyPhrasePosTitle = document.getElementById('studio-story-phrase-pos-title');
+    if (storyPhrasePosTitle) storyPhrasePosTitle.innerText = alignNames[studioState.storyPhraseAlign] || 'بالمنتصف';
+
+    document.querySelectorAll('.studio-story-phrase-align-btn').forEach(btn => {
+        const align = btn.getAttribute('data-align');
+        if (align === studioState.storyPhraseAlign) {
+            btn.classList.add('border-amber-500', 'bg-amber-50', 'text-amber-900', 'ring-2', 'ring-amber-400/30');
+            btn.classList.remove('border-stone-200', 'bg-white', 'text-stone-700');
+        } else {
+            btn.classList.remove('border-amber-500', 'bg-amber-50', 'text-amber-900', 'ring-2', 'ring-amber-400/30');
+            btn.classList.add('border-stone-200', 'bg-white', 'text-stone-700');
+        }
+    });
+
+    const storyPhraseXIn = document.getElementById('studio-input-story-phrase-x');
+    const storyPhraseXVal = document.getElementById('studio-story-phrase-x-val');
+    if (storyPhraseXIn) storyPhraseXIn.value = studioState.storyPhraseOffsetPercent || 0;
+    if (storyPhraseXVal) storyPhraseXVal.innerText = `${(studioState.storyPhraseOffsetPercent || 0) > 0 ? '+' : ''}${studioState.storyPhraseOffsetPercent || 0}%`;
+
+    const storyPhraseYIn = document.getElementById('studio-input-story-phrase-y');
+    const storyPhraseYVal = document.getElementById('studio-story-phrase-y-val');
+    if (storyPhraseYIn) storyPhraseYIn.value = studioState.storyPhraseOffsetY || 68;
+    if (storyPhraseYVal) storyPhraseYVal.innerText = `${studioState.storyPhraseOffsetY || 68}px`;
+
+    // حجم خط العبارة
+    document.querySelectorAll('.studio-story-phrase-size-btn').forEach(btn => {
+        const size = btn.getAttribute('data-size');
+        if (size === (studioState.storyPhraseSize || 'md')) {
+            btn.classList.add('border-amber-500', 'bg-amber-50', 'text-amber-900');
+            btn.classList.remove('border-stone-200', 'bg-white', 'text-stone-700');
+        } else {
+            btn.classList.remove('border-amber-500', 'bg-amber-50', 'text-amber-900');
+            btn.classList.add('border-stone-200', 'bg-white', 'text-stone-700');
+        }
+    });
+
+    // لون العبارة
+    document.querySelectorAll('.studio-story-phrase-color-btn').forEach(btn => {
+        const color = btn.getAttribute('data-color');
+        if (color === (studioState.storyPhraseColor || 'default')) {
+            btn.classList.add('ring-2', 'ring-amber-500', 'border-amber-500', 'bg-amber-50');
+            btn.classList.remove('border-stone-200');
+        } else {
+            btn.classList.remove('ring-2', 'ring-amber-500', 'border-amber-500', 'bg-amber-50');
+            btn.classList.add('border-stone-200');
+        }
+    });
+
+    // 3. موضع وإزاحة حساب الإنستقرام
+    const storyHandlePosTitle = document.getElementById('studio-story-handle-pos-title');
+    if (storyHandlePosTitle) storyHandlePosTitle.innerText = alignNames[studioState.storyHandleAlign] || 'بالمنتصف';
+
+    document.querySelectorAll('.studio-story-handle-align-btn').forEach(btn => {
+        const align = btn.getAttribute('data-align');
+        if (align === studioState.storyHandleAlign) {
+            btn.classList.add('border-amber-500', 'bg-amber-50', 'text-amber-900', 'ring-2', 'ring-amber-400/30');
+            btn.classList.remove('border-stone-200', 'bg-white', 'text-stone-700');
+        } else {
+            btn.classList.remove('border-amber-500', 'bg-amber-50', 'text-amber-900', 'ring-2', 'ring-amber-400/30');
+            btn.classList.add('border-stone-200', 'bg-white', 'text-stone-700');
+        }
+    });
+
+    const storyHandleXIn = document.getElementById('studio-input-story-handle-x');
+    const storyHandleXVal = document.getElementById('studio-story-handle-x-val');
+    if (storyHandleXIn) storyHandleXIn.value = studioState.storyHandleOffsetPercent || 0;
+    if (storyHandleXVal) storyHandleXVal.innerText = `${(studioState.storyHandleOffsetPercent || 0) > 0 ? '+' : ''}${studioState.storyHandleOffsetPercent || 0}%`;
+
+    const storyHandleYIn = document.getElementById('studio-input-story-handle-y');
+    const storyHandleYVal = document.getElementById('studio-story-handle-y-val');
+    if (storyHandleYIn) storyHandleYIn.value = studioState.storyHandleOffsetY || 25;
+    if (storyHandleYVal) storyHandleYVal.innerText = `${studioState.storyHandleOffsetY || 25}px`;
+
+    // ألوان حساب الإنستقرام
+    document.querySelectorAll('.studio-story-handle-color-btn').forEach(btn => {
+        const color = btn.getAttribute('data-color');
+        if (color === (studioState.storyHandleColor || 'default')) {
+            btn.classList.add('ring-2', 'ring-amber-500', 'border-amber-500', 'bg-amber-50');
+            btn.classList.remove('border-stone-200');
+        } else {
+            btn.classList.remove('ring-2', 'ring-amber-500', 'border-amber-500', 'bg-amber-50');
+            btn.classList.add('border-stone-200');
+        }
+    });
+
+    // نمط عرض الحساب
+    document.querySelectorAll('.studio-story-handle-style-btn').forEach(btn => {
+        const style = btn.getAttribute('data-style');
+        if (style === (studioState.storyHandleStyle || 'plain')) {
+            btn.classList.add('border-amber-500', 'bg-amber-50', 'text-amber-900');
+            btn.classList.remove('border-stone-200', 'bg-white', 'text-stone-700');
+        } else {
+            btn.classList.remove('border-amber-500', 'bg-amber-50', 'text-amber-900');
+            btn.classList.add('border-stone-200', 'bg-white', 'text-stone-700');
+        }
+    });
+
+    // 4. خيارات احتواء الستوري
+    document.querySelectorAll('.studio-story-fit-btn').forEach(btn => {
+        const fit = btn.getAttribute('data-fit');
+        if (fit === (studioState.storyFitMode || 'cover')) {
+            btn.classList.add('border-amber-500', 'bg-amber-50', 'text-amber-950');
+            btn.classList.remove('border-stone-200', 'bg-white', 'text-stone-700');
+        } else {
+            btn.classList.remove('border-amber-500', 'bg-amber-50', 'text-amber-950');
+            btn.classList.add('border-stone-200', 'bg-white', 'text-stone-700');
+        }
+    });
+}
+
 function updateVignetteButtonStates() {
     const activeVig = getActiveVignette();
     const vigNameEl = document.getElementById('studio-active-vignette-name');
@@ -1107,15 +1389,16 @@ export function updateStudioPreview() {
         
         // تعيين نسبة الأبعاد للحاوية
         stage.className = `relative w-full max-w-[340px] sm:max-w-[360px] mx-auto rounded-3xl overflow-hidden shadow-2xl transition-all duration-300 flex flex-col justify-between p-0 select-none ${ratio.aspectClass} bg-stone-900 cursor-grab active:cursor-grabbing`;
-        stage.style.background = '#1a1a1a';
+        stage.style.background = studioState.storyFitMode === 'contain' ? (studioState.storyBgColor || '#121214') : '#1a1a1a';
         stage.style.backgroundImage = 'none';
 
-        // محتوى الميديا (فيديو أو صورة) داخل غلاف قابل للقص
+        // محتوى الميديا (فيديو أو صورة) داخل غلاف قابل للقص أو احتواء كامل
+        const fitClass = studioState.storyFitMode === 'contain' ? 'object-contain' : 'object-cover';
         let mediaHtml = '';
         if (studioState.mediaType === 'video' && studioState.videoSrc) {
             mediaHtml = `
-                <div class="absolute inset-0 w-full h-full overflow-hidden z-0 pointer-events-none">
-                    <video id="studio-live-video" src="${studioState.videoSrc}" autoplay loop muted playsinline class="w-full h-full object-cover select-none transition-transform duration-75" style="transform: ${transformStyle}; transform-origin: center center;"></video>
+                <div class="absolute inset-0 w-full h-full overflow-hidden z-0 pointer-events-none flex items-center justify-center">
+                    <video id="studio-live-video" src="${studioState.videoSrc}" autoplay loop muted playsinline class="w-full h-full ${fitClass} select-none transition-transform duration-75" style="transform: ${transformStyle}; transform-origin: center center;"></video>
                 </div>
                 <div class="absolute top-3 left-3 z-30 bg-black/50 backdrop-blur-md text-white text-[9px] px-2 py-0.5 rounded-full flex items-center gap-1 pointer-events-none">
                     <span>🎥</span>
@@ -1124,48 +1407,36 @@ export function updateStudioPreview() {
             `;
         } else {
             mediaHtml = `
-                <div class="absolute inset-0 w-full h-full overflow-hidden z-0 pointer-events-none">
-                    <img id="studio-live-img" src="${carpetImg}" alt="Story Carpet" class="w-full h-full object-cover select-none transition-transform duration-75 pointer-events-none" style="transform: ${transformStyle}; transform-origin: center center;">
+                <div class="absolute inset-0 w-full h-full overflow-hidden z-0 pointer-events-none flex items-center justify-center">
+                    <img id="studio-live-img" src="${carpetImg}" alt="Story Carpet" class="w-full h-full ${fitClass} select-none transition-transform duration-75 pointer-events-none" style="transform: ${transformStyle}; transform-origin: center center;">
                 </div>
             `;
         }
 
-        // الشادو الدائري الناعم بالأعلى مع اللوجو
+        // الشادو الدائري الناعم بالأعلى
         const topVignetteHtml = studioState.showTopVignette ? `
             <div class="absolute top-0 inset-x-0 h-44 sm:h-52 pointer-events-none z-10 transition-all duration-300" style="background: ${vig.topVignetteCss};"></div>
         ` : '';
 
-        // اللوجو الرسمي في الأعلى شفاف بدون خلفية ومع اللون المحدد
-        const logoHtml = getLogoHtmlForPreview();
+        // اللوجو الرسمي في الأعلى مع الموضع والمسافة واللون المحدد
+        const logoHtml = getStoryLogoPreviewHtml();
 
         // الشادو الدائري الناعم بالأسفل
         const botVignetteHtml = studioState.showBottomVignette ? `
             <div class="absolute bottom-0 inset-x-0 h-56 sm:h-64 pointer-events-none z-10 transition-all duration-300" style="background: ${vig.botVignetteCss};"></div>
         ` : '';
 
-        // العبارة المميزة واسم الحساب بالأسفل
-        const bottomContentHtml = `
-            <div class="relative z-20 pb-7 sm:pb-9 px-4 flex flex-col items-center justify-center text-center space-y-3 mt-auto pointer-events-none">
-                ${studioState.showStoryPhrase && studioState.storyPhrase ? `
-                    <div class="font-royal-carpet font-bold text-lg sm:text-xl tracking-wide select-none" style="color: ${vig.phraseColor}; text-shadow: ${vig.phraseShadow};">
-                        ${studioState.storyPhrase}
-                    </div>
-                ` : ''}
-
-                ${studioState.showStoryHandle && studioState.storyHandle ? `
-                    <div class="font-mono uppercase font-bold text-[11px] sm:text-[12px] tracking-[0.28em] select-none" style="color: ${vig.handleColor}; text-shadow: 0 1px 2px rgba(255,255,255,0.6);">
-                        ${studioState.storyHandle}
-                    </div>
-                ` : ''}
-            </div>
-        `;
+        // العبارة المميزة واسم الحساب بالأسفل مع الموضع والمسافات والألوان المستقلة
+        const phraseHtml = getStoryPhrasePreviewHtml(vig);
+        const handleHtml = getStoryHandlePreviewHtml(vig);
 
         stage.innerHTML = `
             ${mediaHtml}
             ${topVignetteHtml}
             ${logoHtml}
             ${botVignetteHtml}
-            ${bottomContentHtml}
+            ${phraseHtml}
+            ${handleHtml}
         `;
 
         // إتاحة السحب المباشر باللمس أو الماوس
@@ -1667,11 +1938,18 @@ async function exportStoryVignetteHD(canvas, ctx) {
     const vig = getActiveVignette();
     const carpetSrc = studioState.customImageSrc || '../images/client_room1.jpg';
 
-    // 1. رسم الصورة بكامل الشاشة مع التحجيم والإزاحة الدقيقة (Zoom & Pan)
+    // 1. رسم الصورة بكامل الشاشة أو باحتواء نقي مع التحجيم والإزاحة الدقيقة (Zoom & Pan)
     const zoom = (studioState.mediaZoom || 100) / 100;
     const panX = studioState.mediaPanX || 0;
     const panY = studioState.mediaPanY || 0;
-    await drawCoverImageOnCanvas(ctx, carpetSrc, 0, 0, canvas.width, canvas.height, zoom, panX, panY);
+    
+    if (studioState.storyFitMode === 'contain') {
+        ctx.fillStyle = studioState.storyBgColor || '#121214';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        await drawContainImageOnCanvas(ctx, carpetSrc, 0, 0, canvas.width, canvas.height, zoom, panX, panY);
+    } else {
+        await drawCoverImageOnCanvas(ctx, carpetSrc, 0, 0, canvas.width, canvas.height, zoom, panX, panY);
+    }
 
     // 2. رسم الشادو الدائري الناعم بالأعلى
     if (studioState.showTopVignette !== false) {
@@ -1698,7 +1976,7 @@ async function exportStoryVignetteHD(canvas, ctx) {
         ctx.fillRect(0, botY, canvas.width, botH);
     }
 
-    // 4. رسم لوجو الدار شفافاً في المنتصف بالأعلى بالأبعاد والشفافية واللون المحدد
+    // 4. رسم لوجو الدار شفافاً في الموضع المحدد بالأبعاد والشفافية واللون
     if (studioState.showLogo) {
         try {
             ctx.save();
@@ -1713,9 +1991,22 @@ async function exportStoryVignetteHD(canvas, ctx) {
                 'medium': 225,
                 'large': 295
             };
-            const logoDim = sizeMap[studioState.logoSize] || 225;
-            const logoX = (canvas.width - logoDim) / 2;
-            const logoY = 95;
+            const logoDim = sizeMap[studioState.logoSize || 'medium'] || 225;
+            
+            // حساب موضع X للشعار في HD
+            let logoX = (canvas.width - logoDim) / 2;
+            if (studioState.storyLogoAlign === 'right') {
+                logoX = canvas.width - logoDim - 80;
+            } else if (studioState.storyLogoAlign === 'left') {
+                logoX = 80;
+            } else {
+                const offsetPercent = studioState.storyLogoOffsetPercent || 0;
+                logoX = ((canvas.width - logoDim) / 2) + (canvas.width * (offsetPercent / 100));
+            }
+
+            // حساب موضع Y للشعار في HD (منسوب لارتفاع المعاينة)
+            const topYPercent = (studioState.storyLogoOffsetY || 25) / 580;
+            const logoY = canvas.height * topYPercent;
 
             if (logoVariant === 'custom') {
                 const whiteLogo = await loadImageAsync('../images/logo_white.png');
@@ -1734,17 +2025,44 @@ async function exportStoryVignetteHD(canvas, ctx) {
         }
     }
 
-    // 5. رسم العبارة المميزة في الأسفل
+    // 5. رسم العبارة المميزة في الموضع المحدد واللون والحجم
     if (studioState.showStoryPhrase && studioState.storyPhrase) {
         ctx.save();
-        ctx.font = 'bold 50px Tajawal, sans-serif';
-        ctx.textAlign = 'center';
+        const phraseSizeMap = {
+            'sm': 38,
+            'md': 50,
+            'lg': 62,
+            'xl': 74
+        };
+        const pSize = phraseSizeMap[studioState.storyPhraseSize || 'md'] || 50;
+        ctx.font = `bold ${pSize}px Tajawal, sans-serif`;
+
+        let phraseX = canvas.width / 2;
+        if (studioState.storyPhraseAlign === 'right') {
+            phraseX = canvas.width - 80;
+            ctx.textAlign = 'right';
+        } else if (studioState.storyPhraseAlign === 'left') {
+            phraseX = 80;
+            ctx.textAlign = 'left';
+        } else {
+            const offsetPercent = studioState.storyPhraseOffsetPercent || 0;
+            phraseX = (canvas.width / 2) + (canvas.width * (offsetPercent / 100));
+            ctx.textAlign = 'center';
+        }
         ctx.textBaseline = 'middle';
-        ctx.fillStyle = vig.phraseColor || '#ffffff';
-        ctx.shadowColor = 'rgba(0, 0, 0, 0.45)';
-        ctx.shadowBlur = 14;
-        ctx.shadowOffsetY = 3;
-        ctx.fillText(studioState.storyPhrase, canvas.width / 2, canvas.height - 200);
+
+        const pColor = (studioState.storyPhraseColor && studioState.storyPhraseColor !== 'default') 
+            ? studioState.storyPhraseColor 
+            : (vig.phraseColor || '#ffffff');
+        ctx.fillStyle = pColor;
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.6)';
+        ctx.shadowBlur = 16;
+        ctx.shadowOffsetY = 4;
+
+        const phraseBottomPercent = (studioState.storyPhraseOffsetY || 68) / 580;
+        const phraseY = canvas.height - (canvas.height * phraseBottomPercent);
+
+        ctx.fillText(studioState.storyPhrase, phraseX, phraseY);
         ctx.restore();
     }
 
@@ -1752,13 +2070,51 @@ async function exportStoryVignetteHD(canvas, ctx) {
     if (studioState.showStoryHandle && studioState.storyHandle) {
         ctx.save();
         ctx.font = 'bold 28px "Courier New", monospace, sans-serif';
-        ctx.textAlign = 'center';
+        
+        let handleX = canvas.width / 2;
+        if (studioState.storyHandleAlign === 'right') {
+            handleX = canvas.width - 80;
+            ctx.textAlign = 'right';
+        } else if (studioState.storyHandleAlign === 'left') {
+            handleX = 80;
+            ctx.textAlign = 'left';
+        } else {
+            const offsetPercent = studioState.storyHandleOffsetPercent || 0;
+            handleX = (canvas.width / 2) + (canvas.width * (offsetPercent / 100));
+            ctx.textAlign = 'center';
+        }
         ctx.textBaseline = 'middle';
-        ctx.fillStyle = vig.handleColor || '#5c453d';
-        ctx.shadowColor = 'rgba(255, 255, 255, 0.6)';
-        ctx.shadowBlur = 4;
-        ctx.shadowOffsetY = 1;
-        drawSpacedText(ctx, studioState.storyHandle, canvas.width / 2, canvas.height - 110, 8);
+
+        const hColor = (studioState.storyHandleColor && studioState.storyHandleColor !== 'default') 
+            ? studioState.storyHandleColor 
+            : (vig.handleColor || '#fde68a');
+
+        const handleBottomPercent = (studioState.storyHandleOffsetY || 25) / 580;
+        const handleY = canvas.height - (canvas.height * handleBottomPercent);
+
+        if (studioState.storyHandleStyle === 'pill') {
+            ctx.save();
+            const textMetrics = ctx.measureText(studioState.storyHandle);
+            const pillW = textMetrics.width + (studioState.storyHandle.length * 8) + 60;
+            const pillH = 54;
+            const pillX = handleX - (pillW / 2);
+            const pillY = handleY - (pillH / 2);
+            
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.45)';
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.25)';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.roundRect(pillX, pillY, pillW, pillH, 27);
+            ctx.fill();
+            ctx.stroke();
+            ctx.restore();
+        }
+
+        ctx.fillStyle = hColor;
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.7)';
+        ctx.shadowBlur = 6;
+        ctx.shadowOffsetY = 2;
+        drawSpacedText(ctx, studioState.storyHandle, handleX, handleY, 8);
         ctx.restore();
     }
 
@@ -2532,6 +2888,186 @@ export function initStudioEvents() {
         vigBotIn.addEventListener('input', handleBotVig);
         vigBotIn.addEventListener('change', handleBotVig);
     }
+
+    // 6.5 أحداث وتخصيصات موضع وألوان ومسافات الستوري والريلز (Story & Reels Controls)
+    // أزرار محاذاة الشعار في الستوري
+    document.querySelectorAll('.studio-story-logo-align-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const align = btn.getAttribute('data-align');
+            if (align) {
+                studioState.storyLogoAlign = align;
+                if (align === 'center') studioState.storyLogoOffsetPercent = 0;
+                else if (align === 'right') studioState.storyLogoOffsetPercent = 35;
+                else if (align === 'left') studioState.storyLogoOffsetPercent = -35;
+                updateStoryControlStates();
+                updateStudioPreview();
+            }
+        });
+    });
+
+    const storyLogoXIn = document.getElementById('studio-input-story-logo-x');
+    if (storyLogoXIn) {
+        storyLogoXIn.addEventListener('input', (e) => {
+            studioState.storyLogoOffsetPercent = Number(e.target.value);
+            studioState.storyLogoAlign = 'custom';
+            updateStoryControlStates();
+            updateStudioPreview();
+        });
+    }
+
+    const storyLogoYIn = document.getElementById('studio-input-story-logo-y');
+    if (storyLogoYIn) {
+        storyLogoYIn.addEventListener('input', (e) => {
+            studioState.storyLogoOffsetY = Number(e.target.value);
+            updateStoryControlStates();
+            updateStudioPreview();
+        });
+    }
+
+    // أزرار محاذاة العبارة المميزة
+    document.querySelectorAll('.studio-story-phrase-align-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const align = btn.getAttribute('data-align');
+            if (align) {
+                studioState.storyPhraseAlign = align;
+                if (align === 'center') studioState.storyPhraseOffsetPercent = 0;
+                else if (align === 'right') studioState.storyPhraseOffsetPercent = 30;
+                else if (align === 'left') studioState.storyPhraseOffsetPercent = -30;
+                updateStoryControlStates();
+                updateStudioPreview();
+            }
+        });
+    });
+
+    const storyPhraseXIn = document.getElementById('studio-input-story-phrase-x');
+    if (storyPhraseXIn) {
+        storyPhraseXIn.addEventListener('input', (e) => {
+            studioState.storyPhraseOffsetPercent = Number(e.target.value);
+            studioState.storyPhraseAlign = 'custom';
+            updateStoryControlStates();
+            updateStudioPreview();
+        });
+    }
+
+    const storyPhraseYIn = document.getElementById('studio-input-story-phrase-y');
+    if (storyPhraseYIn) {
+        storyPhraseYIn.addEventListener('input', (e) => {
+            studioState.storyPhraseOffsetY = Number(e.target.value);
+            updateStoryControlStates();
+            updateStudioPreview();
+        });
+    }
+
+    document.querySelectorAll('.studio-story-phrase-size-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const size = btn.getAttribute('data-size');
+            if (size) {
+                studioState.storyPhraseSize = size;
+                updateStoryControlStates();
+                updateStudioPreview();
+            }
+        });
+    });
+
+    document.querySelectorAll('.studio-story-phrase-color-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const color = btn.getAttribute('data-color');
+            if (color) {
+                studioState.storyPhraseColor = color;
+                updateStoryControlStates();
+                updateStudioPreview();
+            }
+        });
+    });
+
+    const storyPhraseCustomColorIn = document.getElementById('studio-input-story-phrase-custom-color');
+    if (storyPhraseCustomColorIn) {
+        const handlePhraseCustomColor = (e) => {
+            studioState.storyPhraseColor = e.target.value;
+            updateStoryControlStates();
+            updateStudioPreview();
+        };
+        storyPhraseCustomColorIn.addEventListener('input', handlePhraseCustomColor);
+        storyPhraseCustomColorIn.addEventListener('change', handlePhraseCustomColor);
+    }
+
+    // أزرار محاذاة توقيع الحساب
+    document.querySelectorAll('.studio-story-handle-align-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const align = btn.getAttribute('data-align');
+            if (align) {
+                studioState.storyHandleAlign = align;
+                if (align === 'center') studioState.storyHandleOffsetPercent = 0;
+                else if (align === 'right') studioState.storyHandleOffsetPercent = 30;
+                else if (align === 'left') studioState.storyHandleOffsetPercent = -30;
+                updateStoryControlStates();
+                updateStudioPreview();
+            }
+        });
+    });
+
+    const storyHandleXIn = document.getElementById('studio-input-story-handle-x');
+    if (storyHandleXIn) {
+        storyHandleXIn.addEventListener('input', (e) => {
+            studioState.storyHandleOffsetPercent = Number(e.target.value);
+            studioState.storyHandleAlign = 'custom';
+            updateStoryControlStates();
+            updateStudioPreview();
+        });
+    }
+
+    const storyHandleYIn = document.getElementById('studio-input-story-handle-y');
+    if (storyHandleYIn) {
+        storyHandleYIn.addEventListener('input', (e) => {
+            studioState.storyHandleOffsetY = Number(e.target.value);
+            updateStoryControlStates();
+            updateStudioPreview();
+        });
+    }
+
+    document.querySelectorAll('.studio-story-handle-color-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const color = btn.getAttribute('data-color');
+            if (color) {
+                studioState.storyHandleColor = color;
+                updateStoryControlStates();
+                updateStudioPreview();
+            }
+        });
+    });
+
+    const storyHandleCustomColorIn = document.getElementById('studio-input-story-handle-custom-color');
+    if (storyHandleCustomColorIn) {
+        const handleStoryCustomColor = (e) => {
+            studioState.storyHandleColor = e.target.value;
+            updateStoryControlStates();
+            updateStudioPreview();
+        };
+        storyHandleCustomColorIn.addEventListener('input', handleStoryCustomColor);
+        storyHandleCustomColorIn.addEventListener('change', handleStoryCustomColor);
+    }
+
+    document.querySelectorAll('.studio-story-handle-style-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const style = btn.getAttribute('data-style');
+            if (style) {
+                studioState.storyHandleStyle = style;
+                updateStoryControlStates();
+                updateStudioPreview();
+            }
+        });
+    });
+
+    document.querySelectorAll('.studio-story-fit-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const fit = btn.getAttribute('data-fit');
+            if (fit) {
+                studioState.storyFitMode = fit;
+                updateStoryControlStates();
+                updateStudioPreview();
+            }
+        });
+    });
 
     // 7. أحداث قالب العرض النقي والعلامة المائية (Minimal Showcase Events)
     document.querySelectorAll('.studio-minimal-logo-align-btn').forEach(btn => {
