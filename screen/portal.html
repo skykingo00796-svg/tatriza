@@ -347,6 +347,11 @@
                         <span class="text-xs sm:text-sm">✨</span>
                         <span class="whitespace-nowrap">إدارة البنرات<span class="hidden sm:inline"> والترويج</span></span>
                     </button>
+                    <button type="button" onclick="openTatrizaStudioModal()" class="bg-gradient-to-r from-rose-900 via-amber-800 to-amber-900 hover:from-rose-950 hover:to-amber-950 text-white font-bold text-[11px] sm:text-sm h-9 sm:h-11 px-2.5 sm:px-4 rounded-xl shadow-xs transition flex items-center justify-center gap-1 sm:gap-1.5 cursor-pointer whitespace-nowrap shrink-0 border border-amber-300/40" title="استوديو تصاميم السوشيال ميديا وحالات الواتساب">
+                        <span class="text-xs sm:text-sm">🎨</span>
+                        <span class="whitespace-nowrap">استوديو التصاميم</span>
+                        <span class="text-[9px] px-1.5 py-0.2 bg-amber-400 text-amber-950 rounded-full font-black hidden md:inline">جديد</span>
+                    </button>
                 </div>
 
                 <!-- أدوات الفرز والبحث الداخلي المتجاوبة (حقل النص فوق الخيارات في الشاشات المتوسطة والصغيرة) -->
@@ -465,7 +470,297 @@
     <!-- ========================================== -->
     <!-- حاوية النوافذ الإدارية المستقلة -->
     <!-- ========================================== -->
-        <!-- نافذة إدارة وتخصيص التصنيفات الملكية (إضافة وحذف التصنيفات للأدمن) -->
+
+    <!-- ========================================== -->
+    <!-- استوديو تصاميم السوشيال ميديا وحالات الواتساب (Tatriza Creative Studio) -->
+    <!-- ========================================== -->
+    <div id="tatriza-studio-modal" class="hidden fixed inset-0 z-50 modal-glass-backdrop flex items-center justify-center p-2 sm:p-4 md:p-6" dir="rtl">
+        <div class="lux-modal-box w-full max-w-6xl rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-2xl relative max-h-[96vh] flex flex-col bg-[#fffbf7] border border-stone-300/90 overflow-hidden">
+            
+            <!-- رأس نافذة الاستوديو الفاخر -->
+            <div class="flex items-center justify-between pb-3 sm:pb-4 border-b border-stone-200/90 gap-2 shrink-0">
+                <div class="flex items-center gap-2.5 sm:gap-3 min-w-0">
+                    <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-br from-amber-500/20 via-rose-500/20 to-amber-500/30 border border-amber-300 text-amber-900 flex items-center justify-center text-xl sm:text-2xl shadow-xs shrink-0">
+                        🎨
+                    </div>
+                    <div class="truncate">
+                        <div class="flex items-center gap-2">
+                            <h2 class="font-display font-black text-stone-900 text-base sm:text-lg md:text-xl truncate">استوديو تصاميم السوشيال ميديا</h2>
+                            <span class="text-[9.5px] sm:text-[10px] font-bold px-2 py-0.5 rounded-full bg-gradient-to-r from-amber-500 to-rose-700 text-white shadow-2xs">احترافي HD</span>
+                        </div>
+                        <p class="text-[10px] sm:text-xs text-stone-500 font-medium truncate">توليد وتصدير بوستات وستوريات إنستقرام وحالات واتساب بدقة فائقة بضغطة زر</p>
+                    </div>
+                </div>
+
+                <!-- أزرار الإجراءات السريعة في الرأس -->
+                <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
+                    <button type="button" onclick="saveStudioDraft()" class="hidden sm:inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-950 border border-amber-300/80 text-xs font-bold transition shadow-2xs cursor-pointer" title="حفظ التصميم كمسودة للرجوع إليها لاحقاً">
+                        <span>💾</span>
+                        <span>حفظ كمسودة</span>
+                    </button>
+                    <button type="button" onclick="closeTatrizaStudioModal()" class="bg-stone-100 hover:bg-stone-200 text-stone-600 hover:text-stone-900 w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center transition text-sm font-bold cursor-pointer" title="إغلاق الاستوديو">
+                        ✕
+                    </button>
+                </div>
+            </div>
+
+            <!-- جسم الاستوديو (شبكة من عمودين: المعاينة المباشرة يميناً، وأدوات التحكم يساراً) -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 pt-3 sm:pt-4 overflow-y-auto flex-1 no-scrollbar">
+                
+                <!-- العمود الأيمن: مسرح المعاينة الحية والتصدير الفوري (lg:col-span-5) -->
+                <div class="lg:col-span-5 flex flex-col items-center justify-between gap-3 sm:gap-4 bg-stone-100/60 p-3 sm:p-5 rounded-2xl sm:rounded-3xl border border-stone-200/80">
+                    
+                    <!-- محول الأبعاد السريع فوق المعاينة مباشرة -->
+                    <div class="w-full flex items-center justify-center gap-1 sm:gap-2 p-1 bg-white rounded-xl border border-stone-200 shadow-2xs">
+                        <button type="button" data-ratio="1:1" class="studio-ratio-btn flex-1 py-1.5 px-2 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1 cursor-pointer">
+                            <span>📸</span>
+                            <span>مربع 1:1</span>
+                        </button>
+                        <button type="button" data-ratio="9:16" class="studio-ratio-btn flex-1 py-1.5 px-2 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1 cursor-pointer">
+                            <span>📱</span>
+                            <span>ستوري 9:16</span>
+                        </button>
+                        <button type="button" data-ratio="4:5" class="studio-ratio-btn flex-1 py-1.5 px-2 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1 cursor-pointer">
+                            <span>🖼️</span>
+                            <span>طولي 4:5</span>
+                        </button>
+                    </div>
+
+                    <!-- حاوية مسرح المعاينة الحية (Dynamic Live Stage) -->
+                    <div class="w-full flex items-center justify-center py-1 sm:py-2">
+                        <div id="studio-live-stage" class="relative w-full max-w-[360px] mx-auto rounded-3xl overflow-hidden shadow-2xl transition-all duration-300 flex flex-col justify-between p-4 select-none aspect-square">
+                            <!-- يتم بناؤها وتحديثها حياً بواسطة updateStudioPreview() في studio.js -->
+                        </div>
+                    </div>
+
+                    <!-- أزرار الإجراءات والتصدير المباشر -->
+                    <div class="w-full space-y-2 pt-2 border-t border-stone-200">
+                        <!-- زر التصدير والتحميل بدقة فائقة -->
+                        <button type="button" id="studio-btn-export" onclick="exportStudioHDImage()" class="w-full btn-liquid-metal text-white font-extrabold text-xs sm:text-sm h-11 sm:h-12 rounded-xl sm:rounded-2xl shadow-md transition flex items-center justify-center gap-2 cursor-pointer border border-amber-300/40">
+                            <span class="text-base sm:text-lg">📥</span>
+                            <span>تحميل التصميم بدقة فائقة (HD PNG)</span>
+                        </button>
+
+                        <div class="grid grid-cols-2 gap-2">
+                            <!-- نسخ نص البوست الجاهز والهاشتاقات -->
+                            <button type="button" onclick="copyStudioCaption()" class="bg-white hover:bg-stone-50 text-stone-800 border border-stone-300 font-bold text-[11px] sm:text-xs h-9.5 rounded-xl transition shadow-2xs flex items-center justify-center gap-1.5 cursor-pointer" title="نسخ الكابشن والهاشتاقات">
+                                <span>📋</span>
+                                <span>نسخ نص الإعلان</span>
+                            </button>
+
+                            <!-- مشاركة واتساب سريعة -->
+                            <button type="button" onclick="shareStudioToWhatsApp()" class="btn-liquid-emerald font-bold text-[11px] sm:text-xs h-9.5 rounded-xl transition shadow-2xs flex items-center justify-center gap-1.5 cursor-pointer" title="مشاركة عبر الواتساب">
+                                <span>💬</span>
+                                <span>مشاركة واتساب</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- العمود الأيسر: خيارات التخصيص والمحتوى والتحكم الدقيق (lg:col-span-7) -->
+                <div class="lg:col-span-7 space-y-4">
+                    
+                    <!-- 1. اختيار القطعة والصورة -->
+                    <div class="bg-white p-3.5 sm:p-4.5 rounded-2xl border border-stone-200/90 shadow-2xs space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs sm:text-sm font-black text-stone-900 flex items-center gap-1.5">
+                                <span>1️⃣</span>
+                                <span>اختيار السجادة أو رفع صورة:</span>
+                            </span>
+                            <label class="cursor-pointer bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300/80 px-2.5 py-1 rounded-lg text-[10px] sm:text-xs font-bold transition inline-flex items-center gap-1">
+                                <span>📷</span>
+                                <span>رفع صورة من جهازك</span>
+                                <input type="file" id="studio-file-upload" accept="image/*" class="hidden">
+                            </label>
+                        </div>
+
+                        <!-- قائمة السجاد من المخزون -->
+                        <div class="relative">
+                            <select id="studio-carpet-select" class="w-full h-10 bg-stone-50 border border-stone-300/90 rounded-xl pr-3 pl-8 text-xs sm:text-sm text-stone-800 outline-none focus:border-brand cursor-pointer shadow-2xs transition">
+                                <!-- تملأ تلقائياً -->
+                            </select>
+                        </div>
+
+                        <!-- مصغرات صور القطعة للتبديل بينها -->
+                        <div id="studio-thumbs-container" class="hidden flex items-center gap-2 overflow-x-auto py-1 no-scrollbar">
+                            <!-- صور السجادة -->
+                        </div>
+                    </div>
+
+                    <!-- 2. الثيمات والخلفيات الفاخرة المتاحة -->
+                    <div class="bg-white p-3.5 sm:p-4.5 rounded-2xl border border-stone-200/90 shadow-2xs space-y-2.5">
+                        <span class="text-xs sm:text-sm font-black text-stone-900 flex items-center gap-1.5">
+                            <span>2️⃣</span>
+                            <span>الخلفية والثيم الملكي:</span>
+                        </span>
+                        
+                        <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                            <!-- عنابي ملكي -->
+                            <div data-theme="royal-burgundy" class="studio-theme-card p-2 sm:p-2.5 rounded-xl border border-stone-200 cursor-pointer transition flex flex-col justify-between bg-gradient-to-br from-[#2b0613] to-[#8a1d41] text-white">
+                                <span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-amber-400/20 text-amber-200 w-fit">👑 أيقوني</span>
+                                <span class="font-bold text-xs mt-2 block">العنابي والذهب</span>
+                            </div>
+
+                            <!-- موكا دافئ -->
+                            <div data-theme="warm-mocha" class="studio-theme-card p-2 sm:p-2.5 rounded-xl border border-stone-200 cursor-pointer transition flex flex-col justify-between bg-gradient-to-br from-[#1c1310] to-[#593e34] text-white">
+                                <span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-amber-400/20 text-amber-200 w-fit">☕ دافئ</span>
+                                <span class="font-bold text-xs mt-2 block">الموكا والعاجي</span>
+                            </div>
+
+                            <!-- أوبسيديان داكن -->
+                            <div data-theme="obsidian-gold" class="studio-theme-card p-2 sm:p-2.5 rounded-xl border border-stone-200 cursor-pointer transition flex flex-col justify-between bg-gradient-to-br from-[#090a0d] to-[#21262d] text-white">
+                                <span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-amber-400/20 text-amber-200 w-fit">🖤 داكن</span>
+                                <span class="font-bold text-xs mt-2 block">الأوبسيديان والذهب</span>
+                            </div>
+
+                            <!-- رخام إيطالي -->
+                            <div data-theme="majlis-marble" class="studio-theme-card p-2 sm:p-2.5 rounded-xl border border-stone-200 cursor-pointer transition flex flex-col justify-between relative overflow-hidden text-white" style="background: url('../images/studio_marble_majlis.jpg') center/cover;">
+                                <div class="absolute inset-0 bg-black/50"></div>
+                                <span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-white/20 text-white w-fit relative z-10">🏛️ موك آب</span>
+                                <span class="font-bold text-xs mt-2 block relative z-10">المجلس الرخامي</span>
+                            </div>
+
+                            <!-- باركيه خشب -->
+                            <div data-theme="modern-parquet" class="studio-theme-card p-2 sm:p-2.5 rounded-xl border border-stone-200 cursor-pointer transition flex flex-col justify-between relative overflow-hidden text-white" style="background: url('../images/studio_parquet_wood.jpg') center/cover;">
+                                <div class="absolute inset-0 bg-black/50"></div>
+                                <span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-white/20 text-white w-fit relative z-10">🪵 استوديو</span>
+                                <span class="font-bold text-xs mt-2 block relative z-10">الباركيه الفرنسي</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 3. نصوص وبيانات التصميم (نصوص قابلة للتعديل الحي) -->
+                    <div class="bg-white p-3.5 sm:p-4.5 rounded-2xl border border-stone-200/90 shadow-2xs space-y-3">
+                        <span class="text-xs sm:text-sm font-black text-stone-900 flex items-center gap-1.5">
+                            <span>3️⃣</span>
+                            <span>نصوص وبيانات القطعة:</span>
+                        </span>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                            <!-- العنوان -->
+                            <div class="sm:col-span-2">
+                                <label class="block text-[11px] font-bold text-stone-600 mb-1">عنوان القطعة الرئيسي</label>
+                                <input type="text" id="studio-input-title" class="w-full h-9 bg-stone-50 border border-stone-300 rounded-xl px-3 text-xs text-stone-800 outline-none focus:border-brand">
+                            </div>
+
+                            <!-- العبارة الفرعية -->
+                            <div class="sm:col-span-2">
+                                <label class="block text-[11px] font-bold text-stone-600 mb-1">العبارة التسويقية الفرعية</label>
+                                <input type="text" id="studio-input-subtitle" class="w-full h-9 bg-stone-50 border border-stone-300 rounded-xl px-3 text-xs text-stone-800 outline-none focus:border-brand">
+                            </div>
+
+                            <!-- المقاسات -->
+                            <div>
+                                <label class="block text-[11px] font-bold text-stone-600 mb-1">المقاسات</label>
+                                <input type="text" id="studio-input-dim" class="w-full h-9 bg-stone-50 border border-stone-300 rounded-xl px-3 text-xs text-stone-800 outline-none focus:border-brand">
+                            </div>
+
+                            <!-- الخامة -->
+                            <div>
+                                <label class="block text-[11px] font-bold text-stone-600 mb-1">نوع الخامة</label>
+                                <input type="text" id="studio-input-mat" class="w-full h-9 bg-stone-50 border border-stone-300 rounded-xl px-3 text-xs text-stone-800 outline-none focus:border-brand">
+                            </div>
+
+                            <!-- السعر -->
+                            <div>
+                                <label class="block text-[11px] font-bold text-stone-600 mb-1">السعر</label>
+                                <input type="text" id="studio-input-price" class="w-full h-9 bg-stone-50 border border-stone-300 rounded-xl px-3 text-xs text-stone-800 outline-none focus:border-brand">
+                            </div>
+
+                            <!-- العملة -->
+                            <div>
+                                <label class="block text-[11px] font-bold text-stone-600 mb-1">العملة</label>
+                                <input type="text" id="studio-input-curr" class="w-full h-9 bg-stone-50 border border-stone-300 rounded-xl px-3 text-xs text-stone-800 outline-none focus:border-brand">
+                            </div>
+                        </div>
+
+                        <!-- تكبير وتصغير حجم السجادة في المشهد -->
+                        <div class="pt-2 border-t border-stone-100 flex items-center justify-between gap-3">
+                            <span class="text-xs font-bold text-stone-700 whitespace-nowrap">حجم السجادة بالمشهد:</span>
+                            <input type="range" id="studio-input-scale" min="60" max="100" value="88" class="w-full accent-amber-600 cursor-pointer">
+                            <span id="studio-scale-val" class="text-xs font-black text-brand w-10 text-left">88%</span>
+                        </div>
+                    </div>
+
+                    <!-- 4. الشارات الترويجية وأزرار التفعيل والتعطيل -->
+                    <div class="bg-white p-3.5 sm:p-4.5 rounded-2xl border border-stone-200/90 shadow-2xs space-y-3">
+                        <span class="text-xs sm:text-sm font-black text-stone-900 flex items-center gap-1.5">
+                            <span>4️⃣</span>
+                            <span>الشارات وعناصر الظهور:</span>
+                        </span>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                            <div>
+                                <label class="block text-[11px] font-bold text-stone-600 mb-1">الشارة الترويجية (Sticker)</label>
+                                <select id="studio-select-sticker" class="w-full h-9 bg-stone-50 border border-stone-300 rounded-xl px-2.5 text-xs text-stone-800 outline-none focus:border-brand cursor-pointer">
+                                    <option value="exclusive">🏷️ قطعة حصرية فريدة (1 of 1)</option>
+                                    <option value="silk">💎 حرير طبيعي خالص 100%</option>
+                                    <option value="wool">🐑 صوف جبلي مغزول يدوياً</option>
+                                    <option value="oman">✨ صنعت بشغف في سلطنة عُمان</option>
+                                    <option value="artisan">🌟 تحفة نادرة من أرشيف الدار</option>
+                                    <option value="limited">⏳ عرض خاص لفترة محدودة</option>
+                                    <option value="none">بدون شارة</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="block text-[11px] font-bold text-stone-600 mb-1">رقم هاتف الواتساب</label>
+                                <input type="text" id="studio-input-wa" class="w-full h-9 bg-stone-50 border border-stone-300 rounded-xl px-3 text-xs text-stone-800 outline-none focus:border-brand" dir="ltr">
+                            </div>
+                        </div>
+
+                        <!-- مفاتيح التحكم بالظهور (Toggles) -->
+                        <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 pt-2 border-t border-stone-100 text-xs text-stone-700">
+                            <label class="flex items-center gap-1.5 cursor-pointer">
+                                <input type="checkbox" id="studio-toggle-logo" checked class="accent-brand cursor-pointer">
+                                <span>شعار الدار</span>
+                            </label>
+                            <label class="flex items-center gap-1.5 cursor-pointer">
+                                <input type="checkbox" id="studio-toggle-price" checked class="accent-brand cursor-pointer">
+                                <span>إظهار السعر</span>
+                            </label>
+                            <label class="flex items-center gap-1.5 cursor-pointer">
+                                <input type="checkbox" id="studio-toggle-dim" checked class="accent-brand cursor-pointer">
+                                <span>إظهار المقاس</span>
+                            </label>
+                            <label class="flex items-center gap-1.5 cursor-pointer">
+                                <input type="checkbox" id="studio-toggle-mat" checked class="accent-brand cursor-pointer">
+                                <span>إظهار الخامة</span>
+                            </label>
+                            <label class="flex items-center gap-1.5 cursor-pointer">
+                                <input type="checkbox" id="studio-toggle-wa" checked class="accent-brand cursor-pointer">
+                                <span>شريط الواتساب</span>
+                            </label>
+                            <label class="flex items-center gap-1.5 cursor-pointer">
+                                <input type="checkbox" id="studio-toggle-shadow" checked class="accent-brand cursor-pointer">
+                                <span>ظل السجادة 3D</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- 5. قسم المسودات المحفوظة -->
+                    <div class="bg-stone-50 p-3.5 sm:p-4 rounded-2xl border border-stone-200/90 space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-stone-800 flex items-center gap-1.5">
+                                <span>📂</span>
+                                <span>مسوداتي المحفوظة (Saved Drafts):</span>
+                            </span>
+                            <button type="button" onclick="saveStudioDraft()" class="text-xs text-brand font-bold hover:underline cursor-pointer">
+                                ＋ حفظ التصميم الحالي
+                            </button>
+                        </div>
+                        <div id="studio-drafts-list" class="space-y-1.5 max-h-36 overflow-y-auto no-scrollbar">
+                            <!-- قائمة المسودات المحفوظة -->
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- نافذة إدارة وتخصيص التصنيفات الملكية (إضافة وحذف التصنيفات للأدمن) -->
     <div id="add-category-modal" class="hidden fixed inset-0 z-50 modal-glass-backdrop flex items-center justify-center p-3 sm:p-4">
         <div class="lux-modal-box w-full max-w-lg rounded-2xl sm:rounded-3xl p-5 sm:p-6 space-y-4 shadow-2xl relative max-h-[90vh] overflow-y-auto">
             <button type="button" onclick="closeAddCategoryModal()" class="absolute top-4 left-4 bg-stone-100 hover:bg-stone-200 text-stone-600 hover:text-stone-900 w-8 h-8 rounded-full flex items-center justify-center transition text-sm font-bold cursor-pointer" title="إغلاق">
@@ -1684,6 +1979,21 @@
                     <div class="drawer-action-arrow">&gt;</div>
                 </button>
 
+                <!-- 2.7 استوديو تصاميم السوشيال ميديا وحالات الواتساب -->
+                <button type="button" onclick="closeOptionsDrawer(); openTatrizaStudioModal();" class="drawer-lux-card group w-full text-right cursor-pointer">
+                    <div class="flex items-center gap-2.5 sm:gap-3 min-w-0 flex-1">
+                        <div class="drawer-icon-orb bg-rose-50 text-rose-800 border-rose-300/60 shrink-0">🎨</div>
+                        <div class="flex flex-col text-right min-w-0 flex-1 overflow-hidden">
+                            <div class="flex items-center gap-1.5">
+                                <span class="font-display text-[11.5px] sm:text-xs md:text-sm font-black text-stone-900 group-hover:text-brand transition whitespace-nowrap truncate block">استوديو تصاميم السوشيال ميديا</span>
+                                <span class="text-[8.5px] px-1.5 py-0.2 bg-amber-100 text-amber-900 rounded font-black border border-amber-300">جديد</span>
+                            </div>
+                            <span class="text-[9px] sm:text-[9.5px] md:text-[10px] text-stone-500 font-medium whitespace-nowrap truncate block mt-1">توليد وتصدير بوستات وستوريات HD وحالات واتساب</span>
+                        </div>
+                    </div>
+                    <div class="drawer-action-arrow">&gt;</div>
+                </button>
+
                 <!-- 3. تعديل النمط / الثيم -->
                 <button type="button" onclick="closeOptionsDrawer(); openThemeModal();" class="drawer-lux-card group w-full text-right cursor-pointer">
                     <div class="flex items-center gap-2.5 sm:gap-3 min-w-0 flex-1">
@@ -1754,6 +2064,6 @@
 
 
     <!-- استدعاء محرك البوابة المستقل حصرياً في نهاية الصفحة -->
-    <script type="module" src="../js/portal.js?v=2.4"></script>
+    <script type="module" src="../js/portal.js?v=2.5"></script>
 </body>
 </html>

@@ -69,6 +69,12 @@ import {
     applyTheme 
 } from './theme.js';
 
+import { 
+    openTatrizaStudioModal, 
+    closeTatrizaStudioModal, 
+    initStudioEvents 
+} from './studio.js';
+
 import { getVideoFromIndexedDB } from './firebase-public.js';
 
 // حالة لوحة الإدارة
@@ -425,6 +431,7 @@ function initPortalSubscriptions() {
     // 1. مزامنة المعروضات
     subscribeToCarpets((carpets) => {
         allPortalCarpets = carpets || [];
+        window.allPortalCarpets = allPortalCarpets;
         renderPortalDashboard();
     }, (err) => {
         console.warn("Carpets subscription error:", err);
@@ -664,10 +671,11 @@ function renderPortalProductsTable(shouldScroll = false) {
                         <button type="button" onclick="event.stopPropagation(); window.portalOpenProductModal('${c.id}')" class="card-btn-preview btn-liquid-metal text-white text-[8px] sm:text-[8.5px] font-bold h-6.5 sm:h-7 px-2 sm:px-2.5 shrink-0 rounded-lg transition shadow-2xs cursor-pointer whitespace-nowrap inline-flex items-center justify-center gap-1 leading-none select-none" title="معاينة بكامل الشاشة"><span class="text-[8.5px] shrink-0">👁️</span><span class="whitespace-nowrap font-bold">معاينة</span></button>
                     </div>
 
-                    <!-- شريط أدوات المسؤول: زر الحذف بنفس حجم زر المعاينة تماماً والتعديل يأخذ باقي المساحة -->
+                    <!-- شريط أدوات المسؤول: زر الاستوديو، التعديل، والحذف -->
                     <div class="card-actions-row pt-1.5 border-t border-stone-200/70 flex items-center gap-1.5">
+                        <button type="button" onclick="event.stopPropagation(); window.openTatrizaStudioModal('${c.id}')" class="card-btn-studio h-6.5 sm:h-7 px-2 bg-gradient-to-r from-amber-700 to-amber-900 hover:from-amber-800 hover:to-stone-900 text-amber-200 border border-amber-500/50 font-bold rounded-lg transition inline-flex items-center justify-center gap-1 cursor-pointer shadow-2xs text-[8px] sm:text-[8.5px] leading-none select-none shrink-0" title="تصميم بوست أو ستوري احترافي للسوشيال ميديا"><span class="text-[8.5px] shrink-0">🎨</span><span class="truncate font-bold hidden sm:inline">استوديو</span></button>
                         <button type="button" onclick="event.stopPropagation(); window.portalOpenEdit('${c.id}')" class="card-btn-edit h-6.5 sm:h-7 flex-1 min-w-0 bg-amber-50 hover:bg-amber-100 text-amber-950 border border-amber-300/80 font-extrabold rounded-lg transition inline-flex items-center justify-center gap-1 cursor-pointer shadow-2xs text-[8px] sm:text-[8.5px] leading-none select-none" title="تعديل بيانات السجادة"><span class="text-[8.5px] shrink-0">✏️</span><span class="truncate font-extrabold">تعديل</span></button>
-                        <button type="button" onclick="event.stopPropagation(); window.portalDeleteCarpet('${c.id}')" class="card-btn-delete h-6.5 sm:h-7 w-[52px] sm:w-[58px] shrink-0 bg-rose-50 hover:bg-rose-100 text-rose-800 border border-rose-300/80 font-extrabold rounded-lg transition inline-flex items-center justify-center gap-1 cursor-pointer shadow-2xs text-[8px] sm:text-[8.5px] leading-none select-none" title="حذف السجادة نهائياً"><span class="text-[8.5px] shrink-0">🗑️</span><span class="truncate font-extrabold">حذف</span></button>
+                        <button type="button" onclick="event.stopPropagation(); window.portalDeleteCarpet('${c.id}')" class="card-btn-delete h-6.5 sm:h-7 w-[46px] sm:w-[50px] shrink-0 bg-rose-50 hover:bg-rose-100 text-rose-800 border border-rose-300/80 font-extrabold rounded-lg transition inline-flex items-center justify-center gap-1 cursor-pointer shadow-2xs text-[8px] sm:text-[8.5px] leading-none select-none" title="حذف السجادة نهائياً"><span class="text-[8.5px] shrink-0">🗑️</span><span class="truncate font-extrabold">حذف</span></button>
                     </div>
                 </div>
             </div>
@@ -2477,6 +2485,7 @@ window.addEventListener('DOMContentLoaded', () => {
     initEditImageManager();
     initVideoUploadHandlers();
     initShowcaseCMS();
+    initStudioEvents();
 
     // مراقبة حالة جلسة Firebase Auth
     subscribeToAdminAuth((user) => {
@@ -2543,4 +2552,9 @@ window.handleLookbookFormSubmit = handleLookbookFormSubmit;
 window.startLookbookEdit = startLookbookEdit;
 window.cancelLookbookEdit = cancelLookbookEdit;
 window.deleteLookbookItem = deleteLookbookItem;
+
+// استوديو تصاميم السوشيال ميديا وحالات الواتساب الاحترافي
+window.allPortalCarpets = allPortalCarpets;
+window.openTatrizaStudioModal = (carpetId) => openTatrizaStudioModal(carpetId, allPortalCarpets);
+window.closeTatrizaStudioModal = closeTatrizaStudioModal;
 
