@@ -345,6 +345,89 @@ export function getTintedLogoCanvas(logoImg, color) {
     return oc;
 }
 
+export function getMinimalLogoPreviewHtml() {
+    if (!studioState.showLogo) return '';
+    const logoOption = STUDIO_LOGO_OPTIONS[studioState.logoVariant] || STUDIO_LOGO_OPTIONS['white'];
+    const sizeClasses = {
+        'small': 'w-10 h-10 sm:w-12 sm:h-12',
+        'medium': 'w-14 h-14 sm:w-16 sm:h-16',
+        'large': 'w-20 h-20 sm:w-24 sm:h-24'
+    };
+    const sizeClass = sizeClasses[studioState.logoSize || 'small'] || sizeClasses['small'];
+    const opacityStyle = `opacity: ${(studioState.logoOpacity || 100) / 100};`;
+    const topY = studioState.minimalLogoOffsetY || 25;
+
+    // حساب موضع X للشعار (يمين أو وسط أو يسار أو تحريك دقيق)
+    let positionStyle = '';
+    if (studioState.minimalLogoAlign === 'right') {
+        positionStyle = `top: ${topY}px; right: 24px;`;
+    } else if (studioState.minimalLogoAlign === 'left') {
+        positionStyle = `top: ${topY}px; left: 24px;`;
+    } else {
+        const offsetPercent = studioState.minimalLogoOffsetPercent || 0;
+        positionStyle = `top: ${topY}px; left: calc(50% + ${offsetPercent}%); transform: translateX(-50%);`;
+    }
+
+    if (studioState.logoVariant === 'custom') {
+        const color = studioState.logoCustomColor || '#7c1d3c';
+        return `
+            <div class="absolute z-20 pointer-events-none transition-all duration-150" style="${positionStyle}">
+                <div 
+                    class="${sizeClass} drop-shadow-xs select-none" 
+                    style="background-color: ${color}; -webkit-mask-image: url('../images/logo_white.png'); -webkit-mask-size: contain; -webkit-mask-repeat: no-repeat; -webkit-mask-position: center; mask-image: url('../images/logo_white.png'); mask-size: contain; mask-repeat: no-repeat; mask-position: center; ${opacityStyle}">
+                </div>
+            </div>
+        `;
+    }
+
+    const blendStyle = studioState.logoVariant === 'original' ? 'mix-blend-mode: multiply;' : '';
+
+    return `
+        <div class="absolute z-20 pointer-events-none transition-all duration-150" style="${positionStyle}">
+            <img 
+                src="${logoOption.src}" 
+                class="${sizeClass} object-contain drop-shadow-xs select-none" 
+                style="${blendStyle} ${opacityStyle}" 
+                alt="TATRIZA Logo">
+        </div>
+    `;
+}
+
+export function getMinimalHandlePreviewHtml() {
+    if (!studioState.showStoryHandle || !studioState.storyHandle) return '';
+    const bottomY = studioState.minimalHandleOffsetY || 25;
+    const color = studioState.minimalHandleColor || '#6b7280';
+    const handleText = studioState.storyHandle.trim();
+
+    let positionStyle = '';
+    if (studioState.minimalHandleAlign === 'right') {
+        positionStyle = `bottom: ${bottomY}px; right: 24px;`;
+    } else if (studioState.minimalHandleAlign === 'left') {
+        positionStyle = `bottom: ${bottomY}px; left: 24px;`;
+    } else {
+        const offsetPercent = studioState.minimalHandleOffsetPercent || 0;
+        positionStyle = `bottom: ${bottomY}px; left: calc(50% + ${offsetPercent}%); transform: translateX(-50%);`;
+    }
+
+    if (studioState.minimalHandleStyle === 'pill') {
+        return `
+            <div class="absolute z-20 pointer-events-none transition-all duration-150" style="${positionStyle}">
+                <div class="px-3.5 py-1 rounded-full bg-white/85 backdrop-blur-xs border border-stone-200/60 shadow-2xs font-mono uppercase font-bold text-[10px] sm:text-[11px] tracking-[0.25em] select-none text-center" style="color: ${color};">
+                    ${handleText}
+                </div>
+            </div>
+        `;
+    }
+
+    return `
+        <div class="absolute z-20 pointer-events-none transition-all duration-150" style="${positionStyle}">
+            <div class="font-mono uppercase font-bold text-[11px] sm:text-[12px] tracking-[0.25em] select-none drop-shadow-2xs text-center" style="color: ${color}; text-shadow: 0 1px 2px rgba(255,255,255,0.7);">
+                ${handleText}
+            </div>
+        </div>
+    `;
+}
+
 // 2. ثيمات نمط كارت السجادة الملكي (Card Mode)
 export const STUDIO_THEMES = {
     'royal-burgundy': {
@@ -483,6 +566,18 @@ let studioState = {
     showBottomVignette: true,
     showStoryPhrase: true,
     showStoryHandle: true,
+
+    // إعدادات قالب العرض النقي والعلامة المائية (المطابق لبوست الفراولة بدون شادو)
+    minimalLogoAlign: 'center', // 'right', 'center', 'left', 'custom'
+    minimalLogoOffsetPercent: 0, // -45 to +45
+    minimalLogoOffsetY: 25, // 10 to 90 px
+    minimalHandleAlign: 'center', // 'right', 'center', 'left', 'custom'
+    minimalHandleOffsetPercent: 0, // -45 to +45
+    minimalHandleOffsetY: 25, // 15 to 90 px
+    minimalHandleColor: '#6b7280', // رمادي كالأصل أو أحد ألوان الموقع الأربعة
+    minimalHandleStyle: 'plain', // 'plain' أو 'pill'
+    minimalFitMode: 'contain', // 'contain' أو 'cover'
+    minimalBgColor: '#ffffff', // أبيض كالأصل
     
     // الأبعاد والثيمات
     ratio: '9:16', // افتراضي 9:16 ليتطابق مع الستوري المطلوب
@@ -605,15 +700,10 @@ function syncStudioControlsFromState() {
     // 2. إظهار/إخفاء الحاويات المناسبة للنمط
     const controlsStory = document.getElementById('studio-controls-story');
     const controlsCard = document.getElementById('studio-controls-card');
-    if (controlsStory && controlsCard) {
-        if (studioState.layoutMode === 'story_vignette') {
-            controlsStory.classList.remove('hidden');
-            controlsCard.classList.add('hidden');
-        } else {
-            controlsStory.classList.add('hidden');
-            controlsCard.classList.remove('hidden');
-        }
-    }
+    const controlsMinimal = document.getElementById('studio-controls-minimal');
+    if (controlsStory) controlsStory.classList.toggle('hidden', studioState.layoutMode !== 'story_vignette');
+    if (controlsCard) controlsCard.classList.toggle('hidden', studioState.layoutMode !== 'card');
+    if (controlsMinimal) controlsMinimal.classList.toggle('hidden', studioState.layoutMode !== 'minimal_showcase');
 
     // 3. مزامنة أشرطة التحريك والتكبير (Pan & Zoom)
     syncPanZoomSlidersOnly();
@@ -636,6 +726,7 @@ function syncStudioControlsFromState() {
     updateLogoControlStates();
     updateVignetteButtonStates();
     updateMediaButtonStates();
+    updateMinimalControlStates();
 
     // 5. مزامنة حقول نمط الكارت الملكي
     const titleIn = document.getElementById('studio-input-title');
@@ -790,6 +881,110 @@ function updateLogoControlStates() {
     if (logoOpacityVal) logoOpacityVal.innerText = `${studioState.logoOpacity || 100}%`;
 }
 
+function updateMinimalControlStates() {
+    // 1. عنوان وأزرار محاذاة الشعار
+    const logoPosTitle = document.getElementById('studio-minimal-logo-pos-title');
+    const alignNames = { 'right': 'محاذاة لليمين', 'center': 'بالمنتصف', 'left': 'محاذاة لليسار', 'custom': 'إزاحة دقيقة' };
+    if (logoPosTitle) logoPosTitle.innerText = alignNames[studioState.minimalLogoAlign] || 'بالمنتصف';
+
+    document.querySelectorAll('.studio-minimal-logo-align-btn').forEach(btn => {
+        const align = btn.getAttribute('data-align');
+        if (align === studioState.minimalLogoAlign) {
+            btn.classList.add('border-amber-500', 'bg-amber-50', 'text-amber-900', 'ring-2', 'ring-amber-400/30');
+            btn.classList.remove('border-stone-200', 'bg-white', 'text-stone-700');
+        } else {
+            btn.classList.remove('border-amber-500', 'bg-amber-50', 'text-amber-900', 'ring-2', 'ring-amber-400/30');
+            btn.classList.add('border-stone-200', 'bg-white', 'text-stone-700');
+        }
+    });
+
+    const logoXIn = document.getElementById('studio-input-minimal-logo-x');
+    const logoXVal = document.getElementById('studio-minimal-logo-x-val');
+    if (logoXIn) logoXIn.value = studioState.minimalLogoOffsetPercent || 0;
+    if (logoXVal) logoXVal.innerText = `${(studioState.minimalLogoOffsetPercent || 0) > 0 ? '+' : ''}${studioState.minimalLogoOffsetPercent || 0}%`;
+
+    const logoYIn = document.getElementById('studio-input-minimal-logo-y');
+    const logoYVal = document.getElementById('studio-minimal-logo-y-val');
+    if (logoYIn) logoYIn.value = studioState.minimalLogoOffsetY || 25;
+    if (logoYVal) logoYVal.innerText = `${studioState.minimalLogoOffsetY || 25}px`;
+
+    // 2. حساب وتوقيع الإنستقرام
+    const handleIn = document.getElementById('studio-input-minimal-handle');
+    if (handleIn) handleIn.value = studioState.storyHandle || '@TATRIZA_22';
+
+    const handlePosTitle = document.getElementById('studio-minimal-handle-pos-title');
+    if (handlePosTitle) handlePosTitle.innerText = alignNames[studioState.minimalHandleAlign] || 'بالمنتصف';
+
+    document.querySelectorAll('.studio-minimal-handle-align-btn').forEach(btn => {
+        const align = btn.getAttribute('data-align');
+        if (align === studioState.minimalHandleAlign) {
+            btn.classList.add('border-amber-500', 'bg-amber-50', 'text-amber-900', 'ring-2', 'ring-amber-400/30');
+            btn.classList.remove('border-stone-200', 'bg-white', 'text-stone-700');
+        } else {
+            btn.classList.remove('border-amber-500', 'bg-amber-50', 'text-amber-900', 'ring-2', 'ring-amber-400/30');
+            btn.classList.add('border-stone-200', 'bg-white', 'text-stone-700');
+        }
+    });
+
+    const handleXIn = document.getElementById('studio-input-minimal-handle-x');
+    const handleXVal = document.getElementById('studio-minimal-handle-x-val');
+    if (handleXIn) handleXIn.value = studioState.minimalHandleOffsetPercent || 0;
+    if (handleXVal) handleXVal.innerText = `${(studioState.minimalHandleOffsetPercent || 0) > 0 ? '+' : ''}${studioState.minimalHandleOffsetPercent || 0}%`;
+
+    const handleYIn = document.getElementById('studio-input-minimal-handle-y');
+    const handleYVal = document.getElementById('studio-minimal-handle-y-val');
+    if (handleYIn) handleYIn.value = studioState.minimalHandleOffsetY || 25;
+    if (handleYVal) handleYVal.innerText = `${studioState.minimalHandleOffsetY || 25}px`;
+
+    // لون التوقيع
+    document.querySelectorAll('.studio-handle-color-btn').forEach(btn => {
+        const c = btn.getAttribute('data-handle-color');
+        if (c === studioState.minimalHandleColor) {
+            btn.classList.add('border-amber-500', 'bg-amber-50', 'ring-2', 'ring-amber-400/30');
+            btn.classList.remove('border-stone-200', 'bg-white');
+        } else {
+            btn.classList.remove('border-amber-500', 'bg-amber-50', 'ring-2', 'ring-amber-400/30');
+            btn.classList.add('border-stone-200', 'bg-white');
+        }
+    });
+
+    // شكل التوقيع
+    document.querySelectorAll('.studio-minimal-handle-style-btn').forEach(btn => {
+        const s = btn.getAttribute('data-style');
+        if (s === studioState.minimalHandleStyle) {
+            btn.classList.add('border-amber-500', 'bg-amber-50', 'text-amber-900');
+            btn.classList.remove('border-stone-200', 'bg-white', 'text-stone-700');
+        } else {
+            btn.classList.remove('border-amber-500', 'bg-amber-50', 'text-amber-900');
+            btn.classList.add('border-stone-200', 'bg-white', 'text-stone-700');
+        }
+    });
+
+    // طريقة الاحتواء
+    document.querySelectorAll('.studio-minimal-fit-btn').forEach(btn => {
+        const f = btn.getAttribute('data-fit');
+        if (f === studioState.minimalFitMode) {
+            btn.classList.add('border-amber-500', 'bg-amber-50', 'text-amber-950');
+            btn.classList.remove('border-stone-200', 'bg-white', 'text-stone-700');
+        } else {
+            btn.classList.remove('border-amber-500', 'bg-amber-50', 'text-amber-950');
+            btn.classList.add('border-stone-200', 'bg-white', 'text-stone-700');
+        }
+    });
+
+    // لون الخلفية
+    document.querySelectorAll('.studio-minimal-bg-btn').forEach(btn => {
+        const b = btn.getAttribute('data-bg');
+        if (b === studioState.minimalBgColor) {
+            btn.classList.add('border-2', 'border-amber-500', 'ring-2', 'ring-amber-400/40', 'scale-110');
+            btn.classList.remove('border-stone-300');
+        } else {
+            btn.classList.remove('border-2', 'border-amber-500', 'ring-2', 'ring-amber-400/40', 'scale-110');
+            btn.classList.add('border-stone-300');
+        }
+    });
+}
+
 function updateVignetteButtonStates() {
     const activeVig = getActiveVignette();
     const vigNameEl = document.getElementById('studio-active-vignette-name');
@@ -838,6 +1033,8 @@ function updateExportButtonText() {
         } else {
             btn.innerHTML = `<span class="text-base sm:text-lg">📥</span><span>تحميل صورة ستوري بدقة فائقة (HD 1080×1920)</span>`;
         }
+    } else if (studioState.layoutMode === 'minimal_showcase') {
+        btn.innerHTML = `<span class="text-base sm:text-lg">📥</span><span>تحميل صورة العرض النقي بدقة فائقة (HD PNG)</span>`;
     } else {
         btn.innerHTML = `<span class="text-base sm:text-lg">📥</span><span>تحميل تصميم البوست بدقة فائقة (HD PNG)</span>`;
     }
@@ -977,7 +1174,62 @@ export function updateStudioPreview() {
     }
 
     // -------------------------------------------------------------
-    // الحالة الثانية: نمط بوست الكارت الملكي (مع بطاقة المواصفات والسعر)
+    // الحالة الثانية: نمط العرض النقي والعلامة المائية (Minimal Clean Showcase)
+    // المطابق لبوست الفراولة tufted بدون شادو مع تحكم كامل بموضع الشعار والحساب
+    // -------------------------------------------------------------
+    if (studioState.layoutMode === 'minimal_showcase') {
+        const bgColor = studioState.minimalBgColor || '#ffffff';
+        const fitClass = (studioState.minimalFitMode || 'contain') === 'contain' ? 'object-contain p-4 sm:p-6' : 'object-cover';
+
+        stage.className = `relative w-full max-w-[340px] sm:max-w-[360px] mx-auto rounded-3xl overflow-hidden shadow-2xl transition-all duration-300 flex flex-col justify-between p-0 select-none ${ratio.aspectClass} cursor-grab active:cursor-grabbing`;
+        stage.style.background = bgColor;
+        stage.style.backgroundImage = 'none';
+
+        // محتوى الميديا (صورة أو فيديو)
+        let mediaHtml = '';
+        if (studioState.mediaType === 'video' && studioState.videoSrc) {
+            mediaHtml = `
+                <div class="absolute inset-0 w-full h-full overflow-hidden z-0 pointer-events-none flex items-center justify-center">
+                    <video id="studio-live-video" src="${studioState.videoSrc}" autoplay loop muted playsinline class="w-full h-full ${fitClass} select-none transition-transform duration-75" style="transform: ${transformStyle}; transform-origin: center center;"></video>
+                </div>
+                <div class="absolute top-3 left-3 z-30 bg-black/50 backdrop-blur-md text-white text-[9px] px-2 py-0.5 rounded-full flex items-center gap-1 pointer-events-none">
+                    <span>🎥</span>
+                    <span>معاينة فيديو</span>
+                </div>
+            `;
+        } else {
+            mediaHtml = `
+                <div class="absolute inset-0 w-full h-full overflow-hidden z-0 pointer-events-none flex items-center justify-center">
+                    <img id="studio-live-img" src="${carpetImg}" alt="Minimal Carpet" class="w-full h-full ${fitClass} select-none transition-transform duration-75 pointer-events-none" style="transform: ${transformStyle}; transform-origin: center center;">
+                </div>
+            `;
+        }
+
+        // شعار الدار في الأعلى مع التحكم بالموضع الأفقي (يمين أو وسط أو يسار)
+        let logoHtml = '';
+        if (studioState.showLogo) {
+            logoHtml = getMinimalLogoPreviewHtml();
+        }
+
+        // حساب وتوقيع الإنستقرام بالأسفل مع التحكم بالموضع الأفقي
+        let handleHtml = '';
+        if (studioState.showStoryHandle && studioState.storyHandle) {
+            handleHtml = getMinimalHandlePreviewHtml();
+        }
+
+        stage.innerHTML = `
+            ${mediaHtml}
+            ${logoHtml}
+            ${handleHtml}
+        `;
+
+        // إتاحة السحب المباشر باللمس أو الماوس
+        setupStageDragAndZoom();
+        return;
+    }
+
+    // -------------------------------------------------------------
+    // الحالة الثالثة: نمط بوست الكارت الملكي (مع بطاقة المواصفات والسعر)
     // -------------------------------------------------------------
     const theme = STUDIO_THEMES[studioState.theme] || STUDIO_THEMES['royal-burgundy'];
 
@@ -1189,6 +1441,11 @@ export async function exportStudioHDImage() {
         // -------------------------------------------------------------
         if (studioState.layoutMode === 'story_vignette') {
             await exportStoryVignetteHD(canvas, ctx);
+            return;
+        }
+
+        if (studioState.layoutMode === 'minimal_showcase') {
+            await exportMinimalShowcaseHD(canvas, ctx);
             return;
         }
 
@@ -1510,6 +1767,120 @@ async function exportStoryVignetteHD(canvas, ctx) {
     showToast('تم تحميل ستوري إنستقرام فائق الدقة (1080×1920) بنجاح!', 'success', 'تطريز ستوديو');
 }
 
+// دالة تصدير قالب العرض النقي والعلامة المائية عالي الدقة (Minimal Clean Showcase HD)
+async function exportMinimalShowcaseHD(canvas, ctx) {
+    const carpetSrc = studioState.customImageSrc || '../images/client_room1.jpg';
+    const bgColor = studioState.minimalBgColor || '#ffffff';
+
+    // 1. رسم خلفية الكانفاس النقية
+    ctx.fillStyle = bgColor;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // 2. رسم الصورة أو مقطع الفيديو مع التحجيم والإزاحة
+    const zoom = (studioState.mediaZoom || 100) / 100;
+    const panX = studioState.mediaPanX || 0;
+    const panY = studioState.mediaPanY || 0;
+    const fitMode = studioState.minimalFitMode || 'contain';
+
+    if (fitMode === 'contain') {
+        await drawContainImageOnCanvas(ctx, carpetSrc, 0, 0, canvas.width, canvas.height, zoom, panX, panY);
+    } else {
+        await drawCoverImageOnCanvas(ctx, carpetSrc, 0, 0, canvas.width, canvas.height, zoom, panX, panY);
+    }
+
+    // 3. رسم اللوجو العلوي المفرغ مع الموضع الأفقي المختار (يمين / وسط / يسار)
+    if (studioState.showLogo) {
+        try {
+            ctx.save();
+            const logoOpacity = (studioState.logoOpacity || 100) / 100;
+            ctx.globalAlpha = logoOpacity;
+            const logoVariant = studioState.logoVariant || 'white';
+            const logoOpt = STUDIO_LOGO_OPTIONS[logoVariant] || STUDIO_LOGO_OPTIONS['white'];
+
+            // حجم الشعار في النمط النقي (حجم صغير وأنيق)
+            const sizesMap = {
+                'small': 120,
+                'medium': 175,
+                'large': 235
+            };
+            const logoDim = sizesMap[studioState.logoSize || 'small'] || 120;
+            
+            // حساب موضع X للشعار (يمين، وسط، يسار أو إزاحة دقيقة)
+            let logoCenterX = canvas.width / 2;
+            if (studioState.minimalLogoAlign === 'right') {
+                logoCenterX = canvas.width - (logoDim / 2) - 90;
+            } else if (studioState.minimalLogoAlign === 'left') {
+                logoCenterX = (logoDim / 2) + 90;
+            } else {
+                logoCenterX = (canvas.width / 2) + (canvas.width * ((studioState.minimalLogoOffsetPercent || 0) / 100));
+            }
+            const logoX = logoCenterX - (logoDim / 2);
+            const logoY = Number(studioState.minimalLogoOffsetY || 25) * (canvas.height / 500);
+
+            if (logoVariant === 'custom') {
+                const whiteLogo = await loadImageAsync('../images/logo_white.png');
+                const tinted = getTintedLogoCanvas(whiteLogo, studioState.logoCustomColor || '#7c1d3c');
+                ctx.drawImage(tinted, logoX, logoY, logoDim, logoDim);
+            } else if (logoVariant === 'original') {
+                const origImg = await loadImageAsync('../images/logo.jpg');
+                ctx.drawImage(origImg, logoX, logoY, logoDim, logoDim);
+            } else {
+                const logoImg = await loadImageAsync(logoOpt.src);
+                ctx.drawImage(logoImg, logoX, logoY, logoDim, logoDim);
+            }
+            ctx.restore();
+        } catch (e) {
+            console.warn('Minimal logo export error:', e);
+        }
+    }
+
+    // 4. رسم حساب الإنستقرام السفلي مع الموضع الأفقي المختار (يمين / وسط / يسار)
+    if (studioState.showStoryHandle && studioState.storyHandle) {
+        ctx.save();
+        const handleText = studioState.storyHandle.trim();
+        const handleColor = studioState.minimalHandleColor || '#6b7280';
+
+        // حساب موضع X لحساب الإنستقرام
+        let handleCenterX = canvas.width / 2;
+        if (studioState.minimalHandleAlign === 'right') {
+            handleCenterX = canvas.width - 240;
+        } else if (studioState.minimalHandleAlign === 'left') {
+            handleCenterX = 240;
+        } else {
+            handleCenterX = (canvas.width / 2) + (canvas.width * ((studioState.minimalHandleOffsetPercent || 0) / 100));
+        }
+
+        const handleY = canvas.height - (Number(studioState.minimalHandleOffsetY || 25) * (canvas.height / 500));
+
+        // نمط كبسولة زجاجية اختيارية أو نص مباشر نقي كالصورة
+        if (studioState.minimalHandleStyle === 'pill') {
+            ctx.font = 'bold 28px "Courier New", monospace, sans-serif';
+            const metrics = ctx.measureText(handleText);
+            const textWidth = metrics.width + (handleText.length * 8);
+            const pillW = textWidth + 60;
+            const pillH = 54;
+            drawRoundedRect(ctx, handleCenterX - (pillW / 2), handleY - (pillH / 2), pillW, pillH, 27);
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+            ctx.fill();
+            ctx.strokeStyle = 'rgba(0, 0, 0, 0.08)';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+        }
+
+        ctx.font = 'bold 28px "Courier New", monospace, sans-serif';
+        ctx.fillStyle = handleColor;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        drawSpacedText(ctx, handleText, handleCenterX, handleY, 8);
+        ctx.restore();
+    }
+
+    // تنزيل الصورة
+    const ratioStr = studioState.ratio.replace(':', 'x');
+    downloadCanvasAsPNG(canvas, `TATRIZA-Minimal-${ratioStr}.png`);
+    showToast(`تم تحميل تصميم العرض النقي (${canvas.width}×${canvas.height}) بنجاح!`, 'success', 'تطريز ستوديو');
+}
+
 function downloadCanvasAsPNG(canvas, fileName) {
     const dataUrl = canvas.toDataURL('image/png', 1.0);
     const link = document.createElement('a');
@@ -1616,6 +1987,47 @@ function drawCoverImageOnCanvas(ctx, src, x, y, w, h, zoom = 1.0, panXPercent = 
     });
 }
 
+// رسم الصورة في وضع الاحتواء (Contain) للحفاظ على الحواف النقية والخلفية كصورة الفراولة
+function drawContainImageOnCanvas(ctx, src, x, y, w, h, zoom = 1.0, panXPercent = 0, panYPercent = 0) {
+    return new Promise((resolve) => {
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.src = src;
+        img.onload = () => {
+            ctx.save();
+            ctx.beginPath();
+            ctx.rect(x, y, w, h);
+            ctx.clip();
+
+            const imgRatio = img.width / img.height;
+            const targetRatio = w / h;
+            let baseW, baseH;
+
+            if (imgRatio > targetRatio) {
+                baseW = w * 0.88;
+                baseH = baseW / imgRatio;
+            } else {
+                baseH = h * 0.82;
+                baseW = baseH * imgRatio;
+            }
+
+            const finalW = baseW * zoom;
+            const finalH = baseH * zoom;
+
+            const centerX = x + (w - finalW) / 2;
+            const centerY = y + (h - finalH) / 2;
+
+            const offsetX = (w * (panXPercent / 100));
+            const offsetY = (h * (panYPercent / 100));
+
+            ctx.drawImage(img, centerX + offsetX, centerY + offsetY, finalW, finalH);
+            ctx.restore();
+            resolve();
+        };
+        img.onerror = () => resolve();
+    });
+}
+
 // مساعدة لرسم مستطيل بحواف دائرية
 function drawRoundedRect(ctx, x, y, width, height, radius) {
     ctx.beginPath();
@@ -1700,7 +2112,19 @@ export function copyStudioCaption() {
     let caption = '';
     const cleanWa = (studioState.whatsapp || '+968').replace(/[^0-9]/g, '');
 
-    if (studioState.layoutMode === 'story_vignette') {
+    if (studioState.layoutMode === 'minimal_showcase') {
+        const handle = studioState.minimalHandle || '@TATRIZA_22';
+        caption = `✨ دار تطريز | TATRIZA
+${studioState.title ? `🏷️ ${studioState.title}\n` : ''}
+حياكة متقنة وإبداع يدوي يجسد أدق التفاصيل بأعلى معايير الجودة 🧵✨
+نسعد دائماً بمشاركتكم أعمالنا الفنية الحصرية والمصممة خصيصاً لكم.
+
+📍 حسابنا الرسمي على الإنستغرام: ${handle}
+💬 للطلب والاستفسار المباشر عبر الواتساب:
+https://wa.me/${cleanWa}?text=${encodeURIComponent(`مرحباً دار تطريز، أود الاستفسار والطلب:`)}
+
+#تطريز #سجاد_يدوي #حرف_يدوية #تصميم_خاص #سلطنة_عمان #مسقط #TATRIZA #Tufting #Handmade`;
+    } else if (studioState.layoutMode === 'story_vignette') {
         const phrase = studioState.storyPhrase || '- 🌟 عمل مُتقن -';
         caption = `✨ دار تطريز للسجاد الملكي | TATRIZA
 ${phrase}
@@ -1858,7 +2282,7 @@ function renderStudioDraftsList() {
 // ربط الأحداث مع واجهة المستخدم
 // ==========================================
 export function initStudioEvents() {
-    // 1. أزرار اختيار نمط الإخراج (ستوري إنستقرام مقابل كارت ملكي)
+    // 1. أزرار اختيار نمط الإخراج (ستوري إنستقرام مقابل كارت ملكي مقابل قالب نقي)
     document.querySelectorAll('.studio-layout-btn').forEach(btn => {
         btn.addEventListener('click', () => {
             const layout = btn.getAttribute('data-layout');
@@ -1866,6 +2290,9 @@ export function initStudioEvents() {
                 studioState.layoutMode = layout;
                 if (layout === 'story_vignette') {
                     studioState.ratio = '9:16';
+                } else if (layout === 'minimal_showcase') {
+                    studioState.ratio = '1:1';
+                    studioState.logoSize = 'small';
                 }
                 syncStudioControlsFromState();
                 updateStudioPreview();
@@ -2106,7 +2533,137 @@ export function initStudioEvents() {
         vigBotIn.addEventListener('change', handleBotVig);
     }
 
-    // 6. بطاقات ثيمات الكارت الملكي
+    // 7. أحداث قالب العرض النقي والعلامة المائية (Minimal Showcase Events)
+    document.querySelectorAll('.studio-minimal-logo-align-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const align = btn.getAttribute('data-align');
+            if (align) {
+                studioState.minimalLogoAlign = align;
+                if (align === 'center') studioState.minimalLogoOffsetPercent = 0;
+                else if (align === 'right') studioState.minimalLogoOffsetPercent = 35;
+                else if (align === 'left') studioState.minimalLogoOffsetPercent = -35;
+                updateMinimalControlStates();
+                updateStudioPreview();
+            }
+        });
+    });
+
+    const minLogoXIn = document.getElementById('studio-input-minimal-logo-x');
+    if (minLogoXIn) {
+        minLogoXIn.addEventListener('input', (e) => {
+            studioState.minimalLogoOffsetPercent = Number(e.target.value);
+            studioState.minimalLogoAlign = 'custom';
+            updateMinimalControlStates();
+            updateStudioPreview();
+        });
+    }
+
+    const minLogoYIn = document.getElementById('studio-input-minimal-logo-y');
+    if (minLogoYIn) {
+        minLogoYIn.addEventListener('input', (e) => {
+            studioState.minimalLogoOffsetY = Number(e.target.value);
+            updateMinimalControlStates();
+            updateStudioPreview();
+        });
+    }
+
+    const minHandleIn = document.getElementById('studio-input-minimal-handle');
+    if (minHandleIn) {
+        minHandleIn.addEventListener('input', (e) => {
+            studioState.storyHandle = e.target.value;
+            const storyHandleInput = document.getElementById('studio-input-story-handle');
+            if (storyHandleInput) storyHandleInput.value = e.target.value;
+            updateStudioPreview();
+        });
+    }
+
+    document.querySelectorAll('.studio-minimal-handle-align-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const align = btn.getAttribute('data-align');
+            if (align) {
+                studioState.minimalHandleAlign = align;
+                if (align === 'center') studioState.minimalHandleOffsetPercent = 0;
+                else if (align === 'right') studioState.minimalHandleOffsetPercent = 35;
+                else if (align === 'left') studioState.minimalHandleOffsetPercent = -35;
+                updateMinimalControlStates();
+                updateStudioPreview();
+            }
+        });
+    });
+
+    const minHandleXIn = document.getElementById('studio-input-minimal-handle-x');
+    if (minHandleXIn) {
+        minHandleXIn.addEventListener('input', (e) => {
+            studioState.minimalHandleOffsetPercent = Number(e.target.value);
+            studioState.minimalHandleAlign = 'custom';
+            updateMinimalControlStates();
+            updateStudioPreview();
+        });
+    }
+
+    const minHandleYIn = document.getElementById('studio-input-minimal-handle-y');
+    if (minHandleYIn) {
+        minHandleYIn.addEventListener('input', (e) => {
+            studioState.minimalHandleOffsetY = Number(e.target.value);
+            updateMinimalControlStates();
+            updateStudioPreview();
+        });
+    }
+
+    document.querySelectorAll('.studio-handle-color-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const color = btn.getAttribute('data-handle-color');
+            if (color) {
+                studioState.minimalHandleColor = color;
+                updateMinimalControlStates();
+                updateStudioPreview();
+            }
+        });
+    });
+
+    document.querySelectorAll('.studio-minimal-handle-style-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const style = btn.getAttribute('data-style');
+            if (style) {
+                studioState.minimalHandleStyle = style;
+                updateMinimalControlStates();
+                updateStudioPreview();
+            }
+        });
+    });
+
+    document.querySelectorAll('.studio-minimal-fit-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const fit = btn.getAttribute('data-fit');
+            if (fit) {
+                studioState.minimalFitMode = fit;
+                updateMinimalControlStates();
+                updateStudioPreview();
+            }
+        });
+    });
+
+    document.querySelectorAll('.studio-minimal-bg-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const bg = btn.getAttribute('data-bg');
+            if (bg) {
+                studioState.minimalBgColor = bg;
+                updateMinimalControlStates();
+                updateStudioPreview();
+            }
+        });
+    });
+
+    const minCustomBgIn = document.getElementById('studio-input-minimal-custom-bg');
+    if (minCustomBgIn) {
+        minCustomBgIn.addEventListener('input', (e) => {
+            studioState.minimalBgColor = e.target.value;
+            updateMinimalControlStates();
+            updateStudioPreview();
+        });
+    }
+
+    // 8. بطاقات ثيمات الكارت الملكي
     document.querySelectorAll('.studio-theme-card').forEach(card => {
         card.addEventListener('click', () => {
             const themeId = card.getAttribute('data-theme');
