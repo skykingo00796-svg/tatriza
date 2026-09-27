@@ -1550,10 +1550,10 @@
             ></video>
 
             <!-- زر إيقاف وتشغيل تفاعلي بالوسط -->
-            <div id="lightbox-video-center-btn" onclick="window.toggleLightboxVideoPlay()" class="absolute inset-0 flex items-center justify-center pointer-events-none transition-all duration-300 opacity-0">
-                <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-black/65 backdrop-blur-md border border-white/30 text-white flex items-center justify-center text-2xl sm:text-3xl shadow-2xl transform transition hover:scale-110 pointer-events-auto cursor-pointer" id="lightbox-video-center-icon">
-                    ▶
-                </div>
+            <div id="lightbox-video-center-btn" onclick="window.toggleLightboxVideoPlay()" class="absolute inset-0 flex items-center justify-center pointer-events-auto transition-all duration-300 opacity-100 z-20">
+                <button type="button" class="luxury-play-center-btn w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-black/65 hover:bg-black/90 backdrop-blur-md border-2 border-amber-400/80 text-amber-300 hover:text-amber-200 flex items-center justify-center text-2xl sm:text-3xl shadow-[0_0_30px_rgba(217,119,6,0.5)] transform transition-transform duration-300 hover:scale-110 active:scale-95 pointer-events-auto cursor-pointer" id="lightbox-video-center-icon" title="بدء تشغيل الفيديو">
+                    <span class="mr-[-3px]">▶</span>
+                </button>
             </div>
 
             <!-- عنوان/شارة السجادة أسفل الفيديو -->

@@ -381,21 +381,20 @@ export function openModal(carpetId, allCarpets) {
                         playsinline 
                         muted 
                         loop 
-                        autoplay 
-                        preload="auto"
+                        preload="metadata"
                         class="max-w-full max-h-full w-auto h-auto object-contain mx-auto block cursor-pointer bg-white"
                         onclick="window.toggleProductVideoPlay(this)"
                     ></video>
                     
-                    <!-- زر الإيقاف والتشغيل العائم بالمنتصف -->
+                    <!-- زر الإيقاف والتشغيل الفاخر بالمنتصف -->
                     <div 
                         id="modal-video-center-btn" 
                         onclick="window.toggleProductVideoPlay(document.getElementById('modal-product-video'))" 
-                        class="absolute inset-0 flex items-center justify-center pointer-events-none transition-all duration-300 opacity-0"
+                        class="absolute inset-0 flex items-center justify-center transition-all duration-300 opacity-100 pointer-events-auto z-10"
                     >
-                        <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-black/65 backdrop-blur-md border border-white/30 text-white flex items-center justify-center text-xl sm:text-2xl shadow-2xl transform transition hover:scale-110 pointer-events-auto cursor-pointer" id="modal-video-center-icon">
-                            ▶
-                        </div>
+                        <button type="button" class="luxury-play-center-btn w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-black/70 hover:bg-black/90 backdrop-blur-md border-2 border-amber-400/80 text-amber-300 hover:text-amber-200 flex items-center justify-center text-2xl sm:text-3xl shadow-[0_0_30px_rgba(217,119,6,0.5)] transform transition-transform duration-300 hover:scale-110 active:scale-95 pointer-events-auto cursor-pointer group/modalplay" id="modal-video-center-icon" title="بدء تشغيل الفيديو">
+                            <span class="mr-[-3px] group-hover/modalplay:scale-110 transition-transform">▶</span>
+                        </button>
                     </div>
                 </div>
             `;
@@ -428,7 +427,6 @@ export function openModal(carpetId, allCarpets) {
                         videoEl.setAttribute('muted', '');
                         videoEl.src = blobUrl;
                         videoEl.load();
-                        videoEl.play().catch(() => {});
                     }
                 }
             });
@@ -520,6 +518,15 @@ export function closeModal() {
     if (videoBadge) {
         videoBadge.classList.add('hidden');
     }
+    const centerBtn = document.getElementById('modal-video-center-btn');
+    if (centerBtn) {
+        centerBtn.classList.remove('opacity-0', 'pointer-events-none');
+        centerBtn.classList.add('opacity-100', 'pointer-events-auto');
+    }
+    const centerIcon = document.getElementById('modal-video-center-icon');
+    if (centerIcon) {
+        centerIcon.innerHTML = '<span class="mr-[-3px]">▶</span>';
+    }
 }
 
 export function handleModalScroll(container) {
@@ -545,8 +552,11 @@ export function handleModalScroll(container) {
         const isVideoActive = Math.abs(slideRect.left - containerRect.left) < (width * 0.45);
 
         if (isVideoActive) {
-            if (videoEl.paused) {
-                videoEl.play().catch(() => {});
+            // لا تشغيل تلقائي - يبقى الفيديو متوقفاً والزر ظاهراً بانتظار نقرة الزائر
+            const centerBtn = document.getElementById('modal-video-center-btn');
+            if (centerBtn && videoEl.paused) {
+                centerBtn.classList.remove('opacity-0', 'pointer-events-none');
+                centerBtn.classList.add('opacity-100', 'pointer-events-auto');
             }
             // إظهار زري كتم الصوت وتكبير الفيديو في الأعلى يمين مقابل زر الإغلاق
             if (videoTopControls) {
@@ -560,6 +570,11 @@ export function handleModalScroll(container) {
         } else {
             if (!videoEl.paused) {
                 videoEl.pause();
+            }
+            const centerBtn = document.getElementById('modal-video-center-btn');
+            if (centerBtn) {
+                centerBtn.classList.remove('opacity-0', 'pointer-events-none');
+                centerBtn.classList.add('opacity-100', 'pointer-events-auto');
             }
             // كتم الصوت تلقائياً عند الابتعاد عن شريحة الفيديو
             videoEl.muted = true;
@@ -644,8 +659,17 @@ window.openVideoLightbox = (videoSrc, title = 'فيديو استعراضي') => 
             if (icon) icon.innerText = '🔇';
             audioBtn.setAttribute('title', 'تشغيل الصوت');
         }
+        const centerBtn = document.getElementById('lightbox-video-center-btn');
+        const centerIcon = document.getElementById('lightbox-video-center-icon');
+        if (centerBtn) {
+            centerBtn.classList.remove('opacity-0', 'pointer-events-none');
+            centerBtn.classList.add('opacity-100', 'pointer-events-auto');
+        }
+        if (centerIcon) {
+            centerIcon.innerHTML = '<span class="mr-[-3px]">▶</span>';
+        }
         modal.classList.remove('hidden');
-        player.play().catch(() => {});
+        player.pause();
     }
 };
 
@@ -677,22 +701,28 @@ window.toggleLightboxVideoPlay = () => {
     const centerIcon = document.getElementById('lightbox-video-center-icon');
 
     if (player.paused) {
-        player.play().catch(() => {});
-        if (centerIcon) centerIcon.innerText = '▶';
-        if (centerBtn) {
-            centerBtn.classList.remove('opacity-0');
-            centerBtn.classList.add('opacity-100');
-            setTimeout(() => {
-                centerBtn.classList.remove('opacity-100');
-                centerBtn.classList.add('opacity-0');
-            }, 350);
+        const onPlaying = () => {
+            if (centerBtn) {
+                centerBtn.classList.remove('opacity-100', 'pointer-events-auto');
+                centerBtn.classList.add('opacity-0', 'pointer-events-none');
+            }
+        };
+
+        const playPromise = player.play();
+        if (playPromise !== undefined) {
+            playPromise.then(onPlaying).catch(() => {
+                player.muted = true;
+                player.play().then(onPlaying).catch(() => {});
+            });
         }
     } else {
         player.pause();
-        if (centerIcon) centerIcon.innerText = '⏸';
         if (centerBtn) {
-            centerBtn.classList.remove('opacity-0');
-            centerBtn.classList.add('opacity-100');
+            centerBtn.classList.remove('opacity-0', 'pointer-events-none');
+            centerBtn.classList.add('opacity-100', 'pointer-events-auto');
+        }
+        if (centerIcon) {
+            centerIcon.innerHTML = '<span class="mr-[-3px]">▶</span>';
         }
     }
 };
@@ -725,22 +755,28 @@ window.toggleProductVideoPlay = (videoEl) => {
     const centerIcon = document.getElementById('modal-video-center-icon');
 
     if (videoEl.paused) {
-        videoEl.play().catch(() => {});
-        if (centerIcon) centerIcon.innerText = '▶';
-        if (centerBtn) {
-            centerBtn.classList.remove('opacity-0');
-            centerBtn.classList.add('opacity-100');
-            setTimeout(() => {
-                centerBtn.classList.remove('opacity-100');
-                centerBtn.classList.add('opacity-0');
-            }, 450);
+        const onPlaying = () => {
+            if (centerBtn) {
+                centerBtn.classList.remove('opacity-100', 'pointer-events-auto');
+                centerBtn.classList.add('opacity-0', 'pointer-events-none');
+            }
+        };
+
+        const playPromise = videoEl.play();
+        if (playPromise !== undefined) {
+            playPromise.then(onPlaying).catch(() => {
+                videoEl.muted = true;
+                videoEl.play().then(onPlaying).catch(() => {});
+            });
         }
     } else {
         videoEl.pause();
-        if (centerIcon) centerIcon.innerText = '⏸';
         if (centerBtn) {
-            centerBtn.classList.remove('opacity-0');
-            centerBtn.classList.add('opacity-100');
+            centerBtn.classList.remove('opacity-0', 'pointer-events-none');
+            centerBtn.classList.add('opacity-100', 'pointer-events-auto');
+        }
+        if (centerIcon) {
+            centerIcon.innerHTML = '<span class="mr-[-3px]">▶</span>';
         }
     }
 };

@@ -299,11 +299,11 @@ function displayCarpets(carpetsToDisplay) {
                         onclick="event.stopPropagation(); window.toggleCardVideoPlay('${carpet.id}')"
                     ></video>
                     
-<!-- زر إيقاف وتشغيل تفاعلي بالوسط مصغر ومضبوط للبطاقة -->
-                    <div id="card-video-center-btn-${carpet.id}" onclick="event.stopPropagation(); window.toggleCardVideoPlay('${carpet.id}')" class="absolute inset-0 flex items-center justify-center pointer-events-none transition-all duration-300 opacity-0">
-                        <div class="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-black/65 backdrop-blur-md border border-white/30 text-white flex items-center justify-center text-[9px] shadow-md transform transition hover:scale-110 pointer-events-auto cursor-pointer" id="card-video-center-icon-${carpet.id}">
-                            ▶
-                        </div>
+                    <!-- زر إيقاف وتشغيل تفاعلي فاخر بالوسط لبطاقة المنتج -->
+                    <div id="card-video-center-btn-${carpet.id}" onclick="event.stopPropagation(); window.toggleCardVideoPlay('${carpet.id}')" class="absolute inset-0 flex items-center justify-center transition-all duration-300 opacity-100 pointer-events-auto z-10">
+                        <button type="button" class="card-video-center-btn w-11 h-11 sm:w-13 sm:h-13 rounded-full bg-black/70 hover:bg-black/90 border-2 border-amber-400/80 text-amber-300 hover:text-amber-200 flex items-center justify-center text-base sm:text-lg shadow-xl transform transition-transform duration-300 hover:scale-110 active:scale-95 pointer-events-auto cursor-pointer group/cardplay" id="card-video-center-icon-${carpet.id}" title="بدء تشغيل الفيديو">
+                            <span class="mr-[-2px] group-hover/cardplay:scale-110 transition-transform">▶</span>
+                        </button>
                     </div>
 
                     <!-- زر الصوت المصغر لبطاقة المعرض بحجم مريح ومتناسق -->
@@ -461,12 +461,14 @@ function handleImageScrollForGrid(container, carpetId) {
         const isVideoActive = (activeIndex === 1);
 
         if (isVideoActive) {
-            // 1. تشغيل الفيديو في البطاقة تلقائياً
-            if (cardVideo.paused) {
-                cardVideo.play().catch(() => {});
+            // لا تشغيل تلقائي - يبقى الفيديو متوقفاً والزر بانتظار نقرة الزائر في المنتصف
+            const centerBtn = document.getElementById(`card-video-center-btn-${carpetId}`);
+            if (centerBtn && cardVideo.paused) {
+                centerBtn.classList.remove('opacity-0', 'pointer-events-none');
+                centerBtn.classList.add('opacity-100', 'pointer-events-auto');
             }
 
-            // 2. تحويل الزر إلى أيقونة تكبير مصغرة ومحكمة ومتناسقة مع حجم الكارد وزر كتم الصوت
+            // تحويل الزر إلى أيقونة تكبير مصغرة ومحكمة ومتناسقة مع حجم الكارد وزر كتم الصوت
             if (badge) {
                 badge.className = "absolute bottom-1.5 right-1.5 bg-black/75 hover:bg-black/90 text-white w-5 h-5 sm:w-5.5 sm:h-5.5 rounded-md backdrop-blur-md border border-white/20 flex items-center justify-center transition shadow-2xs cursor-pointer pointer-events-auto z-20 hover:scale-105";
                 badge.innerHTML = `<span class="text-[9px] sm:text-[10px] leading-none">⛶</span>`;
@@ -476,6 +478,11 @@ function handleImageScrollForGrid(container, carpetId) {
             // إيقاف تشغيل الفيديو عند الانتقال لصور أخرى لتوفير البطارية
             if (!cardVideo.paused) {
                 cardVideo.pause();
+            }
+            const centerBtn = document.getElementById(`card-video-center-btn-${carpetId}`);
+            if (centerBtn) {
+                centerBtn.classList.remove('opacity-0', 'pointer-events-none');
+                centerBtn.classList.add('opacity-100', 'pointer-events-auto');
             }
             // إعادة كتم الصوت تلقائياً لراحة العميل
             cardVideo.muted = true;
@@ -563,22 +570,28 @@ window.toggleCardVideoPlay = (carpetId) => {
     const centerIcon = document.getElementById(`card-video-center-icon-${carpetId}`);
 
     if (cardVideo.paused) {
-        cardVideo.play().catch(() => {});
-        if (centerIcon) centerIcon.innerText = '▶';
-        if (centerBtn) {
-            centerBtn.classList.remove('opacity-0');
-            centerBtn.classList.add('opacity-100');
-            setTimeout(() => {
-                centerBtn.classList.remove('opacity-100');
-                centerBtn.classList.add('opacity-0');
-            }, 350);
+        const onPlaying = () => {
+            if (centerBtn) {
+                centerBtn.classList.remove('opacity-100', 'pointer-events-auto');
+                centerBtn.classList.add('opacity-0', 'pointer-events-none');
+            }
+        };
+
+        const playPromise = cardVideo.play();
+        if (playPromise !== undefined) {
+            playPromise.then(onPlaying).catch(() => {
+                cardVideo.muted = true;
+                cardVideo.play().then(onPlaying).catch(() => {});
+            });
         }
     } else {
         cardVideo.pause();
-        if (centerIcon) centerIcon.innerText = '⏸';
         if (centerBtn) {
-            centerBtn.classList.remove('opacity-0');
-            centerBtn.classList.add('opacity-100');
+            centerBtn.classList.remove('opacity-0', 'pointer-events-none');
+            centerBtn.classList.add('opacity-100', 'pointer-events-auto');
+        }
+        if (centerIcon) {
+            centerIcon.innerHTML = '<span class="mr-[-2px]">▶</span>';
         }
     }
 };
@@ -1283,28 +1296,45 @@ function setCinemaVideoSource(targetUrl, posterUrl, autoPlay = false) {
 
     const playIcon = document.getElementById('cinema-play-icon');
     const playText = document.getElementById('cinema-play-text');
+    const centerWrap = document.getElementById('cinema-video-center-btn-wrap');
+    const centerIcon = document.getElementById('cinema-video-center-icon');
+
+    const updatePlayingUI = () => {
+        if (playIcon) playIcon.innerText = '⏸';
+        if (playText) playText.innerText = 'إيقاف مؤقت';
+        if (centerWrap) {
+            centerWrap.classList.remove('opacity-100', 'pointer-events-auto');
+            centerWrap.classList.add('opacity-0', 'pointer-events-none');
+        }
+        if (centerIcon) centerIcon.innerText = '⏸';
+    };
+
+    const updatePausedUI = () => {
+        if (playIcon) playIcon.innerText = '▶';
+        if (playText) playText.innerText = 'مشاهدة الحرفة';
+        if (centerWrap) {
+            centerWrap.classList.remove('opacity-0', 'pointer-events-none');
+            centerWrap.classList.add('opacity-100', 'pointer-events-auto');
+        }
+        if (centerIcon) centerIcon.innerText = '▶';
+    };
+
+    if (!videoEl._playPauseBound) {
+        videoEl._playPauseBound = true;
+        videoEl.addEventListener('play', updatePlayingUI);
+        videoEl.addEventListener('pause', updatePausedUI);
+    }
 
     if (autoPlay && targetUrl) {
         const playPromise = videoEl.play();
         if (playPromise !== undefined) {
-            playPromise.then(() => {
-                if (playIcon) playIcon.innerText = '⏸';
-                if (playText) playText.innerText = 'إيقاف مؤقت';
-            }).catch(() => {
-                // المتصفح قد يقيد الصوت في التشغيل التلقائي، نكتم الصوت ونعيد المحاولة
+            playPromise.then(updatePlayingUI).catch(() => {
                 videoEl.muted = true;
-                videoEl.play().then(() => {
-                    if (playIcon) playIcon.innerText = '⏸';
-                    if (playText) playText.innerText = 'إيقاف مؤقت';
-                }).catch(() => {
-                    if (playIcon) playIcon.innerText = '▶';
-                    if (playText) playText.innerText = 'مشاهدة الحرفة';
-                });
+                videoEl.play().then(updatePlayingUI).catch(updatePausedUI);
             });
         }
     } else {
-        if (playIcon) playIcon.innerText = '▶';
-        if (playText) playText.innerText = 'مشاهدة الحرفة';
+        updatePausedUI();
     }
 }
 
@@ -1388,7 +1418,7 @@ function applyActiveCinemaContent(autoPlay = false) {
 }
 
 // دالة تحريك وانزلاق البطاقة بالكامل لليمين أو اليسار
-function navigateCinemaScene(direction, targetIdx, autoPlay = true) {
+function navigateCinemaScene(direction, targetIdx, autoPlay = false) {
     if (!currentCinemaVideos || currentCinemaVideos.length <= 1) return;
     if (isCinemaTransitioning) return;
     if (targetIdx === activeCinemaIndex) return;
@@ -1442,19 +1472,19 @@ function applyActiveCinemaVideo(autoPlay = false) {
 window.selectCinemaVideo = function(idx) {
     if (idx === activeCinemaIndex) return;
     const direction = idx > activeCinemaIndex ? 'next' : 'prev';
-    navigateCinemaScene(direction, idx, true);
+    navigateCinemaScene(direction, idx, false);
 };
 
 window.prevCinemaVideo = function() {
     if (!currentCinemaVideos || currentCinemaVideos.length <= 1) return;
     const prevIdx = (activeCinemaIndex - 1 + currentCinemaVideos.length) % currentCinemaVideos.length;
-    navigateCinemaScene('prev', prevIdx, true);
+    navigateCinemaScene('prev', prevIdx, false);
 };
 
 window.nextCinemaVideo = function() {
     if (!currentCinemaVideos || currentCinemaVideos.length <= 1) return;
     const nextIdx = (activeCinemaIndex + 1) % currentCinemaVideos.length;
-    navigateCinemaScene('next', nextIdx, true);
+    navigateCinemaScene('next', nextIdx, false);
 };
 
 // مستمعات السحب باللمس على الجوال (Touch Swipe Support)
@@ -1567,31 +1597,42 @@ window.toggleCinemaVideoPlay = function() {
     const video = document.getElementById('atelier-cinema-video');
     const icon = document.getElementById('cinema-play-icon');
     const text = document.getElementById('cinema-play-text');
+    const centerWrap = document.getElementById('cinema-video-center-btn-wrap');
+    const centerIcon = document.getElementById('cinema-video-center-icon');
     if (!video) return;
 
     if (video.paused) {
         if (!video.src && currentCinemaVideos && currentCinemaVideos[activeCinemaIndex]) {
-            applyActiveCinemaContent(true);
-            return;
+            applyActiveCinemaContent(false);
         }
+
+        const onPlaying = () => {
+            if (icon) icon.innerText = '⏸';
+            if (text) text.innerText = 'إيقاف مؤقت';
+            if (centerWrap) {
+                centerWrap.classList.remove('opacity-100', 'pointer-events-auto');
+                centerWrap.classList.add('opacity-0', 'pointer-events-none');
+            }
+            if (centerIcon) centerIcon.innerText = '⏸';
+        };
+
         const playPromise = video.play();
         if (playPromise !== undefined) {
-            playPromise.then(() => {
-                if (icon) icon.innerText = '⏸';
-                if (text) text.innerText = 'إيقاف مؤقت';
-            }).catch(() => {
+            playPromise.then(onPlaying).catch(() => {
                 // إذا رفض المتصفح الصوت، نكتمه ونشغل تلقائياً
                 video.muted = true;
-                video.play().then(() => {
-                    if (icon) icon.innerText = '⏸';
-                    if (text) text.innerText = 'إيقاف مؤقت';
-                }).catch(() => {});
+                video.play().then(onPlaying).catch(() => {});
             });
         }
     } else {
         video.pause();
         if (icon) icon.innerText = '▶';
         if (text) text.innerText = 'مشاهدة الحرفة';
+        if (centerWrap) {
+            centerWrap.classList.remove('opacity-0', 'pointer-events-none');
+            centerWrap.classList.add('opacity-100', 'pointer-events-auto');
+        }
+        if (centerIcon) centerIcon.innerText = '▶';
     }
 };
 
