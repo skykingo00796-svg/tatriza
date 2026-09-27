@@ -348,33 +348,29 @@ export function getTintedLogoCanvas(logoImg, color) {
 export function getMinimalLogoPreviewHtml() {
     if (!studioState.showLogo) return '';
     const logoOption = STUDIO_LOGO_OPTIONS[studioState.logoVariant] || STUDIO_LOGO_OPTIONS['white'];
-    const sizeClasses = {
-        'small': 'w-10 h-10 sm:w-12 sm:h-12',
-        'medium': 'w-14 h-14 sm:w-16 sm:h-16',
-        'large': 'w-20 h-20 sm:w-24 sm:h-24'
+    
+    // أبعاد دقيقة ومطلقة بالبكسل - ثابتة تماماً ومستقلة عن التحريك الأفقي
+    const dimMap = {
+        'small': 46,
+        'medium': 64,
+        'large': 86
     };
-    const sizeClass = sizeClasses[studioState.logoSize || 'small'] || sizeClasses['small'];
-    const opacityStyle = `opacity: ${(studioState.logoOpacity || 100) / 100};`;
+    const dim = dimMap[studioState.logoSize || 'small'] || 46;
+    const opacity = (studioState.logoOpacity || 100) / 100;
     const topY = studioState.minimalLogoOffsetY || 25;
+    const offsetPercent = studioState.minimalLogoOffsetPercent || 0;
 
-    // حساب موضع X للشعار (يمين أو وسط أو يسار أو تحريك دقيق)
-    let positionStyle = '';
-    if (studioState.minimalLogoAlign === 'right') {
-        positionStyle = `top: ${topY}px; right: 24px;`;
-    } else if (studioState.minimalLogoAlign === 'left') {
-        positionStyle = `top: ${topY}px; left: 24px;`;
-    } else {
-        const offsetPercent = studioState.minimalLogoOffsetPercent || 0;
-        positionStyle = `top: ${topY}px; left: calc(50% + ${offsetPercent}%); transform: translateX(-50%);`;
-    }
+    // تثبيت العرض والارتفاع بدقة مع max-width: none لمنع أي انضغاط عند أطراف الكانفاس
+    const boxStyle = `width: ${dim}px !important; height: ${dim}px !important; min-width: ${dim}px !important; max-width: none !important; min-height: ${dim}px !important; max-height: none !important; flex-shrink: 0;`;
+    const positionStyle = `top: ${topY}px; left: calc(50% + ${offsetPercent}%); transform: translateX(-50%); ${boxStyle}`;
 
     if (studioState.logoVariant === 'custom') {
         const color = studioState.logoCustomColor || '#7c1d3c';
         return `
-            <div class="absolute z-20 pointer-events-none transition-all duration-150" style="${positionStyle}">
+            <div class="absolute z-20 pointer-events-none transition-all duration-150 flex items-center justify-center" style="${positionStyle}">
                 <div 
-                    class="${sizeClass} drop-shadow-xs select-none" 
-                    style="background-color: ${color}; -webkit-mask-image: url('../images/logo_white.png'); -webkit-mask-size: contain; -webkit-mask-repeat: no-repeat; -webkit-mask-position: center; mask-image: url('../images/logo_white.png'); mask-size: contain; mask-repeat: no-repeat; mask-position: center; ${opacityStyle}">
+                    class="drop-shadow-xs select-none block" 
+                    style="${boxStyle} background-color: ${color}; -webkit-mask-image: url('../images/logo_white.png'); -webkit-mask-size: contain; -webkit-mask-repeat: no-repeat; -webkit-mask-position: center; mask-image: url('../images/logo_white.png'); mask-size: contain; mask-repeat: no-repeat; mask-position: center; opacity: ${opacity};">
                 </div>
             </div>
         `;
@@ -383,11 +379,11 @@ export function getMinimalLogoPreviewHtml() {
     const blendStyle = studioState.logoVariant === 'original' ? 'mix-blend-mode: multiply;' : '';
 
     return `
-        <div class="absolute z-20 pointer-events-none transition-all duration-150" style="${positionStyle}">
+        <div class="absolute z-20 pointer-events-none transition-all duration-150 flex items-center justify-center" style="${positionStyle}">
             <img 
                 src="${logoOption.src}" 
-                class="${sizeClass} object-contain drop-shadow-xs select-none" 
-                style="${blendStyle} ${opacityStyle}" 
+                class="object-contain drop-shadow-xs select-none block" 
+                style="${boxStyle} ${blendStyle} opacity: ${opacity};" 
                 alt="TATRIZA Logo">
         </div>
     `;
@@ -431,32 +427,29 @@ export function getMinimalHandlePreviewHtml() {
 export function getStoryLogoPreviewHtml() {
     if (!studioState.showLogo) return '';
     const logoOption = STUDIO_LOGO_OPTIONS[studioState.logoVariant] || STUDIO_LOGO_OPTIONS['white'];
-    const sizeClasses = {
-        'small': 'w-12 h-12 sm:w-14 sm:h-14',
-        'medium': 'w-18 h-18 sm:w-22 sm:h-22',
-        'large': 'w-26 h-26 sm:w-30 sm:h-30'
+    
+    // أبعاد دقيقة ومطلقة بالبكسل - ثابتة تماماً ومستقلة عن التحريك الأفقي
+    const dimMap = {
+        'small': 52,
+        'medium': 74,
+        'large': 98
     };
-    const sizeClass = sizeClasses[studioState.logoSize || 'medium'] || sizeClasses['medium'];
-    const opacityStyle = `opacity: ${(studioState.logoOpacity || 100) / 100};`;
+    const dim = dimMap[studioState.logoSize || 'medium'] || 74;
+    const opacity = (studioState.logoOpacity || 100) / 100;
     const topY = studioState.storyLogoOffsetY || 25;
+    const offsetPercent = studioState.storyLogoOffsetPercent || 0;
 
-    let positionStyle = '';
-    if (studioState.storyLogoAlign === 'right') {
-        positionStyle = `top: ${topY}px; right: 24px;`;
-    } else if (studioState.storyLogoAlign === 'left') {
-        positionStyle = `top: ${topY}px; left: 24px;`;
-    } else {
-        const offsetPercent = studioState.storyLogoOffsetPercent || 0;
-        positionStyle = `top: ${topY}px; left: calc(50% + ${offsetPercent}%); transform: translateX(-50%);`;
-    }
+    // تثبيت العرض والارتفاع بدقة مع max-width: none لمنع أي انضغاط عند أطراف الكانفاس
+    const boxStyle = `width: ${dim}px !important; height: ${dim}px !important; min-width: ${dim}px !important; max-width: none !important; min-height: ${dim}px !important; max-height: none !important; flex-shrink: 0;`;
+    const positionStyle = `top: ${topY}px; left: calc(50% + ${offsetPercent}%); transform: translateX(-50%); ${boxStyle}`;
 
     if (studioState.logoVariant === 'custom') {
         const color = studioState.logoCustomColor || '#fef08a';
         return `
-            <div class="absolute z-20 pointer-events-none transition-all duration-150" style="${positionStyle}">
+            <div class="absolute z-20 pointer-events-none transition-all duration-150 flex items-center justify-center" style="${positionStyle}">
                 <div 
-                    class="${sizeClass} drop-shadow-md select-none" 
-                    style="background-color: ${color}; -webkit-mask-image: url('../images/logo_white.png'); -webkit-mask-size: contain; -webkit-mask-repeat: no-repeat; -webkit-mask-position: center; mask-image: url('../images/logo_white.png'); mask-size: contain; mask-repeat: no-repeat; mask-position: center; ${opacityStyle}">
+                    class="drop-shadow-md select-none block" 
+                    style="${boxStyle} background-color: ${color}; -webkit-mask-image: url('../images/logo_white.png'); -webkit-mask-size: contain; -webkit-mask-repeat: no-repeat; -webkit-mask-position: center; mask-image: url('../images/logo_white.png'); mask-size: contain; mask-repeat: no-repeat; mask-position: center; opacity: ${opacity};">
                 </div>
             </div>
         `;
@@ -465,11 +458,11 @@ export function getStoryLogoPreviewHtml() {
     const blendStyle = studioState.logoVariant === 'original' ? 'mix-blend-mode: multiply;' : '';
 
     return `
-        <div class="absolute z-20 pointer-events-none transition-all duration-150" style="${positionStyle}">
+        <div class="absolute z-20 pointer-events-none transition-all duration-150 flex items-center justify-center" style="${positionStyle}">
             <img 
                 src="${logoOption.src}" 
-                class="${sizeClass} object-contain drop-shadow-md select-none" 
-                style="${blendStyle} ${opacityStyle}" 
+                class="object-contain drop-shadow-md select-none block" 
+                style="${boxStyle} ${blendStyle} opacity: ${opacity};" 
                 alt="TATRIZA Logo">
         </div>
     `;
@@ -1993,16 +1986,10 @@ async function exportStoryVignetteHD(canvas, ctx) {
             };
             const logoDim = sizeMap[studioState.logoSize || 'medium'] || 225;
             
-            // حساب موضع X للشعار في HD
-            let logoX = (canvas.width - logoDim) / 2;
-            if (studioState.storyLogoAlign === 'right') {
-                logoX = canvas.width - logoDim - 80;
-            } else if (studioState.storyLogoAlign === 'left') {
-                logoX = 80;
-            } else {
-                const offsetPercent = studioState.storyLogoOffsetPercent || 0;
-                logoX = ((canvas.width - logoDim) / 2) + (canvas.width * (offsetPercent / 100));
-            }
+            // حساب موضع X للشعار في HD مطابق تماماً للمعاينة الحية
+            const offsetPercent = studioState.storyLogoOffsetPercent || 0;
+            const logoCenterX = (canvas.width / 2) + (canvas.width * (offsetPercent / 100));
+            const logoX = logoCenterX - (logoDim / 2);
 
             // حساب موضع Y للشعار في HD (منسوب لارتفاع المعاينة)
             const topYPercent = (studioState.storyLogoOffsetY || 25) / 580;
@@ -2161,15 +2148,9 @@ async function exportMinimalShowcaseHD(canvas, ctx) {
             };
             const logoDim = sizesMap[studioState.logoSize || 'small'] || 120;
             
-            // حساب موضع X للشعار (يمين، وسط، يسار أو إزاحة دقيقة)
-            let logoCenterX = canvas.width / 2;
-            if (studioState.minimalLogoAlign === 'right') {
-                logoCenterX = canvas.width - (logoDim / 2) - 90;
-            } else if (studioState.minimalLogoAlign === 'left') {
-                logoCenterX = (logoDim / 2) + 90;
-            } else {
-                logoCenterX = (canvas.width / 2) + (canvas.width * ((studioState.minimalLogoOffsetPercent || 0) / 100));
-            }
+            // حساب موضع X للشعار مطابق تماماً للمعاينة الحية
+            const offsetPercent = studioState.minimalLogoOffsetPercent || 0;
+            const logoCenterX = (canvas.width / 2) + (canvas.width * (offsetPercent / 100));
             const logoX = logoCenterX - (logoDim / 2);
             const logoY = Number(studioState.minimalLogoOffsetY || 25) * (canvas.height / 500);
 
