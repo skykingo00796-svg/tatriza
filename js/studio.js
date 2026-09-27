@@ -10,12 +10,144 @@ import { showToast } from './modals.js';
 // الإعدادات والقوالب وثيمات التصميم
 // ==========================================
 
-// 1. ثيمات الشادو الدائري لنمط الستوري كامل الشاشة (Story / Reels Vignette)
+// 1. خيارات وألوان شعار الدار والعلامة المائية (Transparent & Multi-Color Logos)
+export const STUDIO_LOGO_OPTIONS = {
+    'white': {
+        id: 'white',
+        name: 'أبيض ناصع نقي',
+        sub: 'الأكثر فخامة على الستوري والشادو',
+        badge: '✨ موصى به',
+        src: '../images/logo_white.png',
+        colorDot: '#ffffff'
+    },
+    'gold': {
+        id: 'gold',
+        name: 'مُذهّب ملكي خالص',
+        sub: 'فخامة ذهبية ملكية راقية',
+        badge: '👑 فاخر',
+        src: '../images/logo_gold.png',
+        colorDot: '#d4af37'
+    },
+    'transparent-burgundy': {
+        id: 'transparent-burgundy',
+        name: 'عنابي تطريز الرسمي (شفاف)',
+        sub: 'الهوية الرسمية للدار بدون خلفية',
+        badge: '🏛️ كلاسيك',
+        src: '../images/logo_transparent.png',
+        colorDot: '#7c1d3c'
+    },
+    'transparent-gold': {
+        id: 'transparent-gold',
+        name: 'كهرماني ذهبي / رمال وهيبة',
+        sub: 'اللوجو الذهبي بدون خلفية',
+        badge: '🏜️ وهيبة',
+        src: '../images/logoY_transparent.png',
+        colorDot: '#c59b27'
+    },
+    'transparent-emerald': {
+        id: 'transparent-emerald',
+        name: 'زمردي / واحة ظفار',
+        sub: 'اللوجو الأخضر بدون خلفية',
+        badge: '🌿 ظفار',
+        src: '../images/logoG_transparent.png',
+        colorDot: '#435838'
+    },
+    'transparent-navy': {
+        id: 'transparent-navy',
+        name: 'كحلي نيلي / بحر مسقط',
+        sub: 'اللوجو الكحلي بدون خلفية',
+        badge: '🌊 مسقط',
+        src: '../images/logoB_transparent.png',
+        colorDot: '#2d5f75'
+    },
+    'black': {
+        id: 'black',
+        name: 'أسود فحمي فاخر',
+        sub: 'مناسب للخلفيات الفاتحة والبوستات',
+        badge: '⚫ نقي',
+        src: '../images/logo_black.png',
+        colorDot: '#18181b'
+    },
+    'custom': {
+        id: 'custom',
+        name: 'لون مخصص للشعار',
+        sub: 'اختر أي لون تريده للشعار بالكامل',
+        badge: '🎨 مخصص',
+        src: '../images/logo_white.png',
+        colorDot: '#fef08a'
+    },
+    'original': {
+        id: 'original',
+        name: 'اللوجو الأصلي (بخلفية بيج)',
+        sub: 'الشعار بصيغته الكلاسيكية',
+        badge: '📜 أصلي',
+        src: '../images/logo.jpg',
+        colorDot: '#7c1d3c'
+    }
+};
+
+// 2. ثيمات الشادو الدائري لنمط الستوري كامل الشاشة (Story / Reels Vignette)
 export const STUDIO_VIGNETTES = {
+    // ألوان وأنماط الموقع المعتمدة
+    'site-burgundy': {
+        id: 'site-burgundy',
+        name: 'عنابي دار تطريز الكلاسيكي',
+        badge: '🏛️ هوية الموقع',
+        category: 'site',
+        topColorRgb: '124, 29, 60',
+        bottomColorRgb: '110, 22, 52',
+        topVignetteCss: 'radial-gradient(ellipse 110% 75% at 50% 0%, rgba(124, 29, 60, 0.95) 0%, rgba(124, 29, 60, 0.82) 35%, rgba(124, 29, 60, 0.35) 70%, transparent 100%)',
+        botVignetteCss: 'radial-gradient(ellipse 120% 90% at 50% 100%, rgba(110, 22, 52, 0.96) 0%, rgba(110, 22, 52, 0.88) 40%, rgba(110, 22, 52, 0.45) 75%, transparent 100%)',
+        phraseColor: '#fde047',
+        phraseShadow: '0 2px 14px rgba(0,0,0,0.7)',
+        handleColor: '#fde68a'
+    },
+    'site-emerald': {
+        id: 'site-emerald',
+        name: 'زمردي واحة ظفار الملكي',
+        badge: '🌿 أخضر الموقع',
+        category: 'site',
+        topColorRgb: '55, 75, 46',
+        bottomColorRgb: '42, 58, 35',
+        topVignetteCss: 'radial-gradient(ellipse 110% 75% at 50% 0%, rgba(55, 75, 46, 0.95) 0%, rgba(55, 75, 46, 0.82) 35%, rgba(55, 75, 46, 0.35) 70%, transparent 100%)',
+        botVignetteCss: 'radial-gradient(ellipse 120% 90% at 50% 100%, rgba(42, 58, 35, 0.96) 0%, rgba(42, 58, 35, 0.88) 40%, rgba(42, 58, 35, 0.45) 75%, transparent 100%)',
+        phraseColor: '#ffffff',
+        phraseShadow: '0 2px 14px rgba(0,0,0,0.65)',
+        handleColor: '#d1fae5'
+    },
+    'site-navy': {
+        id: 'site-navy',
+        name: 'كحلي ليالي وبحر مسقط',
+        badge: '🌊 أزرق الموقع',
+        category: 'site',
+        topColorRgb: '36, 75, 94',
+        bottomColorRgb: '28, 58, 74',
+        topVignetteCss: 'radial-gradient(ellipse 110% 75% at 50% 0%, rgba(36, 75, 94, 0.95) 0%, rgba(36, 75, 94, 0.82) 35%, rgba(36, 75, 94, 0.35) 70%, transparent 100%)',
+        botVignetteCss: 'radial-gradient(ellipse 120% 90% at 50% 100%, rgba(28, 58, 74, 0.96) 0%, rgba(28, 58, 74, 0.88) 40%, rgba(28, 58, 74, 0.45) 75%, transparent 100%)',
+        phraseColor: '#ffffff',
+        phraseShadow: '0 2px 14px rgba(0,0,0,0.65)',
+        handleColor: '#bae6fd'
+    },
+    'site-gold': {
+        id: 'site-gold',
+        name: 'كهرماني رمال وهيبة الذهبي',
+        badge: '🏜️ ذهبي الموقع',
+        category: 'site',
+        topColorRgb: '185, 142, 30',
+        bottomColorRgb: '158, 119, 20',
+        topVignetteCss: 'radial-gradient(ellipse 110% 75% at 50% 0%, rgba(185, 142, 30, 0.95) 0%, rgba(185, 142, 30, 0.82) 35%, rgba(185, 142, 30, 0.35) 70%, transparent 100%)',
+        botVignetteCss: 'radial-gradient(ellipse 120% 90% at 50% 100%, rgba(158, 119, 20, 0.96) 0%, rgba(158, 119, 20, 0.88) 40%, rgba(158, 119, 20, 0.45) 75%, transparent 100%)',
+        phraseColor: '#2b1b06',
+        phraseShadow: '0 1px 8px rgba(255,255,255,0.4)',
+        handleColor: '#3a260d'
+    },
+
+    // تدرجات إنستقرام وريلز الفاخرة
     'blush-rose': {
         id: 'blush-rose',
-        name: 'الوردي والبيج الدافئ (كالأصل)',
-        badge: '🌸 الأكثر تطابقاً',
+        name: 'الوردي والتوتي الدافئ (كالأصل)',
+        badge: '🌸 المطابق للبوست',
+        category: 'luxury',
         topColorRgb: '228, 196, 184',
         bottomColorRgb: '224, 187, 174',
         topVignetteCss: 'radial-gradient(ellipse 110% 75% at 50% 0%, rgba(228, 196, 184, 0.95) 0%, rgba(228, 196, 184, 0.8) 35%, rgba(228, 196, 184, 0.3) 70%, transparent 100%)',
@@ -26,8 +158,9 @@ export const STUDIO_VIGNETTES = {
     },
     'royal-burgundy': {
         id: 'royal-burgundy',
-        name: 'العنابي الملكي والذهب',
-        badge: '👑 فاخر ملكي',
+        name: 'العنابي الداكن المذهب',
+        badge: '🍷 مخملي فاخر',
+        category: 'luxury',
         topColorRgb: '43, 6, 19',
         bottomColorRgb: '43, 6, 19',
         topVignetteCss: 'radial-gradient(ellipse 110% 75% at 50% 0%, rgba(43, 6, 19, 0.95) 0%, rgba(43, 6, 19, 0.8) 35%, rgba(43, 6, 19, 0.3) 70%, transparent 100%)',
@@ -38,8 +171,9 @@ export const STUDIO_VIGNETTES = {
     },
     'obsidian-gold': {
         id: 'obsidian-gold',
-        name: 'الأوبسيديان الفاخر الداكن',
-        badge: '🖤 فخامة داكنة',
+        name: 'الأوبسيديان الفاحم والذهب',
+        badge: '🖤 سينمائي داكن',
+        category: 'luxury',
         topColorRgb: '12, 13, 16',
         bottomColorRgb: '10, 11, 14',
         topVignetteCss: 'radial-gradient(ellipse 110% 75% at 50% 0%, rgba(12, 13, 16, 0.95) 0%, rgba(12, 13, 16, 0.8) 35%, rgba(12, 13, 16, 0.3) 70%, transparent 100%)',
@@ -50,8 +184,9 @@ export const STUDIO_VIGNETTES = {
     },
     'warm-ivory': {
         id: 'warm-ivory',
-        name: 'العاجي والذهب الدافئ',
-        badge: '✨ نهاري مشرق',
+        name: 'العاجي والبيج المخملي',
+        badge: '🕊️ نهاري مشرق',
+        category: 'luxury',
         topColorRgb: '235, 225, 212',
         bottomColorRgb: '230, 218, 202',
         topVignetteCss: 'radial-gradient(ellipse 110% 75% at 50% 0%, rgba(235, 225, 212, 0.95) 0%, rgba(235, 225, 212, 0.8) 35%, rgba(235, 225, 212, 0.3) 70%, transparent 100%)',
@@ -59,8 +194,156 @@ export const STUDIO_VIGNETTES = {
         phraseColor: '#ffffff',
         phraseShadow: '0 2px 10px rgba(0,0,0,0.4)',
         handleColor: '#4a382e'
+    },
+    'amethyst-violet': {
+        id: 'amethyst-violet',
+        name: 'البنفسجي الإمبراطوري',
+        badge: '🔮 ملكي نادر',
+        category: 'luxury',
+        topColorRgb: '58, 16, 68',
+        bottomColorRgb: '46, 12, 54',
+        topVignetteCss: 'radial-gradient(ellipse 110% 75% at 50% 0%, rgba(58, 16, 68, 0.95) 0%, rgba(58, 16, 68, 0.82) 35%, rgba(58, 16, 68, 0.35) 70%, transparent 100%)',
+        botVignetteCss: 'radial-gradient(ellipse 120% 90% at 50% 100%, rgba(46, 12, 54, 0.96) 0%, rgba(46, 12, 54, 0.88) 40%, rgba(46, 12, 54, 0.45) 75%, transparent 100%)',
+        phraseColor: '#f3e8ff',
+        phraseShadow: '0 2px 14px rgba(0,0,0,0.7)',
+        handleColor: '#d8b4fe'
+    },
+    'terracotta-copper': {
+        id: 'terracotta-copper',
+        name: 'النحاسي والبرونزي التراثي',
+        badge: '🏺 دافئ وتراثي',
+        category: 'luxury',
+        topColorRgb: '168, 72, 48',
+        bottomColorRgb: '142, 58, 38',
+        topVignetteCss: 'radial-gradient(ellipse 110% 75% at 50% 0%, rgba(168, 72, 48, 0.95) 0%, rgba(168, 72, 48, 0.82) 35%, rgba(168, 72, 48, 0.35) 70%, transparent 100%)',
+        botVignetteCss: 'radial-gradient(ellipse 120% 90% at 50% 100%, rgba(142, 58, 38, 0.96) 0%, rgba(142, 58, 38, 0.88) 40%, rgba(142, 58, 38, 0.45) 75%, transparent 100%)',
+        phraseColor: '#ffffff',
+        phraseShadow: '0 2px 12px rgba(0,0,0,0.5)',
+        handleColor: '#fed7aa'
+    },
+    'midnight-sapphire': {
+        id: 'midnight-sapphire',
+        name: 'الياقوتي الأزرق الليلي',
+        badge: '🌌 فخامة ليلية',
+        category: 'luxury',
+        topColorRgb: '12, 24, 46',
+        bottomColorRgb: '8, 16, 32',
+        topVignetteCss: 'radial-gradient(ellipse 110% 75% at 50% 0%, rgba(12, 24, 46, 0.95) 0%, rgba(12, 24, 46, 0.82) 35%, rgba(12, 24, 46, 0.35) 70%, transparent 100%)',
+        botVignetteCss: 'radial-gradient(ellipse 120% 90% at 50% 100%, rgba(8, 16, 32, 0.96) 0%, rgba(8, 16, 32, 0.88) 40%, rgba(8, 16, 32, 0.45) 75%, transparent 100%)',
+        phraseColor: '#e0f2fe',
+        phraseShadow: '0 2px 14px rgba(0,0,0,0.7)',
+        handleColor: '#93c5fd'
+    },
+    'custom': {
+        id: 'custom',
+        name: 'تخصيص حر بالألوان',
+        badge: '🎨 منتقي ألوان حر',
+        category: 'custom',
+        topColorRgb: '124, 29, 60',
+        bottomColorRgb: '110, 22, 52',
+        phraseColor: '#ffffff',
+        handleColor: '#fde047'
     }
 };
+
+export function hexToRgbString(hex) {
+    if (!hex) return '124, 29, 60';
+    let c = hex.replace('#', '').trim();
+    if (c.length === 3) c = c.split('').map(x => x + x).join('');
+    const num = parseInt(c, 16);
+    if (isNaN(num)) return '124, 29, 60';
+    return `${(num >> 16) & 255}, ${(num >> 8) & 255}, ${num & 255}`;
+}
+
+export function getActiveVignette() {
+    if (studioState.vignetteTheme === 'custom') {
+        const topHex = studioState.customVigTopColor || '#7c1d3c';
+        const botHex = studioState.customVigBotColor || '#6e1634';
+        const topRgb = hexToRgbString(topHex);
+        const botRgb = hexToRgbString(botHex);
+        return {
+            id: 'custom',
+            name: 'تخصيص حر بالألوان',
+            badge: '🎨 مخصص',
+            topColorRgb: topRgb,
+            bottomColorRgb: botRgb,
+            topVignetteCss: `radial-gradient(ellipse 110% 75% at 50% 0%, rgba(${topRgb}, 0.95) 0%, rgba(${topRgb}, 0.82) 35%, rgba(${topRgb}, 0.35) 70%, transparent 100%)`,
+            botVignetteCss: `radial-gradient(ellipse 120% 90% at 50% 100%, rgba(${botRgb}, 0.96) 0%, rgba(${botRgb}, 0.88) 40%, rgba(${botRgb}, 0.45) 75%, transparent 100%)`,
+            phraseColor: '#ffffff',
+            phraseShadow: '0 2px 14px rgba(0,0,0,0.7)',
+            handleColor: '#fde047'
+        };
+    }
+    return STUDIO_VIGNETTES[studioState.vignetteTheme] || STUDIO_VIGNETTES['site-burgundy'];
+}
+
+export function getLogoHtmlForPreview() {
+    if (!studioState.showLogo) return '';
+    const logoOption = STUDIO_LOGO_OPTIONS[studioState.logoVariant] || STUDIO_LOGO_OPTIONS['white'];
+    const sizeClasses = {
+        'small': 'w-14 h-14 sm:w-16 sm:h-16',
+        'medium': 'w-20 h-20 sm:w-24 sm:h-24',
+        'large': 'w-28 h-28 sm:w-32 sm:h-32'
+    };
+    const sizeClass = sizeClasses[studioState.logoSize] || sizeClasses['medium'];
+    const opacityStyle = `opacity: ${(studioState.logoOpacity || 100) / 100};`;
+
+    if (studioState.logoVariant === 'custom') {
+        const color = studioState.logoCustomColor || '#fef08a';
+        return `
+            <div class="relative z-20 pt-5 sm:pt-7 flex flex-col items-center justify-center pointer-events-none transition-all duration-200">
+                <div 
+                    class="${sizeClass} drop-shadow-md select-none transition-all duration-150" 
+                    style="background-color: ${color}; -webkit-mask-image: url('../images/logo_white.png'); -webkit-mask-size: contain; -webkit-mask-repeat: no-repeat; -webkit-mask-position: center; mask-image: url('../images/logo_white.png'); mask-size: contain; mask-repeat: no-repeat; mask-position: center; ${opacityStyle}">
+                </div>
+            </div>
+        `;
+    }
+
+    const blendStyle = studioState.logoVariant === 'original' ? 'mix-blend-mode: multiply;' : '';
+
+    return `
+        <div class="relative z-20 pt-5 sm:pt-7 flex flex-col items-center justify-center pointer-events-none transition-all duration-200">
+            <img 
+                src="${logoOption.src}" 
+                class="${sizeClass} object-contain drop-shadow-md select-none transition-all duration-150" 
+                style="${blendStyle} ${opacityStyle}" 
+                alt="TATRIZA Logo">
+        </div>
+    `;
+}
+
+export function getCardLogoElementHtml() {
+    if (!studioState.showLogo) return '';
+    const logoOption = STUDIO_LOGO_OPTIONS[studioState.logoVariant] || STUDIO_LOGO_OPTIONS['white'];
+    const opacityStyle = `opacity: ${(studioState.logoOpacity || 100) / 100};`;
+
+    if (studioState.logoVariant === 'custom') {
+        const color = studioState.logoCustomColor || '#fef08a';
+        return `
+            <div class="w-9 h-9 sm:w-10 sm:h-10 shrink-0 drop-shadow-xs" style="background-color: ${color}; -webkit-mask-image: url('../images/logo_white.png'); -webkit-mask-size: contain; -webkit-mask-repeat: no-repeat; -webkit-mask-position: center; mask-image: url('../images/logo_white.png'); mask-size: contain; mask-repeat: no-repeat; mask-position: center; ${opacityStyle}"></div>
+        `;
+    }
+
+    const blendStyle = studioState.logoVariant === 'original' ? 'mix-blend-mode: multiply;' : '';
+    return `
+        <img src="${logoOption.src}" class="w-9 h-9 sm:w-10 sm:h-10 object-contain drop-shadow-xs shrink-0" style="${blendStyle} ${opacityStyle}" alt="Logo">
+    `;
+}
+
+export function getTintedLogoCanvas(logoImg, color) {
+    const oc = document.createElement('canvas');
+    oc.width = logoImg.naturalWidth || logoImg.width;
+    oc.height = logoImg.naturalHeight || logoImg.height;
+    const octx = oc.getContext('2d');
+    
+    octx.drawImage(logoImg, 0, 0);
+    octx.globalCompositeOperation = 'source-in';
+    octx.fillStyle = color;
+    octx.fillRect(0, 0, oc.width, oc.height);
+    
+    return oc;
+}
 
 // 2. ثيمات نمط كارت السجادة الملكي (Card Mode)
 export const STUDIO_THEMES = {
@@ -183,10 +466,19 @@ let studioState = {
     mediaPanX: 0,   // إزاحة أفقية يمين/يسار: من -50% إلى +50%
     mediaPanY: 0,   // إزاحة رأسية فوق/تحت: من -50% إلى +50%
 
+    // إعدادات الشعار والعلامة المائية
+    showLogo: true,
+    logoVariant: 'white', // 'white', 'gold', 'transparent-burgundy', 'transparent-gold', 'transparent-emerald', 'transparent-navy', 'black', 'custom', 'original'
+    logoCustomColor: '#fef08a',
+    logoSize: 'medium', // 'small', 'medium', 'large'
+    logoOpacity: 100, // 40 to 100
+
     // إعدادات نمط ستوري إنستقرام كامل الشاشة
     storyPhrase: '- 🌟 عمل مُتقن -',
     storyHandle: '@TATRIZA_22',
-    vignetteTheme: 'blush-rose',
+    vignetteTheme: 'site-burgundy',
+    customVigTopColor: '#7c1d3c',
+    customVigBotColor: '#6e1634',
     showTopVignette: true,
     showBottomVignette: true,
     showStoryPhrase: true,
@@ -205,7 +497,6 @@ let studioState = {
     currency: 'ر.ع.',
     sticker: 'exclusive',
     whatsapp: '968XXXXXXXX',
-    showLogo: true,
     showPrice: true,
     showDimensions: true,
     showMaterial: true,
@@ -342,6 +633,7 @@ function syncStudioControlsFromState() {
     if (toggleStoryPhrase) toggleStoryPhrase.checked = studioState.showStoryPhrase;
     if (toggleStoryHandle) toggleStoryHandle.checked = studioState.showStoryHandle;
 
+    updateLogoControlStates();
     updateVignetteButtonStates();
     updateMediaButtonStates();
 
@@ -459,7 +751,50 @@ function updateRatioButtonStates() {
     });
 }
 
+function updateLogoControlStates() {
+    const toggleLogoMain = document.getElementById('studio-toggle-logo-main');
+    if (toggleLogoMain) toggleLogoMain.checked = studioState.showLogo;
+
+    const logoTitle = document.getElementById('studio-logo-variant-title');
+    const activeLogoOpt = STUDIO_LOGO_OPTIONS[studioState.logoVariant] || STUDIO_LOGO_OPTIONS['white'];
+    if (logoTitle) logoTitle.innerText = activeLogoOpt.name;
+
+    document.querySelectorAll('.studio-logo-btn').forEach(btn => {
+        const v = btn.getAttribute('data-logo-variant');
+        if (v === studioState.logoVariant) {
+            btn.classList.add('ring-2', 'ring-amber-500', 'border-amber-500', 'scale-[1.02]');
+        } else {
+            btn.classList.remove('ring-2', 'ring-amber-500', 'border-amber-500', 'scale-[1.02]');
+        }
+    });
+
+    const logoColorIn = document.getElementById('studio-input-logo-custom-color');
+    if (logoColorIn && studioState.logoCustomColor) {
+        logoColorIn.value = studioState.logoCustomColor;
+    }
+
+    document.querySelectorAll('.studio-logo-size-btn').forEach(btn => {
+        const s = btn.getAttribute('data-logo-size');
+        if (s === (studioState.logoSize || 'medium')) {
+            btn.classList.add('border-amber-500', 'bg-amber-50', 'text-amber-900');
+            btn.classList.remove('border-stone-200', 'bg-white', 'text-stone-700');
+        } else {
+            btn.classList.remove('border-amber-500', 'bg-amber-50', 'text-amber-900');
+            btn.classList.add('border-stone-200', 'bg-white', 'text-stone-700');
+        }
+    });
+
+    const logoOpacityIn = document.getElementById('studio-input-logo-opacity');
+    const logoOpacityVal = document.getElementById('studio-logo-opacity-val');
+    if (logoOpacityIn) logoOpacityIn.value = studioState.logoOpacity || 100;
+    if (logoOpacityVal) logoOpacityVal.innerText = `${studioState.logoOpacity || 100}%`;
+}
+
 function updateVignetteButtonStates() {
+    const activeVig = getActiveVignette();
+    const vigNameEl = document.getElementById('studio-active-vignette-name');
+    if (vigNameEl) vigNameEl.innerText = activeVig.name;
+
     document.querySelectorAll('.studio-vignette-card').forEach(card => {
         const vigId = card.getAttribute('data-vignette');
         if (vigId === studioState.vignetteTheme) {
@@ -468,6 +803,19 @@ function updateVignetteButtonStates() {
             card.classList.remove('ring-2', 'ring-amber-500', 'border-amber-500', 'scale-[1.02]');
         }
     });
+
+    const customVigBox = document.getElementById('studio-custom-vig-box');
+    if (customVigBox) {
+        if (studioState.vignetteTheme === 'custom') {
+            customVigBox.classList.remove('hidden');
+        } else {
+            customVigBox.classList.add('hidden');
+        }
+    }
+    const vigTopIn = document.getElementById('studio-input-vig-top');
+    const vigBotIn = document.getElementById('studio-input-vig-bot');
+    if (vigTopIn && studioState.customVigTopColor) vigTopIn.value = studioState.customVigTopColor;
+    if (vigBotIn && studioState.customVigBotColor) vigBotIn.value = studioState.customVigBotColor;
 }
 
 function updateThemeButtonStates() {
@@ -558,7 +906,7 @@ export function updateStudioPreview() {
     // الحالة الأولى: نمط ستوري وريلز إنستقرام كامل الشاشة مع الشادو الناعم
     // -------------------------------------------------------------
     if (studioState.layoutMode === 'story_vignette') {
-        const vig = STUDIO_VIGNETTES[studioState.vignetteTheme] || STUDIO_VIGNETTES['blush-rose'];
+        const vig = getActiveVignette();
         
         // تعيين نسبة الأبعاد للحاوية
         stage.className = `relative w-full max-w-[340px] sm:max-w-[360px] mx-auto rounded-3xl overflow-hidden shadow-2xl transition-all duration-300 flex flex-col justify-between p-0 select-none ${ratio.aspectClass} bg-stone-900 cursor-grab active:cursor-grabbing`;
@@ -590,12 +938,8 @@ export function updateStudioPreview() {
             <div class="absolute top-0 inset-x-0 h-44 sm:h-52 pointer-events-none z-10 transition-all duration-300" style="background: ${vig.topVignetteCss};"></div>
         ` : '';
 
-        // اللوجو الرسمي في الأعلى
-        const logoHtml = studioState.showLogo ? `
-            <div class="relative z-20 pt-6 sm:pt-8 flex flex-col items-center justify-center pointer-events-none">
-                <img src="../images/logo.jpg" class="w-16 h-16 sm:w-20 sm:h-20 object-contain drop-shadow-sm select-none" style="mix-blend-mode: multiply;" alt="TATRIZA Logo">
-            </div>
-        ` : '';
+        // اللوجو الرسمي في الأعلى شفاف بدون خلفية ومع اللون المحدد
+        const logoHtml = getLogoHtmlForPreview();
 
         // الشادو الدائري الناعم بالأسفل
         const botVignetteHtml = studioState.showBottomVignette ? `
@@ -666,12 +1010,12 @@ export function updateStudioPreview() {
         `;
     }
 
-    // شعار الدار بالأعلى
+    // شعار الدار بالأعلى شفاف مع اللون المختار
     let logoHtml = '';
     if (studioState.showLogo) {
         logoHtml = `
             <div class="flex items-center gap-2 pointer-events-none">
-                <img src="../images/logo.jpg" class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl object-cover border border-amber-300/40 shadow-xs" alt="Logo">
+                ${getCardLogoElementHtml()}
                 <div class="text-right leading-none">
                     <span class="font-display font-black text-xs sm:text-sm tracking-wider text-white block">TATRIZA</span>
                     <span class="text-[8.5px] sm:text-[9.5px] font-medium" style="color: ${theme.accentColor};">دار تطريز للسجاد الملكي</span>
@@ -880,7 +1224,24 @@ export async function exportStudioHDImage() {
 
         // 2. رسم شعار الدار بالأعلى
         if (studioState.showLogo) {
-            await drawRoundedImage(ctx, '../images/logo.jpg', canvas.width - 160, 60, 100, 100, 24);
+            ctx.save();
+            const logoOpacity = (studioState.logoOpacity || 100) / 100;
+            ctx.globalAlpha = logoOpacity;
+            const logoVariant = studioState.logoVariant || 'white';
+            const logoOpt = STUDIO_LOGO_OPTIONS[logoVariant] || STUDIO_LOGO_OPTIONS['white'];
+
+            if (logoVariant === 'custom') {
+                const whiteLogo = await loadImageAsync('../images/logo_white.png');
+                const tinted = getTintedLogoCanvas(whiteLogo, studioState.logoCustomColor || '#fef08a');
+                ctx.drawImage(tinted, canvas.width - 160, 60, 100, 100);
+            } else if (logoVariant === 'original') {
+                await drawRoundedImage(ctx, '../images/logo.jpg', canvas.width - 160, 60, 100, 100, 24);
+            } else {
+                const img = await loadImageAsync(logoOpt.src);
+                ctx.drawImage(img, canvas.width - 160, 60, 100, 100);
+            }
+            ctx.restore();
+
             ctx.font = 'bold 36px Tajawal, sans-serif';
             ctx.fillStyle = '#ffffff';
             ctx.textAlign = 'right';
@@ -1046,7 +1407,7 @@ export async function exportStudioHDImage() {
 
 // دالة تصدير نمط ستوري إنستقرام والريلز عالي الدقة (Story Vignette HD)
 async function exportStoryVignetteHD(canvas, ctx) {
-    const vig = STUDIO_VIGNETTES[studioState.vignetteTheme] || STUDIO_VIGNETTES['blush-rose'];
+    const vig = getActiveVignette();
     const carpetSrc = studioState.customImageSrc || '../images/client_room1.jpg';
 
     // 1. رسم الصورة بكامل الشاشة مع التحجيم والإزاحة الدقيقة (Zoom & Pan)
@@ -1080,16 +1441,37 @@ async function exportStoryVignetteHD(canvas, ctx) {
         ctx.fillRect(0, botY, canvas.width, botH);
     }
 
-    // 4. رسم لوجو الدار شفافاً في المنتصف بالأعلى
+    // 4. رسم لوجو الدار شفافاً في المنتصف بالأعلى بالأبعاد والشفافية واللون المحدد
     if (studioState.showLogo) {
         try {
-            const logoImg = await loadImageAsync('../images/logo.jpg');
-            const transLogoCanvas = getTransparentLogoCanvas(logoImg);
-            const logoW = 210;
-            const logoH = 210;
-            const logoX = (canvas.width - logoW) / 2;
+            ctx.save();
+            const logoOpacity = (studioState.logoOpacity || 100) / 100;
+            ctx.globalAlpha = logoOpacity;
+            const logoVariant = studioState.logoVariant || 'white';
+            const logoOpt = STUDIO_LOGO_OPTIONS[logoVariant] || STUDIO_LOGO_OPTIONS['white'];
+
+            // تحجيم الشعار بدقة متناسبة مع الأبعاد
+            const sizeMap = {
+                'small': 160,
+                'medium': 225,
+                'large': 295
+            };
+            const logoDim = sizeMap[studioState.logoSize] || 225;
+            const logoX = (canvas.width - logoDim) / 2;
             const logoY = 95;
-            ctx.drawImage(transLogoCanvas, logoX, logoY, logoW, logoH);
+
+            if (logoVariant === 'custom') {
+                const whiteLogo = await loadImageAsync('../images/logo_white.png');
+                const tinted = getTintedLogoCanvas(whiteLogo, studioState.logoCustomColor || '#fef08a');
+                ctx.drawImage(tinted, logoX, logoY, logoDim, logoDim);
+            } else if (logoVariant === 'original') {
+                const origImg = await loadImageAsync('../images/logo.jpg');
+                ctx.drawImage(origImg, logoX, logoY, logoDim, logoDim);
+            } else {
+                const logoImg = await loadImageAsync(logoOpt.src);
+                ctx.drawImage(logoImg, logoX, logoY, logoDim, logoDim);
+            }
+            ctx.restore();
         } catch(e) {
             console.warn('Logo render fallback:', e);
         }
@@ -1618,7 +2000,76 @@ export function initStudioEvents() {
     const btnDpadCenter = document.getElementById('studio-btn-dpad-center');
     if (btnDpadCenter) btnDpadCenter.addEventListener('click', resetTransform);
 
-    // 5. بطاقات ثيمات الشادو الدائري (Vignette Presets)
+    // 5. التحكم بشعار الدار والعلامة المائية (Logo Controls)
+    const toggleLogoMain = document.getElementById('studio-toggle-logo-main');
+    if (toggleLogoMain) {
+        toggleLogoMain.addEventListener('change', (e) => {
+            studioState.showLogo = e.target.checked;
+            const toggleLogoCard = document.getElementById('studio-toggle-logo');
+            if (toggleLogoCard) toggleLogoCard.checked = studioState.showLogo;
+            updateStudioPreview();
+        });
+    }
+
+    const toggleLogoCard = document.getElementById('studio-toggle-logo');
+    if (toggleLogoCard) {
+        toggleLogoCard.addEventListener('change', (e) => {
+            studioState.showLogo = e.target.checked;
+            const toggleLogoM = document.getElementById('studio-toggle-logo-main');
+            if (toggleLogoM) toggleLogoM.checked = studioState.showLogo;
+            updateStudioPreview();
+        });
+    }
+
+    document.querySelectorAll('.studio-logo-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const variant = btn.getAttribute('data-logo-variant');
+            if (variant && STUDIO_LOGO_OPTIONS[variant]) {
+                studioState.logoVariant = variant;
+                if (variant === 'custom') {
+                    const customColorInput = document.getElementById('studio-input-logo-custom-color');
+                    if (customColorInput) customColorInput.click();
+                }
+                updateLogoControlStates();
+                updateStudioPreview();
+            }
+        });
+    });
+
+    const logoCustomColorIn = document.getElementById('studio-input-logo-custom-color');
+    if (logoCustomColorIn) {
+        const handleCustomColor = (e) => {
+            studioState.logoCustomColor = e.target.value;
+            studioState.logoVariant = 'custom';
+            updateLogoControlStates();
+            updateStudioPreview();
+        };
+        logoCustomColorIn.addEventListener('input', handleCustomColor);
+        logoCustomColorIn.addEventListener('change', handleCustomColor);
+    }
+
+    document.querySelectorAll('.studio-logo-size-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const size = btn.getAttribute('data-logo-size');
+            if (size) {
+                studioState.logoSize = size;
+                updateLogoControlStates();
+                updateStudioPreview();
+            }
+        });
+    });
+
+    const logoOpacityIn = document.getElementById('studio-input-logo-opacity');
+    const logoOpacityVal = document.getElementById('studio-logo-opacity-val');
+    if (logoOpacityIn) {
+        logoOpacityIn.addEventListener('input', (e) => {
+            studioState.logoOpacity = Number(e.target.value);
+            if (logoOpacityVal) logoOpacityVal.innerText = `${studioState.logoOpacity}%`;
+            updateStudioPreview();
+        });
+    }
+
+    // 6. بطاقات ثيمات الشادو الدائري (Vignette Presets)
     document.querySelectorAll('.studio-vignette-card').forEach(card => {
         card.addEventListener('click', () => {
             const vigId = card.getAttribute('data-vignette');
@@ -1629,6 +2080,31 @@ export function initStudioEvents() {
             }
         });
     });
+
+    // منتقيات ألوان الشادو المخصص (Top & Bottom Custom Vignette)
+    const vigTopIn = document.getElementById('studio-input-vig-top');
+    if (vigTopIn) {
+        const handleTopVig = (e) => {
+            studioState.customVigTopColor = e.target.value;
+            studioState.vignetteTheme = 'custom';
+            updateVignetteButtonStates();
+            updateStudioPreview();
+        };
+        vigTopIn.addEventListener('input', handleTopVig);
+        vigTopIn.addEventListener('change', handleTopVig);
+    }
+
+    const vigBotIn = document.getElementById('studio-input-vig-bot');
+    if (vigBotIn) {
+        const handleBotVig = (e) => {
+            studioState.customVigBotColor = e.target.value;
+            studioState.vignetteTheme = 'custom';
+            updateVignetteButtonStates();
+            updateStudioPreview();
+        };
+        vigBotIn.addEventListener('input', handleBotVig);
+        vigBotIn.addEventListener('change', handleBotVig);
+    }
 
     // 6. بطاقات ثيمات الكارت الملكي
     document.querySelectorAll('.studio-theme-card').forEach(card => {
@@ -1727,7 +2203,6 @@ export function initStudioEvents() {
     }
 
     // 13. مفاتيح عناصر الكارت (Toggles)
-    bindToggle('studio-toggle-logo', 'showLogo');
     bindToggle('studio-toggle-price', 'showPrice');
     bindToggle('studio-toggle-dim', 'showDimensions');
     bindToggle('studio-toggle-mat', 'showMaterial');

@@ -73,7 +73,7 @@ import {
     openTatrizaStudioModal, 
     closeTatrizaStudioModal, 
     initStudioEvents 
-} from './studio.js';
+} from './studio.js?v=3.0';
 
 import { getVideoFromIndexedDB } from './firebase-public.js';
 
