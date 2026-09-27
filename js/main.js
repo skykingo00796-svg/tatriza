@@ -293,10 +293,10 @@ function displayCarpets(carpetsToDisplay) {
                         src="${initialVideoSrc}"
                         playsinline 
                         muted 
-                        loop 
                         preload="metadata"
                         class="w-full h-full object-contain bg-[#fffbf7] cursor-pointer"
                         onclick="event.stopPropagation(); window.toggleCardVideoPlay('${carpet.id}')"
+                        onended="window.handleCardVideoEnded('${carpet.id}')"
                     ></video>
                     
                     <!-- زر إيقاف وتشغيل تفاعلي فاخر بالوسط لبطاقة المنتج متناغم مع لون الثيم -->
@@ -562,6 +562,23 @@ window.fullscreenCardVideo = (carpetId) => {
     }
 };
 
+window.handleCardVideoEnded = (carpetId) => {
+    const cardVideo = document.getElementById(`card-video-${carpetId}`);
+    const centerBtn = document.getElementById(`card-video-center-btn-${carpetId}`);
+    const centerIcon = document.getElementById(`card-video-center-icon-${carpetId}`);
+    if (cardVideo) {
+        cardVideo.pause();
+        cardVideo.currentTime = 0;
+    }
+    if (centerBtn) {
+        centerBtn.classList.remove('opacity-0', 'pointer-events-none');
+        centerBtn.classList.add('opacity-100', 'pointer-events-auto');
+    }
+    if (centerIcon) {
+        centerIcon.innerHTML = '<span class="mr-[-2px] text-white">▶</span>';
+    }
+};
+
 window.toggleCardVideoPlay = (carpetId) => {
     const cardVideo = document.getElementById(`card-video-${carpetId}`);
     if (!cardVideo) return;
@@ -570,6 +587,9 @@ window.toggleCardVideoPlay = (carpetId) => {
     const centerIcon = document.getElementById(`card-video-center-icon-${carpetId}`);
 
     if (cardVideo.paused) {
+        if (cardVideo.ended || (cardVideo.duration && cardVideo.currentTime >= cardVideo.duration - 0.1)) {
+            cardVideo.currentTime = 0;
+        }
         const onPlaying = () => {
             if (centerBtn) {
                 centerBtn.classList.remove('opacity-100', 'pointer-events-auto');
@@ -591,7 +611,7 @@ window.toggleCardVideoPlay = (carpetId) => {
             centerBtn.classList.add('opacity-100', 'pointer-events-auto');
         }
         if (centerIcon) {
-            centerIcon.innerHTML = '<span class="mr-[-2px]">▶</span>';
+            centerIcon.innerHTML = '<span class="mr-[-2px] text-white">▶</span>';
         }
     }
 };
@@ -1323,6 +1343,11 @@ function setCinemaVideoSource(targetUrl, posterUrl, autoPlay = false) {
         videoEl._playPauseBound = true;
         videoEl.addEventListener('play', updatePlayingUI);
         videoEl.addEventListener('pause', updatePausedUI);
+        videoEl.addEventListener('ended', () => {
+            if (typeof window.handleCinemaVideoEnded === 'function') {
+                window.handleCinemaVideoEnded();
+            }
+        });
     }
 
     if (autoPlay && targetUrl) {
@@ -1593,6 +1618,25 @@ function renderDynamicLookbook(items) {
 // ==========================================
 // التحكم في مشغل سينما الحرفة اليدوية (Atelier Cinema)
 // ==========================================
+window.handleCinemaVideoEnded = function() {
+    const video = document.getElementById('atelier-cinema-video');
+    const icon = document.getElementById('cinema-play-icon');
+    const text = document.getElementById('cinema-play-text');
+    const centerWrap = document.getElementById('cinema-video-center-btn-wrap');
+    const centerIcon = document.getElementById('cinema-video-center-icon');
+    if (video) {
+        video.pause();
+        video.currentTime = 0;
+    }
+    if (icon) icon.innerText = '▶';
+    if (text) text.innerText = 'إعادة المشاهدة';
+    if (centerWrap) {
+        centerWrap.classList.remove('opacity-0', 'pointer-events-none');
+        centerWrap.classList.add('opacity-100', 'pointer-events-auto');
+    }
+    if (centerIcon) centerIcon.innerText = '▶';
+};
+
 window.toggleCinemaVideoPlay = function() {
     const video = document.getElementById('atelier-cinema-video');
     const icon = document.getElementById('cinema-play-icon');
@@ -1602,6 +1646,9 @@ window.toggleCinemaVideoPlay = function() {
     if (!video) return;
 
     if (video.paused) {
+        if (video.ended || (video.duration && video.currentTime >= video.duration - 0.1)) {
+            video.currentTime = 0;
+        }
         if (!video.src && currentCinemaVideos && currentCinemaVideos[activeCinemaIndex]) {
             applyActiveCinemaContent(false);
         }

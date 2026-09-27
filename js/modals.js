@@ -380,17 +380,17 @@ export function openModal(carpetId, allCarpets) {
                         src="${initialVideoSrc}" 
                         playsinline 
                         muted 
-                        loop 
                         preload="metadata"
                         class="max-w-full max-h-full w-auto h-auto object-contain mx-auto block cursor-pointer bg-white"
                         onclick="window.toggleProductVideoPlay(this)"
+                        onended="window.handleModalVideoEnded()"
                     ></video>
                     
                     <!-- زر الإيقاف والتشغيل الفاخر بالمنتصف -->
                     <div 
                         id="modal-video-center-btn" 
                         onclick="window.toggleProductVideoPlay(document.getElementById('modal-product-video'))" 
-                        class="absolute inset-0 flex items-center justify-center transition-all duration-300 opacity-100 pointer-events-auto z-10"
+                        class="absolute inset-0 flex items-center justify-center transition-all duration-300 opacity-100 pointer-events-auto z-10">
                         <button type="button" class="luxury-play-center-btn w-16 h-16 sm:w-20 sm:h-20 rounded-full flex items-center justify-center text-2xl sm:text-3xl text-white transform transition-transform duration-300 hover:scale-110 active:scale-95 pointer-events-auto cursor-pointer group/modalplay" id="modal-video-center-icon" title="بدء تشغيل الفيديو">
                             <span class="mr-[-3px] text-white group-hover/modalplay:scale-110 transition-transform">▶</span>
                         </button>
@@ -692,6 +692,23 @@ window.closeVideoLightbox = () => {
     if (modal) modal.classList.add('hidden');
 };
 
+window.handleLightboxVideoEnded = () => {
+    const player = document.getElementById('lightbox-video-player');
+    const centerBtn = document.getElementById('lightbox-video-center-btn');
+    const centerIcon = document.getElementById('lightbox-video-center-icon');
+    if (player) {
+        player.pause();
+        player.currentTime = 0;
+    }
+    if (centerBtn) {
+        centerBtn.classList.remove('opacity-0', 'pointer-events-none');
+        centerBtn.classList.add('opacity-100', 'pointer-events-auto');
+    }
+    if (centerIcon) {
+        centerIcon.innerHTML = '<span class="mr-[-3px]">▶</span>';
+    }
+};
+
 window.toggleLightboxVideoPlay = () => {
     const player = document.getElementById('lightbox-video-player');
     if (!player) return;
@@ -700,6 +717,9 @@ window.toggleLightboxVideoPlay = () => {
     const centerIcon = document.getElementById('lightbox-video-center-icon');
 
     if (player.paused) {
+        if (player.ended || (player.duration && player.currentTime >= player.duration - 0.1)) {
+            player.currentTime = 0;
+        }
         const onPlaying = () => {
             if (centerBtn) {
                 centerBtn.classList.remove('opacity-100', 'pointer-events-auto');
@@ -746,6 +766,23 @@ window.addEventListener('keydown', (e) => {
     }
 });
 
+window.handleModalVideoEnded = () => {
+    const videoEl = document.getElementById('modal-product-video');
+    const centerBtn = document.getElementById('modal-video-center-btn');
+    const centerIcon = document.getElementById('modal-video-center-icon');
+    if (videoEl) {
+        videoEl.pause();
+        videoEl.currentTime = 0;
+    }
+    if (centerBtn) {
+        centerBtn.classList.remove('opacity-0', 'pointer-events-none');
+        centerBtn.classList.add('opacity-100', 'pointer-events-auto');
+    }
+    if (centerIcon) {
+        centerIcon.innerHTML = '<span class="mr-[-3px]">▶</span>';
+    }
+};
+
 window.toggleProductVideoPlay = (videoEl) => {
     if (!videoEl) videoEl = document.getElementById('modal-product-video');
     if (!videoEl) return;
@@ -754,6 +791,9 @@ window.toggleProductVideoPlay = (videoEl) => {
     const centerIcon = document.getElementById('modal-video-center-icon');
 
     if (videoEl.paused) {
+        if (videoEl.ended || (videoEl.duration && videoEl.currentTime >= videoEl.duration - 0.1)) {
+            videoEl.currentTime = 0;
+        }
         const onPlaying = () => {
             if (centerBtn) {
                 centerBtn.classList.remove('opacity-100', 'pointer-events-auto');

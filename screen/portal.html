@@ -1543,10 +1543,10 @@
                 id="lightbox-video-player"
                 playsinline
                 muted
-                loop
                 preload="auto"
                 class="max-w-full max-h-full w-auto h-auto object-contain rounded-2xl shadow-2xl cursor-pointer"
                 onclick="window.toggleLightboxVideoPlay()"
+                onended="window.handleLightboxVideoEnded()"
             ></video>
 
             <!-- زر إيقاف وتشغيل تفاعلي بالوسط متناغم مع لون الثيم -->

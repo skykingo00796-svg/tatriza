@@ -12,7 +12,7 @@
     <!-- مكتبة التنسيقات Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- ملف الأنماط والتصميم العام (مع تعديل المسار للخروج من مجلد screen) -->
-    <link rel="stylesheet" href="../css/style.css?v=2.7">
+    <link rel="stylesheet" href="../css/style.css?v=2.8">
     <!-- محرك الثيم الفوري لمنع وميض الثيم الافتراضي نهائياً (Zero-Flicker Theme Engine) -->
     <script>
         (function() {
@@ -321,10 +321,10 @@
                                 src="https://upload.wikimedia.org/wikipedia/commons/1/13/Weaving_Carpet_at_Lachen.webm"
                                 playsinline 
                                 muted 
-                                loop 
                                 poster="../images/craft_video_poster.jpg" 
                                 preload="metadata"
                                 onclick="window.toggleCinemaVideoPlay()"
+                                onended="window.handleCinemaVideoEnded()"
                                 class="w-full h-full object-contain relative z-10 mx-auto transition-all duration-300 cursor-pointer">
                                 متصفحك لا يدعم تشغيل الفيديو.
                             </video>
@@ -869,10 +869,10 @@
                 id="lightbox-video-player"
                 playsinline
                 muted
-                loop
                 preload="auto"
                 class="max-w-full max-h-full w-auto h-auto object-contain rounded-2xl shadow-2xl cursor-pointer"
                 onclick="window.toggleLightboxVideoPlay()"
+                onended="window.handleLightboxVideoEnded()"
             ></video>
 
             <!-- زر إيقاف وتشغيل تفاعلي بالوسط متناغم مع لون الثيم -->
@@ -1175,7 +1175,7 @@
         </div>
     </footer>
 
-    <script type="module" src="../js/main.js?v=2.7"></script>
+    <script type="module" src="../js/main.js?v=2.9"></script>
 
 </body>
 </html>
