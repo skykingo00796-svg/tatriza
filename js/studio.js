@@ -1,6 +1,7 @@
 // ==========================================================================
 // استوديو تصاميم ونشر السوشيال ميديا وحالات الواتساب (Tatriza Creative Studio)
 // دار تطريز TATRIZA — تصميم وتصدير بوستات وستوريات احترافية بدقة فائقة
+// تحكم كامل بحجم وحركة الصورة (تكبير، تصغير، يمين، يسار، أعلى، أسفل)
 // ==========================================================================
 
 import { showToast } from './modals.js';
@@ -177,6 +178,11 @@ let studioState = {
     customImageSrc: '',
     videoSrc: '',
     
+    // تحكم كامل بحجم وحركة الصورة (Pan & Zoom)
+    mediaZoom: 100, // نسبة التكبير: من 70% إلى 250% (افتراضي 100%)
+    mediaPanX: 0,   // إزاحة أفقية يمين/يسار: من -50% إلى +50%
+    mediaPanY: 0,   // إزاحة رأسية فوق/تحت: من -50% إلى +50%
+
     // إعدادات نمط ستوري إنستقرام كامل الشاشة
     storyPhrase: '- 🌟 عمل مُتقن -',
     storyHandle: '@TATRIZA_22',
@@ -318,7 +324,10 @@ function syncStudioControlsFromState() {
         }
     }
 
-    // 3. مزامنة حقول الستوري كامل الشاشة
+    // 3. مزامنة أشرطة التحريك والتكبير (Pan & Zoom)
+    syncPanZoomSlidersOnly();
+
+    // 4. مزامنة حقول الستوري كامل الشاشة
     const phraseInput = document.getElementById('studio-input-story-phrase');
     const handleInput = document.getElementById('studio-input-story-handle');
     if (phraseInput) phraseInput.value = studioState.storyPhrase || '';
@@ -336,7 +345,7 @@ function syncStudioControlsFromState() {
     updateVignetteButtonStates();
     updateMediaButtonStates();
 
-    // 4. مزامنة حقول نمط الكارت الملكي
+    // 5. مزامنة حقول نمط الكارت الملكي
     const titleIn = document.getElementById('studio-input-title');
     const subtitleIn = document.getElementById('studio-input-subtitle');
     const dimIn = document.getElementById('studio-input-dim');
@@ -381,6 +390,22 @@ function syncStudioControlsFromState() {
 
     // تحديث زر التصدير
     updateExportButtonText();
+}
+
+function syncPanZoomSlidersOnly() {
+    const zoomIn = document.getElementById('studio-input-zoom');
+    const zoomVal = document.getElementById('studio-zoom-val');
+    const panXIn = document.getElementById('studio-input-panx');
+    const panXVal = document.getElementById('studio-panx-val');
+    const panYIn = document.getElementById('studio-input-pany');
+    const panYVal = document.getElementById('studio-pany-val');
+
+    if (zoomIn) zoomIn.value = studioState.mediaZoom || 100;
+    if (zoomVal) zoomVal.innerText = `${studioState.mediaZoom || 100}%`;
+    if (panXIn) panXIn.value = studioState.mediaPanX || 0;
+    if (panXVal) panXVal.innerText = `${(studioState.mediaPanX || 0) > 0 ? '+' : ''}${studioState.mediaPanX || 0}%`;
+    if (panYIn) panYIn.value = studioState.mediaPanY || 0;
+    if (panYVal) panYVal.innerText = `${(studioState.mediaPanY || 0) > 0 ? '+' : ''}${studioState.mediaPanY || 0}%`;
 }
 
 function updateLayoutButtonStates() {
@@ -470,6 +495,25 @@ function updateExportButtonText() {
     }
 }
 
+// تطبيق التحويل (Zoom & Pan) على عنصر المعاينة مباشرة بسرعة فائقة
+function applyLiveTransformOnly() {
+    const zoom = (studioState.mediaZoom || 100) / 100;
+    const panX = studioState.mediaPanX || 0;
+    const panY = studioState.mediaPanY || 0;
+    const transformStyle = `translate3d(${panX}%, ${panY}%, 0) scale(${zoom})`;
+
+    const img = document.getElementById('studio-live-img');
+    if (img) img.style.transform = transformStyle;
+
+    const vid = document.getElementById('studio-live-video');
+    if (vid) vid.style.transform = transformStyle;
+
+    const carpetWrap = document.getElementById('studio-carpet-center-wrap');
+    if (carpetWrap) {
+        carpetWrap.style.transform = `translate3d(${panX}%, ${panY}%, 0) scale(${((studioState.carpetScale || 88) / 100) * zoom})`;
+    }
+}
+
 // عرض مصغرات صور القطعة المختارة للتنقل بينها
 function renderCarpetGalleryThumbs() {
     const container = document.getElementById('studio-thumbs-container');
@@ -504,6 +548,12 @@ export function updateStudioPreview() {
     const ratio = STUDIO_RATIOS[studioState.ratio] || STUDIO_RATIOS['9:16'];
     const carpetImg = studioState.customImageSrc || '../images/client_room1.jpg';
 
+    // حساب نسبة التكبير والإزاحة
+    const zoom = (studioState.mediaZoom || 100) / 100;
+    const panX = studioState.mediaPanX || 0;
+    const panY = studioState.mediaPanY || 0;
+    const transformStyle = `translate3d(${panX}%, ${panY}%, 0) scale(${zoom})`;
+
     // -------------------------------------------------------------
     // الحالة الأولى: نمط ستوري وريلز إنستقرام كامل الشاشة مع الشادو الناعم
     // -------------------------------------------------------------
@@ -511,23 +561,27 @@ export function updateStudioPreview() {
         const vig = STUDIO_VIGNETTES[studioState.vignetteTheme] || STUDIO_VIGNETTES['blush-rose'];
         
         // تعيين نسبة الأبعاد للحاوية
-        stage.className = `relative w-full max-w-[340px] sm:max-w-[360px] mx-auto rounded-3xl overflow-hidden shadow-2xl transition-all duration-300 flex flex-col justify-between p-0 select-none ${ratio.aspectClass} bg-stone-900`;
+        stage.className = `relative w-full max-w-[340px] sm:max-w-[360px] mx-auto rounded-3xl overflow-hidden shadow-2xl transition-all duration-300 flex flex-col justify-between p-0 select-none ${ratio.aspectClass} bg-stone-900 cursor-grab active:cursor-grabbing`;
         stage.style.background = '#1a1a1a';
         stage.style.backgroundImage = 'none';
 
-        // محتوى الميديا (فيديو أو صورة)
+        // محتوى الميديا (فيديو أو صورة) داخل غلاف قابل للقص
         let mediaHtml = '';
         if (studioState.mediaType === 'video' && studioState.videoSrc) {
             mediaHtml = `
-                <video id="studio-live-video" src="${studioState.videoSrc}" autoplay loop muted playsinline class="absolute inset-0 w-full h-full object-cover z-0"></video>
-                <div class="absolute top-3 left-3 z-30 bg-black/50 backdrop-blur-md text-white text-[9px] px-2 py-0.5 rounded-full flex items-center gap-1">
+                <div class="absolute inset-0 w-full h-full overflow-hidden z-0 pointer-events-none">
+                    <video id="studio-live-video" src="${studioState.videoSrc}" autoplay loop muted playsinline class="w-full h-full object-cover select-none transition-transform duration-75" style="transform: ${transformStyle}; transform-origin: center center;"></video>
+                </div>
+                <div class="absolute top-3 left-3 z-30 bg-black/50 backdrop-blur-md text-white text-[9px] px-2 py-0.5 rounded-full flex items-center gap-1 pointer-events-none">
                     <span>🎥</span>
                     <span>معاينة فيديو حية</span>
                 </div>
             `;
         } else {
             mediaHtml = `
-                <img src="${carpetImg}" alt="Story Carpet" class="absolute inset-0 w-full h-full object-cover z-0 transition-transform duration-300">
+                <div class="absolute inset-0 w-full h-full overflow-hidden z-0 pointer-events-none">
+                    <img id="studio-live-img" src="${carpetImg}" alt="Story Carpet" class="w-full h-full object-cover select-none transition-transform duration-75 pointer-events-none" style="transform: ${transformStyle}; transform-origin: center center;">
+                </div>
             `;
         }
 
@@ -538,7 +592,7 @@ export function updateStudioPreview() {
 
         // اللوجو الرسمي في الأعلى
         const logoHtml = studioState.showLogo ? `
-            <div class="relative z-20 pt-6 sm:pt-8 flex flex-col items-center justify-center">
+            <div class="relative z-20 pt-6 sm:pt-8 flex flex-col items-center justify-center pointer-events-none">
                 <img src="../images/logo.jpg" class="w-16 h-16 sm:w-20 sm:h-20 object-contain drop-shadow-sm select-none" style="mix-blend-mode: multiply;" alt="TATRIZA Logo">
             </div>
         ` : '';
@@ -550,7 +604,7 @@ export function updateStudioPreview() {
 
         // العبارة المميزة واسم الحساب بالأسفل
         const bottomContentHtml = `
-            <div class="relative z-20 pb-7 sm:pb-9 px-4 flex flex-col items-center justify-center text-center space-y-3 mt-auto">
+            <div class="relative z-20 pb-7 sm:pb-9 px-4 flex flex-col items-center justify-center text-center space-y-3 mt-auto pointer-events-none">
                 ${studioState.showStoryPhrase && studioState.storyPhrase ? `
                     <div class="font-royal-carpet font-bold text-lg sm:text-xl tracking-wide select-none" style="color: ${vig.phraseColor}; text-shadow: ${vig.phraseShadow};">
                         ${studioState.storyPhrase}
@@ -572,6 +626,9 @@ export function updateStudioPreview() {
             ${botVignetteHtml}
             ${bottomContentHtml}
         `;
+
+        // إتاحة السحب المباشر باللمس أو الماوس
+        setupStageDragAndZoom();
         return;
     }
 
@@ -580,7 +637,7 @@ export function updateStudioPreview() {
     // -------------------------------------------------------------
     const theme = STUDIO_THEMES[studioState.theme] || STUDIO_THEMES['royal-burgundy'];
 
-    stage.className = `relative w-full max-w-[360px] mx-auto rounded-3xl overflow-hidden shadow-2xl transition-all duration-300 flex flex-col justify-between p-4 sm:p-5 select-none ${ratio.aspectClass}`;
+    stage.className = `relative w-full max-w-[360px] mx-auto rounded-3xl overflow-hidden shadow-2xl transition-all duration-300 flex flex-col justify-between p-4 sm:p-5 select-none ${ratio.aspectClass} cursor-grab active:cursor-grabbing`;
 
     // تعيين الخلفية
     if (theme.bgType === 'gradient') {
@@ -603,7 +660,7 @@ export function updateStudioPreview() {
         };
         const stickerText = stickersMap[studioState.sticker] || '✨ إصدار يدوي خاص';
         stickerHtml = `
-            <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] sm:text-[11px] font-bold tracking-wide shadow-md backdrop-blur-md border border-white/20 animate-pulse" style="background: ${theme.badgeBg}; color: ${theme.badgeText};">
+            <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] sm:text-[11px] font-bold tracking-wide shadow-md backdrop-blur-md border border-white/20 animate-pulse pointer-events-none" style="background: ${theme.badgeBg}; color: ${theme.badgeText};">
                 <span>${stickerText}</span>
             </div>
         `;
@@ -613,7 +670,7 @@ export function updateStudioPreview() {
     let logoHtml = '';
     if (studioState.showLogo) {
         logoHtml = `
-            <div class="flex items-center gap-2">
+            <div class="flex items-center gap-2 pointer-events-none">
                 <img src="../images/logo.jpg" class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl object-cover border border-amber-300/40 shadow-xs" alt="Logo">
                 <div class="text-right leading-none">
                     <span class="font-display font-black text-xs sm:text-sm tracking-wider text-white block">TATRIZA</span>
@@ -623,8 +680,8 @@ export function updateStudioPreview() {
         `;
     }
 
-    // السجادة في المنتصف
-    const scaleFactor = (studioState.carpetScale || 88) / 100;
+    // السجادة في المنتصف مع دعم التحريك الحر والتكبير
+    const scaleFactor = ((studioState.carpetScale || 88) / 100) * zoom;
     const shadowStyle = studioState.carpetShadow ? 'filter: drop-shadow(0 20px 25px rgba(0,0,0,0.55)) drop-shadow(0 8px 10px rgba(0,0,0,0.3));' : '';
 
     // قسم البيانات السفلي
@@ -634,14 +691,14 @@ export function updateStudioPreview() {
 
     stage.innerHTML = `
         <!-- شريط الرأس في التصميم -->
-        <div class="w-full flex items-center justify-between gap-2 relative z-10">
+        <div class="w-full flex items-center justify-between gap-2 relative z-10 pointer-events-none">
             ${logoHtml}
             ${stickerHtml}
         </div>
 
         <!-- مسرح السجادة المركزي -->
-        <div class="flex-1 flex items-center justify-center p-2 relative z-10 my-auto overflow-hidden">
-            <div class="transition-transform duration-300 max-w-full max-h-full flex items-center justify-center" style="transform: scale(${scaleFactor});">
+        <div class="flex-1 flex items-center justify-center p-2 relative z-10 my-auto overflow-hidden pointer-events-none">
+            <div id="studio-carpet-center-wrap" class="transition-transform duration-75 max-w-full max-h-full flex items-center justify-center" style="transform: translate3d(${panX}%, ${panY}%, 0) scale(${scaleFactor}); transform-origin: center center;">
                 <img 
                     src="${carpetImg}" 
                     alt="${studioState.title}" 
@@ -651,8 +708,7 @@ export function updateStudioPreview() {
         </div>
 
         <!-- بطاقة المعلومات والدعوة للطلب -->
-        <div class="w-full rounded-2xl p-3 sm:p-3.5 backdrop-blur-md relative z-10 space-y-2 border transition-all" style="background: ${theme.cardBg}; border-color: ${theme.cardBorder}; color: ${theme.textColor};">
-            <!-- العنوان والوصف -->
+        <div class="w-full rounded-2xl p-3 sm:p-3.5 backdrop-blur-md relative z-10 space-y-2 border transition-all pointer-events-none" style="background: ${theme.cardBg}; border-color: ${theme.cardBorder}; color: ${theme.textColor};">
             <div>
                 <h3 class="font-royal-carpet font-bold text-sm sm:text-base leading-snug line-clamp-1" style="color: ${theme.accentColor};">
                     ${studioState.title || 'سجادة ملكية فاخرة'}
@@ -691,6 +747,75 @@ export function updateStudioPreview() {
             ` : ''}
         </div>
     `;
+
+    setupStageDragAndZoom();
+}
+
+// ==========================================
+// التفاعل المباشر: السحب بالماوس أو اللمس (Direct Drag to Pan & Wheel to Zoom)
+// ==========================================
+let isDraggingStage = false;
+let dragStartX = 0;
+let dragStartY = 0;
+let initialPanX = 0;
+let initialPanY = 0;
+
+function setupStageDragAndZoom() {
+    const stage = document.getElementById('studio-live-stage');
+    if (!stage || stage.dataset.dragInitialized) return;
+    stage.dataset.dragInitialized = 'true';
+
+    stage.addEventListener('pointerdown', (e) => {
+        if (e.button !== 0 && e.pointerType === 'mouse') return;
+        isDraggingStage = true;
+        dragStartX = e.clientX;
+        dragStartY = e.clientY;
+        initialPanX = studioState.mediaPanX || 0;
+        initialPanY = studioState.mediaPanY || 0;
+        try { stage.setPointerCapture(e.pointerId); } catch(err){}
+        stage.style.cursor = 'grabbing';
+    });
+
+    stage.addEventListener('pointermove', (e) => {
+        if (!isDraggingStage) return;
+        const rect = stage.getBoundingClientRect();
+        if (rect.width === 0 || rect.height === 0) return;
+
+        const deltaX = e.clientX - dragStartX;
+        const deltaY = e.clientY - dragStartY;
+
+        // تحويل بكسلات السحب إلى نسبة مئوية سلسة
+        const deltaXPercent = (deltaX / rect.width) * 100;
+        const deltaYPercent = (deltaY / rect.height) * 100;
+
+        studioState.mediaPanX = Math.round(Math.max(-50, Math.min(50, initialPanX + deltaXPercent)));
+        studioState.mediaPanY = Math.round(Math.max(-50, Math.min(50, initialPanY + deltaYPercent)));
+
+        // تحديث حي فوري بدون إعادة بناء الـ DOM
+        applyLiveTransformOnly();
+        syncPanZoomSlidersOnly();
+    });
+
+    const endDrag = (e) => {
+        if (isDraggingStage) {
+            isDraggingStage = false;
+            try { stage.releasePointerCapture(e.pointerId); } catch(err){}
+            stage.style.cursor = 'grab';
+        }
+    };
+
+    stage.addEventListener('pointerup', endDrag);
+    stage.addEventListener('pointercancel', endDrag);
+
+    // التكبير والتصغير بعجلة الماوس
+    stage.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        const step = e.deltaY < 0 ? 5 : -5;
+        const newZoom = Math.max(70, Math.min(250, (studioState.mediaZoom || 100) + step));
+        studioState.mediaZoom = newZoom;
+        applyLiveTransformOnly();
+        syncPanZoomSlidersOnly();
+    }, { passive: false });
 }
 
 // ==========================================
@@ -800,11 +925,15 @@ export async function exportStudioHDImage() {
             ctx.restore();
         }
 
-        // 4. رسم صورة السجادة في المنتصف
+        // 4. رسم صورة السجادة في المنتصف مع دعم التحريك والتكبير
         const carpetSrc = studioState.customImageSrc || '../images/client_room1.jpg';
-        const scale = (studioState.carpetScale || 88) / 100;
+        const zoom = (studioState.mediaZoom || 100) / 100;
+        const scale = ((studioState.carpetScale || 88) / 100) * zoom;
         const maxImgW = (canvas.width - 160) * scale;
         const maxImgH = (canvas.height * (studioState.ratio === '9:16' ? 0.5 : 0.45)) * scale;
+
+        const panOffsetX = (canvas.width * ((studioState.mediaPanX || 0) / 100));
+        const panOffsetY = (canvas.height * ((studioState.mediaPanY || 0) / 100));
 
         ctx.save();
         if (studioState.carpetShadow) {
@@ -813,7 +942,7 @@ export async function exportStudioHDImage() {
             ctx.shadowOffsetY = 25;
         }
 
-        await drawContainedImage(ctx, carpetSrc, (canvas.width - maxImgW) / 2, (canvas.height * 0.22), maxImgW, maxImgH);
+        await drawContainedImage(ctx, carpetSrc, ((canvas.width - maxImgW) / 2) + panOffsetX, (canvas.height * 0.22) + panOffsetY, maxImgW, maxImgH);
         ctx.restore();
 
         // 5. رسم بطاقة المعلومات السفلية
@@ -920,8 +1049,11 @@ async function exportStoryVignetteHD(canvas, ctx) {
     const vig = STUDIO_VIGNETTES[studioState.vignetteTheme] || STUDIO_VIGNETTES['blush-rose'];
     const carpetSrc = studioState.customImageSrc || '../images/client_room1.jpg';
 
-    // 1. رسم الصورة بكامل الشاشة (Cover Fit)
-    await drawCoverImageOnCanvas(ctx, carpetSrc, 0, 0, canvas.width, canvas.height);
+    // 1. رسم الصورة بكامل الشاشة مع التحجيم والإزاحة الدقيقة (Zoom & Pan)
+    const zoom = (studioState.mediaZoom || 100) / 100;
+    const panX = studioState.mediaPanX || 0;
+    const panY = studioState.mediaPanY || 0;
+    await drawCoverImageOnCanvas(ctx, carpetSrc, 0, 0, canvas.width, canvas.height, zoom, panX, panY);
 
     // 2. رسم الشادو الدائري الناعم بالأعلى
     if (studioState.showTopVignette !== false) {
@@ -1021,11 +1153,10 @@ function getTransparentLogoCanvas(logoImg) {
         const r = data[i];
         const g = data[i + 1];
         const b = data[i + 2];
-        // خلفية لوجو تاتريزا كريمية (#fdf6f0)
         if (r > 230 && g > 220 && b > 210) {
             const avg = (r + g + b) / 3;
             if (avg > 240) {
-                data[i + 3] = 0; // تفريغ كامل شفاف
+                data[i + 3] = 0;
             } else {
                 data[i + 3] = Math.round(((240 - avg) / 20) * 255);
             }
@@ -1062,25 +1193,41 @@ function loadImageAsync(src) {
     });
 }
 
-function drawCoverImageOnCanvas(ctx, src, x, y, w, h) {
+// رسم الصورة مع دعم التكبير والتحريك الأفقي والرأسي الدقيق
+function drawCoverImageOnCanvas(ctx, src, x, y, w, h, zoom = 1.0, panXPercent = 0, panYPercent = 0) {
     return new Promise((resolve) => {
         const img = new Image();
         img.crossOrigin = 'anonymous';
         img.src = src;
         img.onload = () => {
+            ctx.save();
+            ctx.beginPath();
+            ctx.rect(x, y, w, h);
+            ctx.clip();
+
             const imgRatio = img.width / img.height;
             const targetRatio = w / h;
-            let sx = 0, sy = 0, sWidth = img.width, sHeight = img.height;
+            let baseW, baseH;
 
             if (imgRatio > targetRatio) {
-                sWidth = img.height * targetRatio;
-                sx = (img.width - sWidth) / 2;
+                baseH = h;
+                baseW = h * imgRatio;
             } else {
-                sHeight = img.width / targetRatio;
-                sy = (img.height - sHeight) / 2;
+                baseW = w;
+                baseH = w / imgRatio;
             }
 
-            ctx.drawImage(img, sx, sy, sWidth, sHeight, x, y, w, h);
+            const finalW = baseW * zoom;
+            const finalH = baseH * zoom;
+
+            const centerX = x + (w - finalW) / 2;
+            const centerY = y + (h - finalH) / 2;
+
+            const offsetX = (w * (panXPercent / 100));
+            const offsetY = (h * (panYPercent / 100));
+
+            ctx.drawImage(img, centerX + offsetX, centerY + offsetY, finalW, finalH);
+            ctx.restore();
             resolve();
         };
         img.onerror = () => resolve();
@@ -1249,7 +1396,6 @@ export function saveStudioDraft() {
         };
 
         drafts.unshift(draftObj);
-        // الاحتفاظ بآخر 15 مسودة
         if (drafts.length > 15) drafts.pop();
 
         localStorage.setItem('tatr_studio_drafts', JSON.stringify(drafts));
@@ -1336,7 +1482,6 @@ export function initStudioEvents() {
             const layout = btn.getAttribute('data-layout');
             if (layout) {
                 studioState.layoutMode = layout;
-                // إذا تم اختيار ستوري، نجعل الأبعاد 9:16 تلقائياً
                 if (layout === 'story_vignette') {
                     studioState.ratio = '9:16';
                 }
@@ -1371,7 +1516,109 @@ export function initStudioEvents() {
         });
     });
 
-    // 4. بطاقات ثيمات الشادو الدائري (Vignette Presets)
+    // 4. أزرار وأشرطة التحكم بالتكبير والحركة (Pan & Zoom Controls)
+    const zoomInput = document.getElementById('studio-input-zoom');
+    const zoomVal = document.getElementById('studio-zoom-val');
+    if (zoomInput) {
+        zoomInput.addEventListener('input', (e) => {
+            studioState.mediaZoom = Number(e.target.value);
+            if (zoomVal) zoomVal.innerText = `${studioState.mediaZoom}%`;
+            applyLiveTransformOnly();
+        });
+    }
+
+    const btnZoomIn = document.getElementById('studio-btn-zoom-in');
+    if (btnZoomIn) {
+        btnZoomIn.addEventListener('click', () => {
+            studioState.mediaZoom = Math.min(250, (studioState.mediaZoom || 100) + 10);
+            syncPanZoomSlidersOnly();
+            applyLiveTransformOnly();
+        });
+    }
+
+    const btnZoomOut = document.getElementById('studio-btn-zoom-out');
+    if (btnZoomOut) {
+        btnZoomOut.addEventListener('click', () => {
+            studioState.mediaZoom = Math.max(70, (studioState.mediaZoom || 100) - 10);
+            syncPanZoomSlidersOnly();
+            applyLiveTransformOnly();
+        });
+    }
+
+    const panXInput = document.getElementById('studio-input-panx');
+    const panXVal = document.getElementById('studio-panx-val');
+    if (panXInput) {
+        panXInput.addEventListener('input', (e) => {
+            studioState.mediaPanX = Number(e.target.value);
+            if (panXVal) panXVal.innerText = `${studioState.mediaPanX > 0 ? '+' : ''}${studioState.mediaPanX}%`;
+            applyLiveTransformOnly();
+        });
+    }
+
+    const panYInput = document.getElementById('studio-input-pany');
+    const panYVal = document.getElementById('studio-pany-val');
+    if (panYInput) {
+        panYInput.addEventListener('input', (e) => {
+            studioState.mediaPanY = Number(e.target.value);
+            if (panYVal) panYVal.innerText = `${studioState.mediaPanY > 0 ? '+' : ''}${studioState.mediaPanY}%`;
+            applyLiveTransformOnly();
+        });
+    }
+
+    // أزرار لوحة الأسهم الرباعية (D-Pad)
+    const btnUp = document.getElementById('studio-btn-dpad-up');
+    if (btnUp) {
+        btnUp.addEventListener('click', () => {
+            studioState.mediaPanY = Math.max(-50, (studioState.mediaPanY || 0) - 5);
+            syncPanZoomSlidersOnly();
+            applyLiveTransformOnly();
+        });
+    }
+
+    const btnDown = document.getElementById('studio-btn-dpad-down');
+    if (btnDown) {
+        btnDown.addEventListener('click', () => {
+            studioState.mediaPanY = Math.min(50, (studioState.mediaPanY || 0) + 5);
+            syncPanZoomSlidersOnly();
+            applyLiveTransformOnly();
+        });
+    }
+
+    const btnRight = document.getElementById('studio-btn-dpad-right');
+    if (btnRight) {
+        btnRight.addEventListener('click', () => {
+            studioState.mediaPanX = Math.min(50, (studioState.mediaPanX || 0) + 5);
+            syncPanZoomSlidersOnly();
+            applyLiveTransformOnly();
+        });
+    }
+
+    const btnLeft = document.getElementById('studio-btn-dpad-left');
+    if (btnLeft) {
+        btnLeft.addEventListener('click', () => {
+            studioState.mediaPanX = Math.max(-50, (studioState.mediaPanX || 0) - 5);
+            syncPanZoomSlidersOnly();
+            applyLiveTransformOnly();
+        });
+    }
+
+    // زر إعادة ضبط الموضع والتكبير (Reset)
+    const resetTransform = () => {
+        studioState.mediaZoom = 100;
+        studioState.mediaPanX = 0;
+        studioState.mediaPanY = 0;
+        syncPanZoomSlidersOnly();
+        applyLiveTransformOnly();
+        showToast('تمت إعادة ضبط موضع وحجم الصورة للوضع الافتراضي.', 'info', 'إعادة ضبط');
+    };
+
+    const btnReset = document.getElementById('studio-btn-reset-transform');
+    if (btnReset) btnReset.addEventListener('click', resetTransform);
+
+    const btnDpadCenter = document.getElementById('studio-btn-dpad-center');
+    if (btnDpadCenter) btnDpadCenter.addEventListener('click', resetTransform);
+
+    // 5. بطاقات ثيمات الشادو الدائري (Vignette Presets)
     document.querySelectorAll('.studio-vignette-card').forEach(card => {
         card.addEventListener('click', () => {
             const vigId = card.getAttribute('data-vignette');
@@ -1383,7 +1630,7 @@ export function initStudioEvents() {
         });
     });
 
-    // 5. بطاقات ثيمات الكارت الملكي
+    // 6. بطاقات ثيمات الكارت الملكي
     document.querySelectorAll('.studio-theme-card').forEach(card => {
         card.addEventListener('click', () => {
             const themeId = card.getAttribute('data-theme');
@@ -1395,7 +1642,7 @@ export function initStudioEvents() {
         });
     });
 
-    // 6. حقول نصوص ستوري إنستقرام
+    // 7. حقول نصوص ستوري إنستقرام
     const storyPhraseInput = document.getElementById('studio-input-story-phrase');
     if (storyPhraseInput) {
         storyPhraseInput.addEventListener('input', (e) => {
@@ -1412,7 +1659,7 @@ export function initStudioEvents() {
         });
     }
 
-    // 7. شرائح الاقتراحات السريعة للعبارة المميزة
+    // 8. شرائح الاقتراحات السريعة للعبارة المميزة
     document.querySelectorAll('.studio-phrase-chip').forEach(chip => {
         chip.addEventListener('click', () => {
             const txt = chip.getAttribute('data-phrase');
@@ -1424,7 +1671,7 @@ export function initStudioEvents() {
         });
     });
 
-    // 8. مفاتيح إظهار/إخفاء عناصر الستوري
+    // 9. مفاتيح إظهار/إخفاء عناصر الستوري
     const bindToggle = (id, prop) => {
         const el = document.getElementById(id);
         if (el) {
@@ -1440,7 +1687,7 @@ export function initStudioEvents() {
     bindToggle('studio-toggle-story-phrase', 'showStoryPhrase');
     bindToggle('studio-toggle-story-handle', 'showStoryHandle');
 
-    // 9. حقول نصوص الكارت المباشرة
+    // 10. حقول نصوص الكارت المباشرة
     const bindInput = (id, prop) => {
         const el = document.getElementById(id);
         if (el) {
@@ -1459,7 +1706,7 @@ export function initStudioEvents() {
     bindInput('studio-input-curr', 'currency');
     bindInput('studio-input-wa', 'whatsapp');
 
-    // 10. شريط تحجيم السجادة (Scale)
+    // 11. شريط تحجيم السجادة في الكارت (Scale)
     const scaleInput = document.getElementById('studio-input-scale');
     const scaleVal = document.getElementById('studio-scale-val');
     if (scaleInput) {
@@ -1470,7 +1717,7 @@ export function initStudioEvents() {
         });
     }
 
-    // 11. اختيار الشارة الترويجية (Sticker)
+    // 12. اختيار الشارة الترويجية (Sticker)
     const stickerSelect = document.getElementById('studio-select-sticker');
     if (stickerSelect) {
         stickerSelect.addEventListener('change', (e) => {
@@ -1479,7 +1726,7 @@ export function initStudioEvents() {
         });
     }
 
-    // 12. مفاتيح عناصر الكارت (Toggles)
+    // 13. مفاتيح عناصر الكارت (Toggles)
     bindToggle('studio-toggle-logo', 'showLogo');
     bindToggle('studio-toggle-price', 'showPrice');
     bindToggle('studio-toggle-dim', 'showDimensions');
@@ -1487,7 +1734,7 @@ export function initStudioEvents() {
     bindToggle('studio-toggle-wa', 'showWhatsApp');
     bindToggle('studio-toggle-shadow', 'carpetShadow');
 
-    // 13. اختيار السجادة من القائمة المنسدلة
+    // 14. اختيار السجادة من القائمة المنسدلة
     const carpetSelect = document.getElementById('studio-carpet-select');
     if (carpetSelect) {
         carpetSelect.addEventListener('change', (e) => {
@@ -1502,7 +1749,7 @@ export function initStudioEvents() {
         });
     }
 
-    // 14. رفع صورة مخصصة من الجهاز
+    // 15. رفع صورة مخصصة من الجهاز
     const fileUpload = document.getElementById('studio-file-upload');
     if (fileUpload) {
         fileUpload.addEventListener('change', (e) => {
@@ -1524,7 +1771,7 @@ export function initStudioEvents() {
         });
     }
 
-    // 15. رفع فيديو مخصص من الجهاز
+    // 16. رفع فيديو مخصص من الجهاز
     const videoUpload = document.getElementById('studio-video-upload');
     if (videoUpload) {
         videoUpload.addEventListener('change', (e) => {
