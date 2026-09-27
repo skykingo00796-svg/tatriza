@@ -6,8 +6,62 @@
 import { showToast } from './modals.js';
 
 // ==========================================
-// الإعدادات والقوالب الافتراضية
+// الإعدادات والقوالب وثيمات التصميم
 // ==========================================
+
+// 1. ثيمات الشادو الدائري لنمط الستوري كامل الشاشة (Story / Reels Vignette)
+export const STUDIO_VIGNETTES = {
+    'blush-rose': {
+        id: 'blush-rose',
+        name: 'الوردي والبيج الدافئ (كالأصل)',
+        badge: '🌸 الأكثر تطابقاً',
+        topColorRgb: '228, 196, 184',
+        bottomColorRgb: '224, 187, 174',
+        topVignetteCss: 'radial-gradient(ellipse 110% 75% at 50% 0%, rgba(228, 196, 184, 0.95) 0%, rgba(228, 196, 184, 0.8) 35%, rgba(228, 196, 184, 0.3) 70%, transparent 100%)',
+        botVignetteCss: 'radial-gradient(ellipse 120% 90% at 50% 100%, rgba(224, 187, 174, 0.96) 0%, rgba(224, 187, 174, 0.88) 40%, rgba(224, 187, 174, 0.45) 75%, transparent 100%)',
+        phraseColor: '#ffffff',
+        phraseShadow: '0 2px 10px rgba(0,0,0,0.4)',
+        handleColor: '#5c453d'
+    },
+    'royal-burgundy': {
+        id: 'royal-burgundy',
+        name: 'العنابي الملكي والذهب',
+        badge: '👑 فاخر ملكي',
+        topColorRgb: '43, 6, 19',
+        bottomColorRgb: '43, 6, 19',
+        topVignetteCss: 'radial-gradient(ellipse 110% 75% at 50% 0%, rgba(43, 6, 19, 0.95) 0%, rgba(43, 6, 19, 0.8) 35%, rgba(43, 6, 19, 0.3) 70%, transparent 100%)',
+        botVignetteCss: 'radial-gradient(ellipse 120% 90% at 50% 100%, rgba(43, 6, 19, 0.96) 0%, rgba(43, 6, 19, 0.88) 40%, rgba(43, 6, 19, 0.45) 75%, transparent 100%)',
+        phraseColor: '#fde047',
+        phraseShadow: '0 2px 12px rgba(0,0,0,0.7)',
+        handleColor: '#f3cf7a'
+    },
+    'obsidian-gold': {
+        id: 'obsidian-gold',
+        name: 'الأوبسيديان الفاخر الداكن',
+        badge: '🖤 فخامة داكنة',
+        topColorRgb: '12, 13, 16',
+        bottomColorRgb: '10, 11, 14',
+        topVignetteCss: 'radial-gradient(ellipse 110% 75% at 50% 0%, rgba(12, 13, 16, 0.95) 0%, rgba(12, 13, 16, 0.8) 35%, rgba(12, 13, 16, 0.3) 70%, transparent 100%)',
+        botVignetteCss: 'radial-gradient(ellipse 120% 90% at 50% 100%, rgba(10, 11, 14, 0.96) 0%, rgba(10, 11, 14, 0.88) 40%, rgba(10, 11, 14, 0.45) 75%, transparent 100%)',
+        phraseColor: '#ffffff',
+        phraseShadow: '0 2px 12px rgba(0,0,0,0.7)',
+        handleColor: '#e5b842'
+    },
+    'warm-ivory': {
+        id: 'warm-ivory',
+        name: 'العاجي والذهب الدافئ',
+        badge: '✨ نهاري مشرق',
+        topColorRgb: '235, 225, 212',
+        bottomColorRgb: '230, 218, 202',
+        topVignetteCss: 'radial-gradient(ellipse 110% 75% at 50% 0%, rgba(235, 225, 212, 0.95) 0%, rgba(235, 225, 212, 0.8) 35%, rgba(235, 225, 212, 0.3) 70%, transparent 100%)',
+        botVignetteCss: 'radial-gradient(ellipse 120% 90% at 50% 100%, rgba(230, 218, 202, 0.96) 0%, rgba(230, 218, 202, 0.88) 40%, rgba(230, 218, 202, 0.45) 75%, transparent 100%)',
+        phraseColor: '#ffffff',
+        phraseShadow: '0 2px 10px rgba(0,0,0,0.4)',
+        handleColor: '#4a382e'
+    }
+};
+
+// 2. ثيمات نمط كارت السجادة الملكي (Card Mode)
 export const STUDIO_THEMES = {
     'royal-burgundy': {
         id: 'royal-burgundy',
@@ -58,29 +112,30 @@ export const STUDIO_THEMES = {
         accentColor: '#f7d382',
         cardBg: 'rgba(15, 12, 10, 0.78)',
         cardBorder: 'rgba(247, 211, 130, 0.45)',
-        badgeBg: 'rgba(247, 211, 130, 0.2)',
-        badgeText: '#fff1c7'
+        badgeBg: 'rgba(247, 211, 130, 0.22)',
+        badgeText: '#fae6b8'
     },
     'modern-parquet': {
         id: 'modern-parquet',
-        name: 'الباركيه الخشبي العصري',
-        badge: '🪵 استوديو فخم',
+        name: 'الباركيه الفرنسي الفاخر',
+        badge: '🪵 استوديو خشبي',
         bgType: 'image',
         bgValue: '../images/studio_parquet_wood.jpg',
         textColor: '#ffffff',
-        accentColor: '#fcd34d',
-        cardBg: 'rgba(24, 18, 14, 0.78)',
-        cardBorder: 'rgba(252, 211, 77, 0.4)',
-        badgeBg: 'rgba(252, 211, 77, 0.2)',
-        badgeText: '#fef9c3'
+        accentColor: '#fad074',
+        cardBg: 'rgba(25, 20, 16, 0.75)',
+        cardBorder: 'rgba(250, 208, 116, 0.4)',
+        badgeBg: 'rgba(250, 208, 116, 0.2)',
+        badgeText: '#fce4a6'
     }
 };
 
+// 3. مقاسات ونسب الأبعاد
 export const STUDIO_RATIOS = {
     '1:1': {
         id: '1:1',
-        name: 'بوست مربع (1:1)',
-        subtitle: 'إنستقرام وفيس بوك',
+        name: 'مربع (1:1)',
+        subtitle: 'إنستقرام وفيسبوك وتويتر',
         width: 1080,
         height: 1080,
         aspectClass: 'aspect-square',
@@ -113,17 +168,36 @@ export const STUDIO_RATIOS = {
 // حالة الاستوديو الحالية
 // ==========================================
 let studioState = {
+    // النمط الرئيسي: 'story_vignette' (ستوري إنستقرام شادو ناعم) أو 'card' (بوست الكارت الملكي)
+    layoutMode: 'story_vignette',
+    
+    // الوسائط
+    mediaType: 'image', // 'image' أو 'video'
     selectedCarpetId: '',
     customImageSrc: '',
-    ratio: '1:1',
+    videoSrc: '',
+    
+    // إعدادات نمط ستوري إنستقرام كامل الشاشة
+    storyPhrase: '- 🌟 عمل مُتقن -',
+    storyHandle: '@TATRIZA_22',
+    vignetteTheme: 'blush-rose',
+    showTopVignette: true,
+    showBottomVignette: true,
+    showStoryPhrase: true,
+    showStoryHandle: true,
+    
+    // الأبعاد والثيمات
+    ratio: '9:16', // افتراضي 9:16 ليتطابق مع الستوري المطلوب
     theme: 'royal-burgundy',
+    
+    // إعدادات نمط كارت السجادة الملكي
     title: '',
     subtitle: 'حياكة يدوية متقنة تفيض بالأصالة والفخامة',
     dimensions: '',
     material: '',
     price: '',
     currency: 'ر.ع.',
-    sticker: 'exclusive', // 'none', 'exclusive', 'silk', 'wool', 'oman', 'artisan'
+    sticker: 'exclusive',
     whatsapp: '968XXXXXXXX',
     showLogo: true,
     showPrice: true,
@@ -131,7 +205,7 @@ let studioState = {
     showMaterial: true,
     showSticker: true,
     showWhatsApp: true,
-    carpetScale: 88, // نسبة الحجم 60% إلى 100%
+    carpetScale: 88,
     carpetShadow: true,
     carpetTilt: false
 };
@@ -178,6 +252,12 @@ export function closeTatrizaStudioModal() {
     const modal = document.getElementById('tatriza-studio-modal');
     if (modal) modal.classList.add('hidden');
     document.body.classList.remove('overflow-hidden');
+    
+    // إيقاف تشغيل أي فيديو نشط في المعاينة
+    const videoEl = document.getElementById('studio-live-video');
+    if (videoEl) {
+        try { videoEl.pause(); } catch(e) {}
+    }
 }
 
 function applyCarpetToStudioState(carpet) {
@@ -195,6 +275,11 @@ function applyCarpetToStudioState(carpet) {
         studioState.customImageSrc = carpet.image;
     } else {
         studioState.customImageSrc = '../images/client_room1.jpg';
+    }
+
+    // فحص ما إذا كان للسجادة فيديو مرفق
+    if (carpet.videoUrl) {
+        studioState.videoSrc = carpet.videoUrl;
     }
 }
 
@@ -217,6 +302,41 @@ function populateCarpetDropdown(carpets) {
 
 // مزامنة حقول الإدخال مع الحالة الحالية
 function syncStudioControlsFromState() {
+    // 1. مزامنة تبديل النمط (Layout Mode Switcher)
+    updateLayoutButtonStates();
+
+    // 2. إظهار/إخفاء الحاويات المناسبة للنمط
+    const controlsStory = document.getElementById('studio-controls-story');
+    const controlsCard = document.getElementById('studio-controls-card');
+    if (controlsStory && controlsCard) {
+        if (studioState.layoutMode === 'story_vignette') {
+            controlsStory.classList.remove('hidden');
+            controlsCard.classList.add('hidden');
+        } else {
+            controlsStory.classList.add('hidden');
+            controlsCard.classList.remove('hidden');
+        }
+    }
+
+    // 3. مزامنة حقول الستوري كامل الشاشة
+    const phraseInput = document.getElementById('studio-input-story-phrase');
+    const handleInput = document.getElementById('studio-input-story-handle');
+    if (phraseInput) phraseInput.value = studioState.storyPhrase || '';
+    if (handleInput) handleInput.value = studioState.storyHandle || '';
+
+    const toggleTopVig = document.getElementById('studio-toggle-top-vig');
+    const toggleBotVig = document.getElementById('studio-toggle-bot-vig');
+    const toggleStoryPhrase = document.getElementById('studio-toggle-story-phrase');
+    const toggleStoryHandle = document.getElementById('studio-toggle-story-handle');
+    if (toggleTopVig) toggleTopVig.checked = studioState.showTopVignette;
+    if (toggleBotVig) toggleBotVig.checked = studioState.showBottomVignette;
+    if (toggleStoryPhrase) toggleStoryPhrase.checked = studioState.showStoryPhrase;
+    if (toggleStoryHandle) toggleStoryHandle.checked = studioState.showStoryHandle;
+
+    updateVignetteButtonStates();
+    updateMediaButtonStates();
+
+    // 4. مزامنة حقول نمط الكارت الملكي
     const titleIn = document.getElementById('studio-input-title');
     const subtitleIn = document.getElementById('studio-input-subtitle');
     const dimIn = document.getElementById('studio-input-dim');
@@ -239,7 +359,7 @@ function syncStudioControlsFromState() {
     if (scaleVal) scaleVal.innerText = `${studioState.carpetScale}%`;
     if (stickerIn) stickerIn.value = studioState.sticker;
 
-    // مزامنة أزرار الاختيار (Toggles)
+    // أزرار الاختيار للكارت
     const toggleLogo = document.getElementById('studio-toggle-logo');
     const togglePrice = document.getElementById('studio-toggle-price');
     const toggleDim = document.getElementById('studio-toggle-dim');
@@ -258,6 +378,47 @@ function syncStudioControlsFromState() {
     updateRatioButtonStates();
     updateThemeButtonStates();
     renderCarpetGalleryThumbs();
+
+    // تحديث زر التصدير
+    updateExportButtonText();
+}
+
+function updateLayoutButtonStates() {
+    document.querySelectorAll('.studio-layout-btn').forEach(btn => {
+        const layout = btn.getAttribute('data-layout');
+        if (layout === studioState.layoutMode) {
+            btn.classList.add('border-amber-500', 'ring-2', 'ring-amber-400/30', 'bg-amber-500/10');
+            btn.classList.remove('border-stone-200', 'opacity-80', 'bg-white');
+        } else {
+            btn.classList.remove('border-amber-500', 'ring-2', 'ring-amber-400/30', 'bg-amber-500/10');
+            btn.classList.add('border-stone-200', 'opacity-80', 'bg-white');
+        }
+    });
+}
+
+function updateMediaButtonStates() {
+    document.querySelectorAll('.studio-media-btn').forEach(btn => {
+        const media = btn.getAttribute('data-media');
+        if (media === studioState.mediaType) {
+            btn.classList.add('bg-stone-900', 'text-white', 'shadow-xs');
+            btn.classList.remove('bg-stone-100', 'text-stone-700', 'hover:bg-stone-200');
+        } else {
+            btn.classList.remove('bg-stone-900', 'text-white', 'shadow-xs');
+            btn.classList.add('bg-stone-100', 'text-stone-700', 'hover:bg-stone-200');
+        }
+    });
+
+    const photoUploadBox = document.getElementById('studio-box-photo-upload');
+    const videoUploadBox = document.getElementById('studio-box-video-upload');
+    if (photoUploadBox && videoUploadBox) {
+        if (studioState.mediaType === 'video') {
+            photoUploadBox.classList.add('hidden');
+            videoUploadBox.classList.remove('hidden');
+        } else {
+            photoUploadBox.classList.remove('hidden');
+            videoUploadBox.classList.add('hidden');
+        }
+    }
 }
 
 function updateRatioButtonStates() {
@@ -273,6 +434,17 @@ function updateRatioButtonStates() {
     });
 }
 
+function updateVignetteButtonStates() {
+    document.querySelectorAll('.studio-vignette-card').forEach(card => {
+        const vigId = card.getAttribute('data-vignette');
+        if (vigId === studioState.vignetteTheme) {
+            card.classList.add('ring-2', 'ring-amber-500', 'border-amber-500', 'scale-[1.02]');
+        } else {
+            card.classList.remove('ring-2', 'ring-amber-500', 'border-amber-500', 'scale-[1.02]');
+        }
+    });
+}
+
 function updateThemeButtonStates() {
     document.querySelectorAll('.studio-theme-card').forEach(card => {
         const themeId = card.getAttribute('data-theme');
@@ -284,6 +456,20 @@ function updateThemeButtonStates() {
     });
 }
 
+function updateExportButtonText() {
+    const btn = document.getElementById('studio-btn-export');
+    if (!btn) return;
+    if (studioState.layoutMode === 'story_vignette') {
+        if (studioState.mediaType === 'video') {
+            btn.innerHTML = `<span class="text-base sm:text-lg">📸</span><span>التقاط غلاف الستوري بدقة فائقة (HD PNG)</span>`;
+        } else {
+            btn.innerHTML = `<span class="text-base sm:text-lg">📥</span><span>تحميل صورة ستوري بدقة فائقة (HD 1080×1920)</span>`;
+        }
+    } else {
+        btn.innerHTML = `<span class="text-base sm:text-lg">📥</span><span>تحميل تصميم البوست بدقة فائقة (HD PNG)</span>`;
+    }
+}
+
 // عرض مصغرات صور القطعة المختارة للتنقل بينها
 function renderCarpetGalleryThumbs() {
     const container = document.getElementById('studio-thumbs-container');
@@ -293,7 +479,6 @@ function renderCarpetGalleryThumbs() {
     const currentCarpet = carpets.find(c => c.id === studioState.selectedCarpetId);
 
     if (!currentCarpet || !currentCarpet.images || currentCarpet.images.length <= 1) {
-        container.innerHTML = '';
         container.classList.add('hidden');
         return;
     }
@@ -316,11 +501,86 @@ export function updateStudioPreview() {
     const stage = document.getElementById('studio-live-stage');
     if (!stage) return;
 
-    const theme = STUDIO_THEMES[studioState.theme] || STUDIO_THEMES['royal-burgundy'];
-    const ratio = STUDIO_RATIOS[studioState.ratio] || STUDIO_RATIOS['1:1'];
+    const ratio = STUDIO_RATIOS[studioState.ratio] || STUDIO_RATIOS['9:16'];
+    const carpetImg = studioState.customImageSrc || '../images/client_room1.jpg';
 
-    // تعيين نسبة الأبعاد للحاوية
-    stage.className = `relative w-full max-w-[420px] mx-auto rounded-3xl overflow-hidden shadow-2xl transition-all duration-300 flex flex-col justify-between p-4 sm:p-5 select-none ${ratio.aspectClass}`;
+    // -------------------------------------------------------------
+    // الحالة الأولى: نمط ستوري وريلز إنستقرام كامل الشاشة مع الشادو الناعم
+    // -------------------------------------------------------------
+    if (studioState.layoutMode === 'story_vignette') {
+        const vig = STUDIO_VIGNETTES[studioState.vignetteTheme] || STUDIO_VIGNETTES['blush-rose'];
+        
+        // تعيين نسبة الأبعاد للحاوية
+        stage.className = `relative w-full max-w-[340px] sm:max-w-[360px] mx-auto rounded-3xl overflow-hidden shadow-2xl transition-all duration-300 flex flex-col justify-between p-0 select-none ${ratio.aspectClass} bg-stone-900`;
+        stage.style.background = '#1a1a1a';
+        stage.style.backgroundImage = 'none';
+
+        // محتوى الميديا (فيديو أو صورة)
+        let mediaHtml = '';
+        if (studioState.mediaType === 'video' && studioState.videoSrc) {
+            mediaHtml = `
+                <video id="studio-live-video" src="${studioState.videoSrc}" autoplay loop muted playsinline class="absolute inset-0 w-full h-full object-cover z-0"></video>
+                <div class="absolute top-3 left-3 z-30 bg-black/50 backdrop-blur-md text-white text-[9px] px-2 py-0.5 rounded-full flex items-center gap-1">
+                    <span>🎥</span>
+                    <span>معاينة فيديو حية</span>
+                </div>
+            `;
+        } else {
+            mediaHtml = `
+                <img src="${carpetImg}" alt="Story Carpet" class="absolute inset-0 w-full h-full object-cover z-0 transition-transform duration-300">
+            `;
+        }
+
+        // الشادو الدائري الناعم بالأعلى مع اللوجو
+        const topVignetteHtml = studioState.showTopVignette ? `
+            <div class="absolute top-0 inset-x-0 h-44 sm:h-52 pointer-events-none z-10 transition-all duration-300" style="background: ${vig.topVignetteCss};"></div>
+        ` : '';
+
+        // اللوجو الرسمي في الأعلى
+        const logoHtml = studioState.showLogo ? `
+            <div class="relative z-20 pt-6 sm:pt-8 flex flex-col items-center justify-center">
+                <img src="../images/logo.jpg" class="w-16 h-16 sm:w-20 sm:h-20 object-contain drop-shadow-sm select-none" style="mix-blend-mode: multiply;" alt="TATRIZA Logo">
+            </div>
+        ` : '';
+
+        // الشادو الدائري الناعم بالأسفل
+        const botVignetteHtml = studioState.showBottomVignette ? `
+            <div class="absolute bottom-0 inset-x-0 h-56 sm:h-64 pointer-events-none z-10 transition-all duration-300" style="background: ${vig.botVignetteCss};"></div>
+        ` : '';
+
+        // العبارة المميزة واسم الحساب بالأسفل
+        const bottomContentHtml = `
+            <div class="relative z-20 pb-7 sm:pb-9 px-4 flex flex-col items-center justify-center text-center space-y-3 mt-auto">
+                ${studioState.showStoryPhrase && studioState.storyPhrase ? `
+                    <div class="font-royal-carpet font-bold text-lg sm:text-xl tracking-wide select-none" style="color: ${vig.phraseColor}; text-shadow: ${vig.phraseShadow};">
+                        ${studioState.storyPhrase}
+                    </div>
+                ` : ''}
+
+                ${studioState.showStoryHandle && studioState.storyHandle ? `
+                    <div class="font-mono uppercase font-bold text-[11px] sm:text-[12px] tracking-[0.28em] select-none" style="color: ${vig.handleColor}; text-shadow: 0 1px 2px rgba(255,255,255,0.6);">
+                        ${studioState.storyHandle}
+                    </div>
+                ` : ''}
+            </div>
+        `;
+
+        stage.innerHTML = `
+            ${mediaHtml}
+            ${topVignetteHtml}
+            ${logoHtml}
+            ${botVignetteHtml}
+            ${bottomContentHtml}
+        `;
+        return;
+    }
+
+    // -------------------------------------------------------------
+    // الحالة الثانية: نمط بوست الكارت الملكي (مع بطاقة المواصفات والسعر)
+    // -------------------------------------------------------------
+    const theme = STUDIO_THEMES[studioState.theme] || STUDIO_THEMES['royal-burgundy'];
+
+    stage.className = `relative w-full max-w-[360px] mx-auto rounded-3xl overflow-hidden shadow-2xl transition-all duration-300 flex flex-col justify-between p-4 sm:p-5 select-none ${ratio.aspectClass}`;
 
     // تعيين الخلفية
     if (theme.bgType === 'gradient') {
@@ -354,7 +614,7 @@ export function updateStudioPreview() {
     if (studioState.showLogo) {
         logoHtml = `
             <div class="flex items-center gap-2">
-                <img src="../images/logo.jpg" class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl object-cover border border-amber-300/40 shadow-xs">
+                <img src="../images/logo.jpg" class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl object-cover border border-amber-300/40 shadow-xs" alt="Logo">
                 <div class="text-right leading-none">
                     <span class="font-display font-black text-xs sm:text-sm tracking-wider text-white block">TATRIZA</span>
                     <span class="text-[8.5px] sm:text-[9.5px] font-medium" style="color: ${theme.accentColor};">دار تطريز للسجاد الملكي</span>
@@ -366,7 +626,6 @@ export function updateStudioPreview() {
     // السجادة في المنتصف
     const scaleFactor = (studioState.carpetScale || 88) / 100;
     const shadowStyle = studioState.carpetShadow ? 'filter: drop-shadow(0 20px 25px rgba(0,0,0,0.55)) drop-shadow(0 8px 10px rgba(0,0,0,0.3));' : '';
-    const carpetImg = studioState.customImageSrc || '../images/client_room1.jpg';
 
     // قسم البيانات السفلي
     const showPrice = studioState.showPrice && studioState.price;
@@ -442,62 +701,72 @@ export async function exportStudioHDImage() {
     const originalText = exportBtn ? exportBtn.innerHTML : '';
     if (exportBtn) {
         exportBtn.disabled = true;
-        exportBtn.innerHTML = '<span>⏳</span><span>جارٍ التوليد بدقة HD...</span>';
+        exportBtn.innerHTML = `<span>⏳</span><span>جارٍ التصدير بدقة فائقة...</span>`;
     }
 
     try {
-        const ratio = STUDIO_RATIOS[studioState.ratio] || STUDIO_RATIOS['1:1'];
-        const theme = STUDIO_THEMES[studioState.theme] || STUDIO_THEMES['royal-burgundy'];
-
+        const ratio = STUDIO_RATIOS[studioState.ratio] || STUDIO_RATIOS['9:16'];
         const canvas = document.createElement('canvas');
         canvas.width = ratio.canvasW;
         canvas.height = ratio.canvasH;
         const ctx = canvas.getContext('2d');
 
+        // تنعيم جودة الرسم
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
+
+        // -------------------------------------------------------------
+        // تصدير نمط ستوري إنستقرام كامل الشاشة مع الشادو الدائري والتوقيع
+        // -------------------------------------------------------------
+        if (studioState.layoutMode === 'story_vignette') {
+            await exportStoryVignetteHD(canvas, ctx);
+            return;
+        }
+
+        // -------------------------------------------------------------
+        // تصدير نمط كارت السجادة الملكي
+        // -------------------------------------------------------------
+        const theme = STUDIO_THEMES[studioState.theme] || STUDIO_THEMES['royal-burgundy'];
+
         // 1. رسم الخلفية
         if (theme.bgType === 'gradient') {
             const grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-            if (theme.id === 'royal-burgundy') {
+            if (studioState.theme === 'royal-burgundy') {
                 grad.addColorStop(0, '#2b0613');
                 grad.addColorStop(0.45, '#681530');
-                grad.addColorStop(0.75, '#8a1d41');
+                grad.addColorStop(0.7, '#8a1d41');
                 grad.addColorStop(1, '#1f030c');
-            } else if (theme.id === 'warm-mocha') {
+            } else if (studioState.theme === 'warm-mocha') {
                 grad.addColorStop(0, '#1c1310');
                 grad.addColorStop(0.45, '#3d2a23');
-                grad.addColorStop(0.75, '#593e34');
+                grad.addColorStop(0.7, '#593e34');
                 grad.addColorStop(1, '#150d0a');
             } else {
                 grad.addColorStop(0, '#090a0d');
                 grad.addColorStop(0.5, '#161b22');
-                grad.addColorStop(0.8, '#21262d');
+                grad.addColorStop(0.75, '#21262d');
                 grad.addColorStop(1, '#050608');
             }
             ctx.fillStyle = grad;
             ctx.fillRect(0, 0, canvas.width, canvas.height);
         } else {
-            // رسم صورة الخلفية
             await drawImageOnCanvas(ctx, theme.bgValue, 0, 0, canvas.width, canvas.height, true);
-            // إضافة طبقة تعتيم ناعمة لضمان قراءة النصوص بوضوح
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.45)';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
         }
 
-        // 2. رسم شعار الدار والاسم في الأعلى
+        // 2. رسم شعار الدار بالأعلى
         if (studioState.showLogo) {
-            ctx.save();
-            await drawRoundedImage(ctx, '../images/logo.jpg', 60, 60, 90, 90, 20);
+            await drawRoundedImage(ctx, '../images/logo.jpg', canvas.width - 160, 60, 100, 100, 24);
             ctx.font = 'bold 36px Tajawal, sans-serif';
             ctx.fillStyle = '#ffffff';
             ctx.textAlign = 'right';
-            ctx.fillText('TATRIZA', canvas.width - 60, 100);
+            ctx.fillText('TATRIZA', canvas.width - 180, 105);
+
             ctx.font = '22px Tajawal, sans-serif';
             ctx.fillStyle = theme.accentColor;
-            ctx.fillText('دار تطريز للسجاد والتحف الملكية', canvas.width - 60, 135);
-            ctx.restore();
+            ctx.fillText('دار تطريز للسجاد الملكي', canvas.width - 180, 145);
         }
 
-        // 3. رسم شارة التميز (Sticker) إن وجدت
+        // 3. رسم شارة التميز (Sticker)
         if (studioState.showSticker && studioState.sticker !== 'none') {
             const stickersMap = {
                 'exclusive': '🏷️ قطعة حصرية فريدة (1 of 1)',
@@ -582,7 +851,7 @@ export async function exportStudioHDImage() {
         ctx.lineTo(canvas.width - cardMargin - 40, cardY + 145);
         ctx.stroke();
 
-        // الأبعاد والخامة (يمين)
+        // الأبعاد والخامة
         let pillsText = '';
         if (studioState.showDimensions && studioState.dimensions) pillsText += `📐 ${studioState.dimensions}   `;
         if (studioState.showMaterial && studioState.material) pillsText += `🧵 ${studioState.material}`;
@@ -594,28 +863,35 @@ export async function exportStudioHDImage() {
             ctx.fillText(pillsText, canvas.width - cardMargin - 40, cardY + 195);
         }
 
-        // السعر (يسار)
+        // السعر
         if (studioState.showPrice && studioState.price) {
             const priceText = `${studioState.price} ${studioState.currency}`;
             drawRoundedRect(ctx, cardMargin + 40, cardY + 160, 220, 60, 20);
-            ctx.fillStyle = 'rgba(245, 158, 11, 0.2)';
+            ctx.fillStyle = 'rgba(245, 158, 11, 0.25)';
             ctx.fill();
-            ctx.strokeStyle = 'rgba(251, 191, 36, 0.6)';
+            ctx.strokeStyle = 'rgba(251, 191, 36, 0.5)';
             ctx.lineWidth = 2;
             ctx.stroke();
 
-            ctx.font = 'bold 32px Tajawal, sans-serif';
-            ctx.fillStyle = '#fbbf24';
+            ctx.font = 'black 34px Tajawal, sans-serif';
+            ctx.fillStyle = '#fde047';
             ctx.textAlign = 'center';
-            ctx.fillText(priceText, cardMargin + 150, cardY + 202);
+            ctx.fillText(priceText, cardMargin + 150, cardY + 203);
         }
 
-        // شريط الواتساب في أسفل الكارد
+        // شريط الواتساب
         if (studioState.showWhatsApp) {
+            ctx.beginPath();
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
+            ctx.lineWidth = 1.5;
+            ctx.moveTo(cardMargin + 40, cardY + 235);
+            ctx.lineTo(canvas.width - cardMargin - 40, cardY + 235);
+            ctx.stroke();
+
             ctx.font = 'bold 22px Tajawal, sans-serif';
-            ctx.fillStyle = '#34d399';
+            ctx.fillStyle = '#6ee7b7';
             ctx.textAlign = 'right';
-            ctx.fillText('💬 للطلب المباشر والاستفسار عبر الواتساب', canvas.width - cardMargin - 40, cardY + cardH - 35);
+            ctx.fillText('💬 للطلب والاستفسار الفوري عبر الواتساب', canvas.width - cardMargin - 40, cardY + cardH - 35);
 
             ctx.font = 'bold 22px Tajawal, sans-serif';
             ctx.fillStyle = '#ffffff';
@@ -625,17 +901,9 @@ export async function exportStudioHDImage() {
 
         ctx.restore();
 
-        // 6. تحميل الصورة للمستخدم فوراً
-        const dataUrl = canvas.toDataURL('image/png', 1.0);
-        const link = document.createElement('a');
-        const cleanTitle = (studioState.title || 'tatriza-post').replace(/\s+/g, '-').toLowerCase();
-        link.download = `TATRIZA-${cleanTitle}-${studioState.ratio.replace(':', 'x')}.png`;
-        link.href = dataUrl;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-
-        showToast('تم تحميل التصميم بدقة عالية HD بنجاح!', 'success', 'استوديو تطريز');
+        // تحميل الصورة كملف PNG
+        downloadCanvasAsPNG(canvas, `TATRIZA-Post-${studioState.ratio.replace(':', 'x')}.png`);
+        showToast('تم تحميل تصميم البوست بدقة فائقة HD بنجاح!', 'success', 'استوديو تطريز');
     } catch (err) {
         console.error('Studio export error:', err);
         showToast('تعذر تصدير الصورة، يرجى المحاولة مرة أخرى.', 'error', 'خطأ في التصدير');
@@ -645,6 +913,178 @@ export async function exportStudioHDImage() {
             exportBtn.innerHTML = originalText;
         }
     }
+}
+
+// دالة تصدير نمط ستوري إنستقرام والريلز عالي الدقة (Story Vignette HD)
+async function exportStoryVignetteHD(canvas, ctx) {
+    const vig = STUDIO_VIGNETTES[studioState.vignetteTheme] || STUDIO_VIGNETTES['blush-rose'];
+    const carpetSrc = studioState.customImageSrc || '../images/client_room1.jpg';
+
+    // 1. رسم الصورة بكامل الشاشة (Cover Fit)
+    await drawCoverImageOnCanvas(ctx, carpetSrc, 0, 0, canvas.width, canvas.height);
+
+    // 2. رسم الشادو الدائري الناعم بالأعلى
+    if (studioState.showTopVignette !== false) {
+        const topH = canvas.height * 0.42;
+        const topGrad = ctx.createRadialGradient(canvas.width / 2, 0, 0, canvas.width / 2, 0, topH);
+        topGrad.addColorStop(0, `rgba(${vig.topColorRgb}, 0.96)`);
+        topGrad.addColorStop(0.35, `rgba(${vig.topColorRgb}, 0.82)`);
+        topGrad.addColorStop(0.7, `rgba(${vig.topColorRgb}, 0.35)`);
+        topGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+        ctx.fillStyle = topGrad;
+        ctx.fillRect(0, 0, canvas.width, topH);
+    }
+
+    // 3. رسم الشادو الدائري الناعم بالأسفل
+    if (studioState.showBottomVignette !== false) {
+        const botH = canvas.height * 0.52;
+        const botY = canvas.height - botH;
+        const botGrad = ctx.createRadialGradient(canvas.width / 2, canvas.height, 0, canvas.width / 2, canvas.height, botH);
+        botGrad.addColorStop(0, `rgba(${vig.bottomColorRgb}, 0.98)`);
+        botGrad.addColorStop(0.42, `rgba(${vig.bottomColorRgb}, 0.88)`);
+        botGrad.addColorStop(0.75, `rgba(${vig.bottomColorRgb}, 0.4)`);
+        botGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+        ctx.fillStyle = botGrad;
+        ctx.fillRect(0, botY, canvas.width, botH);
+    }
+
+    // 4. رسم لوجو الدار شفافاً في المنتصف بالأعلى
+    if (studioState.showLogo) {
+        try {
+            const logoImg = await loadImageAsync('../images/logo.jpg');
+            const transLogoCanvas = getTransparentLogoCanvas(logoImg);
+            const logoW = 210;
+            const logoH = 210;
+            const logoX = (canvas.width - logoW) / 2;
+            const logoY = 95;
+            ctx.drawImage(transLogoCanvas, logoX, logoY, logoW, logoH);
+        } catch(e) {
+            console.warn('Logo render fallback:', e);
+        }
+    }
+
+    // 5. رسم العبارة المميزة في الأسفل
+    if (studioState.showStoryPhrase && studioState.storyPhrase) {
+        ctx.save();
+        ctx.font = 'bold 50px Tajawal, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillStyle = vig.phraseColor || '#ffffff';
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.45)';
+        ctx.shadowBlur = 14;
+        ctx.shadowOffsetY = 3;
+        ctx.fillText(studioState.storyPhrase, canvas.width / 2, canvas.height - 200);
+        ctx.restore();
+    }
+
+    // 6. رسم توقيع حساب الإنستقرام
+    if (studioState.showStoryHandle && studioState.storyHandle) {
+        ctx.save();
+        ctx.font = 'bold 28px "Courier New", monospace, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillStyle = vig.handleColor || '#5c453d';
+        ctx.shadowColor = 'rgba(255, 255, 255, 0.6)';
+        ctx.shadowBlur = 4;
+        ctx.shadowOffsetY = 1;
+        drawSpacedText(ctx, studioState.storyHandle, canvas.width / 2, canvas.height - 110, 8);
+        ctx.restore();
+    }
+
+    // تنزيل الصورة
+    downloadCanvasAsPNG(canvas, `TATRIZA-Story-1080x1920.png`);
+    showToast('تم تحميل ستوري إنستقرام فائق الدقة (1080×1920) بنجاح!', 'success', 'تطريز ستوديو');
+}
+
+function downloadCanvasAsPNG(canvas, fileName) {
+    const dataUrl = canvas.toDataURL('image/png', 1.0);
+    const link = document.createElement('a');
+    link.download = fileName;
+    link.href = dataUrl;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
+// دالة تفريغ خلفية اللوجو البيج/البيضاء لجعلها شفافة بالكامل
+function getTransparentLogoCanvas(logoImg) {
+    const oc = document.createElement('canvas');
+    oc.width = logoImg.naturalWidth || logoImg.width;
+    oc.height = logoImg.naturalHeight || logoImg.height;
+    const octx = oc.getContext('2d');
+    octx.drawImage(logoImg, 0, 0);
+
+    const imgData = octx.getImageData(0, 0, oc.width, oc.height);
+    const data = imgData.data;
+
+    for (let i = 0; i < data.length; i += 4) {
+        const r = data[i];
+        const g = data[i + 1];
+        const b = data[i + 2];
+        // خلفية لوجو تاتريزا كريمية (#fdf6f0)
+        if (r > 230 && g > 220 && b > 210) {
+            const avg = (r + g + b) / 3;
+            if (avg > 240) {
+                data[i + 3] = 0; // تفريغ كامل شفاف
+            } else {
+                data[i + 3] = Math.round(((240 - avg) / 20) * 255);
+            }
+        }
+    }
+    octx.putImageData(imgData, 0, 0);
+    return oc;
+}
+
+// دالة كتابة نص متباعد الحروف (Letter Spacing) على الكانفاس
+function drawSpacedText(ctx, text, centerX, centerY, spacing) {
+    const chars = text.split('');
+    let totalWidth = 0;
+    const charWidths = chars.map(c => {
+        const w = ctx.measureText(c).width;
+        totalWidth += w;
+        return w;
+    });
+    totalWidth += (chars.length - 1) * spacing;
+    let startX = centerX - (totalWidth / 2);
+    for (let i = 0; i < chars.length; i++) {
+        ctx.fillText(chars[i], startX + (charWidths[i] / 2), centerY);
+        startX += charWidths[i] + spacing;
+    }
+}
+
+function loadImageAsync(src) {
+    return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.src = src;
+        img.onload = () => resolve(img);
+        img.onerror = (e) => reject(e);
+    });
+}
+
+function drawCoverImageOnCanvas(ctx, src, x, y, w, h) {
+    return new Promise((resolve) => {
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.src = src;
+        img.onload = () => {
+            const imgRatio = img.width / img.height;
+            const targetRatio = w / h;
+            let sx = 0, sy = 0, sWidth = img.width, sHeight = img.height;
+
+            if (imgRatio > targetRatio) {
+                sWidth = img.height * targetRatio;
+                sx = (img.width - sWidth) / 2;
+            } else {
+                sHeight = img.width / targetRatio;
+                sy = (img.height - sHeight) / 2;
+            }
+
+            ctx.drawImage(img, sx, sy, sWidth, sHeight, x, y, w, h);
+            resolve();
+        };
+        img.onerror = () => resolve();
+    });
 }
 
 // مساعدة لرسم مستطيل بحواف دائرية
@@ -728,13 +1168,29 @@ function drawContainedImage(ctx, src, x, y, maxW, maxH) {
 // نسخ نص البوست التسويقي الجاهز (Caption & Hashtags)
 // ==========================================
 export function copyStudioCaption() {
-    const title = studioState.title || 'سجادة يدوية ملكية فاخرة';
-    const dim = studioState.dimensions ? `📐 المقاس: ${studioState.dimensions}` : '';
-    const mat = studioState.material ? `🧵 الخامة: ${studioState.material}` : '';
-    const price = studioState.price ? `💰 السعر: ${studioState.price} ${studioState.currency}` : '';
-    const wa = studioState.whatsapp || '+968';
+    let caption = '';
+    const cleanWa = (studioState.whatsapp || '+968').replace(/[^0-9]/g, '');
 
-    const caption = `✨ دار تطريز TATRIZA | تحف فنية تنبض بالهوية والتطريز ✨
+    if (studioState.layoutMode === 'story_vignette') {
+        const phrase = studioState.storyPhrase || '- 🌟 عمل مُتقن -';
+        caption = `✨ دار تطريز للسجاد الملكي | TATRIZA
+${phrase}
+
+حياكة يدوية متقنة تفيض بالفخامة والأصالة العُمانية 👑
+تصاميم حصرية تُنسج بشغف لتليق بأرقى المجالس والقصور.
+
+📍 حسابنا على الإنستغرام: ${studioState.storyHandle || '@TATRIZA_22'}
+💬 للطلب والاستفسار المباشر عبر الواتساب:
+https://wa.me/${cleanWa}?text=${encodeURIComponent(`مرحباً دار تطريز، أرغب بالاستفسار عن القطعة الفنية: ${phrase}`)}
+
+#تطريز #سجاد_ملكي #سجاد_يدوي #ديكور_فاخر #مجالس_عمان #سلطنة_عمان #مسقط #TATRIZA #LuxuryCarpet #HandmadeRug`;
+    } else {
+        const title = studioState.title || 'سجادة يدوية ملكية فاخرة';
+        const dim = studioState.dimensions ? `📐 المقاس: ${studioState.dimensions}` : '';
+        const mat = studioState.material ? `🧵 الخامة: ${studioState.material}` : '';
+        const price = studioState.price ? `💰 السعر: ${studioState.price} ${studioState.currency}` : '';
+
+        caption = `✨ دار تطريز TATRIZA | تحف فنية تنبض بالهوية والتطريز ✨
 
 🏷️ ${title}
 ${studioState.subtitle ? `«${studioState.subtitle}»` : ''}
@@ -746,12 +1202,13 @@ ${price}
 💎 قطعة يدوية أصلية تحاكي أرقى فنون الحياكة التراثية لتضفي لمسة فخامة استثنائية على منزلك ومجلسك.
 
 📲 للطلب الفوري والاستفسار عبر الواتساب:
-https://wa.me/${wa.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`مرحباً دار تطريز، أرغب بالاستفسار عن القطعة: ${title}`)}
+https://wa.me/${cleanWa}?text=${encodeURIComponent(`مرحباً دار تطريز، أرغب بالاستفسار عن القطعة: ${title}`)}
 
 #تطريز #سجاد_يدوي #سجاد_ملكي #تحف_منزلية #ديكور_فاخر #مجالس_عربية #سلطنة_عمان #مسقط #Tatriza #HandmadeRug #LuxuryLiving`;
+    }
 
     navigator.clipboard.writeText(caption).then(() => {
-        showToast('تم نسخ نص البوست والهاشتاقات بنجاح! جاهز للصق في إنستقرام والواتساب.', 'success', 'نسخ النص الإعلاني');
+        showToast('تم نسخ نص البوست والكابشن والهاشتاقات بنجاح! جاهز للصق في إنستقرام والواتساب.', 'success', 'نسخ النص الإعلاني');
     }).catch(() => {
         showToast('تعذر النسخ التلقائي، يمكنك نسخه يدوياً.', 'info', 'تنبيه');
     });
@@ -761,9 +1218,14 @@ https://wa.me/${wa.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`مرحبا
 // مشاركة فورية على الواتساب
 // ==========================================
 export function shareStudioToWhatsApp() {
-    const title = studioState.title || 'تحفة دار تطريز';
     const wa = studioState.whatsapp ? studioState.whatsapp.replace(/[^0-9]/g, '') : '';
-    const text = encodeURIComponent(`شاهد هذه التحفة الفنية الفاخرة من دار تطريز: ${title}\nالسعر: ${studioState.price} ${studioState.currency}`);
+    let msg = '';
+    if (studioState.layoutMode === 'story_vignette') {
+        msg = `شاهد هذا العمل المتقن من دار تطريز: ${studioState.storyPhrase || 'تحفة يدوية ملكية'}\nحساب الإنستغرام: ${studioState.storyHandle || '@TATRIZA_22'}`;
+    } else {
+        msg = `شاهد هذه التحفة الفنية الفاخرة من دار تطريز: ${studioState.title || 'سجادة ملكية'}\nالسعر: ${studioState.price} ${studioState.currency}`;
+    }
+    const text = encodeURIComponent(msg);
     const url = wa ? `https://wa.me/${wa}?text=${text}` : `https://api.whatsapp.com/send?text=${text}`;
     window.open(url, '_blank');
 }
@@ -775,7 +1237,9 @@ export function saveStudioDraft() {
     try {
         const drafts = getSavedStudioDrafts();
         const draftId = 'draft_' + Date.now();
-        const draftTitle = studioState.title || 'تصميم غير معنون';
+        const draftTitle = studioState.layoutMode === 'story_vignette' 
+            ? (studioState.storyPhrase || 'ستوري إنستقرام') 
+            : (studioState.title || 'بوست كارت');
 
         const draftObj = {
             id: draftId,
@@ -785,8 +1249,8 @@ export function saveStudioDraft() {
         };
 
         drafts.unshift(draftObj);
-        // الاحتفاظ بآخر 12 مسودة
-        if (drafts.length > 12) drafts.pop();
+        // الاحتفاظ بآخر 15 مسودة
+        if (drafts.length > 15) drafts.pop();
 
         localStorage.setItem('tatr_studio_drafts', JSON.stringify(drafts));
         renderStudioDraftsList();
@@ -814,7 +1278,7 @@ export function loadStudioDraft(draftId) {
     studioState = { ...draft.state };
     syncStudioControlsFromState();
     updateStudioPreview();
-    showToast(`تم استرجاع التصميم: «${studioState.title}»`, 'info', 'استرجاع المسودة');
+    showToast(`تم استرجاع التصميم: «${studioState.layoutMode === 'story_vignette' ? studioState.storyPhrase : studioState.title}»`, 'info', 'استرجاع المسودة');
 }
 
 export function deleteStudioDraft(draftId) {
@@ -839,59 +1303,63 @@ function renderStudioDraftsList() {
         return;
     }
 
-    container.innerHTML = drafts.map(d => `
-        <div class="flex items-center justify-between gap-2 p-2 rounded-xl bg-white border border-stone-200/80 hover:border-amber-300 transition text-xs">
-            <button type="button" onclick="window.loadStudioDraft('${d.id}')" class="flex items-center gap-2 text-right flex-1 min-w-0 cursor-pointer">
-                <span class="text-base shrink-0">🎨</span>
-                <div class="truncate">
-                    <span class="font-bold text-stone-900 block truncate">${d.state.title || 'تصميم مسودة'}</span>
-                    <span class="text-[10px] text-stone-400 block">${d.dateFormatted} • ${d.state.ratio}</span>
-                </div>
-            </button>
-            <button type="button" onclick="window.deleteStudioDraft('${d.id}')" class="text-stone-400 hover:text-rose-600 p-1 rounded-lg transition text-xs shrink-0 cursor-pointer" title="حذف المسودة">
-                ✕
-            </button>
-        </div>
-    `).join('');
+    container.innerHTML = drafts.map(d => {
+        const isStory = d.state.layoutMode === 'story_vignette';
+        const titleText = isStory ? (d.state.storyPhrase || 'ستوري إنستقرام') : (d.state.title || 'بوست كارت');
+        const badgeIcon = isStory ? '📱' : '🏷️';
+        const badgeLabel = isStory ? 'ستوري' : 'كارت';
+
+        return `
+            <div class="flex items-center justify-between gap-2 p-2 rounded-xl bg-white border border-stone-200/80 hover:border-amber-300 transition text-xs">
+                <button type="button" onclick="window.loadStudioDraft('${d.id}')" class="flex items-center gap-2 text-right flex-1 min-w-0 cursor-pointer">
+                    <span class="text-base shrink-0">${badgeIcon}</span>
+                    <div class="truncate">
+                        <span class="font-bold text-stone-900 block truncate">${titleText}</span>
+                        <span class="text-[10px] text-stone-400 block">${badgeLabel} • ${d.dateFormatted} • ${d.state.ratio}</span>
+                    </div>
+                </button>
+                <button type="button" onclick="window.deleteStudioDraft('${d.id}')" class="text-stone-400 hover:text-rose-600 p-1 rounded-lg transition text-xs shrink-0 cursor-pointer" title="حذف المسودة">
+                    ✕
+                </button>
+            </div>
+        `;
+    }).join('');
 }
 
 // ==========================================
 // ربط الأحداث مع واجهة المستخدم
 // ==========================================
 export function initStudioEvents() {
-    // 1. اختيار القطعة من القائمة
-    const carpetSelect = document.getElementById('studio-carpet-select');
-    if (carpetSelect) {
-        carpetSelect.addEventListener('change', (e) => {
-            const carpets = window.allPortalCarpets || [];
-            const target = carpets.find(c => c.id === e.target.value);
-            if (target) {
-                applyCarpetToStudioState(target);
+    // 1. أزرار اختيار نمط الإخراج (ستوري إنستقرام مقابل كارت ملكي)
+    document.querySelectorAll('.studio-layout-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const layout = btn.getAttribute('data-layout');
+            if (layout) {
+                studioState.layoutMode = layout;
+                // إذا تم اختيار ستوري، نجعل الأبعاد 9:16 تلقائياً
+                if (layout === 'story_vignette') {
+                    studioState.ratio = '9:16';
+                }
                 syncStudioControlsFromState();
                 updateStudioPreview();
             }
         });
-    }
+    });
 
-    // 2. رفع صورة مخصصة من الجهاز
-    const fileIn = document.getElementById('studio-file-upload');
-    if (fileIn) {
-        fileIn.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = (ev) => {
-                    studioState.customImageSrc = ev.target.result;
-                    updateStudioPreview();
-                    renderCarpetGalleryThumbs();
-                    showToast('تم تحميل وتعيين صورتك في الاستوديو!', 'success', 'صورة مخصصة');
-                };
-                reader.readAsDataURL(file);
+    // 2. أزرار اختيار نوع الوسائط (صورة مقابل فيديو)
+    document.querySelectorAll('.studio-media-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const media = btn.getAttribute('data-media');
+            if (media) {
+                studioState.mediaType = media;
+                updateMediaButtonStates();
+                updateExportButtonText();
+                updateStudioPreview();
             }
         });
-    }
+    });
 
-    // 3. أزرار الأبعاد
+    // 3. أزرار نسب الأبعاد (1:1, 9:16, 4:5)
     document.querySelectorAll('.studio-ratio-btn').forEach(btn => {
         btn.addEventListener('click', () => {
             const ratio = btn.getAttribute('data-ratio');
@@ -903,7 +1371,19 @@ export function initStudioEvents() {
         });
     });
 
-    // 4. بطاقات الثيمات
+    // 4. بطاقات ثيمات الشادو الدائري (Vignette Presets)
+    document.querySelectorAll('.studio-vignette-card').forEach(card => {
+        card.addEventListener('click', () => {
+            const vigId = card.getAttribute('data-vignette');
+            if (vigId && STUDIO_VIGNETTES[vigId]) {
+                studioState.vignetteTheme = vigId;
+                updateVignetteButtonStates();
+                updateStudioPreview();
+            }
+        });
+    });
+
+    // 5. بطاقات ثيمات الكارت الملكي
     document.querySelectorAll('.studio-theme-card').forEach(card => {
         card.addEventListener('click', () => {
             const themeId = card.getAttribute('data-theme');
@@ -915,7 +1395,52 @@ export function initStudioEvents() {
         });
     });
 
-    // 5. حقول النصوص المباشرة
+    // 6. حقول نصوص ستوري إنستقرام
+    const storyPhraseInput = document.getElementById('studio-input-story-phrase');
+    if (storyPhraseInput) {
+        storyPhraseInput.addEventListener('input', (e) => {
+            studioState.storyPhrase = e.target.value;
+            updateStudioPreview();
+        });
+    }
+
+    const storyHandleInput = document.getElementById('studio-input-story-handle');
+    if (storyHandleInput) {
+        storyHandleInput.addEventListener('input', (e) => {
+            studioState.storyHandle = e.target.value;
+            updateStudioPreview();
+        });
+    }
+
+    // 7. شرائح الاقتراحات السريعة للعبارة المميزة
+    document.querySelectorAll('.studio-phrase-chip').forEach(chip => {
+        chip.addEventListener('click', () => {
+            const txt = chip.getAttribute('data-phrase');
+            if (txt) {
+                studioState.storyPhrase = txt;
+                if (storyPhraseInput) storyPhraseInput.value = txt;
+                updateStudioPreview();
+            }
+        });
+    });
+
+    // 8. مفاتيح إظهار/إخفاء عناصر الستوري
+    const bindToggle = (id, prop) => {
+        const el = document.getElementById(id);
+        if (el) {
+            el.addEventListener('change', (e) => {
+                studioState[prop] = e.target.checked;
+                updateStudioPreview();
+            });
+        }
+    };
+
+    bindToggle('studio-toggle-top-vig', 'showTopVignette');
+    bindToggle('studio-toggle-bot-vig', 'showBottomVignette');
+    bindToggle('studio-toggle-story-phrase', 'showStoryPhrase');
+    bindToggle('studio-toggle-story-handle', 'showStoryHandle');
+
+    // 9. حقول نصوص الكارت المباشرة
     const bindInput = (id, prop) => {
         const el = document.getElementById(id);
         if (el) {
@@ -934,56 +1459,104 @@ export function initStudioEvents() {
     bindInput('studio-input-curr', 'currency');
     bindInput('studio-input-wa', 'whatsapp');
 
-    // 6. مقياس حجم السجادة (Zoom Slider)
-    const scaleIn = document.getElementById('studio-input-scale');
-    if (scaleIn) {
-        scaleIn.addEventListener('input', (e) => {
+    // 10. شريط تحجيم السجادة (Scale)
+    const scaleInput = document.getElementById('studio-input-scale');
+    const scaleVal = document.getElementById('studio-scale-val');
+    if (scaleInput) {
+        scaleInput.addEventListener('input', (e) => {
             studioState.carpetScale = Number(e.target.value);
-            const scaleVal = document.getElementById('studio-scale-val');
             if (scaleVal) scaleVal.innerText = `${studioState.carpetScale}%`;
             updateStudioPreview();
         });
     }
 
-    // 7. الشارة الترويجية (Sticker)
-    const stickerIn = document.getElementById('studio-select-sticker');
-    if (stickerIn) {
-        stickerIn.addEventListener('change', (e) => {
+    // 11. اختيار الشارة الترويجية (Sticker)
+    const stickerSelect = document.getElementById('studio-select-sticker');
+    if (stickerSelect) {
+        stickerSelect.addEventListener('change', (e) => {
             studioState.sticker = e.target.value;
             updateStudioPreview();
         });
     }
 
-    // 8. مفاتيح التبديل (Toggles)
-    const bindToggle = (id, prop) => {
-        const el = document.getElementById(id);
-        if (el) {
-            el.addEventListener('change', (e) => {
-                studioState[prop] = e.target.checked;
-                updateStudioPreview();
-            });
-        }
-    };
-
+    // 12. مفاتيح عناصر الكارت (Toggles)
     bindToggle('studio-toggle-logo', 'showLogo');
     bindToggle('studio-toggle-price', 'showPrice');
     bindToggle('studio-toggle-dim', 'showDimensions');
     bindToggle('studio-toggle-mat', 'showMaterial');
     bindToggle('studio-toggle-wa', 'showWhatsApp');
     bindToggle('studio-toggle-shadow', 'carpetShadow');
-}
 
-// جعل الدوال الأساسية متاحة على window
-window.openTatrizaStudioModal = openTatrizaStudioModal;
-window.closeTatrizaStudioModal = closeTatrizaStudioModal;
-window.exportStudioHDImage = exportStudioHDImage;
-window.copyStudioCaption = copyStudioCaption;
-window.shareStudioToWhatsApp = shareStudioToWhatsApp;
-window.saveStudioDraft = saveStudioDraft;
-window.loadStudioDraft = loadStudioDraft;
-window.deleteStudioDraft = deleteStudioDraft;
-window.selectStudioImageFromThumb = function(imgSrc) {
-    studioState.customImageSrc = imgSrc;
-    renderCarpetGalleryThumbs();
-    updateStudioPreview();
-};
+    // 13. اختيار السجادة من القائمة المنسدلة
+    const carpetSelect = document.getElementById('studio-carpet-select');
+    if (carpetSelect) {
+        carpetSelect.addEventListener('change', (e) => {
+            const carpetId = e.target.value;
+            const carpets = window.allPortalCarpets || [];
+            const carpet = carpets.find(c => c.id === carpetId);
+            if (carpet) {
+                applyCarpetToStudioState(carpet);
+                syncStudioControlsFromState();
+                updateStudioPreview();
+            }
+        });
+    }
+
+    // 14. رفع صورة مخصصة من الجهاز
+    const fileUpload = document.getElementById('studio-file-upload');
+    if (fileUpload) {
+        fileUpload.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            if (!file.type.startsWith('image/')) {
+                showToast('يرجى اختيار ملف صورة صالح.', 'error', 'تنبيه');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = (evt) => {
+                studioState.customImageSrc = evt.target.result;
+                updateStudioPreview();
+                showToast('تم تحميل صورتك بنجاح في الاستوديو!', 'success', 'صورة مخصصة');
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+
+    // 15. رفع فيديو مخصص من الجهاز
+    const videoUpload = document.getElementById('studio-video-upload');
+    if (videoUpload) {
+        videoUpload.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            if (!file.type.startsWith('video/')) {
+                showToast('يرجى اختيار ملف فيديو صالح (MP4 أو WebM أو MOV).', 'error', 'تنبيه');
+                return;
+            }
+
+            const videoBlobUrl = URL.createObjectURL(file);
+            studioState.videoSrc = videoBlobUrl;
+            studioState.mediaType = 'video';
+            updateMediaButtonStates();
+            updateExportButtonText();
+            updateStudioPreview();
+            showToast('تم تحميل مقطع الفيديو في الاستوديو بنجاح!', 'success', 'فيديو ريلز/ستوري');
+        });
+    }
+
+    // تصدير دوال الاستوديو إلى window للاستدعاء السريع
+    window.selectStudioImageFromThumb = (imgSrc) => {
+        studioState.customImageSrc = imgSrc;
+        renderCarpetGalleryThumbs();
+        updateStudioPreview();
+    };
+
+    window.saveStudioDraft = saveStudioDraft;
+    window.loadStudioDraft = loadStudioDraft;
+    window.deleteStudioDraft = deleteStudioDraft;
+    window.exportStudioHDImage = exportStudioHDImage;
+    window.copyStudioCaption = copyStudioCaption;
+    window.shareStudioToWhatsApp = shareStudioToWhatsApp;
+}
