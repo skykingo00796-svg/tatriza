@@ -910,54 +910,125 @@ button[type="submit"]:active {
 }
 
 /* ==========================================================================
-   Luxury Video Center Play Buttons (Cinema Banner, Product Cards, Modals)
+   Luxury Video Center Play Buttons - Dynamic Theme Adaptation
+   يتغير لون الزر والإطار والنبض والأيقونة تلقائياً وفق الثيم المختار (عنابي، زيتي، كحلي، ذهبي)
    ========================================================================== */
 .luxury-play-center-btn {
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 25px rgba(217, 119, 6, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.4);
-    animation: goldPlayPulse 2.8s infinite;
+    background: linear-gradient(135deg, rgba(var(--brand-rgb, 124, 29, 60), 0.92) 0%, rgba(var(--brand-rgb, 124, 29, 60), 0.72) 100%) !important;
+    border: 2px solid rgba(255, 255, 255, 0.75) !important;
+    color: #ffffff !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.55), 
+                0 0 25px rgba(var(--brand-rgb, 124, 29, 60), 0.7), 
+                inset 0 1px 2px rgba(255, 255, 255, 0.5) !important;
+    animation: themePlayPulse 2.8s infinite;
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), 
+                box-shadow 0.3s ease, 
+                background 0.3s ease, 
+                border-color 0.3s ease !important;
 }
 
-@keyframes goldPlayPulse {
+@keyframes themePlayPulse {
     0% {
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 0 0 rgba(217, 119, 6, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.4);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.55), 
+                    0 0 0 0 rgba(var(--brand-rgb, 124, 29, 60), 0.7), 
+                    inset 0 1px 2px rgba(255, 255, 255, 0.5);
     }
     70% {
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 0 16px rgba(217, 119, 6, 0), inset 0 1px 1px rgba(255, 255, 255, 0.4);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.55), 
+                    0 0 0 18px rgba(var(--brand-rgb, 124, 29, 60), 0), 
+                    inset 0 1px 2px rgba(255, 255, 255, 0.5);
     }
     100% {
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 0 0 rgba(217, 119, 6, 0), inset 0 1px 1px rgba(255, 255, 255, 0.4);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.55), 
+                    0 0 0 0 rgba(var(--brand-rgb, 124, 29, 60), 0), 
+                    inset 0 1px 2px rgba(255, 255, 255, 0.5);
     }
 }
 
 .luxury-play-center-btn:hover {
     animation: none;
-    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.7), 0 0 35px rgba(245, 158, 11, 0.75), inset 0 1px 2px rgba(255, 255, 255, 0.6);
+    transform: scale(1.12);
+    background: linear-gradient(135deg, var(--brand-hover, #631730) 0%, var(--brand-color, #7c1d3c) 100%) !important;
+    border-color: #ffffff !important;
+    box-shadow: 0 14px 40px rgba(0, 0, 0, 0.75), 
+                0 0 35px rgba(var(--brand-rgb, 124, 29, 60), 0.95), 
+                inset 0 1px 3px rgba(255, 255, 255, 0.7) !important;
 }
 
 .card-video-center-btn {
     backdrop-filter: blur(6px);
     -webkit-backdrop-filter: blur(6px);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), 0 0 15px rgba(217, 119, 6, 0.35);
-    animation: goldPlayPulseCard 2.8s infinite;
+    background: linear-gradient(135deg, rgba(var(--brand-rgb, 124, 29, 60), 0.92) 0%, rgba(var(--brand-rgb, 124, 29, 60), 0.75) 100%) !important;
+    border: 2px solid rgba(255, 255, 255, 0.75) !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.5), 
+                0 0 18px rgba(var(--brand-rgb, 124, 29, 60), 0.65), 
+                inset 0 1px 1.5px rgba(255, 255, 255, 0.5) !important;
+    animation: themePlayPulseCard 2.8s infinite;
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), 
+                box-shadow 0.3s ease, 
+                background 0.3s ease, 
+                border-color 0.3s ease !important;
 }
 
-@keyframes goldPlayPulseCard {
+@keyframes themePlayPulseCard {
     0% {
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), 0 0 0 0 rgba(217, 119, 6, 0.45);
+        box-shadow: 0 4px 18px rgba(0, 0, 0, 0.5), 
+                    0 0 0 0 rgba(var(--brand-rgb, 124, 29, 60), 0.65),
+                    inset 0 1px 1.5px rgba(255, 255, 255, 0.5);
     }
     70% {
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), 0 0 0 10px rgba(217, 119, 6, 0);
+        box-shadow: 0 4px 18px rgba(0, 0, 0, 0.5), 
+                    0 0 0 12px rgba(var(--brand-rgb, 124, 29, 60), 0),
+                    inset 0 1px 1.5px rgba(255, 255, 255, 0.5);
     }
     100% {
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), 0 0 0 0 rgba(217, 119, 6, 0);
+        box-shadow: 0 4px 18px rgba(0, 0, 0, 0.5), 
+                    0 0 0 0 rgba(var(--brand-rgb, 124, 29, 60), 0),
+                    inset 0 1px 1.5px rgba(255, 255, 255, 0.5);
     }
 }
 
 .card-video-center-btn:hover {
     animation: none;
-    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.7), 0 0 22px rgba(245, 158, 11, 0.65);
+    transform: scale(1.12);
+    background: linear-gradient(135deg, var(--brand-hover, #631730) 0%, var(--brand-color, #7c1d3c) 100%) !important;
+    border-color: #ffffff !important;
+    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.7), 
+                0 0 25px rgba(var(--brand-rgb, 124, 29, 60), 0.9) !important;
+}
+
+/* دعم فئات الثيمات المباشرة لضمان التوافق المطلق */
+.theme-burgundy .luxury-play-center-btn,
+.theme-burgundy .card-video-center-btn {
+    --brand-rgb: 124, 29, 60;
+    --brand-color: #7c1d3c;
+    --brand-hover: #631730;
+}
+.theme-green .luxury-play-center-btn,
+.theme-green .card-video-center-btn {
+    --brand-rgb: 67, 88, 56;
+    --brand-color: #435838;
+    --brand-hover: #33432a;
+}
+.theme-blue .luxury-play-center-btn,
+.theme-blue .card-video-center-btn {
+    --brand-rgb: 45, 95, 117;
+    --brand-color: #2d5f75;
+    --brand-hover: #204557;
+}
+.theme-gold .luxury-play-center-btn,
+.theme-gold .card-video-center-btn {
+    --brand-rgb: 197, 155, 39;
+    --brand-color: #c59b27;
+    --brand-hover: #9e771c;
+}
+
+#cinema-play-icon {
+    color: var(--brand-color, #c59b27);
+    transition: color 0.3s ease;
 }
 
 #modal-video-center-btn {

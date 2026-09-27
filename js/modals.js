@@ -391,9 +391,8 @@ export function openModal(carpetId, allCarpets) {
                         id="modal-video-center-btn" 
                         onclick="window.toggleProductVideoPlay(document.getElementById('modal-product-video'))" 
                         class="absolute inset-0 flex items-center justify-center transition-all duration-300 opacity-100 pointer-events-auto z-10"
-                    >
-                        <button type="button" class="luxury-play-center-btn w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-black/70 hover:bg-black/90 backdrop-blur-md border-2 border-amber-400/80 text-amber-300 hover:text-amber-200 flex items-center justify-center text-2xl sm:text-3xl shadow-[0_0_30px_rgba(217,119,6,0.5)] transform transition-transform duration-300 hover:scale-110 active:scale-95 pointer-events-auto cursor-pointer group/modalplay" id="modal-video-center-icon" title="بدء تشغيل الفيديو">
-                            <span class="mr-[-3px] group-hover/modalplay:scale-110 transition-transform">▶</span>
+                        <button type="button" class="luxury-play-center-btn w-16 h-16 sm:w-20 sm:h-20 rounded-full flex items-center justify-center text-2xl sm:text-3xl text-white transform transition-transform duration-300 hover:scale-110 active:scale-95 pointer-events-auto cursor-pointer group/modalplay" id="modal-video-center-icon" title="بدء تشغيل الفيديو">
+                            <span class="mr-[-3px] text-white group-hover/modalplay:scale-110 transition-transform">▶</span>
                         </button>
                     </div>
                 </div>

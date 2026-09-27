@@ -299,10 +299,10 @@ function displayCarpets(carpetsToDisplay) {
                         onclick="event.stopPropagation(); window.toggleCardVideoPlay('${carpet.id}')"
                     ></video>
                     
-                    <!-- زر إيقاف وتشغيل تفاعلي فاخر بالوسط لبطاقة المنتج -->
+                    <!-- زر إيقاف وتشغيل تفاعلي فاخر بالوسط لبطاقة المنتج متناغم مع لون الثيم -->
                     <div id="card-video-center-btn-${carpet.id}" onclick="event.stopPropagation(); window.toggleCardVideoPlay('${carpet.id}')" class="absolute inset-0 flex items-center justify-center transition-all duration-300 opacity-100 pointer-events-auto z-10">
-                        <button type="button" class="card-video-center-btn w-11 h-11 sm:w-13 sm:h-13 rounded-full bg-black/70 hover:bg-black/90 border-2 border-amber-400/80 text-amber-300 hover:text-amber-200 flex items-center justify-center text-base sm:text-lg shadow-xl transform transition-transform duration-300 hover:scale-110 active:scale-95 pointer-events-auto cursor-pointer group/cardplay" id="card-video-center-icon-${carpet.id}" title="بدء تشغيل الفيديو">
-                            <span class="mr-[-2px] group-hover/cardplay:scale-110 transition-transform">▶</span>
+                        <button type="button" class="card-video-center-btn w-11 h-11 sm:w-13 sm:h-13 rounded-full flex items-center justify-center text-base sm:text-lg text-white pointer-events-auto cursor-pointer group/cardplay" id="card-video-center-icon-${carpet.id}" title="بدء تشغيل الفيديو">
+                            <span class="mr-[-2px] text-white group-hover/cardplay:scale-110 transition-transform">▶</span>
                         </button>
                     </div>
 
