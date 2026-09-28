@@ -256,25 +256,60 @@ export function hexToRgbString(hex) {
 }
 
 export function getActiveVignette() {
+    let base;
     if (studioState.vignetteTheme === 'custom') {
         const topHex = studioState.customVigTopColor || '#7c1d3c';
         const botHex = studioState.customVigBotColor || '#6e1634';
         const topRgb = hexToRgbString(topHex);
         const botRgb = hexToRgbString(botHex);
-        return {
+        base = {
             id: 'custom',
             name: 'تخصيص حر بالألوان',
             badge: '🎨 مخصص',
             topColorRgb: topRgb,
             bottomColorRgb: botRgb,
-            topVignetteCss: `radial-gradient(ellipse 110% 75% at 50% 0%, rgba(${topRgb}, 0.95) 0%, rgba(${topRgb}, 0.82) 35%, rgba(${topRgb}, 0.35) 70%, transparent 100%)`,
-            botVignetteCss: `radial-gradient(ellipse 120% 90% at 50% 100%, rgba(${botRgb}, 0.96) 0%, rgba(${botRgb}, 0.88) 40%, rgba(${botRgb}, 0.45) 75%, transparent 100%)`,
             phraseColor: '#ffffff',
             phraseShadow: '0 2px 14px rgba(0,0,0,0.7)',
             handleColor: '#fde047'
         };
+    } else {
+        base = STUDIO_VIGNETTES[studioState.vignetteTheme] || STUDIO_VIGNETTES['site-burgundy'];
     }
-    return STUDIO_VIGNETTES[studioState.vignetteTheme] || STUDIO_VIGNETTES['site-burgundy'];
+
+    // استخراج معايير التحكم الدقيق بالشادو (شفافية، تحريك للأعلى/الأسفل، بروز، حدة)
+    const opacity = (studioState.vignetteOpacity !== undefined ? studioState.vignetteOpacity : 95) / 100;
+    const offsetY = studioState.vignetteOffsetY || 0; // -40px إلى +40px
+    const spread = (studioState.vignetteSpread || 100) / 100; // 0.4 إلى 1.6
+    const sharpness = (studioState.vignetteSharpness !== undefined ? studioState.vignetteSharpness : 40) / 100; // 0 إلى 1
+
+    // حساب الشفافية وقوة الألوان ومواقع التوقف بدقة
+    const topA1 = Math.min(1, 0.96 * opacity).toFixed(3);
+    const topA2 = Math.min(1, (0.78 + 0.16 * sharpness) * opacity).toFixed(3);
+    const topA3 = Math.max(0, (0.35 - 0.22 * sharpness) * opacity).toFixed(3);
+
+    const botA1 = Math.min(1, 0.98 * opacity).toFixed(3);
+    const botA2 = Math.min(1, (0.84 + 0.14 * sharpness) * opacity).toFixed(3);
+    const botA3 = Math.max(0, (0.40 - 0.24 * sharpness) * opacity).toFixed(3);
+
+    const stop1 = Math.max(12, Math.round(35 * (1 - sharpness * 0.45)));
+    const stop2 = Math.min(94, Math.round(70 + (1 - sharpness) * 15));
+
+    // أبعاد وتمركز نقطة بداية الشادو (تحريك للأعلى والأسفل)
+    const topYOrigin = Math.round(offsetY * 0.5);
+    const botYOrigin = Math.round(100 - offsetY * 0.5);
+    const topEllipseH = Math.round(75 * spread);
+    const topEllipseW = Math.round(110 * Math.sqrt(spread));
+    const botEllipseH = Math.round(90 * spread);
+    const botEllipseW = Math.round(120 * Math.sqrt(spread));
+
+    const topVignetteCss = `radial-gradient(ellipse ${topEllipseW}% ${topEllipseH}% at 50% ${topYOrigin}%, rgba(${base.topColorRgb}, ${topA1}) 0%, rgba(${base.topColorRgb}, ${topA2}) ${stop1}%, rgba(${base.topColorRgb}, ${topA3}) ${stop2}%, transparent 100%)`;
+    const botVignetteCss = `radial-gradient(ellipse ${botEllipseW}% ${botEllipseH}% at 50% ${botYOrigin}%, rgba(${base.bottomColorRgb}, ${botA1}) 0%, rgba(${base.bottomColorRgb}, ${botA2}) ${stop1}%, rgba(${base.bottomColorRgb}, ${botA3}) ${stop2}%, transparent 100%)`;
+
+    return {
+        ...base,
+        topVignetteCss,
+        botVignetteCss
+    };
 }
 
 export function getLogoHtmlForPreview() {
@@ -685,6 +720,12 @@ let studioState = {
     showStoryPhrase: true,
     showStoryHandle: true,
 
+    // خصائص وتحكم الشادو الدقيق والمتقدم (Shadow Precision & Dynamics)
+    vignetteOpacity: 95, // قوة اللون والشفافية: من 10% إلى 100%
+    vignetteOffsetY: 0, // تحريك للأعلى والأسفل: من -40px إلى +40px
+    vignetteSpread: 100, // البروز ومساحة الامتداد: من 40% إلى 160%
+    vignetteSharpness: 40, // الحدة مقابل النعومة: من 0% إلى 100%
+
     // إعدادات تموضع وألوان ومسافات نمط ستوري وريلز إنستقرام
     storyLogoAlign: 'center', // 'right', 'center', 'left', 'custom'
     storyLogoOffsetPercent: 0, // -45 to +45
@@ -871,6 +912,25 @@ function syncStudioControlsFromState() {
     updateMediaButtonStates();
     updateMinimalControlStates();
     updateStoryControlStates();
+
+    // مزامنة أشرطة التحكم الدقيق بالشادو (شفافية، تحريك، بروز، حدة)
+    const vigOpacityIn = document.getElementById('studio-slider-vig-opacity');
+    const vigOpacityVal = document.getElementById('studio-vig-opacity-val');
+    const vigOffsetYIn = document.getElementById('studio-slider-vig-offsety');
+    const vigOffsetYVal = document.getElementById('studio-vig-offsety-val');
+    const vigSpreadIn = document.getElementById('studio-slider-vig-spread');
+    const vigSpreadVal = document.getElementById('studio-vig-spread-val');
+    const vigSharpnessIn = document.getElementById('studio-slider-vig-sharpness');
+    const vigSharpnessVal = document.getElementById('studio-vig-sharpness-val');
+
+    if (vigOpacityIn) vigOpacityIn.value = studioState.vignetteOpacity !== undefined ? studioState.vignetteOpacity : 95;
+    if (vigOpacityVal) vigOpacityVal.innerText = `${studioState.vignetteOpacity !== undefined ? studioState.vignetteOpacity : 95}%`;
+    if (vigOffsetYIn) vigOffsetYIn.value = studioState.vignetteOffsetY !== undefined ? studioState.vignetteOffsetY : 0;
+    if (vigOffsetYVal) vigOffsetYVal.innerText = `${studioState.vignetteOffsetY !== undefined ? studioState.vignetteOffsetY : 0}px`;
+    if (vigSpreadIn) vigSpreadIn.value = studioState.vignetteSpread !== undefined ? studioState.vignetteSpread : 100;
+    if (vigSpreadVal) vigSpreadVal.innerText = `${studioState.vignetteSpread !== undefined ? studioState.vignetteSpread : 100}%`;
+    if (vigSharpnessIn) vigSharpnessIn.value = studioState.vignetteSharpness !== undefined ? studioState.vignetteSharpness : 40;
+    if (vigSharpnessVal) vigSharpnessVal.innerText = `${studioState.vignetteSharpness !== undefined ? studioState.vignetteSharpness : 40}%`;
 
     // 5. مزامنة حقول نمط الكارت الملكي
     const titleIn = document.getElementById('studio-input-title');
@@ -1414,17 +1474,23 @@ export function updateStudioPreview() {
             `;
         }
 
-        // الشادو الدائري الناعم بالأعلى
+        // الشادو الدائري الناعم بالأعلى والأسفل مع تطبيق التحريك والبروز
+        const vigSpread = (studioState.vignetteSpread || 100) / 100;
+        const vigOffsetY = studioState.vignetteOffsetY || 0;
+        const topHRem = (11 * vigSpread).toFixed(2);
+        const botHRem = (14 * vigSpread).toFixed(2);
+        const topTransY = Math.round(vigOffsetY * 0.4);
+        const botTransY = Math.round(vigOffsetY * 0.4);
+
         const topVignetteHtml = studioState.showTopVignette ? `
-            <div class="absolute top-0 inset-x-0 h-44 sm:h-52 pointer-events-none z-10 transition-all duration-300" style="background: ${vig.topVignetteCss};"></div>
+            <div class="absolute top-0 inset-x-0 pointer-events-none z-10 transition-all duration-300" style="height: ${topHRem}rem; transform: translateY(${topTransY}px); background: ${vig.topVignetteCss};"></div>
         ` : '';
 
         // اللوجو الرسمي في الأعلى مع الموضع والمسافة واللون المحدد
         const logoHtml = getStoryLogoPreviewHtml();
 
-        // الشادو الدائري الناعم بالأسفل
         const botVignetteHtml = studioState.showBottomVignette ? `
-            <div class="absolute bottom-0 inset-x-0 h-56 sm:h-64 pointer-events-none z-10 transition-all duration-300" style="background: ${vig.botVignetteCss};"></div>
+            <div class="absolute bottom-0 inset-x-0 pointer-events-none z-10 transition-all duration-300" style="height: ${botHRem}rem; transform: translateY(${botTransY}px); background: ${vig.botVignetteCss};"></div>
         ` : '';
 
         // العبارة المميزة واسم الحساب بالأسفل مع الموضع والمسافات والألوان المستقلة
@@ -1550,7 +1616,14 @@ export function updateStudioPreview() {
 
     // السجادة في المنتصف مع دعم التحريك الحر والتكبير
     const scaleFactor = ((studioState.carpetScale || 88) / 100) * zoom;
-    const shadowStyle = studioState.carpetShadow ? 'filter: drop-shadow(0 20px 25px rgba(0,0,0,0.55)) drop-shadow(0 8px 10px rgba(0,0,0,0.3));' : '';
+    const cardVigOpacity = (studioState.vignetteOpacity !== undefined ? studioState.vignetteOpacity : 95) / 100;
+    const cardVigOffsetY = studioState.vignetteOffsetY || 0;
+    const cardVigSpread = (studioState.vignetteSpread || 100) / 100;
+    const cardVigSharpness = (studioState.vignetteSharpness !== undefined ? studioState.vignetteSharpness : 40) / 100;
+    const cardShadowY = Math.round(20 + cardVigOffsetY * 0.5);
+    const cardShadowBlur = Math.round((25 * cardVigSpread) * (1.2 - cardVigSharpness * 0.5));
+    const cardShadowAlpha = Math.min(0.95, 0.55 * (cardVigOpacity / 0.95)).toFixed(2);
+    const shadowStyle = studioState.carpetShadow ? `filter: drop-shadow(0 ${cardShadowY}px ${cardShadowBlur}px rgba(0,0,0,${cardShadowAlpha}));` : '';
 
     // قسم البيانات السفلي
     const showPrice = studioState.showPrice && studioState.price;
@@ -1827,9 +1900,17 @@ export async function exportStudioHDImage() {
 
         ctx.save();
         if (studioState.carpetShadow) {
-            ctx.shadowColor = 'rgba(0, 0, 0, 0.65)';
-            ctx.shadowBlur = 45;
-            ctx.shadowOffsetY = 25;
+            const cardVigOpacity = (studioState.vignetteOpacity !== undefined ? studioState.vignetteOpacity : 95) / 100;
+            const cardVigOffsetY = studioState.vignetteOffsetY || 0;
+            const cardVigSpread = (studioState.vignetteSpread || 100) / 100;
+            const cardVigSharpness = (studioState.vignetteSharpness !== undefined ? studioState.vignetteSharpness : 40) / 100;
+            const cardShadowY = Math.round(25 + cardVigOffsetY * 0.7);
+            const cardShadowBlur = Math.round((45 * cardVigSpread) * (1.2 - cardVigSharpness * 0.5));
+            const cardShadowAlpha = Math.min(0.95, 0.65 * (cardVigOpacity / 0.95));
+
+            ctx.shadowColor = `rgba(0, 0, 0, ${cardShadowAlpha})`;
+            ctx.shadowBlur = cardShadowBlur;
+            ctx.shadowOffsetY = cardShadowY;
         }
 
         await drawContainedImage(ctx, carpetSrc, ((canvas.width - maxImgW) / 2) + panOffsetX, (canvas.height * 0.22) + panOffsetY, maxImgW, maxImgH);
@@ -1952,29 +2033,50 @@ async function exportStoryVignetteHD(canvas, ctx) {
         await drawCoverImageOnCanvas(ctx, carpetSrc, 0, 0, canvas.width, canvas.height, zoom, panX, panY);
     }
 
+    // استخراج معايير التحكم بالشادو بدقة متناهية (شفافية، تحريك للأعلى والأسفل، بروز، حدة)
+    const vigOpacity = (studioState.vignetteOpacity !== undefined ? studioState.vignetteOpacity : 95) / 100;
+    const vigOffsetY = studioState.vignetteOffsetY || 0; // -40 إلى +40
+    const vigSpread = (studioState.vignetteSpread || 100) / 100; // 0.4 إلى 1.6
+    const vigSharpness = (studioState.vignetteSharpness !== undefined ? studioState.vignetteSharpness : 40) / 100; // 0 إلى 1
+
+    const topA1 = Math.min(1, 0.96 * vigOpacity);
+    const topA2 = Math.min(1, (0.78 + 0.16 * vigSharpness) * vigOpacity);
+    const topA3 = Math.max(0, (0.35 - 0.22 * vigSharpness) * vigOpacity);
+
+    const botA1 = Math.min(1, 0.98 * vigOpacity);
+    const botA2 = Math.min(1, (0.84 + 0.14 * vigSharpness) * vigOpacity);
+    const botA3 = Math.max(0, (0.40 - 0.24 * vigSharpness) * vigOpacity);
+
+    const stop1 = Math.max(0.12, 0.35 * (1 - vigSharpness * 0.45));
+    const stop2 = Math.min(0.94, 0.70 + (1 - vigSharpness) * 0.15);
+
+    const canvasOffsetY = canvas.height * (vigOffsetY / 580);
+
     // 2. رسم الشادو الدائري الناعم بالأعلى
     if (studioState.showTopVignette !== false) {
-        const topH = canvas.height * 0.42;
-        const topGrad = ctx.createRadialGradient(canvas.width / 2, 0, 0, canvas.width / 2, 0, topH);
-        topGrad.addColorStop(0, `rgba(${vig.topColorRgb}, 0.96)`);
-        topGrad.addColorStop(0.35, `rgba(${vig.topColorRgb}, 0.82)`);
-        topGrad.addColorStop(0.7, `rgba(${vig.topColorRgb}, 0.35)`);
+        const topH = Math.min(canvas.height, canvas.height * 0.42 * vigSpread);
+        const originY = Math.max(-topH * 0.5, canvasOffsetY);
+        const topGrad = ctx.createRadialGradient(canvas.width / 2, originY, 0, canvas.width / 2, originY, topH);
+        topGrad.addColorStop(0, `rgba(${vig.topColorRgb}, ${topA1})`);
+        topGrad.addColorStop(stop1, `rgba(${vig.topColorRgb}, ${topA2})`);
+        topGrad.addColorStop(stop2, `rgba(${vig.topColorRgb}, ${topA3})`);
         topGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
         ctx.fillStyle = topGrad;
-        ctx.fillRect(0, 0, canvas.width, topH);
+        ctx.fillRect(0, 0, canvas.width, topH + Math.max(0, canvasOffsetY));
     }
 
     // 3. رسم الشادو الدائري الناعم بالأسفل
     if (studioState.showBottomVignette !== false) {
-        const botH = canvas.height * 0.52;
-        const botY = canvas.height - botH;
-        const botGrad = ctx.createRadialGradient(canvas.width / 2, canvas.height, 0, canvas.width / 2, canvas.height, botH);
-        botGrad.addColorStop(0, `rgba(${vig.bottomColorRgb}, 0.98)`);
-        botGrad.addColorStop(0.42, `rgba(${vig.bottomColorRgb}, 0.88)`);
-        botGrad.addColorStop(0.75, `rgba(${vig.bottomColorRgb}, 0.4)`);
+        const botH = Math.min(canvas.height, canvas.height * 0.52 * vigSpread);
+        const originY = canvas.height + canvasOffsetY;
+        const botY = Math.max(0, canvas.height - botH + Math.min(0, canvasOffsetY));
+        const botGrad = ctx.createRadialGradient(canvas.width / 2, originY, 0, canvas.width / 2, originY, botH);
+        botGrad.addColorStop(0, `rgba(${vig.bottomColorRgb}, ${botA1})`);
+        botGrad.addColorStop(stop1, `rgba(${vig.bottomColorRgb}, ${botA2})`);
+        botGrad.addColorStop(stop2, `rgba(${vig.bottomColorRgb}, ${botA3})`);
         botGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
         ctx.fillStyle = botGrad;
-        ctx.fillRect(0, botY, canvas.width, botH);
+        ctx.fillRect(0, botY, canvas.width, canvas.height - botY);
     }
 
     // 4. رسم لوجو الدار شفافاً في الموضع المحدد بالأبعاد والشفافية واللون
@@ -2876,6 +2978,94 @@ export function initStudioEvents() {
         };
         vigBotIn.addEventListener('input', handleBotVig);
         vigBotIn.addEventListener('change', handleBotVig);
+    }
+
+    // أحداث التحكم الدقيق بالشادو (شفافية، تحريك للأعلى/الأسفل، بروز، حدة)
+    const vigOpacityIn = document.getElementById('studio-slider-vig-opacity');
+    const vigOpacityVal = document.getElementById('studio-vig-opacity-val');
+    if (vigOpacityIn) {
+        vigOpacityIn.addEventListener('input', (e) => {
+            studioState.vignetteOpacity = Number(e.target.value);
+            if (vigOpacityVal) vigOpacityVal.innerText = `${studioState.vignetteOpacity}%`;
+            updateStudioPreview();
+        });
+    }
+
+    const vigOffsetYIn = document.getElementById('studio-slider-vig-offsety');
+    const vigOffsetYVal = document.getElementById('studio-vig-offsety-val');
+    if (vigOffsetYIn) {
+        vigOffsetYIn.addEventListener('input', (e) => {
+            studioState.vignetteOffsetY = Number(e.target.value);
+            if (vigOffsetYVal) vigOffsetYVal.innerText = `${studioState.vignetteOffsetY > 0 ? '+' : ''}${studioState.vignetteOffsetY}px`;
+            updateStudioPreview();
+        });
+    }
+
+    const vigSpreadIn = document.getElementById('studio-slider-vig-spread');
+    const vigSpreadVal = document.getElementById('studio-vig-spread-val');
+    if (vigSpreadIn) {
+        vigSpreadIn.addEventListener('input', (e) => {
+            studioState.vignetteSpread = Number(e.target.value);
+            if (vigSpreadVal) vigSpreadVal.innerText = `${studioState.vignetteSpread}%`;
+            updateStudioPreview();
+        });
+    }
+
+    const vigSharpnessIn = document.getElementById('studio-slider-vig-sharpness');
+    const vigSharpnessVal = document.getElementById('studio-vig-sharpness-val');
+    if (vigSharpnessIn) {
+        vigSharpnessIn.addEventListener('input', (e) => {
+            studioState.vignetteSharpness = Number(e.target.value);
+            if (vigSharpnessVal) vigSharpnessVal.innerText = `${studioState.vignetteSharpness}%`;
+            updateStudioPreview();
+        });
+    }
+
+    // أزرار الاختصارات السريعة لإعدادات الشادو
+    document.querySelectorAll('.studio-vig-preset-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const target = btn.getAttribute('data-target');
+            const val = Number(btn.getAttribute('data-val'));
+            if (target === 'opacity') {
+                studioState.vignetteOpacity = val;
+                if (vigOpacityIn) vigOpacityIn.value = val;
+                if (vigOpacityVal) vigOpacityVal.innerText = `${val}%`;
+            } else if (target === 'offsety') {
+                studioState.vignetteOffsetY = val;
+                if (vigOffsetYIn) vigOffsetYIn.value = val;
+                if (vigOffsetYVal) vigOffsetYVal.innerText = `${val > 0 ? '+' : ''}${val}px`;
+            } else if (target === 'spread') {
+                studioState.vignetteSpread = val;
+                if (vigSpreadIn) vigSpreadIn.value = val;
+                if (vigSpreadVal) vigSpreadVal.innerText = `${val}%`;
+            } else if (target === 'sharpness') {
+                studioState.vignetteSharpness = val;
+                if (vigSharpnessIn) vigSharpnessIn.value = val;
+                if (vigSharpnessVal) vigSharpnessVal.innerText = `${val}%`;
+            }
+            updateStudioPreview();
+        });
+    });
+
+    // زر إعادة ضبط الشادو للإعدادات الملكية الافتراضية
+    const resetVigBtn = document.getElementById('studio-btn-reset-vignette');
+    if (resetVigBtn) {
+        resetVigBtn.addEventListener('click', () => {
+            studioState.vignetteOpacity = 95;
+            studioState.vignetteOffsetY = 0;
+            studioState.vignetteSpread = 100;
+            studioState.vignetteSharpness = 40;
+            if (vigOpacityIn) vigOpacityIn.value = 95;
+            if (vigOpacityVal) vigOpacityVal.innerText = '95%';
+            if (vigOffsetYIn) vigOffsetYIn.value = 0;
+            if (vigOffsetYVal) vigOffsetYVal.innerText = '0px';
+            if (vigSpreadIn) vigSpreadIn.value = 100;
+            if (vigSpreadVal) vigSpreadVal.innerText = '100%';
+            if (vigSharpnessIn) vigSharpnessIn.value = 40;
+            if (vigSharpnessVal) vigSharpnessVal.innerText = '40%';
+            updateStudioPreview();
+            showToast('تمت إعادة ضبط معايير الشادو للوضع الملكي القياسي.', 'info', 'إعادة ضبط الشادو');
+        });
     }
 
     // 6.5 أحداث وتخصيصات موضع وألوان ومسافات الستوري والريلز (Story & Reels Controls)
