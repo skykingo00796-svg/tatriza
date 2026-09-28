@@ -491,7 +491,7 @@ export function getActiveVignette() {
 
 export function getLogoHtmlForPreview() {
     if (!studioState.showLogo) return '';
-    const logoOption = STUDIO_LOGO_OPTIONS[studioState.logoVariant] || STUDIO_LOGO_OPTIONS['white'];
+    const logoOption = STUDIO_LOGO_OPTIONS[studioState.logoVariant] || STUDIO_LOGO_OPTIONS['transparent-burgundy'];
     const sizeClasses = {
         'small': 'w-14 h-14 sm:w-16 sm:h-16',
         'medium': 'w-20 h-20 sm:w-24 sm:h-24',
@@ -501,7 +501,7 @@ export function getLogoHtmlForPreview() {
     const opacityStyle = `opacity: ${(studioState.logoOpacity || 100) / 100};`;
 
     if (studioState.logoVariant === 'custom') {
-        const color = studioState.logoCustomColor || '#fef08a';
+        const color = studioState.logoCustomColor || '#7c1d3c';
         return `
             <div class="relative z-20 pt-5 sm:pt-7 flex flex-col items-center justify-center pointer-events-none transition-all duration-200">
                 <div 
@@ -527,11 +527,11 @@ export function getLogoHtmlForPreview() {
 
 export function getCardLogoElementHtml() {
     if (!studioState.showLogo) return '';
-    const logoOption = STUDIO_LOGO_OPTIONS[studioState.logoVariant] || STUDIO_LOGO_OPTIONS['white'];
+    const logoOption = STUDIO_LOGO_OPTIONS[studioState.logoVariant] || STUDIO_LOGO_OPTIONS['transparent-burgundy'];
     const opacityStyle = `opacity: ${(studioState.logoOpacity || 100) / 100};`;
 
     if (studioState.logoVariant === 'custom') {
-        const color = studioState.logoCustomColor || '#fef08a';
+        const color = studioState.logoCustomColor || '#7c1d3c';
         return `
             <div class="w-9 h-9 sm:w-10 sm:h-10 shrink-0 drop-shadow-xs" style="background-color: ${color}; -webkit-mask-image: url('../images/logo_white.png'); -webkit-mask-size: contain; -webkit-mask-repeat: no-repeat; -webkit-mask-position: center; mask-image: url('../images/logo_white.png'); mask-size: contain; mask-repeat: no-repeat; mask-position: center; ${opacityStyle}"></div>
         `;
@@ -559,7 +559,7 @@ export function getTintedLogoCanvas(logoImg, color) {
 
 export function getMinimalLogoPreviewHtml() {
     if (!studioState.showLogo) return '';
-    const logoOption = STUDIO_LOGO_OPTIONS[studioState.logoVariant] || STUDIO_LOGO_OPTIONS['white'];
+    const logoOption = STUDIO_LOGO_OPTIONS[studioState.logoVariant] || STUDIO_LOGO_OPTIONS['transparent-burgundy'];
     
     // أبعاد دقيقة ومطلقة بالبكسل - ثابتة تماماً ومستقلة عن التحريك الأفقي
     const dimMap = {
@@ -639,7 +639,7 @@ export function getMinimalHandlePreviewHtml() {
 
 export function getStoryLogoPreviewHtml() {
     if (!studioState.showLogo) return '';
-    const logoOption = STUDIO_LOGO_OPTIONS[studioState.logoVariant] || STUDIO_LOGO_OPTIONS['white'];
+    const logoOption = STUDIO_LOGO_OPTIONS[studioState.logoVariant] || STUDIO_LOGO_OPTIONS['transparent-burgundy'];
     
     // أبعاد دقيقة ومطلقة بالبكسل - ثابتة تماماً ومستقلة عن التحريك الأفقي
     const dimMap = {
@@ -936,8 +936,8 @@ let studioState = {
 
     // إعدادات الشعار والعلامة المائية
     showLogo: true,
-    logoVariant: 'white', // 'white', 'gold', 'transparent-burgundy', 'transparent-gold', 'transparent-emerald', 'transparent-navy', 'black', 'custom', 'original'
-    logoCustomColor: '#fef08a',
+    logoVariant: 'transparent-burgundy', // 'transparent-burgundy', 'transparent-gold', 'transparent-emerald', 'transparent-navy', 'white', 'gold', 'black', 'custom', 'original'
+    logoCustomColor: '#7c1d3c',
     logoSize: 'medium', // 'small', 'medium', 'large'
     logoOpacity: 100, // 40 to 100
 
@@ -1308,7 +1308,7 @@ function updateLogoControlStates() {
         if (toggle) toggle.checked = studioState.showLogo;
     });
 
-    const activeLogoOpt = STUDIO_LOGO_OPTIONS[studioState.logoVariant] || STUDIO_LOGO_OPTIONS['white'];
+    const activeLogoOpt = STUDIO_LOGO_OPTIONS[studioState.logoVariant] || STUDIO_LOGO_OPTIONS['transparent-burgundy'];
     document.querySelectorAll('#studio-logo-variant-title, .studio-logo-variant-title').forEach(el => {
         el.innerText = activeLogoOpt.name;
     });
@@ -2548,8 +2548,8 @@ async function exportRoyalCardHD(canvas, ctx) {
         ctx.save();
         const logoOpacity = (studioState.logoOpacity || 100) / 100;
         ctx.globalAlpha = logoOpacity;
-        const logoVariant = studioState.logoVariant || 'white';
-        const logoOpt = STUDIO_LOGO_OPTIONS[logoVariant] || STUDIO_LOGO_OPTIONS['white'];
+        const logoVariant = studioState.logoVariant || 'transparent-burgundy';
+        const logoOpt = STUDIO_LOGO_OPTIONS[logoVariant] || STUDIO_LOGO_OPTIONS['transparent-burgundy'];
 
         if (logoVariant === 'custom') {
             const whiteLogo = await loadImageAsync('../images/logo_white.png');
@@ -3014,8 +3014,8 @@ async function exportStoryVignetteHD(canvas, ctx) {
             ctx.save();
             const logoOpacity = (studioState.logoOpacity || 100) / 100;
             ctx.globalAlpha = logoOpacity;
-            const logoVariant = studioState.logoVariant || 'white';
-            const logoOpt = STUDIO_LOGO_OPTIONS[logoVariant] || STUDIO_LOGO_OPTIONS['white'];
+            const logoVariant = studioState.logoVariant || 'transparent-burgundy';
+            const logoOpt = STUDIO_LOGO_OPTIONS[logoVariant] || STUDIO_LOGO_OPTIONS['transparent-burgundy'];
 
             // تحجيم الشعار بدقة متناسبة مع الأبعاد
             const sizeMap = {
@@ -3177,8 +3177,8 @@ async function exportMinimalShowcaseHD(canvas, ctx) {
             ctx.save();
             const logoOpacity = (studioState.logoOpacity || 100) / 100;
             ctx.globalAlpha = logoOpacity;
-            const logoVariant = studioState.logoVariant || 'white';
-            const logoOpt = STUDIO_LOGO_OPTIONS[logoVariant] || STUDIO_LOGO_OPTIONS['white'];
+            const logoVariant = studioState.logoVariant || 'transparent-burgundy';
+            const logoOpt = STUDIO_LOGO_OPTIONS[logoVariant] || STUDIO_LOGO_OPTIONS['transparent-burgundy'];
 
             // حجم الشعار في النمط النقي (حجم صغير وأنيق)
             const sizesMap = {
