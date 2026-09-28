@@ -738,12 +738,9 @@ let studioState = {
 };
 
 // ==========================================
-// فتح وإغلاق نافذة الاستوديو
+// شاشة استوديو التصاميم المستقلة (Dedicated Tatriza Studio Screen)
 // ==========================================
-export function openTatrizaStudioModal(preselectedCarpetId = '', customCarpets = null) {
-    const modal = document.getElementById('tatriza-studio-modal');
-    if (!modal) return;
-
+export function initStudioScreen(preselectedCarpetId = '', customCarpets = null) {
     // استخراج قائمة السجاد من سياق البوابة
     const carpets = customCarpets || window.allPortalCarpets || [];
 
@@ -758,7 +755,7 @@ export function openTatrizaStudioModal(preselectedCarpetId = '', customCarpets =
 
     if (targetCarpet) {
         applyCarpetToStudioState(targetCarpet);
-    } else {
+    } else if (!studioState.customImageSrc) {
         studioState.title = 'تحفة فنية يدوية ملكية';
         studioState.dimensions = '200 × 300 سم';
         studioState.material = 'صوف طبيعي 100% مع حرير';
@@ -770,15 +767,26 @@ export function openTatrizaStudioModal(preselectedCarpetId = '', customCarpets =
     syncStudioControlsFromState();
     updateStudioPreview();
     renderStudioDraftsList();
+}
+window.initStudioScreen = initStudioScreen;
 
-    modal.classList.remove('hidden');
-    document.body.classList.add('overflow-hidden');
+export function openTatrizaStudioModal(preselectedCarpetId = '', customCarpets = null) {
+    if (typeof window.switchPortalScreen === 'function') {
+        window.switchPortalScreen('studio', preselectedCarpetId, customCarpets);
+        return;
+    }
+    initStudioScreen(preselectedCarpetId, customCarpets);
+    const screenEl = document.getElementById('portal-view-studio') || document.getElementById('tatriza-studio-modal');
+    if (screenEl) screenEl.classList.remove('hidden');
 }
 
 export function closeTatrizaStudioModal() {
-    const modal = document.getElementById('tatriza-studio-modal');
-    if (modal) modal.classList.add('hidden');
-    document.body.classList.remove('overflow-hidden');
+    if (typeof window.switchPortalScreen === 'function') {
+        window.switchPortalScreen('carpets');
+        return;
+    }
+    const screenEl = document.getElementById('portal-view-studio') || document.getElementById('tatriza-studio-modal');
+    if (screenEl) screenEl.classList.add('hidden');
     
     // إيقاف تشغيل أي فيديو نشط في المعاينة
     const videoEl = document.getElementById('studio-live-video');

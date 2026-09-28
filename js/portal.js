@@ -1376,7 +1376,11 @@ export function initShowcaseCMS() {
 }
 
 export function openShowcaseManagerModal() {
-    const modal = document.getElementById('showcase-manager-modal');
+    if (typeof window.switchPortalScreen === 'function') {
+        window.switchPortalScreen('banners');
+        return;
+    }
+    const modal = document.getElementById('portal-view-banners') || document.getElementById('showcase-manager-modal');
     if (!modal) return;
     if (!showcaseState) showcaseState = getLocalShowcaseSettings();
     renderShowcaseUI();
@@ -1385,7 +1389,11 @@ export function openShowcaseManagerModal() {
 }
 
 export function closeShowcaseManagerModal() {
-    const modal = document.getElementById('showcase-manager-modal');
+    if (typeof window.switchPortalScreen === 'function') {
+        window.switchPortalScreen('carpets');
+        return;
+    }
+    const modal = document.getElementById('portal-view-banners') || document.getElementById('showcase-manager-modal');
     if (modal) modal.classList.add('hidden');
     cancelMarqueeEdit();
     cancelCinemaEdit();
@@ -2490,6 +2498,15 @@ window.addEventListener('DOMContentLoaded', () => {
     // مراقبة حالة جلسة Firebase Auth
     subscribeToAdminAuth((user) => {
         updatePortalAuthUI(user);
+        // التوجيه الفوري حسب Hash في الرابط إذا كانت الجلسة نشطة
+        setTimeout(() => {
+            const h = window.location.hash;
+            if (h === '#studio') {
+                switchPortalScreen('studio');
+            } else if (h === '#banners') {
+                switchPortalScreen('banners');
+            }
+        }, 100);
     });
 });
 
@@ -2553,8 +2570,106 @@ window.startLookbookEdit = startLookbookEdit;
 window.cancelLookbookEdit = cancelLookbookEdit;
 window.deleteLookbookItem = deleteLookbookItem;
 
+// ==============================================
+// التبديل بين شاشات البوابة المستقلة (Dedicated Screen Router)
+// ==============================================
+export function switchPortalScreen(screenName, carpetId = '', customCarpets = null) {
+    const carpetsView = document.getElementById('portal-view-carpets');
+    const studioView = document.getElementById('portal-view-studio');
+    const bannersView = document.getElementById('portal-view-banners');
+
+    // إيقاف تشغيل الفيديو عند مغادرة الاستوديو أو البنرات
+    if (screenName !== 'studio') {
+        const videoEl = document.getElementById('studio-live-video');
+        if (videoEl) {
+            try { videoEl.pause(); } catch(e) {}
+        }
+    }
+    if (screenName !== 'banners') {
+        if (typeof cancelMarqueeEdit === 'function') cancelMarqueeEdit();
+        if (typeof cancelCinemaEdit === 'function') cancelCinemaEdit();
+        if (typeof cancelJourneyEdit === 'function') cancelJourneyEdit();
+        if (typeof cancelLookbookEdit === 'function') cancelLookbookEdit();
+    }
+
+    if (!carpetsView || !studioView || !bannersView) {
+        // Fallback for legacy modal IDs if elements don't exist yet
+        if (screenName === 'studio') {
+            if (typeof window.initStudioScreen === 'function') {
+                window.initStudioScreen(carpetId, customCarpets || allPortalCarpets);
+            }
+            const modal = document.getElementById('tatriza-studio-modal');
+            if (modal) modal.classList.remove('hidden');
+        } else if (screenName === 'banners') {
+            const modal = document.getElementById('showcase-manager-modal');
+            if (modal) modal.classList.remove('hidden');
+        }
+        return;
+    }
+
+    if (screenName === 'studio') {
+        carpetsView.classList.add('hidden');
+        bannersView.classList.add('hidden');
+        studioView.classList.remove('hidden');
+        if (window.location.hash !== '#studio') {
+            window.location.hash = '#studio';
+        }
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+
+        if (typeof window.initStudioScreen === 'function') {
+            window.initStudioScreen(carpetId, customCarpets || allPortalCarpets);
+        }
+    } else if (screenName === 'banners') {
+        carpetsView.classList.add('hidden');
+        studioView.classList.add('hidden');
+        bannersView.classList.remove('hidden');
+        if (window.location.hash !== '#banners') {
+            window.location.hash = '#banners';
+        }
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+
+        if (!showcaseState) showcaseState = getLocalShowcaseSettings();
+        renderShowcaseUI();
+        switchShowcaseTab(currentShowcaseTab || 'marquee');
+    } else {
+        // Default: 'carpets'
+        studioView.classList.add('hidden');
+        bannersView.classList.add('hidden');
+        carpetsView.classList.remove('hidden');
+        if (window.location.hash === '#studio' || window.location.hash === '#banners') {
+            history.pushState(null, '', window.location.pathname + window.location.search);
+        }
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+}
+window.switchPortalScreen = switchPortalScreen;
+
 // استوديو تصاميم السوشيال ميديا وحالات الواتساب الاحترافي
 window.allPortalCarpets = allPortalCarpets;
-window.openTatrizaStudioModal = (carpetId) => openTatrizaStudioModal(carpetId, allPortalCarpets);
-window.closeTatrizaStudioModal = closeTatrizaStudioModal;
+window.openTatrizaStudioModal = (carpetId) => switchPortalScreen('studio', carpetId, allPortalCarpets);
+window.closeTatrizaStudioModal = () => switchPortalScreen('carpets');
+
+// توجيه المتصفح والأزرار السريعة
+window.addEventListener('hashchange', () => {
+    const h = window.location.hash;
+    if (h === '#studio') {
+        switchPortalScreen('studio');
+    } else if (h === '#banners') {
+        switchPortalScreen('banners');
+    } else {
+        switchPortalScreen('carpets');
+    }
+});
+
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        const studioView = document.getElementById('portal-view-studio');
+        const bannersView = document.getElementById('portal-view-banners');
+        if (studioView && !studioView.classList.contains('hidden')) {
+            switchPortalScreen('carpets');
+        } else if (bannersView && !bannersView.classList.contains('hidden')) {
+            switchPortalScreen('carpets');
+        }
+    }
+});
 

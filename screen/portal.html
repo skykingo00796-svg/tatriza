@@ -239,9 +239,13 @@
     <!-- ========================================== -->
     <div id="portal-dashboard" class="hidden min-h-screen flex flex-col">
         
-        <!-- الشريط العلوي الفاخر للوحة الإدارة -->
-                <!-- الشريط العلوي الفاخر للوحة الإدارة (مطابق للشاشة الرئيسية) -->
-        <header class="sticky top-2 sm:top-3.5 z-40 w-full px-3 sm:px-6 md:px-12 pointer-events-none transition-all duration-300">
+        <!-- ============================================== -->
+        <!-- 1. شاشة إدارة المعرض والقطع (Catalog & Stats Screen) -->
+        <!-- ============================================== -->
+        <div id="portal-view-carpets" class="flex-1 flex flex-col w-full">
+            
+            <!-- الشريط العلوي الفاخر للوحة الإدارة (مطابق للشاشة الرئيسية) -->
+            <header class="sticky top-2 sm:top-3.5 z-40 w-full px-3 sm:px-6 md:px-12 pointer-events-none transition-all duration-300">
             <div class="floating-luxury-dock pointer-events-auto rounded-2xl sm:rounded-3xl w-full px-4 sm:px-6 md:px-8 h-16 sm:h-20 flex justify-between items-center transition-all duration-300">
                 
                 <!-- اللوجو واسم الدار مع رتبة الإدارة -->
@@ -343,14 +347,14 @@
                         <span class="text-xs sm:text-sm">📁</span>
                         <span class="whitespace-nowrap"><span class="hidden sm:inline">إدارة </span>التصنيفات</span>
                     </button>
-                    <button type="button" onclick="openShowcaseManagerModal()" class="bg-gradient-to-r from-amber-50 to-amber-100/80 hover:from-amber-100 hover:to-amber-200/90 text-amber-950 border border-amber-300 font-bold text-[11px] sm:text-sm h-9 sm:h-11 px-2.5 sm:px-4 rounded-xl shadow-2xs transition flex items-center justify-center gap-1 sm:gap-1.5 cursor-pointer whitespace-nowrap shrink-0" title="إدارة وتعديل محتوى البنرات الترويجية">
+                    <button type="button" onclick="switchPortalScreen('banners')" class="bg-gradient-to-r from-amber-50 to-amber-100/80 hover:from-amber-100 hover:to-amber-200/90 text-amber-950 border border-amber-300 font-bold text-[11px] sm:text-sm h-9 sm:h-11 px-2.5 sm:px-4 rounded-xl shadow-2xs transition flex items-center justify-center gap-1 sm:gap-1.5 cursor-pointer whitespace-nowrap shrink-0" title="إدارة وتعديل محتوى البنرات الترويجية">
                         <span class="text-xs sm:text-sm">✨</span>
                         <span class="whitespace-nowrap">إدارة البنرات<span class="hidden sm:inline"> والترويج</span></span>
                     </button>
-                    <button type="button" onclick="openTatrizaStudioModal()" class="bg-gradient-to-r from-rose-900 via-amber-800 to-amber-900 hover:from-rose-950 hover:to-amber-950 text-white font-bold text-[11px] sm:text-sm h-9 sm:h-11 px-2.5 sm:px-4 rounded-xl shadow-xs transition flex items-center justify-center gap-1 sm:gap-1.5 cursor-pointer whitespace-nowrap shrink-0 border border-amber-300/40" title="استوديو تصاميم السوشيال ميديا وحالات الواتساب">
+                    <button type="button" onclick="switchPortalScreen('studio')" class="bg-gradient-to-r from-rose-900 via-amber-800 to-amber-900 hover:from-rose-950 hover:to-amber-950 text-white font-bold text-[11px] sm:text-sm h-9 sm:h-11 px-2.5 sm:px-4 rounded-xl shadow-xs transition flex items-center justify-center gap-1 sm:gap-1.5 cursor-pointer whitespace-nowrap shrink-0 border border-amber-300/40" title="استوديو تصاميم السوشيال ميديا وحالات الواتساب">
                         <span class="text-xs sm:text-sm">🎨</span>
                         <span class="whitespace-nowrap">استوديو التصاميم</span>
-                        <span class="text-[9px] px-1.5 py-0.2 bg-amber-400 text-amber-950 rounded-full font-black hidden md:inline">جديد</span>
+                        <span class="text-[9px] px-1.5 py-0.2 bg-amber-400 text-amber-950 rounded-full font-black hidden md:inline">شاشة كاملة</span>
                     </button>
                 </div>
 
@@ -472,93 +476,115 @@
     <!-- ========================================== -->
 
     <!-- ========================================== -->
-    <!-- استوديو تصاميم السوشيال ميديا وحالات الواتساب (Tatriza Creative Studio) -->
+    <!-- 2. شاشة استوديو التصاميم المستقلة (Dedicated Tatriza Creative Studio Screen) -->
     <!-- ========================================== -->
-    <div id="tatriza-studio-modal" class="hidden fixed inset-0 z-50 modal-glass-backdrop flex items-center justify-center p-2 sm:p-4 md:p-6" dir="rtl">
-        <div class="lux-modal-box w-full max-w-6xl rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-2xl relative max-h-[96vh] flex flex-col bg-[#fffbf7] border border-stone-300/90 overflow-hidden">
-            
-            <!-- رأس نافذة الاستوديو الفاخر -->
-            <div class="flex items-center justify-between pb-3 sm:pb-4 border-b border-stone-200/90 gap-2 shrink-0">
-                <div class="flex items-center gap-2.5 sm:gap-3 min-w-0">
-                    <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-br from-amber-500/20 via-rose-500/20 to-amber-500/30 border border-amber-300 text-amber-900 flex items-center justify-center text-xl sm:text-2xl shadow-xs shrink-0">
-                        🎨
-                    </div>
-                    <div class="truncate">
-                        <div class="flex items-center gap-2">
-                            <h2 class="font-display font-black text-stone-900 text-base sm:text-lg md:text-xl truncate">استوديو تصاميم السوشيال ميديا</h2>
-                            <span class="text-[9.5px] sm:text-[10px] font-bold px-2 py-0.5 rounded-full bg-gradient-to-r from-amber-500 to-rose-700 text-white shadow-2xs">احترافي HD</span>
+    <div id="portal-view-studio" class="hidden flex-1 flex flex-col w-full min-h-screen bg-[#f8f6f0]" dir="rtl">
+        
+        <!-- الشريط العلوي الفاخر لشاشة الاستوديو -->
+        <header class="sticky top-2 sm:top-3.5 z-40 w-full px-3 sm:px-6 md:px-12 pointer-events-none transition-all duration-300">
+            <div class="floating-luxury-dock pointer-events-auto rounded-2xl sm:rounded-3xl w-full px-4 sm:px-6 md:px-8 h-16 sm:h-20 flex justify-between items-center transition-all duration-300">
+                <!-- اليمين: زر العودة للوحة الإدارة + عنوان الاستوديو -->
+                <div class="flex items-center gap-3">
+                    <button type="button" onclick="switchPortalScreen('carpets')" class="group flex items-center gap-1.5 bg-[#fffbf7] hover:bg-amber-50 text-stone-800 hover:text-amber-950 px-3 sm:px-4 py-2 rounded-xl sm:rounded-2xl border border-stone-300/80 hover:border-amber-400 transition-all duration-300 shadow-xs cursor-pointer" title="العودة للوحة المعرض">
+                        <span class="text-sm sm:text-base transition-transform group-hover:translate-x-1">➔</span>
+                        <span class="text-xs sm:text-sm font-bold">العودة للوحة التحكم</span>
+                    </button>
+                    <div class="h-6 w-px bg-stone-300 hidden sm:block"></div>
+                    <div class="flex items-center gap-2.5">
+                        <div class="w-9 h-9 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl bg-gradient-to-br from-amber-500/20 via-rose-500/20 to-amber-500/30 border border-amber-300 text-amber-900 flex items-center justify-center text-lg sm:text-xl shadow-xs shrink-0">
+                            🎨
                         </div>
-                        <p class="text-[10px] sm:text-xs text-stone-500 font-medium truncate">توليد وتصدير بوستات وستوريات إنستقرام وحالات واتساب بدقة فائقة بضغطة زر</p>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <h1 class="font-bold text-sm sm:text-base md:text-lg text-stone-900 tracking-wider">استوديو تصاميم دار تطريز</h1>
+                                <span class="text-[9px] sm:text-[10px] font-bold px-2 py-0.5 rounded-md bg-gradient-to-r from-amber-500 to-rose-700 text-white shadow-2xs">احترافي HD</span>
+                            </div>
+                            <p class="text-[10px] sm:text-xs font-semibold hidden md:block" style="color: var(--brand-color);">بيئة توليد وتصدير بوستات وستوريات إنستقرام وحالات واتساب الفاخرة</p>
+                        </div>
                     </div>
                 </div>
 
-                <!-- أزرار الإجراءات السريعة في الرأس -->
-                <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
-                    <button type="button" onclick="saveStudioDraft()" class="hidden sm:inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-950 border border-amber-300/80 text-xs font-bold transition shadow-2xs cursor-pointer" title="حفظ التصميم كمسودة للرجوع إليها لاحقاً">
+                <!-- اليسار: أزرار التصدير وحفظ المسودة -->
+                <div class="flex items-center gap-2">
+                    <button type="button" onclick="saveStudioDraft()" class="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl bg-white hover:bg-amber-50 text-amber-950 border border-amber-300/80 text-xs font-bold transition shadow-2xs cursor-pointer" title="حفظ التصميم كمسودة">
                         <span>💾</span>
                         <span>حفظ كمسودة</span>
                     </button>
-                    <button type="button" onclick="closeTatrizaStudioModal()" class="bg-stone-100 hover:bg-stone-200 text-stone-600 hover:text-stone-900 w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center transition text-sm font-bold cursor-pointer" title="إغلاق الاستوديو">
-                        ✕
+                    <button type="button" onclick="exportStudioHDImage()" class="btn-liquid-metal text-white font-extrabold text-xs sm:text-sm h-9 sm:h-11 px-3 sm:px-5 rounded-xl sm:rounded-2xl shadow-md transition flex items-center gap-2 cursor-pointer border border-amber-300/40">
+                        <span class="text-sm sm:text-base">📥</span>
+                        <span>تحميل عالي الدقة HD</span>
                     </button>
                 </div>
             </div>
+        </header>
 
-            <!-- جسم الاستوديو (شبكة من عمودين: المعاينة المباشرة يميناً، وأدوات التحكم يساراً) -->
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 pt-3 sm:pt-4 overflow-y-auto flex-1 no-scrollbar">
+        <!-- المحتوى الرئيسي للاستوديو (تقسيم متجاوب ذكي: مسرح المعاينة ثابت يميناً، وأدوات التحكم يساراً) -->
+        <main class="flex-1 w-full max-w-7xl mx-auto px-3 sm:px-6 md:px-8 py-4 sm:py-6">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
                 
-                <!-- العمود الأيمن: مسرح المعاينة الحية والتصدير الفوري (lg:col-span-5) -->
-                <div class="lg:col-span-5 flex flex-col items-center justify-between gap-3 sm:gap-4 bg-stone-100/60 p-3 sm:p-5 rounded-2xl sm:rounded-3xl border border-stone-200/80">
+                <!-- ============================================== -->
+                <!-- العمود الأيمن: المسرح الحي الثابت في مكانه أثناء التمرير (lg:col-span-5 lg:sticky lg:top-24) -->
+                <!-- ============================================== -->
+                <div class="lg:col-span-5 lg:sticky lg:top-24 space-y-4 max-h-[calc(100vh-7rem)] overflow-y-auto no-scrollbar">
                     
-                    <!-- محول الأبعاد السريع فوق المعاينة مباشرة -->
-                    <div class="w-full flex items-center justify-center gap-1 sm:gap-2 p-1 bg-white rounded-xl border border-stone-200 shadow-2xs">
-                        <button type="button" data-ratio="1:1" class="studio-ratio-btn flex-1 py-1.5 px-2 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1 cursor-pointer">
-                            <span>📸</span>
-                            <span>مربع 1:1</span>
-                        </button>
-                        <button type="button" data-ratio="9:16" class="studio-ratio-btn flex-1 py-1.5 px-2 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1 cursor-pointer">
-                            <span>📱</span>
-                            <span>ستوري 9:16</span>
-                        </button>
-                        <button type="button" data-ratio="4:5" class="studio-ratio-btn flex-1 py-1.5 px-2 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1 cursor-pointer">
-                            <span>🖼️</span>
-                            <span>طولي 4:5</span>
-                        </button>
-                    </div>
-
-                    <!-- حاوية مسرح المعاينة الحية (Dynamic Live Stage) -->
-                    <div class="w-full flex items-center justify-center py-1 sm:py-2">
-                        <div id="studio-live-stage" class="relative w-full max-w-[360px] mx-auto rounded-3xl overflow-hidden shadow-2xl transition-all duration-300 flex flex-col justify-between p-4 select-none aspect-square">
-                            <!-- يتم بناؤها وتحديثها حياً بواسطة updateStudioPreview() في studio.js -->
+                    <div class="bg-white/95 rounded-3xl p-4 sm:p-5 border border-stone-200/90 shadow-lg space-y-3.5">
+                        <!-- محول الأبعاد السريع فوق المعاينة مباشرة -->
+                        <div class="w-full flex items-center justify-center gap-1 sm:gap-2 p-1 bg-stone-100 rounded-xl border border-stone-200 shadow-2xs">
+                            <button type="button" data-ratio="1:1" class="studio-ratio-btn flex-1 py-1.5 px-2 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1 cursor-pointer">
+                                <span>📸</span>
+                                <span>مربع 1:1</span>
+                            </button>
+                            <button type="button" data-ratio="9:16" class="studio-ratio-btn flex-1 py-1.5 px-2 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1 cursor-pointer">
+                                <span>📱</span>
+                                <span>ستوري 9:16</span>
+                            </button>
+                            <button type="button" data-ratio="4:5" class="studio-ratio-btn flex-1 py-1.5 px-2 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1 cursor-pointer">
+                                <span>🖼️</span>
+                                <span>طولي 4:5</span>
+                            </button>
                         </div>
-                    </div>
 
-                    <!-- أزرار الإجراءات والتصدير المباشر -->
-                    <div class="w-full space-y-2 pt-2 border-t border-stone-200">
-                        <!-- زر التصدير والتحميل بدقة فائقة -->
-                        <button type="button" id="studio-btn-export" onclick="exportStudioHDImage()" class="w-full btn-liquid-metal text-white font-extrabold text-xs sm:text-sm h-11 sm:h-12 rounded-xl sm:rounded-2xl shadow-md transition flex items-center justify-center gap-2 cursor-pointer border border-amber-300/40">
-                            <span class="text-base sm:text-lg">📥</span>
-                            <span>تحميل التصميم بدقة فائقة (HD PNG)</span>
-                        </button>
+                        <!-- حاوية مسرح المعاينة الحية (Dynamic Live Stage) -->
+                        <div class="w-full flex items-center justify-center py-1">
+                            <div id="studio-live-stage" class="relative w-full max-w-[360px] mx-auto rounded-3xl overflow-hidden shadow-2xl transition-all duration-300 flex flex-col justify-between p-4 select-none aspect-square">
+                                <!-- يتم بناؤها وتحديثها حياً بواسطة updateStudioPreview() في studio.js -->
+                            </div>
+                        </div>
 
-                        <div class="grid grid-cols-2 gap-2">
-                            <!-- نسخ نص البوست الجاهز والهاشتاقات -->
-                            <button type="button" onclick="copyStudioCaption()" class="bg-white hover:bg-stone-50 text-stone-800 border border-stone-300 font-bold text-[11px] sm:text-xs h-9.5 rounded-xl transition shadow-2xs flex items-center justify-center gap-1.5 cursor-pointer" title="نسخ الكابشن والهاشتاقات">
-                                <span>📋</span>
-                                <span>نسخ نص الإعلان</span>
+                        <!-- أزرار الإجراءات والتصدير المباشر -->
+                        <div class="w-full space-y-2 pt-2 border-t border-stone-100">
+                            <!-- زر التصدير والتحميل بدقة فائقة -->
+                            <button type="button" id="studio-btn-export" onclick="exportStudioHDImage()" class="w-full btn-liquid-metal text-white font-extrabold text-xs sm:text-sm h-11 sm:h-12 rounded-xl sm:rounded-2xl shadow-md transition flex items-center justify-center gap-2 cursor-pointer border border-amber-300/40">
+                                <span class="text-base sm:text-lg">📥</span>
+                                <span>تحميل التصميم بدقة فائقة (HD PNG)</span>
                             </button>
 
-                            <!-- مشاركة واتساب سريعة -->
-                            <button type="button" onclick="shareStudioToWhatsApp()" class="btn-liquid-emerald font-bold text-[11px] sm:text-xs h-9.5 rounded-xl transition shadow-2xs flex items-center justify-center gap-1.5 cursor-pointer" title="مشاركة عبر الواتساب">
-                                <span>💬</span>
-                                <span>مشاركة واتساب</span>
-                            </button>
+                            <div class="grid grid-cols-2 gap-2">
+                                <!-- نسخ نص البوست الجاهز والهاشتاقات -->
+                                <button type="button" onclick="copyStudioCaption()" class="bg-stone-50 hover:bg-stone-100 text-stone-800 border border-stone-200 font-bold text-[11px] sm:text-xs h-9.5 rounded-xl transition shadow-2xs flex items-center justify-center gap-1.5 cursor-pointer" title="نسخ الكابشن والهاشتاقات">
+                                    <span>📋</span>
+                                    <span>نسخ نص الإعلان</span>
+                                </button>
+
+                                <!-- مشاركة واتساب سريعة -->
+                                <button type="button" onclick="shareStudioToWhatsApp()" class="btn-liquid-emerald font-bold text-[11px] sm:text-xs h-9.5 rounded-xl transition shadow-2xs flex items-center justify-center gap-1.5 cursor-pointer" title="مشاركة عبر الواتساب">
+                                    <span>💬</span>
+                                    <span>مشاركة واتساب</span>
+                                </button>
+                            </div>
+
+                            <div class="flex items-center justify-between text-[10px] text-stone-400 font-medium px-1 pt-1">
+                                <span>المعاينة حية بدقة متجاوبة</span>
+                                <span>التصدير HD: 1080×1080 / 1080×1920</span>
+                            </div>
                         </div>
                     </div>
                 </div>
 
+                <!-- ============================================== -->
                 <!-- العمود الأيسر: خيارات التخصيص والمحتوى والتحكم الدقيق (lg:col-span-7) -->
-                <div class="lg:col-span-7 space-y-3.5">
+                <!-- ============================================== -->
+                <div class="lg:col-span-7 space-y-4">
                     
                     <!-- 0. اختيار نمط الإخراج والتصميم (Layout Style Selector) -->
                     <div class="bg-gradient-to-r from-amber-500/10 via-amber-400/5 to-rose-500/10 p-3 sm:p-4 rounded-2xl border border-amber-300/80 shadow-2xs space-y-2.5">
@@ -1682,9 +1708,9 @@
 
                 </div>
             </div>
-
-        </div>
+        </main>
     </div>
+    <!-- نهاية شاشة استوديو التصاميم المستقلة -->
 
     <!-- نافذة إدارة وتخصيص التصنيفات الملكية (إضافة وحذف التصنيفات للأدمن) -->
     <div id="add-category-modal" class="hidden fixed inset-0 z-50 modal-glass-backdrop flex items-center justify-center p-3 sm:p-4">
@@ -1810,34 +1836,46 @@
     </div>
 
     <!-- ========================================== -->
-    <!-- نافذة إدارة وتخصيص بنرات وأقسام المعرض الترويجية (Showcase CMS Modal) -->
+    <!-- 3. شاشة إدارة وتخصيص بنرات وأقسام المعرض الترويجية (Showcase CMS Dedicated Screen) -->
     <!-- ========================================== -->
-    <div id="showcase-manager-modal" class="hidden fixed inset-0 z-50 modal-glass-backdrop flex items-center justify-center p-2 sm:p-4">
-        <div class="lux-modal-box w-full max-w-4xl rounded-2xl sm:rounded-3xl p-3 sm:p-6 md:p-7 shadow-2xl relative max-h-[94vh] sm:max-h-[92vh] flex flex-col bg-white">
-            
-            <!-- زر الإغلاق السريع (متناسق مع ترويسة الجوال وبدون تداخل) -->
-            <button type="button" onclick="closeShowcaseManagerModal()" class="absolute top-3 left-3 sm:top-4 sm:left-4 bg-stone-100 hover:bg-stone-200 text-stone-600 hover:text-stone-900 w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center transition text-xs sm:text-sm font-bold cursor-pointer z-10" title="إغلاق">
-                ✕
-            </button>
-            
-            <!-- ترويسة النافذة الفاخرة (خطوط أصغر ومتناسقة تماماً لشاشة الجوال) -->
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-3 pb-2.5 sm:pb-3.5 border-b border-stone-200/80 shrink-0 pl-8 sm:pl-0">
-                <div class="flex items-center gap-2 sm:gap-2.5">
-                    <div class="w-8 h-8 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl bg-amber-100 text-amber-900 flex items-center justify-center text-lg sm:text-2xl shadow-xs shrink-0">
-                        ✨
-                    </div>
-                    <div>
-                        <div class="flex items-center gap-1.5 sm:gap-2 flex-wrap">
-                            <h3 class="font-bold text-stone-900 text-xs sm:text-base md:text-lg">إدارة بنرات وأقسام المعرض</h3>
-                            <span id="showcase-sync-status" class="px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200/80 inline-flex items-center gap-1 shadow-2xs">
-                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                                <span>مزامنة سحابية</span>
-                            </span>
+    <div id="portal-view-banners" class="hidden flex-1 flex flex-col w-full min-h-screen bg-[#f8f6f0]" dir="rtl">
+        
+        <!-- الشريط العلوي الفاخر لشاشة البنرات -->
+        <header class="sticky top-2 sm:top-3.5 z-40 w-full px-3 sm:px-6 md:px-12 pointer-events-none transition-all duration-300">
+            <div class="floating-luxury-dock pointer-events-auto rounded-2xl sm:rounded-3xl w-full px-4 sm:px-6 md:px-8 h-16 sm:h-20 flex justify-between items-center transition-all duration-300">
+                <!-- اليمين: زر العودة + هوية إدارة البنرات -->
+                <div class="flex items-center gap-3">
+                    <button type="button" onclick="switchPortalScreen('carpets')" class="group flex items-center gap-1.5 bg-[#fffbf7] hover:bg-amber-50 text-stone-800 hover:text-amber-950 px-3 sm:px-4 py-2 rounded-xl sm:rounded-2xl border border-stone-300/80 hover:border-amber-400 transition-all duration-300 shadow-xs cursor-pointer" title="العودة للوحة المعرض">
+                        <span class="text-sm sm:text-base transition-transform group-hover:translate-x-1">➔</span>
+                        <span class="text-xs sm:text-sm font-bold">العودة للوحة التحكم</span>
+                    </button>
+                    <div class="h-6 w-px bg-stone-300 hidden sm:block"></div>
+                    <div class="flex items-center gap-2.5">
+                        <div class="w-9 h-9 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl bg-amber-100 text-amber-900 flex items-center justify-center text-lg sm:text-xl shadow-xs shrink-0">
+                            ✨
                         </div>
-                        <p class="text-[10px] sm:text-xs text-stone-500 font-medium leading-snug mt-0.5">تخصيص محتوى البنرات الترويجية وسينما الحرفة ووسائطها</p>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <h1 class="font-bold text-sm sm:text-base md:text-lg text-stone-900 tracking-wider">إدارة بنرات وأقسام المعرض</h1>
+                                <span id="showcase-sync-status" class="px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200/80 inline-flex items-center gap-1 shadow-2xs">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                                    <span>مزامنة سحابية</span>
+                                </span>
+                            </div>
+                            <p class="text-[10px] sm:text-xs font-semibold hidden md:block" style="color: var(--brand-color);">تخصيص محتوى البنرات الترويجية وسينما المشغل وخطوات الحرفة والتوثيقات</p>
+                        </div>
                     </div>
                 </div>
+
+                <!-- اليسار: مؤشر المزامنة التلقائية -->
+                <div class="flex items-center gap-2 text-stone-500 text-xs font-medium">
+                    <span class="hidden sm:inline">حفظ فوري مباشر على السحابة</span>
+                </div>
             </div>
+        </header>
+
+        <main class="flex-1 w-full max-w-7xl mx-auto px-3 sm:px-6 md:px-8 py-4 sm:py-6 space-y-4">
+            <div class="bg-white/95 rounded-3xl p-4 sm:p-6 border border-stone-200/90 shadow-lg space-y-4">
 
             <!-- أشرطة التبويبات الأربعة الفاخرة (متجاوبة بانسيابية مع شريط تمرير ناعم وألقاب مدمجة على الجوال) -->
             <div class="flex items-center gap-1 sm:gap-2 border-b border-stone-200 overflow-x-auto py-1.5 sm:py-2 no-scrollbar shrink-0" role="tablist">
@@ -2250,19 +2288,23 @@
 
             </div>
 
-            <!-- ذيل النافذة الإدارية (موجز وأنيق على الجوال) -->
-            <div class="pt-2.5 sm:pt-3 border-t border-stone-200/80 flex items-center justify-between text-xs text-stone-500 shrink-0">
-                <span class="flex items-center gap-1 sm:gap-1.5 font-medium text-[10px] sm:text-xs text-stone-500">
-                    <span>✨</span>
-                    <span class="hidden sm:inline">كافة التغييرات تنعكس وتُحفظ سحابياً على Firebase فوراً وتصل لكل الزوار لحظياً.</span>
-                    <span class="sm:hidden text-stone-400">مزامنة سحابية فورية ومباشرة</span>
-                </span>
-                <button type="button" onclick="closeShowcaseManagerModal()" class="px-3.5 sm:px-4 py-1.5 rounded-xl bg-stone-200 hover:bg-stone-300 text-stone-800 text-xs font-bold transition cursor-pointer">
-                    إغلاق
-                </button>
+                <!-- ذيل الشاشة الإدارية الفاخرة -->
+                <div class="pt-3 border-t border-stone-200/80 flex items-center justify-between text-xs text-stone-500">
+                    <span class="flex items-center gap-1.5 font-medium text-xs text-stone-500">
+                        <span>✨</span>
+                        <span>كافة التغييرات تنعكس وتُحفظ سحابياً على Firebase فوراً وتصل لكل الزوار لحظياً.</span>
+                    </span>
+                    <button type="button" onclick="switchPortalScreen('carpets')" class="px-4 py-2 rounded-xl bg-stone-100 hover:bg-stone-200 text-stone-800 text-xs font-bold transition cursor-pointer">
+                        العودة للوحة التحكم
+                    </button>
+                </div>
             </div>
-        </div>
+        </main>
     </div>
+    <!-- نهاية شاشة إدارة وتخصيص بنرات وأقسام المعرض -->
+
+    </div>
+    <!-- نهاية لوحة التحكم الكاملة للمسؤول (portal-dashboard) -->
 
     <!-- نافذة إضافة منتج جديد -->
     <div id="add-product-modal" class="fixed inset-0 z-50 modal-glass-backdrop hidden flex items-center justify-center p-4">
@@ -2894,7 +2936,7 @@
                 </button>
 
                 <!-- 2.5 إدارة بنرات وأقسام المعرض الترويجية -->
-                <button type="button" onclick="closeOptionsDrawer(); openShowcaseManagerModal();" class="drawer-lux-card group w-full text-right cursor-pointer">
+                <button type="button" onclick="closeOptionsDrawer(); switchPortalScreen('banners');" class="drawer-lux-card group w-full text-right cursor-pointer">
                     <div class="flex items-center gap-2.5 sm:gap-3 min-w-0 flex-1">
                         <div class="drawer-icon-orb bg-amber-50 text-amber-800 border-amber-300/60 shrink-0">✨</div>
                         <div class="flex flex-col text-right min-w-0 flex-1 overflow-hidden">
@@ -2906,13 +2948,13 @@
                 </button>
 
                 <!-- 2.7 استوديو تصاميم السوشيال ميديا وحالات الواتساب -->
-                <button type="button" onclick="closeOptionsDrawer(); openTatrizaStudioModal();" class="drawer-lux-card group w-full text-right cursor-pointer">
+                <button type="button" onclick="closeOptionsDrawer(); switchPortalScreen('studio');" class="drawer-lux-card group w-full text-right cursor-pointer">
                     <div class="flex items-center gap-2.5 sm:gap-3 min-w-0 flex-1">
                         <div class="drawer-icon-orb bg-rose-50 text-rose-800 border-rose-300/60 shrink-0">🎨</div>
                         <div class="flex flex-col text-right min-w-0 flex-1 overflow-hidden">
                             <div class="flex items-center gap-1.5">
                                 <span class="font-display text-[11.5px] sm:text-xs md:text-sm font-black text-stone-900 group-hover:text-brand transition whitespace-nowrap truncate block">استوديو تصاميم السوشيال ميديا</span>
-                                <span class="text-[8.5px] px-1.5 py-0.2 bg-amber-100 text-amber-900 rounded font-black border border-amber-300">جديد</span>
+                                <span class="text-[8.5px] px-1.5 py-0.2 bg-amber-400 text-amber-950 rounded font-black border border-amber-300">شاشة كاملة</span>
                             </div>
                             <span class="text-[9px] sm:text-[9.5px] md:text-[10px] text-stone-500 font-medium whitespace-nowrap truncate block mt-1">توليد وتصدير بوستات وستوريات HD وحالات واتساب</span>
                         </div>
