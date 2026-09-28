@@ -788,11 +788,55 @@
                         <!-- شبكة ألوان وهوية الشعار بدون خلفية -->
                         <div class="space-y-1.5">
                             <div class="flex items-center justify-between text-xs">
-                                <span class="font-bold text-stone-600">اختر مظهر ولون الشعار:</span>
-                                <span id="studio-logo-variant-title" class="font-bold text-amber-900 text-[11px] bg-amber-50 px-2 py-0.5 rounded border border-amber-200">أبيض ناصع نقي</span>
+                                <span class="font-bold text-stone-600">اختر مظهر ولون الشعار (أنماط الدار المعتمدة والمخصصة):</span>
+                                <span id="studio-logo-variant-title" class="studio-logo-variant-title font-bold text-amber-900 text-[11px] bg-amber-50 px-2 py-0.5 rounded border border-amber-200">أبيض ناصع نقي</span>
                             </div>
                             <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                                <!-- 1. أبيض ناصع -->
+                                <!-- 1. عنابي تطريز شفاف (هوية الدار الرسمية) -->
+                                <button type="button" data-logo-variant="transparent-burgundy" class="studio-logo-btn min-h-[56px] p-2.5 rounded-xl border border-stone-200 bg-stone-50 hover:bg-stone-100 text-stone-900 flex items-center gap-2 cursor-pointer transition text-right">
+                                    <div class="w-8 h-8 rounded-lg bg-[#7c1d3c] flex items-center justify-center p-1 shrink-0 shadow-2xs">
+                                        <img src="../images/logo_transparent.png" class="w-full h-full object-contain filter brightness-0 invert" alt="Burgundy Logo">
+                                    </div>
+                                    <div class="overflow-hidden">
+                                        <span class="block text-xs font-bold leading-tight truncate">عنابي الدار</span>
+                                        <span class="block text-[9.5px] text-[#7c1d3c] font-bold mt-0.5">الهوية الرسمية 🍷</span>
+                                    </div>
+                                </button>
+
+                                <!-- 2. ذهبي وهيبة شفاف (رمال الصحراء) -->
+                                <button type="button" data-logo-variant="transparent-gold" class="studio-logo-btn min-h-[56px] p-2.5 rounded-xl border border-stone-200 bg-stone-50 hover:bg-stone-100 text-stone-900 flex items-center gap-2 cursor-pointer transition text-right">
+                                    <div class="w-8 h-8 rounded-lg bg-[#c59b27] flex items-center justify-center p-1 shrink-0 shadow-2xs">
+                                        <img src="../images/logoY_transparent.png" class="w-full h-full object-contain filter brightness-0 invert" alt="Amber Gold Logo">
+                                    </div>
+                                    <div class="overflow-hidden">
+                                        <span class="block text-xs font-bold leading-tight truncate">ذهبي وهيبة</span>
+                                        <span class="block text-[9.5px] text-amber-700 font-bold mt-0.5">رمال الصحراء 🏜️</span>
+                                    </div>
+                                </button>
+
+                                <!-- 3. زمردي ظفار شفاف (واحة الجنوب) -->
+                                <button type="button" data-logo-variant="transparent-emerald" class="studio-logo-btn min-h-[56px] p-2.5 rounded-xl border border-stone-200 bg-stone-50 hover:bg-stone-100 text-stone-900 flex items-center gap-2 cursor-pointer transition text-right">
+                                    <div class="w-8 h-8 rounded-lg bg-[#435838] flex items-center justify-center p-1 shrink-0 shadow-2xs">
+                                        <img src="../images/logoG_transparent.png" class="w-full h-full object-contain filter brightness-0 invert" alt="Emerald Logo">
+                                    </div>
+                                    <div class="overflow-hidden">
+                                        <span class="block text-xs font-bold leading-tight truncate">زمردي ملكي</span>
+                                        <span class="block text-[9.5px] text-emerald-800 font-bold mt-0.5">واحة ظفار 🌿</span>
+                                    </div>
+                                </button>
+
+                                <!-- 4. كحلي مسقط شفاف (بحر مسقط) -->
+                                <button type="button" data-logo-variant="transparent-navy" class="studio-logo-btn min-h-[56px] p-2.5 rounded-xl border border-stone-200 bg-stone-50 hover:bg-stone-100 text-stone-900 flex items-center gap-2 cursor-pointer transition text-right">
+                                    <div class="w-8 h-8 rounded-lg bg-[#2d5f75] flex items-center justify-center p-1 shrink-0 shadow-2xs">
+                                        <img src="../images/logoB_transparent.png" class="w-full h-full object-contain filter brightness-0 invert" alt="Navy Logo">
+                                    </div>
+                                    <div class="overflow-hidden">
+                                        <span class="block text-xs font-bold leading-tight truncate">كحلي نيلي</span>
+                                        <span class="block text-[9.5px] text-sky-800 font-bold mt-0.5">بحر مسقط 🌊</span>
+                                    </div>
+                                </button>
+
+                                <!-- 5. أبيض ناصع -->
                                 <button type="button" data-logo-variant="white" class="studio-logo-btn min-h-[56px] p-2.5 rounded-xl border border-stone-200 bg-stone-900 hover:bg-black text-white flex items-center gap-2 cursor-pointer transition text-right ring-2 ring-amber-500 border-amber-500">
                                     <div class="w-8 h-8 rounded-lg bg-stone-800 flex items-center justify-center p-1 shrink-0">
                                         <img src="../images/logo_white.png" class="w-full h-full object-contain" alt="White Logo">
@@ -803,7 +847,7 @@
                                     </div>
                                 </button>
 
-                                <!-- 2. مذهب ملكي -->
+                                <!-- 6. مذهب ملكي ثلاثي الأبعاد -->
                                 <button type="button" data-logo-variant="gold" class="studio-logo-btn min-h-[56px] p-2.5 rounded-xl border border-stone-200 bg-stone-900 hover:bg-black text-white flex items-center gap-2 cursor-pointer transition text-right">
                                     <div class="w-8 h-8 rounded-lg bg-stone-800 flex items-center justify-center p-1 shrink-0">
                                         <img src="../images/logo_gold.png" class="w-full h-full object-contain" alt="Gold Logo">
@@ -814,50 +858,6 @@
                                     </div>
                                 </button>
 
-                                <!-- 3. عنابي تطريز شفاف -->
-                                <button type="button" data-logo-variant="transparent-burgundy" class="studio-logo-btn min-h-[56px] p-2.5 rounded-xl border border-stone-200 bg-stone-50 hover:bg-stone-100 text-stone-900 flex items-center gap-2 cursor-pointer transition text-right">
-                                    <div class="w-8 h-8 rounded-lg bg-white border border-stone-200 flex items-center justify-center p-1 shrink-0">
-                                        <img src="../images/logo_transparent.png" class="w-full h-full object-contain" alt="Burgundy Logo">
-                                    </div>
-                                    <div class="overflow-hidden">
-                                        <span class="block text-xs font-bold leading-tight truncate">عنابي الموقع</span>
-                                        <span class="block text-[9.5px] text-stone-500 mt-0.5">هوية الدار الرسمية</span>
-                                    </div>
-                                </button>
-
-                                <!-- 4. ذهبي وهيبة شفاف -->
-                                <button type="button" data-logo-variant="transparent-gold" class="studio-logo-btn min-h-[56px] p-2.5 rounded-xl border border-stone-200 bg-stone-50 hover:bg-stone-100 text-stone-900 flex items-center gap-2 cursor-pointer transition text-right">
-                                    <div class="w-8 h-8 rounded-lg bg-white border border-stone-200 flex items-center justify-center p-1 shrink-0">
-                                        <img src="../images/logoY_transparent.png" class="w-full h-full object-contain" alt="Amber Gold Logo">
-                                    </div>
-                                    <div class="overflow-hidden">
-                                        <span class="block text-xs font-bold leading-tight truncate">ذهبي وهيبة</span>
-                                        <span class="block text-[9.5px] text-stone-500 mt-0.5">رمال الصحراء</span>
-                                    </div>
-                                </button>
-
-                                <!-- 5. زمردي ظفار شفاف -->
-                                <button type="button" data-logo-variant="transparent-emerald" class="studio-logo-btn min-h-[56px] p-2.5 rounded-xl border border-stone-200 bg-stone-50 hover:bg-stone-100 text-stone-900 flex items-center gap-2 cursor-pointer transition text-right">
-                                    <div class="w-8 h-8 rounded-lg bg-white border border-stone-200 flex items-center justify-center p-1 shrink-0">
-                                        <img src="../images/logoG_transparent.png" class="w-full h-full object-contain" alt="Emerald Logo">
-                                    </div>
-                                    <div class="overflow-hidden">
-                                        <span class="block text-xs font-bold leading-tight truncate">زمردي ملكي</span>
-                                        <span class="block text-[9.5px] text-stone-500 mt-0.5">واحة ظفار</span>
-                                    </div>
-                                </button>
-
-                                <!-- 6. كحلي مسقط شفاف -->
-                                <button type="button" data-logo-variant="transparent-navy" class="studio-logo-btn min-h-[56px] p-2.5 rounded-xl border border-stone-200 bg-stone-50 hover:bg-stone-100 text-stone-900 flex items-center gap-2 cursor-pointer transition text-right">
-                                    <div class="w-8 h-8 rounded-lg bg-white border border-stone-200 flex items-center justify-center p-1 shrink-0">
-                                        <img src="../images/logoB_transparent.png" class="w-full h-full object-contain" alt="Navy Logo">
-                                    </div>
-                                    <div class="overflow-hidden">
-                                        <span class="block text-xs font-bold leading-tight truncate">كحلي نيلي</span>
-                                        <span class="block text-[9.5px] text-stone-500 mt-0.5">بحر مسقط</span>
-                                    </div>
-                                </button>
-
                                 <!-- 7. أسود فحمي شفاف -->
                                 <button type="button" data-logo-variant="black" class="studio-logo-btn min-h-[56px] p-2.5 rounded-xl border border-stone-200 bg-stone-50 hover:bg-stone-100 text-stone-900 flex items-center gap-2 cursor-pointer transition text-right">
                                     <div class="w-8 h-8 rounded-lg bg-white border border-stone-200 flex items-center justify-center p-1 shrink-0">
@@ -865,13 +865,13 @@
                                     </div>
                                     <div class="overflow-hidden">
                                         <span class="block text-xs font-bold leading-tight truncate">أسود كربوني</span>
-                                        <span class="block text-[9.5px] text-stone-500 mt-0.5">للخلفيات الفاتحة</span>
+                                        <span class="block text-[9.5px] text-stone-500 mt-0.5">للخلفيات الفاتحة ⚫</span>
                                     </div>
                                 </button>
 
                                 <!-- 8. لون مخصص حر -->
                                 <div data-logo-variant="custom" class="studio-logo-btn min-h-[56px] p-2.5 rounded-xl border border-stone-200 bg-gradient-to-br from-amber-50 to-orange-50 hover:from-amber-100 hover:to-orange-100 text-stone-900 flex items-center gap-2 cursor-pointer transition text-right relative overflow-hidden">
-                                    <input type="color" id="studio-input-logo-custom-color" value="#fef08a" class="w-8 h-8 rounded-lg border border-amber-300 p-0 cursor-pointer shrink-0">
+                                    <input type="color" id="studio-input-logo-custom-color" value="#fef08a" class="studio-input-logo-custom-color w-8 h-8 rounded-lg border border-amber-300 p-0 cursor-pointer shrink-0">
                                     <div class="overflow-hidden">
                                         <span class="block text-xs font-bold leading-tight truncate">لون مخصص</span>
                                         <span class="block text-[9.5px] text-amber-700 mt-0.5">اختر أي لون 🎨</span>
@@ -1150,6 +1150,49 @@
                                         <span id="studio-story-logo-y-val" class="font-mono text-stone-800 text-[10px]">25px</span>
                                     </div>
                                     <input type="range" id="studio-input-story-logo-y" min="10" max="140" value="25" class="w-full accent-amber-600 cursor-pointer">
+                                </div>
+                            </div>
+
+                            <!-- تبديل مظهر ولون الشعار في الستوري -->
+                            <div class="space-y-1.5 pt-2 border-t border-stone-100">
+                                <div class="flex items-center justify-between text-xs">
+                                    <span class="font-bold text-stone-700 flex items-center gap-1.5">
+                                        <span>🎨</span>
+                                        <span>لون الشعار في الستوري (أنماط الدار):</span>
+                                    </span>
+                                    <span class="studio-logo-variant-title font-bold text-amber-900 text-[11px] bg-amber-50 px-2 py-0.5 rounded border border-amber-200">أبيض ناصع نقي</span>
+                                </div>
+                                <div class="grid grid-cols-3 sm:grid-cols-6 gap-1.5">
+                                    <!-- عنابي -->
+                                    <button type="button" data-logo-variant="transparent-burgundy" class="studio-logo-btn min-h-[38px] px-2 py-1.5 rounded-xl border border-stone-200 bg-white hover:bg-stone-50 text-stone-800 text-xs font-bold flex items-center justify-center gap-1.5 cursor-pointer transition shadow-2xs" title="عنابي الدار الرسمي">
+                                        <span class="w-3.5 h-3.5 rounded-full bg-[#7c1d3c] shrink-0 border border-stone-300"></span>
+                                        <span>عنابي</span>
+                                    </button>
+                                    <!-- ذهبي -->
+                                    <button type="button" data-logo-variant="transparent-gold" class="studio-logo-btn min-h-[38px] px-2 py-1.5 rounded-xl border border-stone-200 bg-white hover:bg-stone-50 text-stone-800 text-xs font-bold flex items-center justify-center gap-1.5 cursor-pointer transition shadow-2xs" title="ذهبي رمال وهيبة">
+                                        <span class="w-3.5 h-3.5 rounded-full bg-[#c59b27] shrink-0 border border-stone-300"></span>
+                                        <span>ذهبي</span>
+                                    </button>
+                                    <!-- أخضر -->
+                                    <button type="button" data-logo-variant="transparent-emerald" class="studio-logo-btn min-h-[38px] px-2 py-1.5 rounded-xl border border-stone-200 bg-white hover:bg-stone-50 text-stone-800 text-xs font-bold flex items-center justify-center gap-1.5 cursor-pointer transition shadow-2xs" title="زمردي واحة ظفار">
+                                        <span class="w-3.5 h-3.5 rounded-full bg-[#435838] shrink-0 border border-stone-300"></span>
+                                        <span>أخضر</span>
+                                    </button>
+                                    <!-- أزرق -->
+                                    <button type="button" data-logo-variant="transparent-navy" class="studio-logo-btn min-h-[38px] px-2 py-1.5 rounded-xl border border-stone-200 bg-white hover:bg-stone-50 text-stone-800 text-xs font-bold flex items-center justify-center gap-1.5 cursor-pointer transition shadow-2xs" title="كحلي بحر مسقط">
+                                        <span class="w-3.5 h-3.5 rounded-full bg-[#2d5f75] shrink-0 border border-stone-300"></span>
+                                        <span>أزرق</span>
+                                    </button>
+                                    <!-- أبيض -->
+                                    <button type="button" data-logo-variant="white" class="studio-logo-btn min-h-[38px] px-2 py-1.5 rounded-xl border border-stone-200 bg-stone-900 hover:bg-black text-white text-xs font-bold flex items-center justify-center gap-1.5 cursor-pointer transition shadow-2xs" title="أبيض ناصع للستوري والشادو">
+                                        <span class="w-3.5 h-3.5 rounded-full bg-white shrink-0 border border-stone-300"></span>
+                                        <span>أبيض</span>
+                                    </button>
+                                    <!-- مخصص -->
+                                    <div data-logo-variant="custom" class="studio-logo-btn min-h-[38px] px-2 py-1.5 rounded-xl border border-stone-200 bg-white hover:bg-stone-50 text-stone-800 text-xs font-bold flex items-center justify-center gap-1.5 cursor-pointer transition shadow-2xs relative" title="اختيار لون مخصص حر">
+                                        <input type="color" value="#fef08a" class="studio-input-logo-custom-color w-4 h-4 rounded-md border border-amber-300 p-0 cursor-pointer shrink-0">
+                                        <span>مخصص</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -1596,6 +1639,54 @@
                                     <span id="studio-minimal-logo-y-val" class="font-mono text-stone-800 text-[11px] w-8 text-center">25px</span>
                                 </div>
                             </div>
+
+                            <!-- تبديل مظهر ولون الشعار في القالب النقي -->
+                            <div class="space-y-1.5 pt-2 border-t border-stone-100">
+                                <div class="flex items-center justify-between text-xs">
+                                    <span class="font-bold text-stone-700 flex items-center gap-1.5">
+                                        <span>🎨</span>
+                                        <span>لون الشعار (أنماط الدار):</span>
+                                    </span>
+                                    <span class="studio-logo-variant-title font-bold text-amber-900 text-[11px] bg-amber-50 px-2 py-0.5 rounded border border-amber-200">أبيض ناصع نقي</span>
+                                </div>
+                                <div class="grid grid-cols-3 sm:grid-cols-7 gap-1.5">
+                                    <!-- عنابي -->
+                                    <button type="button" data-logo-variant="transparent-burgundy" class="studio-logo-btn min-h-[38px] px-2 py-1.5 rounded-xl border border-stone-200 bg-white hover:bg-stone-50 text-stone-800 text-xs font-bold flex items-center justify-center gap-1.5 cursor-pointer transition shadow-2xs" title="عنابي الدار الرسمي">
+                                        <span class="w-3.5 h-3.5 rounded-full bg-[#7c1d3c] shrink-0 border border-stone-300"></span>
+                                        <span>عنابي</span>
+                                    </button>
+                                    <!-- ذهبي -->
+                                    <button type="button" data-logo-variant="transparent-gold" class="studio-logo-btn min-h-[38px] px-2 py-1.5 rounded-xl border border-stone-200 bg-white hover:bg-stone-50 text-stone-800 text-xs font-bold flex items-center justify-center gap-1.5 cursor-pointer transition shadow-2xs" title="ذهبي رمال وهيبة">
+                                        <span class="w-3.5 h-3.5 rounded-full bg-[#c59b27] shrink-0 border border-stone-300"></span>
+                                        <span>ذهبي</span>
+                                    </button>
+                                    <!-- أخضر -->
+                                    <button type="button" data-logo-variant="transparent-emerald" class="studio-logo-btn min-h-[38px] px-2 py-1.5 rounded-xl border border-stone-200 bg-white hover:bg-stone-50 text-stone-800 text-xs font-bold flex items-center justify-center gap-1.5 cursor-pointer transition shadow-2xs" title="زمردي واحة ظفار">
+                                        <span class="w-3.5 h-3.5 rounded-full bg-[#435838] shrink-0 border border-stone-300"></span>
+                                        <span>أخضر</span>
+                                    </button>
+                                    <!-- أزرق -->
+                                    <button type="button" data-logo-variant="transparent-navy" class="studio-logo-btn min-h-[38px] px-2 py-1.5 rounded-xl border border-stone-200 bg-white hover:bg-stone-50 text-stone-800 text-xs font-bold flex items-center justify-center gap-1.5 cursor-pointer transition shadow-2xs" title="كحلي بحر مسقط">
+                                        <span class="w-3.5 h-3.5 rounded-full bg-[#2d5f75] shrink-0 border border-stone-300"></span>
+                                        <span>أزرق</span>
+                                    </button>
+                                    <!-- أبيض -->
+                                    <button type="button" data-logo-variant="white" class="studio-logo-btn min-h-[38px] px-2 py-1.5 rounded-xl border border-stone-200 bg-stone-900 hover:bg-black text-white text-xs font-bold flex items-center justify-center gap-1.5 cursor-pointer transition shadow-2xs" title="أبيض ناصع">
+                                        <span class="w-3.5 h-3.5 rounded-full bg-white shrink-0 border border-stone-300"></span>
+                                        <span>أبيض</span>
+                                    </button>
+                                    <!-- أسود -->
+                                    <button type="button" data-logo-variant="black" class="studio-logo-btn min-h-[38px] px-2 py-1.5 rounded-xl border border-stone-200 bg-white hover:bg-stone-50 text-stone-800 text-xs font-bold flex items-center justify-center gap-1.5 cursor-pointer transition shadow-2xs" title="أسود كربوني">
+                                        <span class="w-3.5 h-3.5 rounded-full bg-stone-900 shrink-0 border border-stone-400"></span>
+                                        <span>أسود</span>
+                                    </button>
+                                    <!-- مخصص -->
+                                    <div data-logo-variant="custom" class="studio-logo-btn min-h-[38px] px-2 py-1.5 rounded-xl border border-stone-200 bg-white hover:bg-stone-50 text-stone-800 text-xs font-bold flex items-center justify-center gap-1.5 cursor-pointer transition shadow-2xs relative" title="اختيار لون مخصص حر">
+                                        <input type="color" value="#fef08a" class="studio-input-logo-custom-color w-4 h-4 rounded-md border border-amber-300 p-0 cursor-pointer shrink-0">
+                                        <span>مخصص</span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
                         <!-- 2. التحكم بحساب وتوقيع الإنستقرام السفلي -->
@@ -1805,6 +1896,56 @@
                                 <div data-theme="studio-minimal" class="studio-theme-card p-2 sm:p-2.5 rounded-xl border border-stone-200 cursor-pointer transition flex flex-col justify-between bg-gradient-to-br from-[#18181b] to-[#3f3f46] text-white">
                                     <span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-white/20 text-white w-fit">⚡ نقي</span>
                                     <span class="font-bold text-xs mt-2 block">استوديو مينيمال</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 1.5 لون وتطريز الشعار في ترويسة البوست الملكي -->
+                        <div class="bg-white p-3.5 sm:p-4 rounded-2xl border border-stone-200/90 shadow-2xs space-y-3">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs sm:text-sm font-black text-stone-900 flex items-center gap-1.5">
+                                    <span>🛡️</span>
+                                    <span>لون وتطريز الشعار في ترويسة البوست:</span>
+                                </span>
+                                <div class="flex items-center gap-2">
+                                    <span class="studio-logo-variant-title font-bold text-amber-900 text-[11px] bg-amber-50 px-2 py-0.5 rounded border border-amber-200">أبيض ناصع نقي</span>
+                                    <label class="flex items-center gap-1 cursor-pointer text-[11px] font-bold text-stone-700 bg-stone-100 hover:bg-stone-200 px-2 py-0.5 rounded-lg transition">
+                                        <input type="checkbox" id="studio-toggle-logo-card-head" checked class="accent-amber-600 rounded cursor-pointer">
+                                        <span>إظهار</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-3 sm:grid-cols-6 gap-1.5">
+                                <!-- عنابي -->
+                                <button type="button" data-logo-variant="transparent-burgundy" class="studio-logo-btn min-h-[38px] px-2 py-1.5 rounded-xl border border-stone-200 bg-white hover:bg-stone-50 text-stone-800 text-xs font-bold flex items-center justify-center gap-1.5 cursor-pointer transition shadow-2xs" title="عنابي الدار الرسمي">
+                                    <span class="w-3.5 h-3.5 rounded-full bg-[#7c1d3c] shrink-0 border border-stone-300"></span>
+                                    <span>عنابي</span>
+                                </button>
+                                <!-- ذهبي -->
+                                <button type="button" data-logo-variant="transparent-gold" class="studio-logo-btn min-h-[38px] px-2 py-1.5 rounded-xl border border-stone-200 bg-white hover:bg-stone-50 text-stone-800 text-xs font-bold flex items-center justify-center gap-1.5 cursor-pointer transition shadow-2xs" title="ذهبي رمال وهيبة">
+                                    <span class="w-3.5 h-3.5 rounded-full bg-[#c59b27] shrink-0 border border-stone-300"></span>
+                                    <span>ذهبي</span>
+                                </button>
+                                <!-- أخضر -->
+                                <button type="button" data-logo-variant="transparent-emerald" class="studio-logo-btn min-h-[38px] px-2 py-1.5 rounded-xl border border-stone-200 bg-white hover:bg-stone-50 text-stone-800 text-xs font-bold flex items-center justify-center gap-1.5 cursor-pointer transition shadow-2xs" title="زمردي واحة ظفار">
+                                    <span class="w-3.5 h-3.5 rounded-full bg-[#435838] shrink-0 border border-stone-300"></span>
+                                    <span>أخضر</span>
+                                </button>
+                                <!-- أزرق -->
+                                <button type="button" data-logo-variant="transparent-navy" class="studio-logo-btn min-h-[38px] px-2 py-1.5 rounded-xl border border-stone-200 bg-white hover:bg-stone-50 text-stone-800 text-xs font-bold flex items-center justify-center gap-1.5 cursor-pointer transition shadow-2xs" title="كحلي بحر مسقط">
+                                    <span class="w-3.5 h-3.5 rounded-full bg-[#2d5f75] shrink-0 border border-stone-300"></span>
+                                    <span>أزرق</span>
+                                </button>
+                                <!-- أبيض -->
+                                <button type="button" data-logo-variant="white" class="studio-logo-btn min-h-[38px] px-2 py-1.5 rounded-xl border border-stone-200 bg-stone-900 hover:bg-black text-white text-xs font-bold flex items-center justify-center gap-1.5 cursor-pointer transition shadow-2xs" title="أبيض ناصع">
+                                    <span class="w-3.5 h-3.5 rounded-full bg-white shrink-0 border border-stone-300"></span>
+                                    <span>أبيض</span>
+                                </button>
+                                <!-- مخصص -->
+                                <div data-logo-variant="custom" class="studio-logo-btn min-h-[38px] px-2 py-1.5 rounded-xl border border-stone-200 bg-white hover:bg-stone-50 text-stone-800 text-xs font-bold flex items-center justify-center gap-1.5 cursor-pointer transition shadow-2xs relative" title="اختيار لون مخصص حر">
+                                    <input type="color" value="#fef08a" class="studio-input-logo-custom-color w-4 h-4 rounded-md border border-amber-300 p-0 cursor-pointer shrink-0">
+                                    <span>مخصص</span>
                                 </div>
                             </div>
                         </div>

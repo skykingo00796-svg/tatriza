@@ -12,6 +12,38 @@ import { showToast } from './modals.js';
 
 // 1. خيارات وألوان شعار الدار والعلامة المائية (Transparent & Multi-Color Logos)
 export const STUDIO_LOGO_OPTIONS = {
+    'transparent-burgundy': {
+        id: 'transparent-burgundy',
+        name: 'عنابي تطريز الرسمي (شفاف)',
+        sub: 'الهوية الرسمية للدار بدون خلفية',
+        badge: '🍷 عنابي الدار',
+        src: '../images/logo_transparent.png',
+        colorDot: '#7c1d3c'
+    },
+    'transparent-gold': {
+        id: 'transparent-gold',
+        name: 'ذهبي وهيبة الملكي (شفاف)',
+        sub: 'اللوجو الذهبي رمال وهيبة بدون خلفية',
+        badge: '👑 ذهبي ملكي',
+        src: '../images/logoY_transparent.png',
+        colorDot: '#c59b27'
+    },
+    'transparent-emerald': {
+        id: 'transparent-emerald',
+        name: 'زمردي واحة ظفار (شفاف)',
+        sub: 'اللوجو الأخضر بدون خلفية',
+        badge: '🌿 أخضر ظفار',
+        src: '../images/logoG_transparent.png',
+        colorDot: '#435838'
+    },
+    'transparent-navy': {
+        id: 'transparent-navy',
+        name: 'كحلي بحر مسقط (شفاف)',
+        sub: 'اللوجو الكحلي النيلي بدون خلفية',
+        badge: '🌊 أزرق مسقط',
+        src: '../images/logoB_transparent.png',
+        colorDot: '#2d5f75'
+    },
     'white': {
         id: 'white',
         name: 'أبيض ناصع نقي',
@@ -23,42 +55,10 @@ export const STUDIO_LOGO_OPTIONS = {
     'gold': {
         id: 'gold',
         name: 'مُذهّب ملكي خالص',
-        sub: 'فخامة ذهبية ملكية راقية',
+        sub: 'فخامة ذهبية ملكية ثلاثية الأبعاد',
         badge: '👑 فاخر',
         src: '../images/logo_gold.png',
         colorDot: '#d4af37'
-    },
-    'transparent-burgundy': {
-        id: 'transparent-burgundy',
-        name: 'عنابي تطريز الرسمي (شفاف)',
-        sub: 'الهوية الرسمية للدار بدون خلفية',
-        badge: '🏛️ كلاسيك',
-        src: '../images/logo_transparent.png',
-        colorDot: '#7c1d3c'
-    },
-    'transparent-gold': {
-        id: 'transparent-gold',
-        name: 'كهرماني ذهبي / رمال وهيبة',
-        sub: 'اللوجو الذهبي بدون خلفية',
-        badge: '🏜️ وهيبة',
-        src: '../images/logoY_transparent.png',
-        colorDot: '#c59b27'
-    },
-    'transparent-emerald': {
-        id: 'transparent-emerald',
-        name: 'زمردي / واحة ظفار',
-        sub: 'اللوجو الأخضر بدون خلفية',
-        badge: '🌿 ظفار',
-        src: '../images/logoG_transparent.png',
-        colorDot: '#435838'
-    },
-    'transparent-navy': {
-        id: 'transparent-navy',
-        name: 'كحلي نيلي / بحر مسقط',
-        sub: 'اللوجو الكحلي بدون خلفية',
-        badge: '🌊 مسقط',
-        src: '../images/logoB_transparent.png',
-        colorDot: '#2d5f75'
     },
     'black': {
         id: 'black',
@@ -85,6 +85,13 @@ export const STUDIO_LOGO_OPTIONS = {
         colorDot: '#7c1d3c'
     }
 };
+
+// اختصارات وتوافق لأسماء الثيمات الأربعة
+STUDIO_LOGO_OPTIONS['burgundy'] = STUDIO_LOGO_OPTIONS['transparent-burgundy'];
+STUDIO_LOGO_OPTIONS['emerald'] = STUDIO_LOGO_OPTIONS['transparent-emerald'];
+STUDIO_LOGO_OPTIONS['green'] = STUDIO_LOGO_OPTIONS['transparent-emerald'];
+STUDIO_LOGO_OPTIONS['navy'] = STUDIO_LOGO_OPTIONS['transparent-navy'];
+STUDIO_LOGO_OPTIONS['blue'] = STUDIO_LOGO_OPTIONS['transparent-navy'];
 
 // 2. ثيمات الشادو الدائري لنمط الستوري كامل الشاشة (Story / Reels Vignette)
 export const STUDIO_VIGNETTES = {
@@ -1296,26 +1303,34 @@ function updateRatioButtonStates() {
 }
 
 function updateLogoControlStates() {
-    const toggleLogoMain = document.getElementById('studio-toggle-logo-main');
-    if (toggleLogoMain) toggleLogoMain.checked = studioState.showLogo;
+    ['studio-toggle-logo-main', 'studio-toggle-logo', 'studio-toggle-logo-card-head', 'studio-toggle-logo-story', 'studio-toggle-logo-minimal'].forEach(id => {
+        const toggle = document.getElementById(id);
+        if (toggle) toggle.checked = studioState.showLogo;
+    });
 
-    const logoTitle = document.getElementById('studio-logo-variant-title');
     const activeLogoOpt = STUDIO_LOGO_OPTIONS[studioState.logoVariant] || STUDIO_LOGO_OPTIONS['white'];
-    if (logoTitle) logoTitle.innerText = activeLogoOpt.name;
+    document.querySelectorAll('#studio-logo-variant-title, .studio-logo-variant-title').forEach(el => {
+        el.innerText = activeLogoOpt.name;
+    });
 
     document.querySelectorAll('.studio-logo-btn').forEach(btn => {
         const v = btn.getAttribute('data-logo-variant');
         if (v === studioState.logoVariant) {
             btn.classList.add('ring-2', 'ring-amber-500', 'border-amber-500', 'scale-[1.02]');
+            if (!btn.classList.contains('bg-stone-900') && !btn.classList.contains('bg-black') && !btn.classList.contains('bg-gradient-to-br')) {
+                btn.classList.add('bg-amber-50', 'text-amber-950');
+            }
         } else {
             btn.classList.remove('ring-2', 'ring-amber-500', 'border-amber-500', 'scale-[1.02]');
+            if (!btn.classList.contains('bg-stone-900') && !btn.classList.contains('bg-black') && !btn.classList.contains('bg-gradient-to-br')) {
+                btn.classList.remove('bg-amber-50', 'text-amber-950');
+            }
         }
     });
 
-    const logoColorIn = document.getElementById('studio-input-logo-custom-color');
-    if (logoColorIn && studioState.logoCustomColor) {
-        logoColorIn.value = studioState.logoCustomColor;
-    }
+    document.querySelectorAll('.studio-input-logo-custom-color, #studio-input-logo-custom-color').forEach(inp => {
+        if (studioState.logoCustomColor) inp.value = studioState.logoCustomColor;
+    });
 
     document.querySelectorAll('.studio-logo-size-btn').forEach(btn => {
         const s = btn.getAttribute('data-logo-size');
@@ -3793,33 +3808,28 @@ export function initStudioEvents() {
     if (btnDpadCenter) btnDpadCenter.addEventListener('click', resetTransform);
 
     // 5. التحكم بشعار الدار والعلامة المائية (Logo Controls)
-    const toggleLogoMain = document.getElementById('studio-toggle-logo-main');
-    if (toggleLogoMain) {
-        toggleLogoMain.addEventListener('change', (e) => {
-            studioState.showLogo = e.target.checked;
-            const toggleLogoCard = document.getElementById('studio-toggle-logo');
-            if (toggleLogoCard) toggleLogoCard.checked = studioState.showLogo;
-            updateStudioPreview();
-        });
-    }
-
-    const toggleLogoCard = document.getElementById('studio-toggle-logo');
-    if (toggleLogoCard) {
-        toggleLogoCard.addEventListener('change', (e) => {
-            studioState.showLogo = e.target.checked;
-            const toggleLogoM = document.getElementById('studio-toggle-logo-main');
-            if (toggleLogoM) toggleLogoM.checked = studioState.showLogo;
-            updateStudioPreview();
-        });
-    }
+    ['studio-toggle-logo-main', 'studio-toggle-logo', 'studio-toggle-logo-card-head', 'studio-toggle-logo-story', 'studio-toggle-logo-minimal'].forEach(id => {
+        const toggle = document.getElementById(id);
+        if (toggle) {
+            toggle.addEventListener('change', (e) => {
+                studioState.showLogo = e.target.checked;
+                ['studio-toggle-logo-main', 'studio-toggle-logo', 'studio-toggle-logo-card-head', 'studio-toggle-logo-story', 'studio-toggle-logo-minimal'].forEach(otherId => {
+                    const other = document.getElementById(otherId);
+                    if (other) other.checked = studioState.showLogo;
+                });
+                updateStudioPreview();
+            });
+        }
+    });
 
     document.querySelectorAll('.studio-logo-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
+        btn.addEventListener('click', (e) => {
+            if (e.target.tagName === 'INPUT') return;
             const variant = btn.getAttribute('data-logo-variant');
             if (variant && STUDIO_LOGO_OPTIONS[variant]) {
                 studioState.logoVariant = variant;
                 if (variant === 'custom') {
-                    const customColorInput = document.getElementById('studio-input-logo-custom-color');
+                    const customColorInput = btn.querySelector('.studio-input-logo-custom-color') || document.getElementById('studio-input-logo-custom-color');
                     if (customColorInput) customColorInput.click();
                 }
                 updateLogoControlStates();
@@ -3828,17 +3838,20 @@ export function initStudioEvents() {
         });
     });
 
-    const logoCustomColorIn = document.getElementById('studio-input-logo-custom-color');
-    if (logoCustomColorIn) {
-        const handleCustomColor = (e) => {
-            studioState.logoCustomColor = e.target.value;
-            studioState.logoVariant = 'custom';
-            updateLogoControlStates();
-            updateStudioPreview();
-        };
-        logoCustomColorIn.addEventListener('input', handleCustomColor);
-        logoCustomColorIn.addEventListener('change', handleCustomColor);
-    }
+    const handleCustomLogoColor = (e) => {
+        studioState.logoCustomColor = e.target.value;
+        studioState.logoVariant = 'custom';
+        document.querySelectorAll('.studio-input-logo-custom-color, #studio-input-logo-custom-color').forEach(inp => {
+            inp.value = e.target.value;
+        });
+        updateLogoControlStates();
+        updateStudioPreview();
+    };
+
+    document.querySelectorAll('.studio-input-logo-custom-color, #studio-input-logo-custom-color').forEach(inp => {
+        inp.addEventListener('input', handleCustomLogoColor);
+        inp.addEventListener('change', handleCustomLogoColor);
+    });
 
     document.querySelectorAll('.studio-logo-size-btn').forEach(btn => {
         btn.addEventListener('click', () => {
