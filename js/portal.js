@@ -1319,11 +1319,25 @@ export function updateShowcaseSyncStatus(isCloud) {
     const statusEl = document.getElementById('showcase-sync-status');
     if (!statusEl) return;
     if (isCloud) {
-        statusEl.className = 'px-2.5 py-1 rounded-full text-[10px] sm:text-[11px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200/80 flex items-center gap-1.5 shadow-2xs';
-        statusEl.innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span><span>مزامنة Firebase السحابية</span>';
+        statusEl.className = 'flex items-center gap-1.5 md:gap-2 text-stone-500 text-xs font-medium shrink-0';
+        statusEl.innerHTML = `
+            <span class="hidden lg:inline">حفظ فوري مباشر على السحابة</span>
+            <span class="hidden sm:inline lg:hidden text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-200/80 text-xs font-bold">سحابي مباشر ✓</span>
+            <span class="sm:hidden inline-flex items-center gap-1 bg-emerald-50 text-emerald-800 border border-emerald-300/80 px-2.5 py-1 rounded-xl text-xs font-black shadow-2xs">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+                <span>سحابي مباشر</span>
+            </span>
+        `;
     } else {
-        statusEl.className = 'px-2.5 py-1 rounded-full text-[10px] sm:text-[11px] font-bold bg-amber-50 text-amber-900 border border-amber-300 flex items-center gap-1.5 shadow-2xs';
-        statusEl.innerHTML = '<span class="w-2 h-2 rounded-full bg-amber-500"></span><span>تخزين محلي مؤمن</span>';
+        statusEl.className = 'flex items-center gap-1.5 md:gap-2 text-stone-500 text-xs font-medium shrink-0';
+        statusEl.innerHTML = `
+            <span class="hidden lg:inline">تخزين محلي مؤمن</span>
+            <span class="hidden sm:inline lg:hidden text-amber-700 bg-amber-50 px-2.5 py-1 rounded-lg border border-amber-200/80 text-xs font-bold">محلي مؤمن ✓</span>
+            <span class="sm:hidden inline-flex items-center gap-1 bg-amber-50 text-amber-800 border border-amber-300/80 px-2.5 py-1 rounded-xl text-xs font-black shadow-2xs">
+                <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+                <span>محلي</span>
+            </span>
+        `;
     }
 }
 
