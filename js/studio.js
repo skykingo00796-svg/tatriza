@@ -417,6 +417,14 @@ export function hexToRgbString(hex) {
     return `${(num >> 16) & 255}, ${(num >> 8) & 255}, ${num & 255}`;
 }
 
+export function hexToRgba(hex, alpha = 1) {
+    if (!hex) return `rgba(255, 255, 255, ${alpha})`;
+    if (hex.startsWith('rgba')) return hex;
+    if (hex.startsWith('rgb(')) return hex.replace('rgb(', 'rgba(').replace(')', `, ${alpha})`);
+    const rgb = hexToRgbString(hex);
+    return `rgba(${rgb}, ${alpha})`;
+}
+
 export function getActiveVignette() {
     let base;
     if (studioState.vignetteTheme === 'custom') {
@@ -756,23 +764,10 @@ export const STUDIO_THEMES = {
         bgValue: 'linear-gradient(145deg, #2b0613 0%, #681530 45%, #8a1d41 70%, #1f030c 100%)',
         textColor: '#ffffff',
         accentColor: '#f3cf7a',
-        cardBg: 'rgba(28, 6, 14, 0.65)',
-        cardBorder: 'rgba(243, 207, 122, 0.35)',
+        cardBg: 'rgba(28, 6, 14, 0.72)',
+        cardBorder: 'rgba(243, 207, 122, 0.45)',
         badgeBg: 'rgba(243, 207, 122, 0.18)',
         badgeText: '#f8deb0'
-    },
-    'warm-mocha': {
-        id: 'warm-mocha',
-        name: 'الموكا الدافئ والعاجي',
-        badge: '☕ دافئ ومتناسق',
-        bgType: 'gradient',
-        bgValue: 'linear-gradient(145deg, #1c1310 0%, #3d2a23 45%, #593e34 70%, #150d0a 100%)',
-        textColor: '#fffbf7',
-        accentColor: '#fbbf24',
-        cardBg: 'rgba(30, 20, 16, 0.7)',
-        cardBorder: 'rgba(251, 191, 36, 0.35)',
-        badgeBg: 'rgba(251, 191, 36, 0.16)',
-        badgeText: '#fef3c7'
     },
     'obsidian-gold': {
         id: 'obsidian-gold',
@@ -782,10 +777,62 @@ export const STUDIO_THEMES = {
         bgValue: 'linear-gradient(145deg, #090a0d 0%, #161b22 50%, #21262d 75%, #050608 100%)',
         textColor: '#ffffff',
         accentColor: '#e5b842',
-        cardBg: 'rgba(10, 12, 16, 0.75)',
-        cardBorder: 'rgba(229, 184, 66, 0.4)',
+        cardBg: 'rgba(10, 12, 16, 0.78)',
+        cardBorder: 'rgba(229, 184, 66, 0.45)',
         badgeBg: 'rgba(229, 184, 66, 0.2)',
         badgeText: '#fcedbb'
+    },
+    'emerald-oasis': {
+        id: 'emerald-oasis',
+        name: 'الزمردي الملكي وظفار',
+        badge: '🌿 أخضر ملكي',
+        bgType: 'gradient',
+        bgValue: 'linear-gradient(145deg, #07150c 0%, #142e1b 45%, #244b2c 70%, #050e08 100%)',
+        textColor: '#ffffff',
+        accentColor: '#fde047',
+        cardBg: 'rgba(7, 21, 12, 0.78)',
+        cardBorder: 'rgba(253, 224, 71, 0.4)',
+        badgeBg: 'rgba(253, 224, 71, 0.18)',
+        badgeText: '#fef08a'
+    },
+    'sapphire-night': {
+        id: 'sapphire-night',
+        name: 'الياقوتي الكحلي ومسقط',
+        badge: '🌊 نيلي فاخر',
+        bgType: 'gradient',
+        bgValue: 'linear-gradient(145deg, #060e18 0%, #112035 45%, #1d3656 70%, #03070d 100%)',
+        textColor: '#ffffff',
+        accentColor: '#93c5fd',
+        cardBg: 'rgba(6, 14, 24, 0.78)',
+        cardBorder: 'rgba(147, 197, 253, 0.4)',
+        badgeBg: 'rgba(147, 197, 253, 0.18)',
+        badgeText: '#dbeafe'
+    },
+    'imperial-amethyst': {
+        id: 'imperial-amethyst',
+        name: 'البنفسجي الإمبراطوري',
+        badge: '🔮 ملكي نادر',
+        bgType: 'gradient',
+        bgValue: 'linear-gradient(145deg, #16051b 0%, #350f42 45%, #4e1761 70%, #0e0312 100%)',
+        textColor: '#ffffff',
+        accentColor: '#f5d0fe',
+        cardBg: 'rgba(22, 5, 27, 0.78)',
+        cardBorder: 'rgba(245, 208, 254, 0.4)',
+        badgeBg: 'rgba(245, 208, 254, 0.18)',
+        badgeText: '#fae8ff'
+    },
+    'warm-mocha': {
+        id: 'warm-mocha',
+        name: 'الموكا الدافئ والعاجي',
+        badge: '☕ دافئ ومتناسق',
+        bgType: 'gradient',
+        bgValue: 'linear-gradient(145deg, #1c1310 0%, #3d2a23 45%, #593e34 70%, #150d0a 100%)',
+        textColor: '#fffbf7',
+        accentColor: '#fbbf24',
+        cardBg: 'rgba(30, 20, 16, 0.75)',
+        cardBorder: 'rgba(251, 191, 36, 0.4)',
+        badgeBg: 'rgba(251, 191, 36, 0.16)',
+        badgeText: '#fef3c7'
     },
     'majlis-marble': {
         id: 'majlis-marble',
@@ -795,7 +842,7 @@ export const STUDIO_THEMES = {
         bgValue: '../images/studio_marble_majlis.jpg',
         textColor: '#ffffff',
         accentColor: '#f7d382',
-        cardBg: 'rgba(15, 12, 10, 0.78)',
+        cardBg: 'rgba(15, 12, 10, 0.8)',
         cardBorder: 'rgba(247, 211, 130, 0.45)',
         badgeBg: 'rgba(247, 211, 130, 0.22)',
         badgeText: '#fae6b8'
@@ -808,10 +855,23 @@ export const STUDIO_THEMES = {
         bgValue: '../images/studio_parquet_wood.jpg',
         textColor: '#ffffff',
         accentColor: '#fad074',
-        cardBg: 'rgba(25, 20, 16, 0.75)',
-        cardBorder: 'rgba(250, 208, 116, 0.4)',
+        cardBg: 'rgba(25, 20, 16, 0.8)',
+        cardBorder: 'rgba(250, 208, 116, 0.45)',
         badgeBg: 'rgba(250, 208, 116, 0.2)',
         badgeText: '#fce4a6'
+    },
+    'studio-minimal': {
+        id: 'studio-minimal',
+        name: 'استوديو نقي محايد',
+        badge: '⚡ نقي وهادئ',
+        bgType: 'gradient',
+        bgValue: 'linear-gradient(145deg, #18181b 0%, #27272a 50%, #3f3f46 75%, #09090b 100%)',
+        textColor: '#ffffff',
+        accentColor: '#f4f4f5',
+        cardBg: 'rgba(24, 24, 27, 0.82)',
+        cardBorder: 'rgba(255, 255, 255, 0.3)',
+        badgeBg: 'rgba(255, 255, 255, 0.15)',
+        badgeText: '#ffffff'
     }
 };
 
@@ -944,7 +1004,26 @@ let studioState = {
     showWhatsApp: true,
     carpetScale: 88,
     carpetShadow: true,
-    carpetTilt: false
+    carpetTilt: false,
+
+    // إعدادات وتخصيصات بوست الكارت الملكي المتقدمة (Advanced Royal Card Customization)
+    cardPosition: 'bottom', // 'bottom', 'dock', 'top', 'center'
+    cardAlign: 'right', // 'right', 'center', 'left'
+    cardWidthPercent: 92, // 75 to 100%
+    cardPadding: 'balanced', // 'compact', 'balanced', 'spacious'
+    cardRadius: 'rounded', // 'sharp' (12px), 'rounded' (22px), 'pill' (34px)
+    cardOffsetY: 16, // 0 to 60 px
+    cardGlassOpacity: 75, // 20 to 95%
+    cardGlassBlur: 16, // 0 to 30 px
+    cardBorderStyle: 'gold-glow', // 'gold-glow', 'white-subtle', 'solid-accent', 'none'
+    cardTitleFont: 'el-messiri', // خط عنوان القطعة
+    cardTitleCustomFont: '',
+    cardTitleSize: 'md', // 'sm', 'md', 'lg', 'xl'
+    cardTitleColor: 'default', // 'default' أو hex
+    cardPriceSize: 'md', // 'sm', 'md', 'lg'
+    cardPriceColor: 'default', // 'default' أو hex
+    cardSpecsStyle: 'pills', // 'pills' أو 'inline'
+    cardSpotlight: true // هالة إضاءة ملكية خلف السجادة
 };
 
 // ==========================================
@@ -1081,6 +1160,7 @@ function syncStudioControlsFromState() {
     updateMediaButtonStates();
     updateMinimalControlStates();
     updateStoryControlStates();
+    updateCardControlStates();
 
     // مزامنة أشرطة التحكم الدقيق بالشادو (شفافية، تحريك، بروز، حدة)
     const vigOpacityIn = document.getElementById('studio-slider-vig-opacity');
@@ -1561,6 +1641,202 @@ function updateStoryControlStates() {
     });
 }
 
+function updateCardControlStates() {
+    const posTitles = {
+        'bottom': 'أسفل عائم ⬇️',
+        'dock': 'شريط ممتد 🔲',
+        'top': 'أعلى الكارت ⬆️',
+        'center': 'بالمنتصف ⏺️'
+    };
+    const cardPosBadge = document.getElementById('studio-card-pos-badge');
+    if (cardPosBadge) cardPosBadge.innerText = posTitles[studioState.cardPosition] || 'أسفل عائم ⬇️';
+
+    // 1. أزرار الموضع
+    document.querySelectorAll('.studio-card-pos-btn').forEach(btn => {
+        const pos = btn.getAttribute('data-pos');
+        if (pos === (studioState.cardPosition || 'bottom')) {
+            btn.classList.add('border-amber-500', 'bg-amber-50', 'text-amber-950', 'ring-2', 'ring-amber-400/30');
+            btn.classList.remove('border-stone-200', 'bg-white', 'text-stone-700');
+        } else {
+            btn.classList.remove('border-amber-500', 'bg-amber-50', 'text-amber-950', 'ring-2', 'ring-amber-400/30');
+            btn.classList.add('border-stone-200', 'bg-white', 'text-stone-700');
+        }
+    });
+
+    // 2. أزرار المحاذاة
+    document.querySelectorAll('.studio-card-align-btn').forEach(btn => {
+        const align = btn.getAttribute('data-align');
+        if (align === (studioState.cardAlign || 'right')) {
+            btn.classList.add('border-amber-500', 'bg-amber-50', 'text-amber-950', 'ring-2', 'ring-amber-400/30');
+            btn.classList.remove('border-stone-200', 'bg-white', 'text-stone-700');
+        } else {
+            btn.classList.remove('border-amber-500', 'bg-amber-50', 'text-amber-950', 'ring-2', 'ring-amber-400/30');
+            btn.classList.add('border-stone-200', 'bg-white', 'text-stone-700');
+        }
+    });
+
+    // 3. عرض الكارد والمسافة
+    const cardWidthIn = document.getElementById('studio-input-card-width');
+    const cardWidthVal = document.getElementById('studio-card-width-val');
+    if (cardWidthIn) cardWidthIn.value = studioState.cardWidthPercent || 92;
+    if (cardWidthVal) cardWidthVal.innerText = `${studioState.cardWidthPercent || 92}%`;
+
+    const cardOffsetYIn = document.getElementById('studio-input-card-offset-y');
+    const cardOffsetYVal = document.getElementById('studio-card-offset-y-val');
+    if (cardOffsetYIn) cardOffsetYIn.value = studioState.cardOffsetY !== undefined ? studioState.cardOffsetY : 16;
+    if (cardOffsetYVal) cardOffsetYVal.innerText = `${studioState.cardOffsetY !== undefined ? studioState.cardOffsetY : 16}px`;
+
+    // 4. الحشوة والاستدارة
+    document.querySelectorAll('.studio-card-pad-btn').forEach(btn => {
+        const pad = btn.getAttribute('data-pad');
+        if (pad === (studioState.cardPadding || 'balanced')) {
+            btn.classList.add('border-amber-500', 'bg-amber-50', 'text-amber-950');
+            btn.classList.remove('border-stone-200', 'bg-white', 'text-stone-700');
+        } else {
+            btn.classList.remove('border-amber-500', 'bg-amber-50', 'text-amber-950');
+            btn.classList.add('border-stone-200', 'bg-white', 'text-stone-700');
+        }
+    });
+
+    document.querySelectorAll('.studio-card-radius-btn').forEach(btn => {
+        const r = btn.getAttribute('data-radius');
+        if (r === (studioState.cardRadius || 'rounded')) {
+            btn.classList.add('border-amber-500', 'bg-amber-50', 'text-amber-950');
+            btn.classList.remove('border-stone-200', 'bg-white', 'text-stone-700');
+        } else {
+            btn.classList.remove('border-amber-500', 'bg-amber-50', 'text-amber-950');
+            btn.classList.add('border-stone-200', 'bg-white', 'text-stone-700');
+        }
+    });
+
+    // 5. الزجاج والتمويه
+    const cardGlassOpIn = document.getElementById('studio-input-card-glass-opacity');
+    const cardGlassOpVal = document.getElementById('studio-card-glass-opacity-val');
+    if (cardGlassOpIn) cardGlassOpIn.value = studioState.cardGlassOpacity || 75;
+    if (cardGlassOpVal) cardGlassOpVal.innerText = `${studioState.cardGlassOpacity || 75}%`;
+
+    const cardGlassBlurIn = document.getElementById('studio-input-card-glass-blur');
+    const cardGlassBlurVal = document.getElementById('studio-card-glass-blur-val');
+    if (cardGlassBlurIn) cardGlassBlurIn.value = studioState.cardGlassBlur !== undefined ? studioState.cardGlassBlur : 16;
+    if (cardGlassBlurVal) cardGlassBlurVal.innerText = `${studioState.cardGlassBlur !== undefined ? studioState.cardGlassBlur : 16}px`;
+
+    // 6. نمط الإطار
+    const borderTitles = {
+        'gold-glow': 'توهج ذهبي ملكي ✨',
+        'white-subtle': 'أبيض شفاف ناعم 🤍',
+        'solid-accent': 'لون هوية الثيم 🎨',
+        'none': 'بدون إطار 🚫'
+    };
+    const cardBorderBadge = document.getElementById('studio-card-border-badge');
+    if (cardBorderBadge) cardBorderBadge.innerText = borderTitles[studioState.cardBorderStyle] || 'توهج ذهبي ملكي ✨';
+
+    document.querySelectorAll('.studio-card-border-btn').forEach(btn => {
+        const b = btn.getAttribute('data-border');
+        if (b === (studioState.cardBorderStyle || 'gold-glow')) {
+            btn.classList.add('border-amber-500', 'bg-amber-50', 'text-amber-950', 'ring-2', 'ring-amber-400/30');
+            btn.classList.remove('border-stone-200', 'bg-white', 'text-stone-700');
+        } else {
+            btn.classList.remove('border-amber-500', 'bg-amber-50', 'text-amber-950', 'ring-2', 'ring-amber-400/30');
+            btn.classList.add('border-stone-200', 'bg-white', 'text-stone-700');
+        }
+    });
+
+    // 7. نوع خط العنوان
+    const cardTitleFontSelect = document.getElementById('studio-select-card-title-font');
+    const cardTitleFontBadge = document.getElementById('studio-card-title-font-badge');
+    const cardTitleCustomFontWrap = document.getElementById('studio-card-title-custom-font-wrap');
+    const cardTitleCustomFontIn = document.getElementById('studio-input-card-title-custom-font');
+
+    const curCardTitleFont = studioState.cardTitleFont || 'el-messiri';
+    if (cardTitleFontSelect) cardTitleFontSelect.value = curCardTitleFont;
+    if (cardTitleFontBadge) {
+        const fObj = STUDIO_FONTS[curCardTitleFont];
+        cardTitleFontBadge.innerText = fObj ? (fObj.badge || fObj.name) : 'المسيري 👑';
+    }
+    if (cardTitleCustomFontWrap) {
+        if (curCardTitleFont === 'custom') {
+            cardTitleCustomFontWrap.classList.remove('hidden');
+        } else {
+            cardTitleCustomFontWrap.classList.add('hidden');
+        }
+    }
+    if (cardTitleCustomFontIn) cardTitleCustomFontIn.value = studioState.cardTitleCustomFont || '';
+
+    document.querySelectorAll('.studio-card-title-font-chip').forEach(chip => {
+        const f = chip.getAttribute('data-font');
+        if (f === curCardTitleFont) {
+            chip.classList.add('border-amber-500', 'bg-amber-50', 'text-amber-950');
+            chip.classList.remove('border-stone-200', 'bg-white', 'text-stone-700');
+        } else {
+            chip.classList.remove('border-amber-500', 'bg-amber-50', 'text-amber-950');
+            chip.classList.add('border-stone-200', 'bg-white', 'text-stone-700');
+        }
+    });
+
+    // 8. حجم خط العنوان
+    document.querySelectorAll('.studio-card-title-size-btn').forEach(btn => {
+        const sz = btn.getAttribute('data-size');
+        if (sz === (studioState.cardTitleSize || 'md')) {
+            btn.classList.add('border-amber-500', 'bg-amber-50', 'text-amber-950');
+            btn.classList.remove('border-stone-200', 'bg-white', 'text-stone-700');
+        } else {
+            btn.classList.remove('border-amber-500', 'bg-amber-50', 'text-amber-950');
+            btn.classList.add('border-stone-200', 'bg-white', 'text-stone-700');
+        }
+    });
+
+    // 9. حجم شارة السعر
+    document.querySelectorAll('.studio-card-price-size-btn').forEach(btn => {
+        const sz = btn.getAttribute('data-size');
+        if (sz === (studioState.cardPriceSize || 'md')) {
+            btn.classList.add('border-amber-500', 'bg-amber-50', 'text-amber-950');
+            btn.classList.remove('border-stone-200', 'bg-white', 'text-stone-700');
+        } else {
+            btn.classList.remove('border-amber-500', 'bg-amber-50', 'text-amber-950');
+            btn.classList.add('border-stone-200', 'bg-white', 'text-stone-700');
+        }
+    });
+
+    // 10. نمط المواصفات
+    document.querySelectorAll('.studio-card-specs-style-btn').forEach(btn => {
+        const st = btn.getAttribute('data-style');
+        if (st === (studioState.cardSpecsStyle || 'pills')) {
+            btn.classList.add('border-amber-500', 'bg-amber-50', 'text-amber-950');
+            btn.classList.remove('border-stone-200', 'bg-white', 'text-stone-700');
+        } else {
+            btn.classList.remove('border-amber-500', 'bg-amber-50', 'text-amber-950');
+            btn.classList.add('border-stone-200', 'bg-white', 'text-stone-700');
+        }
+    });
+
+    // 11. ألوان العنوان والسعر
+    document.querySelectorAll('.studio-card-title-color-btn').forEach(btn => {
+        const c = btn.getAttribute('data-color');
+        if (c === (studioState.cardTitleColor || 'default')) {
+            btn.classList.add('ring-2', 'ring-amber-500', 'border-amber-500', 'bg-amber-50');
+            btn.classList.remove('border-stone-200');
+        } else {
+            btn.classList.remove('ring-2', 'ring-amber-500', 'border-amber-500', 'bg-amber-50');
+            btn.classList.add('border-stone-200');
+        }
+    });
+
+    document.querySelectorAll('.studio-card-price-color-btn').forEach(btn => {
+        const c = btn.getAttribute('data-color');
+        if (c === (studioState.cardPriceColor || 'default')) {
+            btn.classList.add('ring-2', 'ring-amber-500', 'border-amber-500', 'bg-amber-50');
+            btn.classList.remove('border-stone-200');
+        } else {
+            btn.classList.remove('ring-2', 'ring-amber-500', 'border-amber-500', 'bg-amber-50');
+            btn.classList.add('border-stone-200');
+        }
+    });
+
+    // 12. الهالة الضوئية
+    const toggleSpot = document.getElementById('studio-toggle-card-spotlight');
+    if (toggleSpot) toggleSpot.checked = studioState.cardSpotlight !== false;
+}
+
 function updateVignetteButtonStates() {
     const activeVig = getActiveVignette();
     const vigNameEl = document.getElementById('studio-active-vignette-name');
@@ -1800,11 +2076,11 @@ export function updateStudioPreview() {
     }
 
     // -------------------------------------------------------------
-    // الحالة الثالثة: نمط بوست الكارت الملكي (مع بطاقة المواصفات والسعر)
+    // الحالة الثالثة: نمط بوست الكارت الملكي المطور (مع بطاقة المواصفات والسعر والتحكم الكامل)
     // -------------------------------------------------------------
     const theme = STUDIO_THEMES[studioState.theme] || STUDIO_THEMES['royal-burgundy'];
 
-    stage.className = `relative w-full max-w-[360px] mx-auto rounded-3xl overflow-hidden shadow-2xl transition-all duration-300 flex flex-col justify-between p-4 sm:p-5 select-none ${ratio.aspectClass} cursor-grab active:cursor-grabbing`;
+    stage.className = `relative w-full max-w-[360px] mx-auto rounded-3xl overflow-hidden shadow-2xl transition-all duration-300 flex flex-col justify-between select-none ${ratio.aspectClass} cursor-grab active:cursor-grabbing`;
 
     // تعيين الخلفية
     if (theme.bgType === 'gradient') {
@@ -1814,7 +2090,17 @@ export function updateStudioPreview() {
         stage.style.background = `url("${theme.bgValue}") center/cover no-repeat`;
     }
 
-    // بناء نص الشارة
+    // هالة إضاءة ملكية خلف السجادة (3D Ambient Spotlight)
+    let spotlightHtml = '';
+    if (studioState.cardSpotlight !== false) {
+        spotlightHtml = `
+            <div class="absolute inset-0 pointer-events-none flex items-center justify-center overflow-hidden z-0">
+                <div class="w-[85%] h-[85%] rounded-full opacity-65 filter blur-3xl pointer-events-none" style="background: radial-gradient(circle, ${theme.accentColor} 0%, rgba(243, 207, 122, 0.15) 40%, transparent 70%);"></div>
+            </div>
+        `;
+    }
+
+    // بناء نص الشارة الترويجية
     let stickerHtml = '';
     if (studioState.showSticker && studioState.sticker !== 'none') {
         const stickersMap = {
@@ -1847,6 +2133,13 @@ export function updateStudioPreview() {
         `;
     }
 
+    const topHeaderHtml = `
+        <div class="w-full flex items-center justify-between gap-2 p-4 sm:p-5 relative z-10 pointer-events-none">
+            ${logoHtml}
+            ${stickerHtml}
+        </div>
+    `;
+
     // السجادة في المنتصف مع دعم التحريك الحر والتكبير
     const scaleFactor = ((studioState.carpetScale || 88) / 100) * zoom;
     const cardVigOpacity = (studioState.vignetteOpacity !== undefined ? studioState.vignetteOpacity : 95) / 100;
@@ -1858,69 +2151,185 @@ export function updateStudioPreview() {
     const cardShadowAlpha = Math.min(0.95, 0.55 * (cardVigOpacity / 0.95)).toFixed(2);
     const shadowStyle = studioState.carpetShadow ? `filter: drop-shadow(0 ${cardShadowY}px ${cardShadowBlur}px rgba(0,0,0,${cardShadowAlpha}));` : '';
 
-    // قسم البيانات السفلي
-    const showPrice = studioState.showPrice && studioState.price;
-    const showDim = studioState.showDimensions && studioState.dimensions;
-    const showMat = studioState.showMaterial && studioState.material;
+    // أقصى ارتفاع للسجادة بحسب أبعاد البوست لكي لا تتداخل مع الكارد
+    const carpetMaxHClass = studioState.ratio === '1:1' ? 'max-h-[160px] sm:max-h-[190px]' : (studioState.ratio === '4:5' ? 'max-h-[220px] sm:max-h-[270px]' : 'max-h-[260px] sm:max-h-[330px]');
 
-    stage.innerHTML = `
-        <!-- شريط الرأس في التصميم -->
-        <div class="w-full flex items-center justify-between gap-2 relative z-10 pointer-events-none">
-            ${logoHtml}
-            ${stickerHtml}
-        </div>
-
-        <!-- مسرح السجادة المركزي -->
+    const carpetStageHtml = `
         <div class="flex-1 flex items-center justify-center p-2 relative z-10 my-auto overflow-hidden pointer-events-none">
             <div id="studio-carpet-center-wrap" class="transition-transform duration-75 max-w-full max-h-full flex items-center justify-center" style="transform: translate3d(${panX}%, ${panY}%, 0) scale(${scaleFactor}); transform-origin: center center;">
                 <img 
                     src="${carpetImg}" 
                     alt="${studioState.title}" 
-                    class="max-w-full max-h-[220px] sm:max-h-[300px] object-contain rounded-2xl border border-white/20 transition-all duration-300"
+                    class="max-w-full ${carpetMaxHClass} object-contain rounded-2xl border border-white/20 transition-all duration-300"
                     style="${shadowStyle}">
             </div>
         </div>
+    `;
 
-        <!-- بطاقة المعلومات والدعوة للطلب -->
-        <div class="w-full rounded-2xl p-3 sm:p-3.5 backdrop-blur-md relative z-10 space-y-2 border transition-all pointer-events-none" style="background: ${theme.cardBg}; border-color: ${theme.cardBorder}; color: ${theme.textColor};">
-            <div>
-                <h3 class="font-royal-carpet font-bold text-sm sm:text-base leading-snug line-clamp-1" style="color: ${theme.accentColor};">
-                    ${studioState.title || 'سجادة ملكية فاخرة'}
-                </h3>
-                ${studioState.subtitle ? `
-                    <p class="text-[9.5px] sm:text-[10.5px] text-stone-200/90 leading-tight mt-0.5 line-clamp-1">
-                        ${studioState.subtitle}
-                    </p>
-                ` : ''}
+    // إعدادات وتخصيصات الكارد الملكي
+    const pos = studioState.cardPosition || 'bottom';
+    const isDock = pos === 'dock';
+    const isTop = pos === 'top';
+    const isCenter = pos === 'center';
+
+    const widthPercent = isDock ? 100 : (studioState.cardWidthPercent || 92);
+    const offsetY = studioState.cardOffsetY !== undefined ? studioState.cardOffsetY : 16;
+    const padType = studioState.cardPadding || 'balanced';
+    const radiusType = studioState.cardRadius || 'rounded';
+    const borderType = studioState.cardBorderStyle || 'gold-glow';
+    const alignType = studioState.cardAlign || 'right';
+
+    // كلاسات الحواف
+    let radiusClass = 'rounded-2xl';
+    if (radiusType === 'sharp') radiusClass = 'rounded-xl';
+    else if (radiusType === 'pill') radiusClass = 'rounded-3xl';
+    if (isDock) radiusClass += ' rounded-b-none';
+
+    // كلاسات الحشوة
+    let paddingClass = 'p-3.5 sm:p-4 space-y-2.5';
+    if (padType === 'compact') paddingClass = 'p-2.5 sm:p-3 space-y-1.5';
+    else if (padType === 'spacious') paddingClass = 'p-4 sm:p-5 space-y-3';
+
+    // نمط الزجاج والشفافية
+    const cardOpacity = (studioState.cardGlassOpacity !== undefined ? studioState.cardGlassOpacity : 75) / 100;
+    const cardBlur = studioState.cardGlassBlur !== undefined ? studioState.cardGlassBlur : 16;
+    const cardBgRgb = hexToRgbString(theme.cardBg || '#1c060e');
+
+    let borderCss = 'border: 1.5px solid rgba(243, 207, 122, 0.45); box-shadow: 0 0 25px rgba(243, 207, 122, 0.18), 0 20px 50px rgba(0,0,0,0.65), inset 0 1px 1px rgba(255,255,255,0.25);';
+    if (borderType === 'white-subtle') {
+        borderCss = 'border: 1px solid rgba(255, 255, 255, 0.22); box-shadow: 0 20px 45px rgba(0,0,0,0.55), inset 0 1px 1px rgba(255,255,255,0.18);';
+    } else if (borderType === 'solid-accent') {
+        borderCss = `border: 1.5px solid ${theme.accentColor}; box-shadow: 0 15px 40px rgba(0,0,0,0.6);`;
+    } else if (borderType === 'none') {
+        borderCss = 'border: none; box-shadow: 0 20px 45px rgba(0,0,0,0.6);';
+    }
+
+    const cardBoxStyles = `
+        background: rgba(${cardBgRgb}, ${cardOpacity});
+        backdrop-filter: blur(${cardBlur}px);
+        -webkit-backdrop-filter: blur(${cardBlur}px);
+        ${borderCss}
+        width: ${widthPercent}%;
+        ${isDock ? 'margin-bottom: 0;' : (isTop ? `margin-top: ${offsetY}px; margin-bottom: 0;` : (isCenter ? 'margin: auto;' : `margin-bottom: ${offsetY}px;`))}
+        margin-left: auto;
+        margin-right: auto;
+    `;
+
+    // نصوص وخطوط الكارت
+    const titleFontFamily = getStudioFontFamily(studioState.cardTitleFont, studioState.cardTitleCustomFont);
+    const titleColor = studioState.cardTitleColor === 'default' ? theme.accentColor : studioState.cardTitleColor;
+    const subtitleColor = studioState.cardSubtitleColor === 'default' ? '#e2e8f0' : studioState.cardSubtitleColor;
+    const priceColor = studioState.cardPriceColor === 'default' ? '#fde047' : studioState.cardPriceColor;
+
+    // أحجام الخطوط
+    let titleSizeClass = 'text-sm sm:text-base';
+    if (studioState.cardTitleSize === 'sm') titleSizeClass = 'text-xs sm:text-sm';
+    else if (studioState.cardTitleSize === 'lg') titleSizeClass = 'text-base sm:text-lg';
+    else if (studioState.cardTitleSize === 'xl') titleSizeClass = 'text-lg sm:text-xl';
+
+    // حجم شارة السعر
+    let priceBadgeClass = 'px-2.5 py-1 text-xs sm:text-sm';
+    if (studioState.cardPriceSize === 'sm') priceBadgeClass = 'px-2 py-0.5 text-[11px] sm:text-xs';
+    else if (studioState.cardPriceSize === 'lg') priceBadgeClass = 'px-3.5 py-1.5 text-sm sm:text-base font-black';
+
+    // المحاذاة
+    const textAlignClass = alignType === 'center' ? 'text-center' : (alignType === 'left' ? 'text-left' : 'text-right');
+    const flexJustifyClass = alignType === 'center' ? 'justify-center' : (alignType === 'left' ? 'justify-start' : 'justify-end');
+
+    const showPrice = studioState.showPrice && studioState.price;
+    const showDim = studioState.showDimensions && studioState.dimensions;
+    const showMat = studioState.showMaterial && studioState.material;
+    const hasSpecs = showDim || showMat;
+    const specsStyle = studioState.cardSpecsStyle || 'pills';
+
+    let specsHtml = '';
+    if (hasSpecs) {
+        if (specsStyle === 'pills') {
+            specsHtml = `
+                <div class="flex flex-wrap items-center gap-1.5 pt-1.5 border-t border-white/12 ${flexJustifyClass}">
+                    ${showDim ? `
+                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg text-[9px] sm:text-[10px] font-bold bg-white/10 border border-white/15 backdrop-blur-md shadow-2xs text-stone-200">
+                            <span>📐</span>
+                            <span>${studioState.dimensions}</span>
+                        </span>
+                    ` : ''}
+                    ${showMat ? `
+                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg text-[9px] sm:text-[10px] font-bold bg-white/10 border border-white/15 backdrop-blur-md shadow-2xs text-stone-200">
+                            <span>🧵</span>
+                            <span>${studioState.material}</span>
+                        </span>
+                    ` : ''}
+                </div>
+            `;
+        } else {
+            specsHtml = `
+                <div class="pt-1.5 border-t border-white/12 text-[9.5px] sm:text-[10.5px] text-stone-300 font-medium ${textAlignClass}">
+                    ${showDim ? `<span>📐 ${studioState.dimensions}</span>` : ''}
+                    ${showDim && showMat ? `<span class="mx-1.5 opacity-40">•</span>` : ''}
+                    ${showMat ? `<span>🧵 ${studioState.material}</span>` : ''}
+                </div>
+            `;
+        }
+    }
+
+    let waHtml = '';
+    if (studioState.showWhatsApp) {
+        waHtml = `
+            <div class="pt-1.5 flex items-center justify-between text-[9px] sm:text-[10px] border-t border-white/12 text-emerald-300">
+                <span class="font-bold flex items-center gap-1.5">
+                    <span class="w-4 h-4 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-[10px] border border-emerald-400/30">💬</span>
+                    <span>للطلب والاستفسار الفوري عبر الواتساب</span>
+                </span>
+                <span class="font-display font-bold text-white tracking-wider px-2 py-0.5 rounded-md bg-white/5 border border-white/10" dir="ltr">${studioState.whatsapp || '+968'}</span>
             </div>
+        `;
+    }
 
-            <!-- المقاس والخامة والسعر -->
-            <div class="flex items-center justify-between gap-2 pt-1 border-t border-white/10">
-                <div class="flex flex-wrap items-center gap-1.5 text-[9px] sm:text-[10px] text-stone-300">
-                    ${showDim ? `<span class="bg-black/40 px-2 py-0.5 rounded-md border border-white/10">📐 ${studioState.dimensions}</span>` : ''}
-                    ${showMat ? `<span class="bg-black/40 px-2 py-0.5 rounded-md border border-white/10">🧵 ${studioState.material}</span>` : ''}
+    const cardBoxHtml = `
+        <div id="studio-royal-card-box" class="relative z-10 transition-all duration-200 pointer-events-none ${radiusClass} ${paddingClass}" style="${cardBoxStyles}">
+            <div class="flex items-start justify-between gap-2.5">
+                <div class="flex-1 min-w-0 ${textAlignClass}">
+                    <h3 class="font-bold leading-tight line-clamp-1 ${titleSizeClass}" style="font-family: ${titleFontFamily}; color: ${titleColor};">
+                        ${studioState.title || 'سجادة ملكية فاخرة'}
+                    </h3>
+                    ${studioState.subtitle ? `
+                        <p class="text-[9.5px] sm:text-[10.5px] leading-tight mt-1 line-clamp-1" style="color: ${subtitleColor};">
+                            ${studioState.subtitle}
+                        </p>
+                    ` : ''}
                 </div>
 
                 ${showPrice ? `
-                    <div class="flex items-baseline gap-1 px-2.5 py-1 rounded-xl bg-gradient-to-r from-amber-500/20 to-amber-400/30 border border-amber-300/40 text-amber-300 shrink-0">
-                        <span class="font-display font-black text-sm sm:text-base leading-none">${studioState.price}</span>
-                        <span class="text-[8.5px] font-bold">${studioState.currency}</span>
+                    <div class="shrink-0 rounded-xl bg-gradient-to-r from-amber-500/20 to-amber-400/30 border border-amber-300/40 text-amber-300 shadow-md ${priceBadgeClass}">
+                        <div class="flex items-baseline gap-1" dir="ltr">
+                            <span class="font-display font-black leading-none" style="color: ${priceColor};">${studioState.price}</span>
+                            <span class="text-[8.5px] font-bold" style="color: ${priceColor};">${studioState.currency}</span>
+                        </div>
                     </div>
                 ` : ''}
             </div>
 
-            <!-- شريط الواتساب -->
-            ${studioState.showWhatsApp ? `
-                <div class="pt-1 flex items-center justify-between text-[9px] sm:text-[10px] text-emerald-300 border-t border-white/10">
-                    <span class="font-bold flex items-center gap-1">
-                        <span>💬</span>
-                        <span>للطلب والاستفسار الفوري عبر الواتساب</span>
-                    </span>
-                    <span class="font-display font-bold text-white tracking-wider" dir="ltr">${studioState.whatsapp || '+968'}</span>
-                </div>
-            ` : ''}
+            ${specsHtml}
+            ${waHtml}
         </div>
     `;
+
+    // ترتيب العناصر بناءً على موضع الكارد (أعلى، أسفل، أو وسط)
+    if (isTop) {
+        stage.innerHTML = `
+            ${spotlightHtml}
+            ${cardBoxHtml}
+            ${carpetStageHtml}
+            ${topHeaderHtml}
+        `;
+    } else {
+        stage.innerHTML = `
+            ${spotlightHtml}
+            ${topHeaderHtml}
+            ${carpetStageHtml}
+            ${cardBoxHtml}
+        `;
+    }
 
     setupStageDragAndZoom();
 }
@@ -2037,215 +2446,9 @@ export async function exportStudioHDImage() {
         }
 
         // -------------------------------------------------------------
-        // تصدير نمط كارت السجادة الملكي
+        // تصدير نمط كارت السجادة الملكي الفاخر بدقة عالية جداً
         // -------------------------------------------------------------
-        const theme = STUDIO_THEMES[studioState.theme] || STUDIO_THEMES['royal-burgundy'];
-
-        // 1. رسم الخلفية
-        if (theme.bgType === 'gradient') {
-            const grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-            if (studioState.theme === 'royal-burgundy') {
-                grad.addColorStop(0, '#2b0613');
-                grad.addColorStop(0.45, '#681530');
-                grad.addColorStop(0.7, '#8a1d41');
-                grad.addColorStop(1, '#1f030c');
-            } else if (studioState.theme === 'warm-mocha') {
-                grad.addColorStop(0, '#1c1310');
-                grad.addColorStop(0.45, '#3d2a23');
-                grad.addColorStop(0.7, '#593e34');
-                grad.addColorStop(1, '#150d0a');
-            } else {
-                grad.addColorStop(0, '#090a0d');
-                grad.addColorStop(0.5, '#161b22');
-                grad.addColorStop(0.75, '#21262d');
-                grad.addColorStop(1, '#050608');
-            }
-            ctx.fillStyle = grad;
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-        } else {
-            await drawImageOnCanvas(ctx, theme.bgValue, 0, 0, canvas.width, canvas.height, true);
-        }
-
-        // 2. رسم شعار الدار بالأعلى
-        if (studioState.showLogo) {
-            ctx.save();
-            const logoOpacity = (studioState.logoOpacity || 100) / 100;
-            ctx.globalAlpha = logoOpacity;
-            const logoVariant = studioState.logoVariant || 'white';
-            const logoOpt = STUDIO_LOGO_OPTIONS[logoVariant] || STUDIO_LOGO_OPTIONS['white'];
-
-            if (logoVariant === 'custom') {
-                const whiteLogo = await loadImageAsync('../images/logo_white.png');
-                const tinted = getTintedLogoCanvas(whiteLogo, studioState.logoCustomColor || '#fef08a');
-                ctx.drawImage(tinted, canvas.width - 160, 60, 100, 100);
-            } else if (logoVariant === 'original') {
-                await drawRoundedImage(ctx, '../images/logo.jpg', canvas.width - 160, 60, 100, 100, 24);
-            } else {
-                const img = await loadImageAsync(logoOpt.src);
-                ctx.drawImage(img, canvas.width - 160, 60, 100, 100);
-            }
-            ctx.restore();
-
-            ctx.font = 'bold 36px Tajawal, sans-serif';
-            ctx.fillStyle = '#ffffff';
-            ctx.textAlign = 'right';
-            ctx.fillText('TATRIZA', canvas.width - 180, 105);
-
-            ctx.font = '22px Tajawal, sans-serif';
-            ctx.fillStyle = theme.accentColor;
-            ctx.fillText('دار تطريز للسجاد الملكي', canvas.width - 180, 145);
-        }
-
-        // 3. رسم شارة التميز (Sticker)
-        if (studioState.showSticker && studioState.sticker !== 'none') {
-            const stickersMap = {
-                'exclusive': '🏷️ قطعة حصرية فريدة (1 of 1)',
-                'silk': '💎 حرير طبيعي خالص 100%',
-                'wool': '🐑 صوف جبلي مغزول يدوياً',
-                'oman': '✨ صنعت بشغف في سلطنة عُمان',
-                'artisan': '🌟 تحفة نادرة من أرشيف الدار',
-                'limited': '⏳ عرض خاص لفترة محدودة'
-            };
-            const stickerText = stickersMap[studioState.sticker] || '✨ إصدار يدوي خاص';
-
-            ctx.save();
-            ctx.font = 'bold 24px Tajawal, sans-serif';
-            const textMetrics = ctx.measureText(stickerText);
-            const badgeW = textMetrics.width + 50;
-            const badgeH = 50;
-            const badgeX = 60;
-            const badgeY = 75;
-
-            drawRoundedRect(ctx, badgeX, badgeY, badgeW, badgeH, 25);
-            ctx.fillStyle = theme.badgeBg;
-            ctx.fill();
-            ctx.strokeStyle = 'rgba(255,255,255,0.3)';
-            ctx.lineWidth = 2;
-            ctx.stroke();
-
-            ctx.fillStyle = theme.badgeText;
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText(stickerText, badgeX + (badgeW / 2), badgeY + (badgeH / 2));
-            ctx.restore();
-        }
-
-        // 4. رسم صورة السجادة في المنتصف مع دعم التحريك والتكبير
-        const carpetSrc = studioState.customImageSrc || '../images/client_room1.jpg';
-        const zoom = (studioState.mediaZoom || 100) / 100;
-        const scale = ((studioState.carpetScale || 88) / 100) * zoom;
-        const maxImgW = (canvas.width - 160) * scale;
-        const maxImgH = (canvas.height * (studioState.ratio === '9:16' ? 0.5 : 0.45)) * scale;
-
-        const panOffsetX = (canvas.width * ((studioState.mediaPanX || 0) / 100));
-        const panOffsetY = (canvas.height * ((studioState.mediaPanY || 0) / 100));
-
-        ctx.save();
-        if (studioState.carpetShadow) {
-            const cardVigOpacity = (studioState.vignetteOpacity !== undefined ? studioState.vignetteOpacity : 95) / 100;
-            const cardVigOffsetY = studioState.vignetteOffsetY || 0;
-            const cardVigSpread = (studioState.vignetteSpread || 100) / 100;
-            const cardVigSharpness = (studioState.vignetteSharpness !== undefined ? studioState.vignetteSharpness : 40) / 100;
-            const cardShadowY = Math.round(25 + cardVigOffsetY * 0.7);
-            const cardShadowBlur = Math.round((45 * cardVigSpread) * (1.2 - cardVigSharpness * 0.5));
-            const cardShadowAlpha = Math.min(0.95, 0.65 * (cardVigOpacity / 0.95));
-
-            ctx.shadowColor = `rgba(0, 0, 0, ${cardShadowAlpha})`;
-            ctx.shadowBlur = cardShadowBlur;
-            ctx.shadowOffsetY = cardShadowY;
-        }
-
-        await drawContainedImage(ctx, carpetSrc, ((canvas.width - maxImgW) / 2) + panOffsetX, (canvas.height * 0.22) + panOffsetY, maxImgW, maxImgH);
-        ctx.restore();
-
-        // 5. رسم بطاقة المعلومات السفلية
-        const cardMargin = 60;
-        const cardW = canvas.width - (cardMargin * 2);
-        const cardH = studioState.ratio === '9:16' ? 360 : 300;
-        const cardY = canvas.height - cardH - cardMargin;
-
-        ctx.save();
-        drawRoundedRect(ctx, cardMargin, cardY, cardW, cardH, 30);
-        ctx.fillStyle = theme.cardBg;
-        ctx.fill();
-        ctx.strokeStyle = theme.cardBorder;
-        ctx.lineWidth = 2.5;
-        ctx.stroke();
-
-        // عنوان السجادة
-        ctx.font = 'bold 44px Tajawal, sans-serif';
-        ctx.fillStyle = theme.accentColor;
-        ctx.textAlign = 'right';
-        ctx.fillText(studioState.title || 'سجادة ملكية فاخرة', canvas.width - cardMargin - 40, cardY + 70);
-
-        // الوصف
-        if (studioState.subtitle) {
-            ctx.font = '24px Tajawal, sans-serif';
-            ctx.fillStyle = '#e5e7eb';
-            ctx.fillText(studioState.subtitle, canvas.width - cardMargin - 40, cardY + 115);
-        }
-
-        // خط فاصل
-        ctx.beginPath();
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
-        ctx.lineWidth = 1.5;
-        ctx.moveTo(cardMargin + 40, cardY + 145);
-        ctx.lineTo(canvas.width - cardMargin - 40, cardY + 145);
-        ctx.stroke();
-
-        // الأبعاد والخامة
-        let pillsText = '';
-        if (studioState.showDimensions && studioState.dimensions) pillsText += `📐 ${studioState.dimensions}   `;
-        if (studioState.showMaterial && studioState.material) pillsText += `🧵 ${studioState.material}`;
-
-        if (pillsText) {
-            ctx.font = 'bold 24px Tajawal, sans-serif';
-            ctx.fillStyle = '#d1d5db';
-            ctx.textAlign = 'right';
-            ctx.fillText(pillsText, canvas.width - cardMargin - 40, cardY + 195);
-        }
-
-        // السعر
-        if (studioState.showPrice && studioState.price) {
-            const priceText = `${studioState.price} ${studioState.currency}`;
-            drawRoundedRect(ctx, cardMargin + 40, cardY + 160, 220, 60, 20);
-            ctx.fillStyle = 'rgba(245, 158, 11, 0.25)';
-            ctx.fill();
-            ctx.strokeStyle = 'rgba(251, 191, 36, 0.5)';
-            ctx.lineWidth = 2;
-            ctx.stroke();
-
-            ctx.font = 'black 34px Tajawal, sans-serif';
-            ctx.fillStyle = '#fde047';
-            ctx.textAlign = 'center';
-            ctx.fillText(priceText, cardMargin + 150, cardY + 203);
-        }
-
-        // شريط الواتساب
-        if (studioState.showWhatsApp) {
-            ctx.beginPath();
-            ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
-            ctx.lineWidth = 1.5;
-            ctx.moveTo(cardMargin + 40, cardY + 235);
-            ctx.lineTo(canvas.width - cardMargin - 40, cardY + 235);
-            ctx.stroke();
-
-            ctx.font = 'bold 22px Tajawal, sans-serif';
-            ctx.fillStyle = '#6ee7b7';
-            ctx.textAlign = 'right';
-            ctx.fillText('💬 للطلب والاستفسار الفوري عبر الواتساب', canvas.width - cardMargin - 40, cardY + cardH - 35);
-
-            ctx.font = 'bold 22px Tajawal, sans-serif';
-            ctx.fillStyle = '#ffffff';
-            ctx.textAlign = 'left';
-            ctx.fillText(studioState.whatsapp || '+968', cardMargin + 40, cardY + cardH - 35);
-        }
-
-        ctx.restore();
-
-        // تحميل الصورة كملف PNG
-        downloadCanvasAsPNG(canvas, `TATRIZA-Post-${studioState.ratio.replace(':', 'x')}.png`);
-        showToast('تم تحميل تصميم البوست بدقة فائقة HD بنجاح!', 'success', 'استوديو تطريز');
+        await exportRoyalCardHD(canvas, ctx);
     } catch (err) {
         console.error('Studio export error:', err);
         showToast('تعذر تصدير الصورة، يرجى المحاولة مرة أخرى.', 'error', 'خطأ في التصدير');
@@ -2255,6 +2458,475 @@ export async function exportStudioHDImage() {
             exportBtn.innerHTML = originalText;
         }
     }
+}
+
+// دالة تصدير كارد البوست الملكي الفاخر عالي الدقة (Royal Card HD Export)
+async function exportRoyalCardHD(canvas, ctx) {
+    const theme = STUDIO_THEMES[studioState.theme] || STUDIO_THEMES['royal-burgundy'];
+
+    // 1. رسم خلفية الثيم الملكية
+    if (theme.bgType === 'gradient') {
+        const grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+        if (studioState.theme === 'royal-burgundy') {
+            grad.addColorStop(0, '#2b0613');
+            grad.addColorStop(0.45, '#681530');
+            grad.addColorStop(0.7, '#8a1d41');
+            grad.addColorStop(1, '#1f030c');
+        } else if (studioState.theme === 'obsidian-gold') {
+            grad.addColorStop(0, '#090a0d');
+            grad.addColorStop(0.5, '#161b22');
+            grad.addColorStop(0.75, '#21262d');
+            grad.addColorStop(1, '#050608');
+        } else if (studioState.theme === 'emerald-oasis') {
+            grad.addColorStop(0, '#07150c');
+            grad.addColorStop(0.45, '#142e1b');
+            grad.addColorStop(0.7, '#244b2c');
+            grad.addColorStop(1, '#050e08');
+        } else if (studioState.theme === 'sapphire-night') {
+            grad.addColorStop(0, '#060e18');
+            grad.addColorStop(0.45, '#112035');
+            grad.addColorStop(0.7, '#1d3656');
+            grad.addColorStop(1, '#03070d');
+        } else if (studioState.theme === 'imperial-amethyst') {
+            grad.addColorStop(0, '#16051b');
+            grad.addColorStop(0.45, '#350f42');
+            grad.addColorStop(0.7, '#4e1761');
+            grad.addColorStop(1, '#0e0312');
+        } else if (studioState.theme === 'warm-mocha') {
+            grad.addColorStop(0, '#1c1310');
+            grad.addColorStop(0.45, '#3d2a23');
+            grad.addColorStop(0.7, '#593e34');
+            grad.addColorStop(1, '#150d0a');
+        } else if (studioState.theme === 'studio-minimal') {
+            grad.addColorStop(0, '#0f172a');
+            grad.addColorStop(0.45, '#1e293b');
+            grad.addColorStop(0.7, '#334155');
+            grad.addColorStop(1, '#020617');
+        } else {
+            grad.addColorStop(0, '#2b0613');
+            grad.addColorStop(0.5, '#681530');
+            grad.addColorStop(1, '#1f030c');
+        }
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+    } else {
+        await drawImageOnCanvas(ctx, theme.bgValue, 0, 0, canvas.width, canvas.height, true);
+    }
+
+    // 2. الهالة الضوئية ثلاثية الأبعاد (3D Ambient Spotlight)
+    if (studioState.cardSpotlight !== false) {
+        ctx.save();
+        const spotX = canvas.width / 2;
+        const spotY = canvas.height * (studioState.cardPosition === 'top' ? 0.62 : 0.4);
+        const spotRadius = canvas.width * 0.68;
+        const spotGrad = ctx.createRadialGradient(spotX, spotY, 30, spotX, spotY, spotRadius);
+        spotGrad.addColorStop(0, 'rgba(255, 255, 255, 0.16)');
+        spotGrad.addColorStop(0.35, 'rgba(255, 255, 255, 0.06)');
+        spotGrad.addColorStop(1, 'rgba(255, 255, 255, 0)');
+        ctx.fillStyle = spotGrad;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.restore();
+    }
+
+    // 3. رسم ترويسة الشعار وشارة التميز بالأعلى
+    if (studioState.showLogo) {
+        ctx.save();
+        const logoOpacity = (studioState.logoOpacity || 100) / 100;
+        ctx.globalAlpha = logoOpacity;
+        const logoVariant = studioState.logoVariant || 'white';
+        const logoOpt = STUDIO_LOGO_OPTIONS[logoVariant] || STUDIO_LOGO_OPTIONS['white'];
+
+        if (logoVariant === 'custom') {
+            const whiteLogo = await loadImageAsync('../images/logo_white.png');
+            const tinted = getTintedLogoCanvas(whiteLogo, studioState.logoCustomColor || '#fef08a');
+            ctx.drawImage(tinted, canvas.width - 150, 50, 95, 95);
+        } else if (logoVariant === 'original') {
+            await drawRoundedImage(ctx, '../images/logo.jpg', canvas.width - 150, 50, 95, 95, 22);
+        } else {
+            const img = await loadImageAsync(logoOpt.src);
+            ctx.drawImage(img, canvas.width - 150, 50, 95, 95);
+        }
+        ctx.restore();
+
+        ctx.font = 'bold 34px Tajawal, sans-serif';
+        ctx.fillStyle = '#ffffff';
+        ctx.textAlign = 'right';
+        ctx.fillText('TATRIZA', canvas.width - 170, 95);
+
+        ctx.font = '21px Tajawal, sans-serif';
+        ctx.fillStyle = theme.accentColor;
+        ctx.fillText('دار تطريز للسجاد الملكي', canvas.width - 170, 132);
+    }
+
+    if (studioState.showSticker && studioState.sticker !== 'none') {
+        const stickersMap = {
+            'exclusive': '🏷️ قطعة حصرية فريدة (1 of 1)',
+            'silk': '💎 حرير طبيعي خالص 100%',
+            'wool': '🐑 صوف جبلي مغزول يدوياً',
+            'oman': '✨ صنعت بشغف في سلطنة عُمان',
+            'artisan': '🌟 تحفة نادرة من أرشيف الدار',
+            'limited': '⏳ عرض خاص لفترة محدودة'
+        };
+        const stickerText = stickersMap[studioState.sticker] || '✨ إصدار يدوي خاص';
+
+        ctx.save();
+        ctx.font = 'bold 22px Tajawal, sans-serif';
+        const textMetrics = ctx.measureText(stickerText);
+        const badgeW = textMetrics.width + 44;
+        const badgeH = 46;
+        const badgeX = 50;
+        const badgeY = 65;
+
+        drawRoundedRect(ctx, badgeX, badgeY, badgeW, badgeH, 23);
+        ctx.fillStyle = theme.badgeBg;
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+        ctx.lineWidth = 1.8;
+        ctx.stroke();
+
+        ctx.fillStyle = theme.badgeText;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(stickerText, badgeX + (badgeW / 2), badgeY + (badgeH / 2));
+        ctx.restore();
+    }
+
+    // 4. حساب أبعاد وإحداثيات الكارد الملكي بدقة فائقة
+    const pos = studioState.cardPosition || 'bottom';
+    const isDock = pos === 'dock';
+    const isTop = pos === 'top';
+    const isCenter = pos === 'center';
+
+    const widthPercent = isDock ? 100 : (studioState.cardWidthPercent || 92);
+    const cardW = canvas.width * (widthPercent / 100);
+    const cardX = (canvas.width - cardW) / 2;
+
+    const padType = studioState.cardPadding || 'balanced';
+    let vPad = 46;
+    let hPad = 50;
+    let itemGap = 20;
+    if (padType === 'compact') {
+        vPad = 32;
+        hPad = 38;
+        itemGap = 15;
+    } else if (padType === 'spacious') {
+        vPad = 58;
+        hPad = 62;
+        itemGap = 26;
+    }
+
+    const radiusType = studioState.cardRadius || 'rounded';
+    let cardRadius = 36;
+    if (radiusType === 'sharp') cardRadius = 20;
+    else if (radiusType === 'pill') cardRadius = 56;
+
+    // أحجام النصوص وشارة السعر
+    let titleFontSize = 44;
+    if (studioState.cardTitleSize === 'sm') titleFontSize = 36;
+    else if (studioState.cardTitleSize === 'lg') titleFontSize = 52;
+    else if (studioState.cardTitleSize === 'xl') titleFontSize = 62;
+
+    let priceBadgeW = 210;
+    let priceBadgeH = 64;
+    let priceFontSize = 34;
+    if (studioState.cardPriceSize === 'sm') {
+        priceBadgeW = 175;
+        priceBadgeH = 54;
+        priceFontSize = 28;
+    } else if (studioState.cardPriceSize === 'lg') {
+        priceBadgeW = 250;
+        priceBadgeH = 76;
+        priceFontSize = 42;
+    }
+
+    const showPrice = studioState.showPrice && studioState.price;
+    const showDim = studioState.showDimensions && studioState.dimensions;
+    const showMat = studioState.showMaterial && studioState.material;
+    const hasSpecs = showDim || showMat;
+    const showWa = studioState.showWhatsApp;
+    const hasSubtitle = Boolean(studioState.subtitle && studioState.subtitle.trim());
+
+    // ارتفاع صف العنوان والسعر
+    const titleBlockH = hasSubtitle ? (titleFontSize + 34) : titleFontSize;
+    const headerRowH = Math.max(titleBlockH, showPrice ? priceBadgeH : 0);
+
+    // ارتفاع صف المواصفات
+    const specsRowH = hasSpecs ? (itemGap + 40) : 0;
+
+    // ارتفاع شريط الواتساب
+    const waRowH = showWa ? (itemGap + 42) : 0;
+
+    // الارتفاع الإجمالي للكارد
+    const cardH = (vPad * 2) + headerRowH + specsRowH + waRowH;
+
+    const scaledOffsetY = (studioState.cardOffsetY !== undefined ? studioState.cardOffsetY : 16) * (canvas.width / 420);
+    let cardY = canvas.height - cardH - scaledOffsetY;
+    if (isDock) {
+        cardY = canvas.height - cardH;
+    } else if (isTop) {
+        cardY = (studioState.showLogo ? 175 : 60) + scaledOffsetY;
+    } else if (isCenter) {
+        cardY = (canvas.height - cardH) / 2;
+    }
+
+    // 5. رسم السجادة مع الحفاظ على المساحة الآمنة وعدم التداخل
+    let carpetTopY = 175;
+    let carpetMaxH = 480;
+    if (isTop) {
+        carpetTopY = cardY + cardH + 30;
+        carpetMaxH = canvas.height - carpetTopY - 50;
+    } else {
+        carpetTopY = (studioState.showLogo ? 175 : 80);
+        carpetMaxH = cardY - carpetTopY - 30;
+    }
+    if (carpetMaxH < 200) carpetMaxH = 200;
+
+    const carpetSrc = studioState.customImageSrc || '../images/client_room1.jpg';
+    const zoom = (studioState.mediaZoom || 100) / 100;
+    const scale = ((studioState.carpetScale || 88) / 100) * zoom;
+    const maxImgW = (canvas.width - 120) * scale;
+    const maxImgH = carpetMaxH * scale;
+
+    const panOffsetX = canvas.width * ((studioState.mediaPanX || 0) / 100);
+    const panOffsetY = canvas.height * ((studioState.mediaPanY || 0) / 100);
+
+    ctx.save();
+    if (studioState.carpetShadow) {
+        const cardVigOpacity = (studioState.vignetteOpacity !== undefined ? studioState.vignetteOpacity : 95) / 100;
+        const cardVigOffsetY = studioState.vignetteOffsetY || 0;
+        const cardVigSpread = (studioState.vignetteSpread || 100) / 100;
+        const cardVigSharpness = (studioState.vignetteSharpness !== undefined ? studioState.vignetteSharpness : 40) / 100;
+        const cardShadowY = Math.round(25 + cardVigOffsetY * 0.7);
+        const cardShadowBlur = Math.round((45 * cardVigSpread) * (1.2 - cardVigSharpness * 0.5));
+        const cardShadowAlpha = Math.min(0.95, 0.65 * (cardVigOpacity / 0.95));
+
+        ctx.shadowColor = `rgba(0, 0, 0, ${cardShadowAlpha})`;
+        ctx.shadowBlur = cardShadowBlur;
+        ctx.shadowOffsetY = cardShadowY;
+    }
+    const carpetDrawY = carpetTopY + ((carpetMaxH - maxImgH) / 2) + panOffsetY;
+    await drawContainedImage(ctx, carpetSrc, ((canvas.width - maxImgW) / 2) + panOffsetX, carpetDrawY, maxImgW, maxImgH);
+    ctx.restore();
+
+    // 6. رسم جسم الكارد الملكي الزجاجي مع الإطار والتوهج
+    ctx.save();
+    const cardOpacity = (studioState.cardGlassOpacity !== undefined ? studioState.cardGlassOpacity : 75) / 100;
+    const cardBgRgb = hexToRgbString(theme.cardBg || '#1c060e');
+
+    // الظل الخارجي للكارد
+    ctx.shadowColor = 'rgba(0, 0, 0, 0.65)';
+    ctx.shadowBlur = 45;
+    ctx.shadowOffsetY = 18;
+
+    if (isDock) {
+        ctx.beginPath();
+        ctx.moveTo(cardX, cardY + cardH);
+        ctx.lineTo(cardX, cardY + cardRadius);
+        ctx.arcTo(cardX, cardY, cardX + cardRadius, cardY, cardRadius);
+        ctx.lineTo(cardX + cardW - cardRadius, cardY);
+        ctx.arcTo(cardX + cardW, cardY, cardX + cardW, cardY + cardRadius, cardRadius);
+        ctx.lineTo(cardX + cardW, cardY + cardH);
+        ctx.closePath();
+    } else {
+        drawRoundedRect(ctx, cardX, cardY, cardW, cardH, cardRadius);
+    }
+    ctx.fillStyle = `rgba(${cardBgRgb}, ${cardOpacity})`;
+    ctx.fill();
+
+    // رسم الإطار والتوهج الملكي (Border Glow)
+    const borderType = studioState.cardBorderStyle || 'gold-glow';
+    if (borderType === 'gold-glow') {
+        ctx.shadowColor = 'rgba(243, 207, 122, 0.45)';
+        ctx.shadowBlur = 28;
+        ctx.strokeStyle = 'rgba(243, 207, 122, 0.6)';
+        ctx.lineWidth = 3;
+        ctx.stroke();
+    } else if (borderType === 'white-subtle') {
+        ctx.shadowColor = 'rgba(255, 255, 255, 0.2)';
+        ctx.shadowBlur = 18;
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.28)';
+        ctx.lineWidth = 2.5;
+        ctx.stroke();
+    } else if (borderType === 'solid-accent') {
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.4)';
+        ctx.shadowBlur = 20;
+        ctx.strokeStyle = theme.accentColor;
+        ctx.lineWidth = 3;
+        ctx.stroke();
+    }
+    ctx.restore();
+
+    // 7. رسم نصوص ومحتويات الكارد
+    const alignType = studioState.cardAlign || 'right';
+    const titleFont = getStudioCanvasFont(studioState.cardTitleFont, titleFontSize, true, studioState.cardTitleCustomFont);
+    const titleColor = studioState.cardTitleColor === 'default' ? theme.accentColor : studioState.cardTitleColor;
+    const priceColor = studioState.cardPriceColor === 'default' ? '#fde047' : studioState.cardPriceColor;
+
+    let contentTopY = cardY + vPad;
+
+    // حساب إحداثيات العنوان والشارة بناءً على المحاذاة
+    let titleX = cardX + cardW - hPad;
+    let titleAlign = 'right';
+    let priceX = cardX + hPad;
+
+    if (alignType === 'left') {
+        titleX = cardX + hPad;
+        titleAlign = 'left';
+        priceX = cardX + cardW - hPad - priceBadgeW;
+    } else if (alignType === 'center') {
+        titleX = cardX + (cardW / 2);
+        titleAlign = 'center';
+        priceX = cardX + hPad;
+    }
+
+    // عنوان السجادة
+    ctx.save();
+    ctx.font = titleFont;
+    ctx.fillStyle = titleColor;
+    ctx.textAlign = titleAlign;
+    ctx.textBaseline = 'top';
+    ctx.fillText(studioState.title || 'سجادة ملكية فاخرة', titleX, contentTopY);
+
+    // العبارة الفرعية
+    if (hasSubtitle) {
+        ctx.font = getStudioCanvasFont('tajawal', 23, false);
+        ctx.fillStyle = '#e2e8f0';
+        ctx.fillText(studioState.subtitle, titleX, contentTopY + titleFontSize + 8);
+    }
+    ctx.restore();
+
+    // شارة السعر
+    if (showPrice) {
+        const priceY = contentTopY + ((headerRowH - priceBadgeH) / 2);
+        ctx.save();
+        drawRoundedRect(ctx, priceX, priceY, priceBadgeW, priceBadgeH, 18);
+        const pGrad = ctx.createLinearGradient(priceX, priceY, priceX + priceBadgeW, priceY + priceBadgeH);
+        pGrad.addColorStop(0, 'rgba(245, 158, 11, 0.32)');
+        pGrad.addColorStop(1, 'rgba(251, 191, 36, 0.18)');
+        ctx.fillStyle = pGrad;
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(251, 191, 36, 0.55)';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        ctx.font = `bold ${priceFontSize}px Tajawal, sans-serif`;
+        ctx.fillStyle = priceColor;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(`${studioState.price} ${studioState.currency}`, priceX + (priceBadgeW / 2), priceY + (priceBadgeH / 2));
+        ctx.restore();
+    }
+
+    contentTopY += headerRowH;
+
+    // المواصفات (الأبعاد والخامة)
+    if (hasSpecs) {
+        contentTopY += itemGap;
+        ctx.save();
+        ctx.beginPath();
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
+        ctx.lineWidth = 1.5;
+        ctx.moveTo(cardX + hPad, contentTopY);
+        ctx.lineTo(cardX + cardW - hPad, contentTopY);
+        ctx.stroke();
+
+        contentTopY += 12;
+
+        const specsStyle = studioState.cardSpecsStyle || 'pills';
+        if (specsStyle === 'pills') {
+            ctx.font = 'bold 22px Tajawal, sans-serif';
+            let pillCursorX = (alignType === 'left') ? (cardX + hPad) : (cardX + cardW - hPad);
+
+            const drawSpecPill = (txt) => {
+                const tw = ctx.measureText(txt).width;
+                const pW = tw + 36;
+                const pH = 40;
+                let pX = (alignType === 'left') ? pillCursorX : (pillCursorX - pW);
+
+                ctx.save();
+                drawRoundedRect(ctx, pX, contentTopY, pW, pH, 12);
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.12)';
+                ctx.fill();
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.18)';
+                ctx.lineWidth = 1.2;
+                ctx.stroke();
+
+                ctx.fillStyle = '#e2e8f0';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(txt, pX + (pW / 2), contentTopY + (pH / 2));
+                ctx.restore();
+
+                if (alignType === 'left') {
+                    pillCursorX += pW + 12;
+                } else {
+                    pillCursorX -= (pW + 12);
+                }
+            };
+
+            if (showDim) drawSpecPill(`📐 ${studioState.dimensions}`);
+            if (showMat) drawSpecPill(`🧵 ${studioState.material}`);
+        } else {
+            let inlineText = '';
+            if (showDim) inlineText += `📐 ${studioState.dimensions}`;
+            if (showDim && showMat) inlineText += `   •   `;
+            if (showMat) inlineText += `🧵 ${studioState.material}`;
+
+            ctx.font = 'bold 22px Tajawal, sans-serif';
+            ctx.fillStyle = '#cbd5e1';
+            ctx.textAlign = titleAlign;
+            ctx.textBaseline = 'top';
+            ctx.fillText(inlineText, titleX, contentTopY + 6);
+        }
+        contentTopY += 28;
+        ctx.restore();
+    }
+
+    // شريط الواتساب
+    if (showWa) {
+        contentTopY += itemGap;
+        ctx.save();
+        ctx.beginPath();
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
+        ctx.lineWidth = 1.5;
+        ctx.moveTo(cardX + hPad, contentTopY);
+        ctx.lineTo(cardX + cardW - hPad, contentTopY);
+        ctx.stroke();
+
+        contentTopY += 12;
+
+        ctx.font = 'bold 22px Tajawal, sans-serif';
+        ctx.fillStyle = '#6ee7b7';
+        ctx.textAlign = 'right';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('💬 للطلب والاستفسار الفوري عبر الواتساب', cardX + cardW - hPad, contentTopY + 16);
+
+        const phone = studioState.whatsapp || '+968';
+        ctx.font = 'bold 22px "Courier New", monospace';
+        const ptw = ctx.measureText(phone).width;
+        const phW = ptw + 28;
+        const phH = 34;
+        const phX = cardX + hPad;
+        const phY = contentTopY;
+
+        drawRoundedRect(ctx, phX, phY, phW, phH, 10);
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.08)';
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.14)';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+
+        ctx.fillStyle = '#ffffff';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(phone, phX + (phW / 2), phY + (phH / 2));
+
+        ctx.restore();
+    }
+
+    // 8. تنزيل الصورة الناتجة فائقة الدقة
+    downloadCanvasAsPNG(canvas, `TATRIZA-Royal-Card-${studioState.ratio.replace(':', 'x')}.png`);
+    showToast('تم تحميل تصميم البوست الملكي بدقة فائقة HD بنجاح!', 'success', 'استوديو تطريز');
 }
 
 // دالة تصدير نمط ستوري إنستقرام والريلز عالي الدقة (Story Vignette HD)
@@ -3695,6 +4367,230 @@ export function initStudioEvents() {
             }
         });
     });
+
+    // -------------------------------------------------------------
+    // أحداث كارد البوست الملكي الفاخر (Royal Card Customizer Events)
+    // -------------------------------------------------------------
+    // 1. زر موضع الكارد (أعلى، أسفل عائم، شريط ممتد، بالمنتصف)
+    document.querySelectorAll('.studio-card-pos-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const pos = btn.getAttribute('data-pos');
+            if (pos) {
+                studioState.cardPosition = pos;
+                updateCardControlStates();
+                updateStudioPreview();
+            }
+        });
+    });
+
+    // 2. زر محاذاة نصوص الكارد (يمين، وسط، يسار)
+    document.querySelectorAll('.studio-card-align-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const align = btn.getAttribute('data-align');
+            if (align) {
+                studioState.cardAlign = align;
+                updateCardControlStates();
+                updateStudioPreview();
+            }
+        });
+    });
+
+    // 3. عرض الكارد ونسبة العرض
+    const cardWidthIn = document.getElementById('studio-input-card-width');
+    if (cardWidthIn) {
+        cardWidthIn.addEventListener('input', (e) => {
+            studioState.cardWidthPercent = Number(e.target.value);
+            updateCardControlStates();
+            updateStudioPreview();
+        });
+    }
+
+    // 4. إزاحة الكارد الرأسية (Offset Y)
+    const cardOffsetYIn = document.getElementById('studio-input-card-offset-y');
+    if (cardOffsetYIn) {
+        cardOffsetYIn.addEventListener('input', (e) => {
+            studioState.cardOffsetY = Number(e.target.value);
+            updateCardControlStates();
+            updateStudioPreview();
+        });
+    }
+
+    // 5. حجم الحشوة الداخلية للكارد (Padding)
+    document.querySelectorAll('.studio-card-pad-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const pad = btn.getAttribute('data-pad');
+            if (pad) {
+                studioState.cardPadding = pad;
+                updateCardControlStates();
+                updateStudioPreview();
+            }
+        });
+    });
+
+    // 6. استدارة حواف الكارد (Radius)
+    document.querySelectorAll('.studio-card-radius-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const radius = btn.getAttribute('data-radius');
+            if (radius) {
+                studioState.cardRadius = radius;
+                updateCardControlStates();
+                updateStudioPreview();
+            }
+        });
+    });
+
+    // 7. شفافية الزجاج والتمويه (Glassmorphism Opacity & Blur)
+    const cardGlassOpIn = document.getElementById('studio-input-card-glass-opacity');
+    if (cardGlassOpIn) {
+        cardGlassOpIn.addEventListener('input', (e) => {
+            studioState.cardGlassOpacity = Number(e.target.value);
+            updateCardControlStates();
+            updateStudioPreview();
+        });
+    }
+
+    const cardGlassBlurIn = document.getElementById('studio-input-card-glass-blur');
+    if (cardGlassBlurIn) {
+        cardGlassBlurIn.addEventListener('input', (e) => {
+            studioState.cardGlassBlur = Number(e.target.value);
+            updateCardControlStates();
+            updateStudioPreview();
+        });
+    }
+
+    // 8. نمط إطار الكارد والتوهج الملكي (Border Style)
+    document.querySelectorAll('.studio-card-border-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const border = btn.getAttribute('data-border');
+            if (border) {
+                studioState.cardBorderStyle = border;
+                updateCardControlStates();
+                updateStudioPreview();
+            }
+        });
+    });
+
+    // 9. نوع خط عنوان القطعة في الكارد
+    const cardTitleFontSelect = document.getElementById('studio-select-card-title-font');
+    if (cardTitleFontSelect) {
+        cardTitleFontSelect.addEventListener('change', (e) => {
+            studioState.cardTitleFont = e.target.value;
+            updateCardControlStates();
+            updateStudioPreview();
+        });
+    }
+
+    document.querySelectorAll('.studio-card-title-font-chip').forEach(chip => {
+        chip.addEventListener('click', () => {
+            const font = chip.getAttribute('data-font');
+            if (font) {
+                studioState.cardTitleFont = font;
+                updateCardControlStates();
+                updateStudioPreview();
+            }
+        });
+    });
+
+    const cardTitleCustomFontIn = document.getElementById('studio-input-card-title-custom-font');
+    if (cardTitleCustomFontIn) {
+        cardTitleCustomFontIn.addEventListener('input', (e) => {
+            studioState.cardTitleCustomFont = e.target.value;
+            studioState.cardTitleFont = 'custom';
+            updateStudioPreview();
+        });
+    }
+
+    // 10. حجم خط العنوان
+    document.querySelectorAll('.studio-card-title-size-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const size = btn.getAttribute('data-size');
+            if (size) {
+                studioState.cardTitleSize = size;
+                updateCardControlStates();
+                updateStudioPreview();
+            }
+        });
+    });
+
+    // 11. حجم شارة السعر
+    document.querySelectorAll('.studio-card-price-size-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const size = btn.getAttribute('data-size');
+            if (size) {
+                studioState.cardPriceSize = size;
+                updateCardControlStates();
+                updateStudioPreview();
+            }
+        });
+    });
+
+    // 12. نمط عرض المواصفات
+    document.querySelectorAll('.studio-card-specs-style-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const style = btn.getAttribute('data-style');
+            if (style) {
+                studioState.cardSpecsStyle = style;
+                updateCardControlStates();
+                updateStudioPreview();
+            }
+        });
+    });
+
+    // 13. ألوان عنوان القطعة
+    document.querySelectorAll('.studio-card-title-color-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const color = btn.getAttribute('data-color');
+            if (color) {
+                studioState.cardTitleColor = color;
+                updateCardControlStates();
+                updateStudioPreview();
+            }
+        });
+    });
+
+    const cardTitleCustomColorIn = document.getElementById('studio-input-card-title-custom-color');
+    if (cardTitleCustomColorIn) {
+        const handleCardTitleCustomColor = (e) => {
+            studioState.cardTitleColor = e.target.value;
+            updateCardControlStates();
+            updateStudioPreview();
+        };
+        cardTitleCustomColorIn.addEventListener('input', handleCardTitleCustomColor);
+        cardTitleCustomColorIn.addEventListener('change', handleCardTitleCustomColor);
+    }
+
+    // 14. ألوان شارة السعر
+    document.querySelectorAll('.studio-card-price-color-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const color = btn.getAttribute('data-color');
+            if (color) {
+                studioState.cardPriceColor = color;
+                updateCardControlStates();
+                updateStudioPreview();
+            }
+        });
+    });
+
+    const cardPriceCustomColorIn = document.getElementById('studio-input-card-price-custom-color');
+    if (cardPriceCustomColorIn) {
+        const handleCardPriceCustomColor = (e) => {
+            studioState.cardPriceColor = e.target.value;
+            updateCardControlStates();
+            updateStudioPreview();
+        };
+        cardPriceCustomColorIn.addEventListener('input', handleCardPriceCustomColor);
+        cardPriceCustomColorIn.addEventListener('change', handleCardPriceCustomColor);
+    }
+
+    // 15. مفتاح الهالة الضوئية ثلاثية الأبعاد (3D Ambient Spotlight)
+    const toggleCardSpotlight = document.getElementById('studio-toggle-card-spotlight');
+    if (toggleCardSpotlight) {
+        toggleCardSpotlight.addEventListener('change', (e) => {
+            studioState.cardSpotlight = e.target.checked;
+            updateCardControlStates();
+            updateStudioPreview();
+        });
+    }
 
     // 7. حقول نصوص ستوري إنستقرام
     const storyPhraseInput = document.getElementById('studio-input-story-phrase');
