@@ -480,42 +480,43 @@
     <!-- ========================================== -->
     <div id="portal-view-studio" class="hidden flex-1 flex flex-col w-full min-h-screen bg-[#f8f6f0]" dir="rtl">
         
-        <!-- الشريط العلوي الفاخر لشاشة الاستوديو (متجاوب بانسيابية فائقة ومحمي من التداخل على التابلت) -->
-        <header class="sticky top-2 sm:top-3 z-40 w-full px-3 sm:px-6 md:px-12 pointer-events-none transition-all duration-300">
-            <div class="floating-luxury-dock pointer-events-auto rounded-2xl sm:rounded-3xl w-full px-3 sm:px-4 md:px-6 lg:px-8 h-15 sm:h-16 md:h-18 lg:h-20 flex justify-between items-center transition-all duration-300 gap-2">
-                <!-- اليمين: زر العودة + هوية وعنوان الاستوديو -->
+        <!-- الشريط العلوي الفاخر لشاشة الاستوديو (كبير، بارز، ملفت وواضح على الجوال ومتجاوب بدقة على التابلت والكمبيوتر) -->
+        <header class="sticky top-2 sm:top-3.5 z-40 w-full px-3 sm:px-6 md:px-12 pointer-events-none transition-all duration-300">
+            <div class="floating-luxury-dock pointer-events-auto rounded-2xl sm:rounded-3xl w-full px-3.5 sm:px-5 md:px-8 h-16 sm:h-18 md:h-20 flex justify-between items-center transition-all duration-300 gap-2">
+                <!-- اليمين: زر العودة + هوية وعنوان الاستوديو (كبير وواضح وملفت) -->
                 <div class="flex items-center gap-2 sm:gap-2.5 md:gap-3 min-w-0">
-                    <button type="button" onclick="switchPortalScreen('carpets')" class="group flex items-center justify-center gap-1 sm:gap-1.5 bg-[#fffbf7] hover:bg-amber-50 text-stone-800 hover:text-amber-950 h-8.5 sm:h-9 md:h-9.5 lg:h-11 px-2.5 sm:px-3 md:px-3.5 lg:px-4 rounded-xl sm:rounded-2xl border border-stone-300/80 hover:border-amber-400 transition-all duration-300 shadow-xs cursor-pointer shrink-0" title="العودة للوحة التحكم" aria-label="العودة للوحة التحكم">
-                        <span class="text-xs sm:text-sm md:text-base transition-transform group-hover:translate-x-1">➔</span>
-                        <span class="text-[11px] sm:text-xs md:text-xs lg:text-sm font-bold hidden sm:inline lg:hidden">العودة</span>
+                    <button type="button" onclick="switchPortalScreen('carpets')" class="group flex items-center justify-center gap-1.5 bg-[#fffbf7] hover:bg-amber-50 text-stone-900 hover:text-amber-950 h-10 sm:h-10.5 md:h-11 w-10 sm:w-auto px-0 sm:px-3.5 md:px-4 rounded-xl sm:rounded-2xl border border-stone-300/90 hover:border-amber-400 transition-all duration-300 shadow-sm active:scale-95 cursor-pointer shrink-0" title="العودة للوحة التحكم" aria-label="العودة للوحة التحكم">
+                        <span class="text-base sm:text-lg font-black transition-transform group-hover:translate-x-1">➔</span>
+                        <span class="text-xs md:text-sm font-bold hidden sm:inline lg:hidden">العودة</span>
                         <span class="text-sm font-bold hidden lg:inline">العودة للوحة التحكم</span>
                     </button>
-                    <div class="h-5 sm:h-6 w-px bg-stone-300 hidden sm:block shrink-0"></div>
-                    <div class="flex items-center gap-1.5 sm:gap-2 md:gap-2.5 min-w-0">
-                        <div class="w-8 h-8 sm:w-8.5 sm:h-8.5 md:w-9.5 md:h-9.5 lg:w-11 lg:h-11 rounded-xl sm:rounded-2xl bg-gradient-to-br from-amber-500/20 via-rose-500/20 to-amber-500/30 border border-amber-300 text-amber-900 flex items-center justify-center text-sm sm:text-base md:text-lg lg:text-xl shadow-xs shrink-0">
+                    <div class="h-6 w-px bg-stone-300 hidden sm:block shrink-0"></div>
+                    <div class="flex items-center gap-2 sm:gap-2.5 min-w-0">
+                        <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl bg-gradient-to-br from-amber-500/25 via-rose-500/20 to-amber-500/35 border border-amber-400/80 text-amber-950 flex items-center justify-center text-lg sm:text-xl shadow-xs shrink-0 ring-2 ring-amber-300/30">
                             🎨
                         </div>
                         <div class="min-w-0">
-                            <div class="flex items-center gap-1 sm:gap-1.5 md:gap-2">
-                                <h1 class="font-bold text-xs sm:text-xs md:text-sm lg:text-base xl:text-lg text-stone-900 tracking-wider truncate">استوديو التصاميم</h1>
-                                <span class="text-[8px] sm:text-[8.5px] md:text-[9px] lg:text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-gradient-to-r from-amber-500 to-rose-700 text-white shadow-2xs shrink-0">
+                            <div class="flex items-center gap-1.5 sm:gap-2">
+                                <h1 class="font-black text-sm sm:text-base md:text-lg text-stone-900 tracking-wide truncate">استوديو التصاميم</h1>
+                                <span class="text-[9px] sm:text-[10px] font-black px-1.5 sm:px-2 py-0.5 rounded-md bg-gradient-to-r from-amber-500 via-rose-600 to-amber-600 text-white shadow-2xs shrink-0">
                                     <span class="hidden xl:inline">احترافي </span>HD
                                 </span>
                             </div>
-                            <p class="text-[10px] sm:text-xs font-semibold hidden xl:block truncate max-w-sm" style="color: var(--brand-color);">بيئة توليد وتصدير بوستات وستوريات إنستقرام وحالات واتساب الفاخرة</p>
+                            <p class="text-[11px] font-bold hidden xl:block truncate max-w-sm" style="color: var(--brand-color);">بيئة توليد وتصدير بوستات وستوريات إنستقرام الفاخرة</p>
                         </div>
                     </div>
                 </div>
 
-                <!-- اليسار: أزرار التصدير وحفظ المسودة مدمجة ومضبوطة الحجم دايركت -->
-                <div class="flex items-center gap-1 sm:gap-1.5 md:gap-2 shrink-0">
-                    <button type="button" onclick="saveStudioDraft()" class="flex items-center justify-center gap-1 sm:gap-1.5 h-8.5 sm:h-9 md:h-9.5 lg:h-11 px-2 sm:px-2.5 md:px-3 lg:px-4 rounded-xl sm:rounded-2xl bg-white hover:bg-amber-50 text-amber-950 border border-amber-300/80 text-[11px] sm:text-xs font-bold transition shadow-2xs cursor-pointer shrink-0" title="حفظ التصميم كمسودة" aria-label="حفظ كمسودة">
-                        <span class="text-xs sm:text-sm md:text-base">💾</span>
+                <!-- اليسار: أزرار التصدير وحفظ المسودة واضحة وبارزة وملفتة -->
+                <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
+                    <button type="button" onclick="saveStudioDraft()" class="flex items-center justify-center gap-1.5 h-10 sm:h-10.5 md:h-11 w-10 sm:w-auto px-0 sm:px-3 md:px-4 rounded-xl sm:rounded-2xl bg-white hover:bg-amber-50 text-amber-950 border border-amber-300/90 text-xs md:text-sm font-bold transition shadow-sm active:scale-95 cursor-pointer shrink-0" title="حفظ التصميم كمسودة" aria-label="حفظ كمسودة">
+                        <span class="text-base sm:text-lg">💾</span>
                         <span class="hidden md:inline lg:hidden">مسودة</span>
                         <span class="hidden lg:inline">حفظ كمسودة</span>
                     </button>
-                    <button type="button" onclick="exportStudioHDImage()" class="btn-liquid-metal text-white font-extrabold text-[11px] sm:text-xs md:text-xs lg:text-sm h-8.5 sm:h-9 md:h-9.5 lg:h-11 px-2.5 sm:px-3 md:px-3.5 lg:px-5 rounded-xl sm:rounded-2xl shadow-md transition flex items-center justify-center gap-1 sm:gap-1.5 md:gap-2 cursor-pointer border border-amber-300/40 shrink-0" title="تحميل وحفظ عالي الدقة HD" aria-label="تحميل عالي الدقة HD">
-                        <span class="text-xs sm:text-sm md:text-base">📥</span>
+                    <button type="button" onclick="exportStudioHDImage()" class="btn-liquid-metal text-white font-black text-xs md:text-sm h-10 sm:h-10.5 md:h-11 px-3 sm:px-3.5 md:px-5 rounded-xl sm:rounded-2xl shadow-md active:scale-95 transition flex items-center justify-center gap-1.5 sm:gap-2 cursor-pointer border border-amber-300/50 shrink-0" title="تحميل وحفظ عالي الدقة HD" aria-label="تحميل عالي الدقة HD">
+                        <span class="text-base sm:text-lg">📥</span>
+                        <span class="sm:hidden text-xs font-black">HD</span>
                         <span class="hidden sm:inline lg:hidden">تحميل HD</span>
                         <span class="hidden lg:inline">تحميل عالي الدقة HD</span>
                     </button>
@@ -1845,39 +1846,42 @@
     <!-- ========================================== -->
     <div id="portal-view-banners" class="hidden flex-1 flex flex-col w-full min-h-screen bg-[#f8f6f0]" dir="rtl">
         
-        <!-- الشريط العلوي الفاخر لشاشة البنرات (متجاوب بانسيابية فائقة ومحمي من التداخل على التابلت) -->
-        <header class="sticky top-2 sm:top-3 z-40 w-full px-3 sm:px-6 md:px-12 pointer-events-none transition-all duration-300">
-            <div class="floating-luxury-dock pointer-events-auto rounded-2xl sm:rounded-3xl w-full px-3 sm:px-4 md:px-6 lg:px-8 h-15 sm:h-16 md:h-18 lg:h-20 flex justify-between items-center transition-all duration-300 gap-2">
-                <!-- اليمين: زر العودة + هوية وعنوان إدارة البنرات -->
+        <!-- الشريط العلوي الفاخر لشاشة البنرات (كبير، بارز، ملفت وواضح على الجوال ومتجاوب بدقة على التابلت والكمبيوتر) -->
+        <header class="sticky top-2 sm:top-3.5 z-40 w-full px-3 sm:px-6 md:px-12 pointer-events-none transition-all duration-300">
+            <div class="floating-luxury-dock pointer-events-auto rounded-2xl sm:rounded-3xl w-full px-3.5 sm:px-5 md:px-8 h-16 sm:h-18 md:h-20 flex justify-between items-center transition-all duration-300 gap-2">
+                <!-- اليمين: زر العودة + هوية وعنوان إدارة البنرات (كبير وواضح وملفت) -->
                 <div class="flex items-center gap-2 sm:gap-2.5 md:gap-3 min-w-0">
-                    <button type="button" onclick="switchPortalScreen('carpets')" class="group flex items-center justify-center gap-1 sm:gap-1.5 bg-[#fffbf7] hover:bg-amber-50 text-stone-800 hover:text-amber-950 h-8.5 sm:h-9 md:h-9.5 lg:h-11 px-2.5 sm:px-3 md:px-3.5 lg:px-4 rounded-xl sm:rounded-2xl border border-stone-300/80 hover:border-amber-400 transition-all duration-300 shadow-xs cursor-pointer shrink-0" title="العودة للوحة التحكم" aria-label="العودة للوحة التحكم">
-                        <span class="text-xs sm:text-sm md:text-base transition-transform group-hover:translate-x-1">➔</span>
-                        <span class="text-[11px] sm:text-xs md:text-xs lg:text-sm font-bold hidden sm:inline lg:hidden">العودة</span>
+                    <button type="button" onclick="switchPortalScreen('carpets')" class="group flex items-center justify-center gap-1.5 bg-[#fffbf7] hover:bg-amber-50 text-stone-900 hover:text-amber-950 h-10 sm:h-10.5 md:h-11 w-10 sm:w-auto px-0 sm:px-3.5 md:px-4 rounded-xl sm:rounded-2xl border border-stone-300/90 hover:border-amber-400 transition-all duration-300 shadow-sm active:scale-95 cursor-pointer shrink-0" title="العودة للوحة التحكم" aria-label="العودة للوحة التحكم">
+                        <span class="text-base sm:text-lg font-black transition-transform group-hover:translate-x-1">➔</span>
+                        <span class="text-xs md:text-sm font-bold hidden sm:inline lg:hidden">العودة</span>
                         <span class="text-sm font-bold hidden lg:inline">العودة للوحة التحكم</span>
                     </button>
-                    <div class="h-5 sm:h-6 w-px bg-stone-300 hidden sm:block shrink-0"></div>
-                    <div class="flex items-center gap-1.5 sm:gap-2 md:gap-2.5 min-w-0">
-                        <div class="w-8 h-8 sm:w-8.5 sm:h-8.5 md:w-9.5 md:h-9.5 lg:w-11 lg:h-11 rounded-xl sm:rounded-2xl bg-amber-100 text-amber-900 flex items-center justify-center text-sm sm:text-base md:text-lg lg:text-xl shadow-xs shrink-0">
+                    <div class="h-6 w-px bg-stone-300 hidden sm:block shrink-0"></div>
+                    <div class="flex items-center gap-2 sm:gap-2.5 min-w-0">
+                        <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl bg-gradient-to-br from-amber-400/30 via-amber-200/50 to-amber-500/30 border border-amber-400/80 text-amber-950 flex items-center justify-center text-lg sm:text-xl shadow-xs shrink-0 ring-2 ring-amber-300/30">
                             ✨
                         </div>
                         <div class="min-w-0">
-                            <div class="flex items-center gap-1 sm:gap-1.5 md:gap-2">
-                                <h1 class="font-bold text-xs sm:text-xs md:text-sm lg:text-base xl:text-lg text-stone-900 tracking-wider truncate">إدارة البنرات</h1>
-                                <span id="showcase-sync-status" class="px-1.5 sm:px-2 py-0.5 rounded-full text-[8px] sm:text-[8.5px] md:text-[9px] lg:text-[10px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200/80 inline-flex items-center gap-1 shadow-2xs shrink-0">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                                    <span class="hidden sm:inline">مزامنة سحابية</span>
+                            <div class="flex items-center gap-1.5 sm:gap-2">
+                                <h1 class="font-black text-sm sm:text-base md:text-lg text-stone-900 tracking-wide truncate">إدارة البنرات</h1>
+                                <span id="showcase-sync-status" class="px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-300/80 inline-flex items-center gap-1 shadow-2xs shrink-0">
+                                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                                    <span>سحابي</span>
                                 </span>
                             </div>
-                            <p class="text-[10px] sm:text-xs font-semibold hidden xl:block truncate max-w-sm" style="color: var(--brand-color);">تخصيص محتوى البنرات الترويجية وسينما المشغل وخطوات الحرفة والتوثيقات</p>
+                            <p class="text-[11px] font-bold hidden xl:block truncate max-w-sm" style="color: var(--brand-color);">تخصيص محتوى البنرات الترويجية وسينما المشغل وخطوات الحرفة</p>
                         </div>
                     </div>
                 </div>
 
-                <!-- اليسار: مؤشر المزامنة التلقائية المضبوط -->
+                <!-- اليسار: مؤشر المزامنة التلقائية واضح وملفت -->
                 <div class="flex items-center gap-1.5 md:gap-2 text-stone-500 text-xs font-medium shrink-0">
                     <span class="hidden lg:inline">حفظ فوري مباشر على السحابة</span>
-                    <span class="hidden sm:inline lg:hidden text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200/80 text-[11px] font-bold">سحابي مباشر ✓</span>
-                    <span class="sm:hidden text-emerald-600 text-sm" title="مزامنة فورية مباشرة">☁️</span>
+                    <span class="hidden sm:inline lg:hidden text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-200/80 text-xs font-bold">سحابي مباشر ✓</span>
+                    <span class="sm:hidden inline-flex items-center gap-1 bg-emerald-50 text-emerald-800 border border-emerald-300/80 px-2.5 py-1 rounded-xl text-xs font-black shadow-2xs">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+                        <span>سحابي مباشر</span>
+                    </span>
                 </div>
             </div>
         </header>
