@@ -618,12 +618,12 @@ function renderPortalProductsTable(shouldScroll = false) {
                         <div class="card-light-glare"></div>
 
                         <!-- أبعاد السجادة في أعلى اليمين (زجاجي فائق الشفافية لإبراز تفاصيل السجادة) -->
-                        <span class="card-badge-dimensions absolute top-1.5 right-1.5 px-2 bg-black/30 hover:bg-black/45 backdrop-blur-md text-white text-[8px] sm:text-[9px] font-bold rounded-lg shadow-xs border border-white/20 inline-flex items-center justify-center leading-none z-30 pointer-events-none select-none transition">
+                        <span class="card-badge-dimensions absolute top-1.5 right-1.5 px-2 bg-black/30 hover:bg-black/45 backdrop-blur-md text-white text-[8px] sm:text-[9px] font-bold rounded-lg shadow-xs border border-white/20 inline-flex items-center justify-center leading-none text-center z-30 pointer-events-none select-none transition">
                             ${c.dimensions || ''}
                         </span>
 
                         <!-- شارة حالة التوفر في أعلى اليسار (زجاجي كريستالي شفاف وملون فاخر) -->
-                        <button type="button" onclick="event.stopPropagation(); window.portalToggleStock('${c.id}')" class="card-badge-stock absolute top-1.5 left-1.5 px-2 rounded-lg text-[8px] sm:text-[9px] font-bold shadow-xs transition inline-flex items-center justify-center gap-1 cursor-pointer backdrop-blur-md leading-none z-30 select-none ${isOutOfStock ? 'bg-rose-950/40 hover:bg-rose-950/60 text-rose-200 border border-rose-400/30' : 'bg-emerald-950/40 hover:bg-emerald-950/60 text-emerald-200 border border-emerald-400/30'}" title="انقر للتبديل الفوري لحالة التوفر">
+                        <button type="button" onclick="event.stopPropagation(); window.portalToggleStock('${c.id}')" class="card-badge-stock absolute top-1.5 left-1.5 px-2 rounded-lg text-[8px] sm:text-[9px] font-bold shadow-xs transition inline-flex items-center justify-center gap-1 cursor-pointer backdrop-blur-md leading-none text-center z-30 select-none ${isOutOfStock ? 'bg-rose-950/40 hover:bg-rose-950/60 text-rose-200 border border-rose-400/30' : 'bg-emerald-950/40 hover:bg-emerald-950/60 text-emerald-200 border border-emerald-400/30'}" title="انقر للتبديل الفوري لحالة التوفر">
                             <span class="stock-dot w-1.5 h-1.5 rounded-full ${isOutOfStock ? 'bg-rose-400' : 'bg-emerald-400'} shrink-0 shadow-2xs"></span>
                             <span class="whitespace-nowrap">${isOutOfStock ? 'نفدت' : 'متوفرة'}</span>
                         </button>
@@ -631,7 +631,7 @@ function renderPortalProductsTable(shouldScroll = false) {
                         <!-- طبقة تغطية زجاجية خفيفة وشفافة تماماً إن كانت نافدة -->
                         ${isOutOfStock ? `
                             <div class="absolute inset-0 bg-black/15 backdrop-blur-[0.5px] flex items-center justify-center z-20 pointer-events-none p-1">
-                                <span class="h-6 sm:h-6.5 px-2.5 bg-black/40 backdrop-blur-md text-amber-200 border border-white/20 text-[8.5px] sm:text-[9.5px] font-bold rounded-lg shadow-md inline-flex items-center justify-center leading-none">
+                                <span class="h-6 sm:h-6.5 px-2.5 bg-black/40 backdrop-blur-md text-amber-200 border border-white/20 text-[8.5px] sm:text-[9.5px] font-bold rounded-lg shadow-md inline-flex items-center justify-center leading-none text-center select-none">
                                     نفدت الكمية
                                 </span>
                             </div>
@@ -639,14 +639,14 @@ function renderPortalProductsTable(shouldScroll = false) {
 
                         <!-- عداد الوسائط في أسفل اليسار (زجاجي شفاف وخفيف) -->
                         ${imagesCount > 1 ? `
-                            <div class="card-badge-media absolute bottom-1.5 left-1.5 px-1.5 bg-black/30 backdrop-blur-md text-white/90 text-[7.5px] sm:text-[8px] font-bold rounded-md inline-flex items-center justify-center leading-none pointer-events-none border border-white/15 z-30">
+                            <div class="card-badge-media absolute bottom-1.5 left-1.5 px-1.5 bg-black/30 backdrop-blur-md text-white/90 text-[7.5px] sm:text-[8px] font-bold rounded-md inline-flex items-center justify-center leading-none text-center pointer-events-none border border-white/15 z-30 select-none">
                                 <span>📷 ${imagesCount}</span>
                             </div>
                         ` : ''}
 
                         <!-- زر الفيديو في أسفل اليمين (زجاجي شفاف وراقي) -->
                         ${hasVideo ? `
-                            <button type="button" onclick="event.stopPropagation(); window.portalPlayCardVideo('${c.id}')" class="card-badge-video absolute bottom-1.5 right-1.5 px-1.5 bg-black/35 hover:bg-black/55 backdrop-blur-md text-amber-300 text-[7.5px] sm:text-[8px] font-bold rounded-md inline-flex items-center justify-center gap-0.5 pointer-events-auto z-30 border border-white/20 leading-none shadow-xs transition cursor-pointer" title="مشاهدة وتكبير الفيديو">
+                            <button type="button" onclick="event.stopPropagation(); window.portalPlayCardVideo('${c.id}')" class="card-badge-video absolute bottom-1.5 right-1.5 px-1.5 bg-black/35 hover:bg-black/55 backdrop-blur-md text-amber-300 text-[7.5px] sm:text-[8px] font-bold rounded-md inline-flex items-center justify-center gap-0.5 pointer-events-auto z-30 border border-white/20 leading-none text-center shadow-xs transition cursor-pointer select-none" title="مشاهدة وتكبير الفيديو">
                                 <span class="text-[8.5px]">🎬</span>
                                 <span>فيديو</span>
                             </button>

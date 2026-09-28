@@ -366,22 +366,20 @@ function displayCarpets(carpetsToDisplay) {
                     <div class="card-light-glare"></div>
                     
                     <!-- أبعاد السجادة في أعلى اليمين (فوق اللمعة بوضوح تام z-30) -->
-                    <span class="card-badge-dimensions absolute top-1.5 right-1.5 bg-black/30 hover:bg-black/45 backdrop-blur-md text-white text-[8px] sm:text-[9px] font-bold px-2 py-0.5 rounded-md shadow-xs z-30 pointer-events-none border border-white/20 leading-tight transition">
+                    <span class="card-badge-dimensions absolute top-1.5 right-1.5 bg-black/30 hover:bg-black/45 backdrop-blur-md text-white text-[8px] sm:text-[9px] font-bold px-2 py-0.5 rounded-md shadow-xs z-30 pointer-events-none border border-white/20 inline-flex items-center justify-center leading-none text-center select-none transition">
                         ${carpet.dimensions}
                     </span>
 
-
-
                     ${isOutOfStock ? `
                         <div class="absolute inset-0 bg-black/15 backdrop-blur-[0.5px] flex items-center justify-center z-10 pointer-events-none p-1">
-                            <span class="bg-black/40 backdrop-blur-md text-amber-200 border border-white/20 text-[9px] sm:text-[10px] font-bold px-2.5 py-1 rounded-lg shadow-lg text-center leading-tight">
+                            <span class="bg-black/40 backdrop-blur-md text-amber-200 border border-white/20 text-[9px] sm:text-[10px] font-bold px-2.5 py-1 rounded-lg shadow-lg text-center inline-flex items-center justify-center leading-none select-none">
                                 نفدت الكمية
                             </span>
                         </div>
                     ` : ''}
 
-                    <div id="counter-wrapper-${carpet.id}" class="card-badge-media absolute bottom-1.5 left-1.5 bg-black/30 backdrop-blur-md text-white/90 text-[7.5px] sm:text-[8px] font-bold px-1.5 py-0.5 rounded-md pointer-events-none border border-white/15 z-10 ${hasMultipleMedia && !isOutOfStock ? '' : 'hidden'} leading-tight">
-                        <span id="counter-${carpet.id}">1</span>/<span id="total-${carpet.id}">${totalMedia}</span>
+                    <div id="counter-wrapper-${carpet.id}" dir="ltr" class="card-badge-media absolute bottom-1.5 left-1.5 bg-black/30 backdrop-blur-md text-white/90 text-[7.5px] sm:text-[8px] font-bold px-1.5 py-0.5 rounded-md pointer-events-none border border-white/15 z-10 ${hasMultipleMedia && !isOutOfStock ? '' : 'hidden'} inline-flex items-center justify-center leading-none text-center select-none">
+                        <span id="counter-${carpet.id}">1</span><span class="mx-0.5 opacity-60">/</span><span id="total-${carpet.id}">${totalMedia}</span>
                     </div>
 
                     ${hasVideo ? `
@@ -389,7 +387,7 @@ function displayCarpets(carpetsToDisplay) {
                             type="button" 
                             id="video-badge-${carpet.id}" 
                             onclick="event.stopPropagation(); window.handleCardVideoBadgeClick('${carpet.id}')"
-                            class="absolute bottom-1.5 right-1.5 bg-black/35 hover:bg-black/55 backdrop-blur-md text-amber-300 text-[8px] sm:text-[9px] font-bold px-1.5 py-0.5 rounded-md pointer-events-auto z-10 border border-white/20 flex items-center gap-0.5 shadow-xs transition cursor-pointer leading-tight"
+                            class="card-badge-video absolute bottom-1.5 right-1.5 bg-black/35 hover:bg-black/55 backdrop-blur-md text-amber-300 text-[8px] sm:text-[9px] font-bold px-1.5 py-0.5 rounded-md pointer-events-auto z-10 border border-white/20 inline-flex items-center justify-center gap-0.5 shadow-xs transition cursor-pointer leading-none select-none"
                             title="مشاهدة الفيديو"
                         >
                             <span class="text-[9px]">🎬</span>
