@@ -5,10 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>بوابة الإدارة المعتمدة | دار تطريز TATRIZA</title>
     
-    <!-- خطوط جوجل العربية الفاخرة -->
+    <!-- خطوط جوجل العربية والإنجليزية الفاخرة المعتمدة للمنصة والاستوديو -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@400;600;700;800;900&family=Almarai:wght@400;700;800&family=Amiri:ital,wght@0,400;0,700;1,400&family=Cairo:wght@400;600;700;800;900&family=El+Messiri:wght@400;500;600;700&family=Kufam:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Noto+Serif+Arabic:wght@400;600;700;800;900&family=Tajawal:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@400;600;700;800;900&family=Almarai:wght@400;700;800&family=Amiri:ital,wght@0,400;0,700;1,400&family=Aref+Ruqaa:wght@400;700&family=Cairo:wght@400;600;700;800;900&family=Cinzel:wght@500;700;900&family=El+Messiri:wght@400;500;600;700&family=Great+Vibes&family=Kufam:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Marhey:wght@400;600;700&family=Montserrat:wght@400;600;700;800&family=Noto+Serif+Arabic:wght@400;600;700;800;900&family=Outfit:wght@400;600;700&family=Playfair+Display:ital,wght@0,600;0,700;0,900;1,600&family=Reem+Kufi:wght@400;600;700&family=Tajawal:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     
     <link rel="stylesheet" href="../css/style.css">
     <!-- محرك التوثيق الفوري لمنع وميض شاشة تسجيل الدخول نهائياً (Zero-Flicker Admin Auth Engine) -->
@@ -1239,6 +1239,60 @@
                                 </div>
                             </div>
 
+                            <!-- نوع خط العبارة التسويقية (عربي وإنجليزي ومخصص) -->
+                            <div class="space-y-2 pt-2 border-t border-stone-100">
+                                <div class="flex items-center justify-between text-xs">
+                                    <span class="font-bold text-stone-700 flex items-center gap-1.5">
+                                        <span>🔤</span>
+                                        <span>نوع خط العبارة التسويقية:</span>
+                                    </span>
+                                    <span id="studio-story-phrase-font-badge" class="text-[10.5px] font-bold text-amber-900 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">المسيري 👑</span>
+                                </div>
+                                <select id="studio-select-story-phrase-font" class="w-full h-9 bg-white border border-stone-300 rounded-xl px-2.5 text-xs font-bold text-stone-800 outline-none focus:border-brand shadow-2xs cursor-pointer">
+                                    <optgroup label="✨ خطوط عربية فاخرة (Arabic Luxury Fonts)">
+                                        <option value="el-messiri" selected>المسيري الملكي (El Messiri) - خط تطريزة 👑</option>
+                                        <option value="tajawal">تجوال (Tajawal) - عصري متزن ✨</option>
+                                        <option value="amiri">أميري كلاسيك (Amiri) - نسخ تراثي أصيل 📜</option>
+                                        <option value="cairo">القاهرة (Cairo) - عريض وبارز جريء 🔥</option>
+                                        <option value="alexandria">الإسكندرية (Alexandria) - هندسي معماري فاخر 🏛️</option>
+                                        <option value="aref-ruqaa">عارف رقعة (Aref Ruqaa) - خط رقعة كلاسيكي ساحر ✍️</option>
+                                        <option value="reem-kufi">ريم كوفي (Reem Kufi) - كوفي فني هندسي 📐</option>
+                                        <option value="kufam">كوفام (Kufam) - كوفي حديث معاصر 🎨</option>
+                                        <option value="noto-serif">نوتو سيريف (Noto Serif) - وقور رصين 📖</option>
+                                        <option value="almarai">المراعي (Almarai) - نقي وهادئ 🌿</option>
+                                        <option value="marhey">مرحي (Marhey) - حيوي ومرح وديناميكي 🎉</option>
+                                    </optgroup>
+                                    <optgroup label="💎 خطوط إنجليزية وتواقيع عالمية (English & Luxury)">
+                                        <option value="playfair">Playfair Display - سيريف ملكي فاخر للأزياء 👑</option>
+                                        <option value="cinzel">Cinzel - نقش روماني إمبراطوري فاخر 🏛️</option>
+                                        <option value="great-vibes">Great Vibes - توقيع كاليجرافي يدوي ساحر ✒️</option>
+                                        <option value="montserrat">Montserrat - مودرن عالمي أنيق 💎</option>
+                                        <option value="outfit">Outfit - مينيمال معاصر فائق الأناقة ⚡</option>
+                                        <option value="mono">Space Mono / Courier - كود تقني محايد 💻</option>
+                                    </optgroup>
+                                    <optgroup label="✏️ خط مخصص">
+                                        <option value="custom">✏️ إدخال اسم خط مخصص من جهازك...</option>
+                                    </optgroup>
+                                </select>
+
+                                <!-- شرائح الوصول السريع لأشهر الخطوط -->
+                                <div class="flex flex-wrap gap-1">
+                                    <button type="button" class="studio-phrase-font-chip px-2 py-0.5 rounded-lg text-[10px] font-bold border border-amber-500 bg-amber-50 text-amber-950 transition cursor-pointer" data-font="el-messiri">المسيري 👑</button>
+                                    <button type="button" class="studio-phrase-font-chip px-2 py-0.5 rounded-lg text-[10px] font-bold border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition cursor-pointer" data-font="tajawal">تجوال ✨</button>
+                                    <button type="button" class="studio-phrase-font-chip px-2 py-0.5 rounded-lg text-[10px] font-bold border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition cursor-pointer" data-font="amiri">أميري 📜</button>
+                                    <button type="button" class="studio-phrase-font-chip px-2 py-0.5 rounded-lg text-[10px] font-bold border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition cursor-pointer" data-font="aref-ruqaa">رقعة ✍️</button>
+                                    <button type="button" class="studio-phrase-font-chip px-2 py-0.5 rounded-lg text-[10px] font-bold border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition cursor-pointer" data-font="cairo">القاهرة 🔥</button>
+                                    <button type="button" class="studio-phrase-font-chip px-2 py-0.5 rounded-lg text-[10px] font-bold border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition cursor-pointer" data-font="playfair">Playfair 👑</button>
+                                    <button type="button" class="studio-phrase-font-chip px-2 py-0.5 rounded-lg text-[10px] font-bold border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition cursor-pointer" data-font="great-vibes">Great Vibes ✒️</button>
+                                    <button type="button" class="studio-phrase-font-chip px-2 py-0.5 rounded-lg text-[10px] font-bold border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition cursor-pointer" data-font="cinzel">Cinzel 🏛️</button>
+                                </div>
+
+                                <!-- حقل الخط المخصص إن تم اختياره -->
+                                <div id="studio-story-phrase-custom-font-wrap" class="hidden">
+                                    <input type="text" id="studio-input-story-phrase-custom-font" placeholder="اكتب اسم الخط المثبت لديك (مثال: Traditional Arabic أو Didot)..." class="w-full h-8.5 bg-stone-50 border border-stone-300 rounded-lg px-2.5 text-xs text-stone-800 outline-none focus:border-brand shadow-2xs">
+                                </div>
+                            </div>
+
                             <!-- حجم خط العبارة وألوانها -->
                             <div class="space-y-2 pt-2 border-t border-stone-100">
                                 <div class="flex items-center justify-between text-xs">
@@ -1349,6 +1403,54 @@
                                         <span id="studio-story-handle-y-val" class="font-mono text-stone-800 text-[10px]">25px</span>
                                     </div>
                                     <input type="range" id="studio-input-story-handle-y" min="10" max="120" value="25" class="w-full accent-amber-600 cursor-pointer">
+                                </div>
+                            </div>
+
+                            <!-- نوع خط توقيع الحساب (عربي وإنجليزي ومخصص) -->
+                            <div class="space-y-2 pt-2 border-t border-stone-100">
+                                <div class="flex items-center justify-between text-xs">
+                                    <span class="font-bold text-stone-700 flex items-center gap-1.5">
+                                        <span>🔤</span>
+                                        <span>نوع خط توقيع الحساب:</span>
+                                    </span>
+                                    <span id="studio-story-handle-font-badge" class="text-[10.5px] font-bold text-amber-900 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">Space Mono 💻</span>
+                                </div>
+                                <select id="studio-select-story-handle-font" class="w-full h-9 bg-white border border-stone-300 rounded-xl px-2.5 text-xs font-bold text-stone-800 outline-none focus:border-brand shadow-2xs cursor-pointer">
+                                    <optgroup label="💎 خطوط إنجليزية وتواقيع عالمية (Handle & Signatures)">
+                                        <option value="mono" selected>Space Mono / Courier - كود تقني متباعد 💻</option>
+                                        <option value="montserrat">Montserrat - مودرن عالمي واسع التباعد 💎</option>
+                                        <option value="great-vibes">Great Vibes - توقيع يدوي كاليجرافي ساحر ✒️</option>
+                                        <option value="cinzel">Cinzel - نقش روماني كلاسيكي للماركات الفخمة 🏛️</option>
+                                        <option value="playfair">Playfair Display - سيريف ملكي فاخر 👑</option>
+                                        <option value="outfit">Outfit - مينيمال حديث ونقي ⚡</option>
+                                    </optgroup>
+                                    <optgroup label="✨ خطوط عربية فاخرة">
+                                        <option value="tajawal">تجوال (Tajawal) - عصري متزن ✨</option>
+                                        <option value="el-messiri">المسيري (El Messiri) - خط تطريزة 👑</option>
+                                        <option value="cairo">القاهرة (Cairo) - عريض وبارز 🔥</option>
+                                        <option value="alexandria">الإسكندرية (Alexandria) - هندسي فاخر 🏛️</option>
+                                        <option value="amiri">أميري (Amiri) - نسخ تراثي 📜</option>
+                                        <option value="aref-ruqaa">عارف رقعة (Aref Ruqaa) - رقعة أصيل ✍️</option>
+                                        <option value="reem-kufi">ريم كوفي (Reem Kufi) - كوفي فني 📐</option>
+                                    </optgroup>
+                                    <optgroup label="✏️ خط مخصص">
+                                        <option value="custom">✏️ إدخال اسم خط مخصص...</option>
+                                    </optgroup>
+                                </select>
+
+                                <!-- شرائح الوصول السريع لأشهر خطوط التوقيع -->
+                                <div class="flex flex-wrap gap-1">
+                                    <button type="button" class="studio-handle-font-chip px-2 py-0.5 rounded-lg text-[10px] font-bold border border-amber-500 bg-amber-50 text-amber-950 transition cursor-pointer" data-font="mono">Mono 💻</button>
+                                    <button type="button" class="studio-handle-font-chip px-2 py-0.5 rounded-lg text-[10px] font-bold border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition cursor-pointer" data-font="montserrat">Montserrat 💎</button>
+                                    <button type="button" class="studio-handle-font-chip px-2 py-0.5 rounded-lg text-[10px] font-bold border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition cursor-pointer" data-font="great-vibes">Great Vibes ✒️</button>
+                                    <button type="button" class="studio-handle-font-chip px-2 py-0.5 rounded-lg text-[10px] font-bold border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition cursor-pointer" data-font="cinzel">Cinzel 🏛️</button>
+                                    <button type="button" class="studio-handle-font-chip px-2 py-0.5 rounded-lg text-[10px] font-bold border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition cursor-pointer" data-font="tajawal">تجوال ✨</button>
+                                    <button type="button" class="studio-handle-font-chip px-2 py-0.5 rounded-lg text-[10px] font-bold border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition cursor-pointer" data-font="el-messiri">المسيري 👑</button>
+                                </div>
+
+                                <!-- حقل الخط المخصص للتوقيع إن تم اختياره -->
+                                <div id="studio-story-handle-custom-font-wrap" class="hidden">
+                                    <input type="text" id="studio-input-story-handle-custom-font" placeholder="اكتب اسم الخط المثبت لديك للتوقيع..." class="w-full h-8.5 bg-stone-50 border border-stone-300 rounded-lg px-2.5 text-xs text-stone-800 outline-none focus:border-brand shadow-2xs">
                                 </div>
                             </div>
 

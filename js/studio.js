@@ -246,6 +246,168 @@ export const STUDIO_VIGNETTES = {
     }
 };
 
+// ==========================================
+// مكتبة الخطوط المعتمدة للاستوديو (عربية، إنجليزية، تواقيع، ومخصص)
+// ==========================================
+export const STUDIO_FONTS = {
+    // خطوط عربية فاخرة
+    'el-messiri': {
+        id: 'el-messiri',
+        name: 'المسيري الملكي',
+        family: "'El Messiri', serif",
+        category: 'arabic',
+        badge: 'المسيري 👑'
+    },
+    'tajawal': {
+        id: 'tajawal',
+        name: 'تجوال العصري',
+        family: "'Tajawal', sans-serif",
+        category: 'arabic',
+        badge: 'تجوال ✨'
+    },
+    'amiri': {
+        id: 'amiri',
+        name: 'أميري كلاسيك',
+        family: "'Amiri', serif",
+        category: 'arabic',
+        badge: 'أميري 📜'
+    },
+    'cairo': {
+        id: 'cairo',
+        name: 'القاهرة العريض',
+        family: "'Cairo', sans-serif",
+        category: 'arabic',
+        badge: 'القاهرة 🔥'
+    },
+    'alexandria': {
+        id: 'alexandria',
+        name: 'الإسكندرية الهندسي',
+        family: "'Alexandria', sans-serif",
+        category: 'arabic',
+        badge: 'الإسكندرية 🏛️'
+    },
+    'aref-ruqaa': {
+        id: 'aref-ruqaa',
+        name: 'عارف رقعة الأصيل',
+        family: "'Aref Ruqaa', serif",
+        category: 'arabic',
+        badge: 'رقعة ✍️'
+    },
+    'reem-kufi': {
+        id: 'reem-kufi',
+        name: 'ريم كوفي الفني',
+        family: "'Reem Kufi', sans-serif",
+        category: 'arabic',
+        badge: 'كوفي 📐'
+    },
+    'kufam': {
+        id: 'kufam',
+        name: 'كوفام المعاصر',
+        family: "'Kufam', sans-serif",
+        category: 'arabic',
+        badge: 'كوفام 🎨'
+    },
+    'noto-serif': {
+        id: 'noto-serif',
+        name: 'نوتو سيريف الوقور',
+        family: "'Noto Serif Arabic', serif",
+        category: 'arabic',
+        badge: 'نوتو 📖'
+    },
+    'almarai': {
+        id: 'almarai',
+        name: 'المراعي الهادئ',
+        family: "'Almarai', sans-serif",
+        category: 'arabic',
+        badge: 'المراعي 🌿'
+    },
+    'marhey': {
+        id: 'marhey',
+        name: 'مرحي الديناميكي',
+        family: "'Marhey', cursive",
+        category: 'arabic',
+        badge: 'مرحي 🎉'
+    },
+
+    // خطوط إنجليزية وتواقيع عالمية
+    'playfair': {
+        id: 'playfair',
+        name: 'Playfair Display',
+        family: "'Playfair Display', serif",
+        category: 'english',
+        badge: 'Playfair 👑'
+    },
+    'cinzel': {
+        id: 'cinzel',
+        name: 'Cinzel Roman',
+        family: "'Cinzel', serif",
+        category: 'english',
+        badge: 'Cinzel 🏛️'
+    },
+    'great-vibes': {
+        id: 'great-vibes',
+        name: 'Great Vibes Script',
+        family: "'Great Vibes', cursive",
+        category: 'english',
+        badge: 'Great Vibes ✒️'
+    },
+    'montserrat': {
+        id: 'montserrat',
+        name: 'Montserrat Modern',
+        family: "'Montserrat', sans-serif",
+        category: 'english',
+        badge: 'Montserrat 💎'
+    },
+    'outfit': {
+        id: 'outfit',
+        name: 'Outfit Minimal',
+        family: "'Outfit', sans-serif",
+        category: 'english',
+        badge: 'Outfit ⚡'
+    },
+    'mono': {
+        id: 'mono',
+        name: 'Space Mono / Courier',
+        family: "'Courier New', Courier, monospace",
+        category: 'english',
+        badge: 'Mono 💻'
+    },
+    'custom': {
+        id: 'custom',
+        name: 'خط مخصص',
+        family: '',
+        category: 'custom',
+        badge: '✏️ مخصص'
+    }
+};
+
+export function getStudioFontFamily(fontId, customFont = '') {
+    if (fontId === 'custom' && customFont && customFont.trim()) {
+        return `"${customFont.trim()}", sans-serif`;
+    }
+    const font = STUDIO_FONTS[fontId];
+    if (font && font.family) return font.family;
+    return "'El Messiri', serif";
+}
+
+export function getStudioCanvasFont(fontId, sizePx, isBold = true, customFont = '') {
+    const weight = isBold ? 'bold' : 'normal';
+    if (fontId === 'custom' && customFont && customFont.trim()) {
+        return `${weight} ${sizePx}px "${customFont.trim()}", sans-serif`;
+    }
+    const font = STUDIO_FONTS[fontId];
+    if (font) {
+        if (fontId === 'great-vibes') {
+            return `${Math.round(sizePx * 1.15)}px 'Great Vibes', cursive`;
+        }
+        if (fontId === 'mono') {
+            return `${weight} ${sizePx}px "Courier New", monospace`;
+        }
+        return `${weight} ${sizePx}px ${font.family}`;
+    }
+    return `${weight} ${sizePx}px 'El Messiri', serif`;
+}
+
 export function hexToRgbString(hex) {
     if (!hex) return '124, 29, 60';
     let c = hex.replace('#', '').trim();
@@ -429,6 +591,7 @@ export function getMinimalHandlePreviewHtml() {
     const bottomY = studioState.minimalHandleOffsetY || 25;
     const color = studioState.minimalHandleColor || '#6b7280';
     const handleText = studioState.storyHandle.trim();
+    const fontFamily = getStudioFontFamily(studioState.storyHandleFont || 'mono', studioState.storyHandleCustomFont);
 
     let positionStyle = '';
     if (studioState.minimalHandleAlign === 'right') {
@@ -443,7 +606,7 @@ export function getMinimalHandlePreviewHtml() {
     if (studioState.minimalHandleStyle === 'pill') {
         return `
             <div class="absolute z-20 pointer-events-none transition-all duration-150" style="${positionStyle}">
-                <div class="px-3.5 py-1 rounded-full bg-white/85 backdrop-blur-xs border border-stone-200/60 shadow-2xs font-mono uppercase font-bold text-[10px] sm:text-[11px] tracking-[0.25em] select-none text-center" style="color: ${color};">
+                <div class="px-3.5 py-1 rounded-full bg-white/85 backdrop-blur-xs border border-stone-200/60 shadow-2xs font-bold text-[10px] sm:text-[11px] tracking-[0.25em] select-none text-center" style="font-family: ${fontFamily}; color: ${color};">
                     ${handleText}
                 </div>
             </div>
@@ -452,7 +615,7 @@ export function getMinimalHandlePreviewHtml() {
 
     return `
         <div class="absolute z-20 pointer-events-none transition-all duration-150" style="${positionStyle}">
-            <div class="font-mono uppercase font-bold text-[11px] sm:text-[12px] tracking-[0.25em] select-none drop-shadow-2xs text-center" style="color: ${color}; text-shadow: 0 1px 2px rgba(255,255,255,0.7);">
+            <div class="font-bold text-[11px] sm:text-[12px] tracking-[0.25em] select-none drop-shadow-2xs text-center" style="font-family: ${fontFamily}; color: ${color}; text-shadow: 0 1px 2px rgba(255,255,255,0.7);">
                 ${handleText}
             </div>
         </div>
@@ -516,6 +679,7 @@ export function getStoryPhrasePreviewHtml(vig) {
         'xl': 'text-xl sm:text-2xl'
     };
     const sizeClass = sizeMap[studioState.storyPhraseSize || 'md'] || 'text-base sm:text-lg';
+    const fontFamily = getStudioFontFamily(studioState.storyPhraseFont || 'el-messiri', studioState.storyPhraseCustomFont);
 
     let positionStyle = '';
     let alignClass = 'text-center';
@@ -533,7 +697,7 @@ export function getStoryPhrasePreviewHtml(vig) {
 
     return `
         <div class="absolute z-20 pointer-events-none transition-all duration-150 px-3 max-w-[88%] w-max" style="${positionStyle}">
-            <div class="font-royal-carpet font-bold ${sizeClass} tracking-wide select-none ${alignClass} drop-shadow-md" style="color: ${phraseColor}; text-shadow: ${vig.phraseShadow};">
+            <div class="font-bold ${sizeClass} tracking-wide select-none ${alignClass} drop-shadow-md" style="font-family: ${fontFamily}; color: ${phraseColor}; text-shadow: ${vig.phraseShadow};">
                 ${studioState.storyPhrase}
             </div>
         </div>
@@ -547,6 +711,7 @@ export function getStoryHandlePreviewHtml(vig) {
         ? studioState.storyHandleColor 
         : (vig.handleColor || '#fde68a');
     const handleText = studioState.storyHandle.trim();
+    const fontFamily = getStudioFontFamily(studioState.storyHandleFont || 'mono', studioState.storyHandleCustomFont);
 
     let positionStyle = '';
     let alignClass = 'text-center';
@@ -565,7 +730,7 @@ export function getStoryHandlePreviewHtml(vig) {
     if (studioState.storyHandleStyle === 'pill') {
         return `
             <div class="absolute z-20 pointer-events-none transition-all duration-150" style="${positionStyle}">
-                <div class="px-3.5 py-1 rounded-full bg-black/45 backdrop-blur-md border border-white/20 shadow-lg font-mono uppercase font-bold text-[10px] sm:text-[11px] tracking-[0.25em] select-none text-center" style="color: ${handleColor};">
+                <div class="px-3.5 py-1 rounded-full bg-black/45 backdrop-blur-md border border-white/20 shadow-lg font-bold text-[10px] sm:text-[11px] tracking-[0.25em] select-none text-center" style="font-family: ${fontFamily}; color: ${handleColor};">
                     ${handleText}
                 </div>
             </div>
@@ -574,7 +739,7 @@ export function getStoryHandlePreviewHtml(vig) {
 
     return `
         <div class="absolute z-20 pointer-events-none transition-all duration-150" style="${positionStyle}">
-            <div class="font-mono uppercase font-bold text-[11px] sm:text-[12px] tracking-[0.28em] select-none ${alignClass} drop-shadow-sm" style="color: ${handleColor}; text-shadow: 0 1px 3px rgba(0,0,0,0.8);">
+            <div class="font-bold text-[11px] sm:text-[12px] tracking-[0.28em] select-none ${alignClass} drop-shadow-sm" style="font-family: ${fontFamily}; color: ${handleColor}; text-shadow: 0 1px 3px rgba(0,0,0,0.8);">
                 ${handleText}
             </div>
         </div>
@@ -735,10 +900,14 @@ let studioState = {
     storyPhraseOffsetY: 68, // 35 to 220 px
     storyPhraseColor: 'default', // 'default' أو hex
     storyPhraseSize: 'md', // 'sm', 'md', 'lg', 'xl'
+    storyPhraseFont: 'el-messiri', // نوع خط العبارة التسويقية
+    storyPhraseCustomFont: '', // اسم خط مخصص
     storyHandleAlign: 'center', // 'right', 'center', 'left', 'custom'
     storyHandleOffsetPercent: 0, // -40 to +40
     storyHandleOffsetY: 25, // 10 to 120 px
     storyHandleColor: 'default', // 'default' أو hex
+    storyHandleFont: 'mono', // نوع خط توقيع الحساب
+    storyHandleCustomFont: '', // اسم خط مخصص للتوقيع
     storyHandleStyle: 'plain', // 'plain' أو 'pill'
     storyFitMode: 'cover', // 'cover' أو 'contain'
     storyBgColor: '#121214',
@@ -1266,6 +1435,38 @@ function updateStoryControlStates() {
         }
     });
 
+    // نوع خط العبارة التسويقية
+    const phraseFontSelect = document.getElementById('studio-select-story-phrase-font');
+    const phraseFontBadge = document.getElementById('studio-story-phrase-font-badge');
+    const phraseCustomFontWrap = document.getElementById('studio-story-phrase-custom-font-wrap');
+    const phraseCustomFontIn = document.getElementById('studio-input-story-phrase-custom-font');
+
+    const curPhraseFont = studioState.storyPhraseFont || 'el-messiri';
+    if (phraseFontSelect) phraseFontSelect.value = curPhraseFont;
+    if (phraseFontBadge) {
+        const fontObj = STUDIO_FONTS[curPhraseFont];
+        phraseFontBadge.innerText = fontObj ? (fontObj.badge || fontObj.name) : 'المسيري 👑';
+    }
+    if (phraseCustomFontWrap) {
+        if (curPhraseFont === 'custom') {
+            phraseCustomFontWrap.classList.remove('hidden');
+        } else {
+            phraseCustomFontWrap.classList.add('hidden');
+        }
+    }
+    if (phraseCustomFontIn) phraseCustomFontIn.value = studioState.storyPhraseCustomFont || '';
+
+    document.querySelectorAll('.studio-phrase-font-chip').forEach(chip => {
+        const f = chip.getAttribute('data-font');
+        if (f === curPhraseFont) {
+            chip.classList.add('border-amber-500', 'bg-amber-50', 'text-amber-950');
+            chip.classList.remove('border-stone-200', 'bg-white', 'text-stone-700');
+        } else {
+            chip.classList.remove('border-amber-500', 'bg-amber-50', 'text-amber-950');
+            chip.classList.add('border-stone-200', 'bg-white', 'text-stone-700');
+        }
+    });
+
     // 3. موضع وإزاحة حساب الإنستقرام
     const storyHandlePosTitle = document.getElementById('studio-story-handle-pos-title');
     if (storyHandlePosTitle) storyHandlePosTitle.innerText = alignNames[studioState.storyHandleAlign] || 'بالمنتصف';
@@ -1312,6 +1513,38 @@ function updateStoryControlStates() {
         } else {
             btn.classList.remove('border-amber-500', 'bg-amber-50', 'text-amber-900');
             btn.classList.add('border-stone-200', 'bg-white', 'text-stone-700');
+        }
+    });
+
+    // نوع خط توقيع الحساب
+    const handleFontSelect = document.getElementById('studio-select-story-handle-font');
+    const handleFontBadge = document.getElementById('studio-story-handle-font-badge');
+    const handleCustomFontWrap = document.getElementById('studio-story-handle-custom-font-wrap');
+    const handleCustomFontIn = document.getElementById('studio-input-story-handle-custom-font');
+
+    const curHandleFont = studioState.storyHandleFont || 'mono';
+    if (handleFontSelect) handleFontSelect.value = curHandleFont;
+    if (handleFontBadge) {
+        const fontObj = STUDIO_FONTS[curHandleFont];
+        handleFontBadge.innerText = fontObj ? (fontObj.badge || fontObj.name) : 'Mono 💻';
+    }
+    if (handleCustomFontWrap) {
+        if (curHandleFont === 'custom') {
+            handleCustomFontWrap.classList.remove('hidden');
+        } else {
+            handleCustomFontWrap.classList.add('hidden');
+        }
+    }
+    if (handleCustomFontIn) handleCustomFontIn.value = studioState.storyHandleCustomFont || '';
+
+    document.querySelectorAll('.studio-handle-font-chip').forEach(chip => {
+        const f = chip.getAttribute('data-font');
+        if (f === curHandleFont) {
+            chip.classList.add('border-amber-500', 'bg-amber-50', 'text-amber-950');
+            chip.classList.remove('border-stone-200', 'bg-white', 'text-stone-700');
+        } else {
+            chip.classList.remove('border-amber-500', 'bg-amber-50', 'text-amber-950');
+            chip.classList.add('border-stone-200', 'bg-white', 'text-stone-700');
         }
     });
 
@@ -1781,6 +2014,15 @@ export async function exportStudioHDImage() {
         ctx.imageSmoothingEnabled = true;
         ctx.imageSmoothingQuality = 'high';
 
+        // التحقق من اكتمال تحميل الخطوط في الكانفاس قبل الرسم
+        if (document.fonts && document.fonts.ready) {
+            try {
+                await document.fonts.ready;
+            } catch (fontErr) {
+                console.warn('Canvas fonts ready check skipped:', fontErr);
+            }
+        }
+
         // -------------------------------------------------------------
         // تصدير نمط ستوري إنستقرام كامل الشاشة مع الشادو الدائري والتوقيع
         // -------------------------------------------------------------
@@ -2132,7 +2374,7 @@ async function exportStoryVignetteHD(canvas, ctx) {
             'xl': 74
         };
         const pSize = phraseSizeMap[studioState.storyPhraseSize || 'md'] || 50;
-        ctx.font = `bold ${pSize}px Tajawal, sans-serif`;
+        ctx.font = getStudioCanvasFont(studioState.storyPhraseFont || 'el-messiri', pSize, true, studioState.storyPhraseCustomFont);
 
         let phraseX = canvas.width / 2;
         if (studioState.storyPhraseAlign === 'right') {
@@ -2166,7 +2408,7 @@ async function exportStoryVignetteHD(canvas, ctx) {
     // 6. رسم توقيع حساب الإنستقرام
     if (studioState.showStoryHandle && studioState.storyHandle) {
         ctx.save();
-        ctx.font = 'bold 28px "Courier New", monospace, sans-serif';
+        ctx.font = getStudioCanvasFont(studioState.storyHandleFont || 'mono', 28, true, studioState.storyHandleCustomFont);
         
         let handleX = canvas.width / 2;
         if (studioState.storyHandleAlign === 'right') {
@@ -2211,7 +2453,8 @@ async function exportStoryVignetteHD(canvas, ctx) {
         ctx.shadowColor = 'rgba(0, 0, 0, 0.7)';
         ctx.shadowBlur = 6;
         ctx.shadowOffsetY = 2;
-        drawSpacedText(ctx, studioState.storyHandle, handleX, handleY, 8);
+        const letterSpacing = (studioState.storyHandleFont === 'great-vibes') ? 2 : 8;
+        drawSpacedText(ctx, studioState.storyHandle, handleX, handleY, letterSpacing);
         ctx.restore();
     }
 
@@ -2299,11 +2542,14 @@ async function exportMinimalShowcaseHD(canvas, ctx) {
 
         const handleY = canvas.height - (Number(studioState.minimalHandleOffsetY || 25) * (canvas.height / 500));
 
+        const handleFont = getStudioCanvasFont(studioState.storyHandleFont || 'mono', 28, true, studioState.storyHandleCustomFont);
+        const letterSpacing = (studioState.storyHandleFont === 'great-vibes') ? 2 : 8;
+
         // نمط كبسولة زجاجية اختيارية أو نص مباشر نقي كالصورة
         if (studioState.minimalHandleStyle === 'pill') {
-            ctx.font = 'bold 28px "Courier New", monospace, sans-serif';
+            ctx.font = handleFont;
             const metrics = ctx.measureText(handleText);
-            const textWidth = metrics.width + (handleText.length * 8);
+            const textWidth = metrics.width + (handleText.length * letterSpacing);
             const pillW = textWidth + 60;
             const pillH = 54;
             drawRoundedRect(ctx, handleCenterX - (pillW / 2), handleY - (pillH / 2), pillW, pillH, 27);
@@ -2314,11 +2560,11 @@ async function exportMinimalShowcaseHD(canvas, ctx) {
             ctx.stroke();
         }
 
-        ctx.font = 'bold 28px "Courier New", monospace, sans-serif';
+        ctx.font = handleFont;
         ctx.fillStyle = handleColor;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
-        drawSpacedText(ctx, handleText, handleCenterX, handleY, 8);
+        drawSpacedText(ctx, handleText, handleCenterX, handleY, letterSpacing);
         ctx.restore();
     }
 
@@ -3170,6 +3416,36 @@ export function initStudioEvents() {
         storyPhraseCustomColorIn.addEventListener('change', handlePhraseCustomColor);
     }
 
+    // أحداث اختيار نوع خط العبارة التسويقية
+    const phraseFontSelect = document.getElementById('studio-select-story-phrase-font');
+    if (phraseFontSelect) {
+        phraseFontSelect.addEventListener('change', (e) => {
+            studioState.storyPhraseFont = e.target.value;
+            updateStoryControlStates();
+            updateStudioPreview();
+        });
+    }
+
+    document.querySelectorAll('.studio-phrase-font-chip').forEach(chip => {
+        chip.addEventListener('click', () => {
+            const font = chip.getAttribute('data-font');
+            if (font) {
+                studioState.storyPhraseFont = font;
+                updateStoryControlStates();
+                updateStudioPreview();
+            }
+        });
+    });
+
+    const phraseCustomFontIn = document.getElementById('studio-input-story-phrase-custom-font');
+    if (phraseCustomFontIn) {
+        phraseCustomFontIn.addEventListener('input', (e) => {
+            studioState.storyPhraseCustomFont = e.target.value;
+            studioState.storyPhraseFont = 'custom';
+            updateStudioPreview();
+        });
+    }
+
     // أزرار محاذاة توقيع الحساب
     document.querySelectorAll('.studio-story-handle-align-btn').forEach(btn => {
         btn.addEventListener('click', () => {
@@ -3236,6 +3512,36 @@ export function initStudioEvents() {
             }
         });
     });
+
+    // أحداث اختيار نوع خط توقيع الحساب
+    const handleFontSelect = document.getElementById('studio-select-story-handle-font');
+    if (handleFontSelect) {
+        handleFontSelect.addEventListener('change', (e) => {
+            studioState.storyHandleFont = e.target.value;
+            updateStoryControlStates();
+            updateStudioPreview();
+        });
+    }
+
+    document.querySelectorAll('.studio-handle-font-chip').forEach(chip => {
+        chip.addEventListener('click', () => {
+            const font = chip.getAttribute('data-font');
+            if (font) {
+                studioState.storyHandleFont = font;
+                updateStoryControlStates();
+                updateStudioPreview();
+            }
+        });
+    });
+
+    const handleCustomFontIn = document.getElementById('studio-input-story-handle-custom-font');
+    if (handleCustomFontIn) {
+        handleCustomFontIn.addEventListener('input', (e) => {
+            studioState.storyHandleCustomFont = e.target.value;
+            studioState.storyHandleFont = 'custom';
+            updateStudioPreview();
+        });
+    }
 
     document.querySelectorAll('.studio-story-fit-btn').forEach(btn => {
         btn.addEventListener('click', () => {
