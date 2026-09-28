@@ -535,16 +535,16 @@
                     
                     <div class="bg-white/95 rounded-3xl p-4 sm:p-5 border border-stone-200/90 shadow-lg space-y-3.5">
                         <!-- محول الأبعاد السريع فوق المعاينة مباشرة -->
-                        <div class="w-full flex items-center justify-center gap-1 sm:gap-2 p-1 bg-stone-100 rounded-xl border border-stone-200 shadow-2xs">
-                            <button type="button" data-ratio="1:1" class="studio-ratio-btn flex-1 py-1.5 px-2 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1 cursor-pointer">
+                        <div class="w-full flex items-center justify-center gap-1 sm:gap-2 p-1.5 bg-stone-100 rounded-xl border border-stone-200 shadow-2xs">
+                            <button type="button" data-ratio="1:1" class="studio-ratio-btn flex-1 min-h-[38px] py-2 px-2.5 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer">
                                 <span>📸</span>
                                 <span>مربع 1:1</span>
                             </button>
-                            <button type="button" data-ratio="9:16" class="studio-ratio-btn flex-1 py-1.5 px-2 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1 cursor-pointer">
+                            <button type="button" data-ratio="9:16" class="studio-ratio-btn flex-1 min-h-[38px] py-2 px-2.5 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer">
                                 <span>📱</span>
                                 <span>ستوري 9:16</span>
                             </button>
-                            <button type="button" data-ratio="4:5" class="studio-ratio-btn flex-1 py-1.5 px-2 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1 cursor-pointer">
+                            <button type="button" data-ratio="4:5" class="studio-ratio-btn flex-1 min-h-[38px] py-2 px-2.5 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer">
                                 <span>🖼️</span>
                                 <span>طولي 4:5</span>
                             </button>
@@ -558,22 +558,22 @@
                         </div>
 
                         <!-- أزرار الإجراءات والتصدير المباشر -->
-                        <div class="w-full space-y-2 pt-2 border-t border-stone-100">
+                        <div class="w-full space-y-2.5 pt-2 border-t border-stone-100">
                             <!-- زر التصدير والتحميل بدقة فائقة -->
-                            <button type="button" id="studio-btn-export" onclick="exportStudioHDImage()" class="w-full btn-liquid-metal text-white font-extrabold text-xs sm:text-sm h-11 sm:h-12 rounded-xl sm:rounded-2xl shadow-md transition flex items-center justify-center gap-2 cursor-pointer border border-amber-300/40">
+                            <button type="button" id="studio-btn-export" onclick="exportStudioHDImage()" class="w-full btn-liquid-metal text-white font-extrabold text-xs sm:text-sm h-12 rounded-xl sm:rounded-2xl shadow-md transition flex items-center justify-center gap-2 cursor-pointer border border-amber-300/40">
                                 <span class="text-base sm:text-lg">📥</span>
                                 <span>تحميل التصميم بدقة فائقة (HD PNG)</span>
                             </button>
 
                             <div class="grid grid-cols-2 gap-2">
                                 <!-- نسخ نص البوست الجاهز والهاشتاقات -->
-                                <button type="button" onclick="copyStudioCaption()" class="bg-stone-50 hover:bg-stone-100 text-stone-800 border border-stone-200 font-bold text-[11px] sm:text-xs h-9.5 rounded-xl transition shadow-2xs flex items-center justify-center gap-1.5 cursor-pointer" title="نسخ الكابشن والهاشتاقات">
+                                <button type="button" onclick="copyStudioCaption()" class="bg-stone-50 hover:bg-stone-100 text-stone-800 border border-stone-200 font-bold text-xs sm:text-[13px] min-h-[42px] h-10.5 rounded-xl transition shadow-2xs flex items-center justify-center gap-1.5 cursor-pointer" title="نسخ الكابشن والهاشتاقات">
                                     <span>📋</span>
                                     <span>نسخ نص الإعلان</span>
                                 </button>
 
                                 <!-- مشاركة واتساب سريعة -->
-                                <button type="button" onclick="shareStudioToWhatsApp()" class="btn-liquid-emerald font-bold text-[11px] sm:text-xs h-9.5 rounded-xl transition shadow-2xs flex items-center justify-center gap-1.5 cursor-pointer" title="مشاركة عبر الواتساب">
+                                <button type="button" onclick="shareStudioToWhatsApp()" class="btn-liquid-emerald font-bold text-xs sm:text-[13px] min-h-[42px] h-10.5 rounded-xl transition shadow-2xs flex items-center justify-center gap-1.5 cursor-pointer" title="مشاركة عبر الواتساب">
                                     <span>💬</span>
                                     <span>مشاركة واتساب</span>
                                 </button>
@@ -641,12 +641,12 @@
                             </span>
 
                             <!-- محول نوع الميديا: صورة أو فيديو -->
-                            <div class="inline-flex p-0.5 rounded-lg bg-stone-100 border border-stone-200 text-[11px] font-bold">
-                                <button type="button" data-media="image" class="studio-media-btn px-2.5 py-1 rounded-md transition cursor-pointer bg-stone-900 text-white shadow-xs">
+                            <div class="inline-flex p-1 rounded-xl bg-stone-100 border border-stone-200 text-xs font-bold gap-1">
+                                <button type="button" data-media="image" class="studio-media-btn min-h-[36px] px-3.5 py-1.5 rounded-lg transition cursor-pointer bg-stone-900 text-white shadow-xs flex items-center justify-center gap-1.5">
                                     <span>📷</span>
                                     <span>صورة</span>
                                 </button>
-                                <button type="button" data-media="video" class="studio-media-btn px-2.5 py-1 rounded-md transition cursor-pointer text-stone-700 hover:bg-stone-200">
+                                <button type="button" data-media="video" class="studio-media-btn min-h-[36px] px-3.5 py-1.5 rounded-lg transition cursor-pointer text-stone-700 hover:bg-stone-200 flex items-center justify-center gap-1.5">
                                     <span>🎥</span>
                                     <span>فيديو (Reels)</span>
                                 </button>
@@ -655,7 +655,7 @@
 
                         <!-- قائمة السجاد من المخزون -->
                         <div class="relative">
-                            <select id="studio-carpet-select" class="w-full h-9.5 bg-stone-50 border border-stone-300/90 rounded-xl pr-3 pl-8 text-xs text-stone-800 outline-none focus:border-brand cursor-pointer shadow-2xs transition">
+                            <select id="studio-carpet-select" class="w-full h-11 bg-stone-50 border border-stone-300/90 rounded-xl pr-3.5 pl-8 text-xs sm:text-[13px] font-bold text-stone-800 outline-none focus:border-brand cursor-pointer shadow-2xs transition leading-normal">
                                 <!-- تملأ تلقائياً -->
                             </select>
                         </div>
@@ -669,7 +669,7 @@
                         <div class="pt-2 border-t border-stone-100 flex items-center justify-between gap-2">
                             <!-- رفع صورة -->
                             <div id="studio-box-photo-upload" class="flex-1">
-                                <label class="w-full cursor-pointer bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300/80 px-3 py-2 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 shadow-2xs">
+                                <label class="w-full min-h-[44px] cursor-pointer bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300/80 px-3 py-2.5 rounded-xl text-xs sm:text-[13px] font-bold transition flex items-center justify-center gap-2 shadow-2xs">
                                     <span class="text-base">📷</span>
                                     <span>رفع صورة من جهازك / هاتفك</span>
                                     <input type="file" id="studio-file-upload" accept="image/*" class="hidden">
@@ -678,7 +678,7 @@
 
                             <!-- رفع فيديو -->
                             <div id="studio-box-video-upload" class="hidden flex-1">
-                                <label class="w-full cursor-pointer bg-gradient-to-r from-rose-50 to-amber-50 hover:from-rose-100 hover:to-amber-100 text-amber-950 border border-amber-400/80 px-3 py-2 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 shadow-2xs">
+                                <label class="w-full min-h-[44px] cursor-pointer bg-gradient-to-r from-rose-50 to-amber-50 hover:from-rose-100 hover:to-amber-100 text-amber-950 border border-amber-400/80 px-3 py-2.5 rounded-xl text-xs sm:text-[13px] font-bold transition flex items-center justify-center gap-2 shadow-2xs">
                                     <span class="text-base">📹</span>
                                     <span>رفع مقطع فيديو (MP4/WebM)</span>
                                     <input type="file" id="studio-video-upload" accept="video/*" class="hidden">
@@ -694,7 +694,7 @@
                                 <span>🔍</span>
                                 <span>حجم وموضع الصورة داخل الإطار (تحريك وتكبير):</span>
                             </span>
-                            <button type="button" id="studio-btn-reset-transform" class="text-[10px] sm:text-[11px] font-bold text-amber-900 hover:text-amber-950 bg-amber-50 hover:bg-amber-100 border border-amber-300/80 px-2 py-0.5 rounded-lg transition cursor-pointer flex items-center gap-1" title="إعادة التكبير والموضع للوضع الافتراضي">
+                            <button type="button" id="studio-btn-reset-transform" class="min-h-[34px] px-3 py-1.5 rounded-lg text-xs font-bold text-amber-900 hover:text-amber-950 bg-amber-50 hover:bg-amber-100 border border-amber-300/80 transition cursor-pointer flex items-center gap-1.5 shadow-2xs" title="إعادة التكبير والموضع للوضع الافتراضي">
                                 <span>🎯</span>
                                 <span>إعادة ضبط الموضع</span>
                             </button>
@@ -707,10 +707,10 @@
                                     <span>🔎</span>
                                     <span>مستوى التكبير (Zoom):</span>
                                 </span>
-                                <div class="flex items-center gap-1">
-                                    <button type="button" id="studio-btn-zoom-out" class="w-6 h-6 rounded-md bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold flex items-center justify-center cursor-pointer text-xs" title="تصغير">－</button>
-                                    <span id="studio-zoom-val" class="font-display font-black text-amber-950 text-xs w-11 text-center bg-amber-50/80 px-1 py-0.5 rounded border border-amber-200">100%</span>
-                                    <button type="button" id="studio-btn-zoom-in" class="w-6 h-6 rounded-md bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold flex items-center justify-center cursor-pointer text-xs" title="تكبير">＋</button>
+                                <div class="flex items-center gap-1.5">
+                                    <button type="button" id="studio-btn-zoom-out" class="w-7 h-7 rounded-lg bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold flex items-center justify-center cursor-pointer text-xs" title="تصغير">－</button>
+                                    <span id="studio-zoom-val" class="font-display font-black text-amber-950 text-xs w-12 h-7 flex items-center justify-center bg-amber-50/80 px-1 rounded-lg border border-amber-200">100%</span>
+                                    <button type="button" id="studio-btn-zoom-in" class="w-7 h-7 rounded-lg bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold flex items-center justify-center cursor-pointer text-xs" title="تكبير">＋</button>
                                 </div>
                             </div>
                             <input type="range" id="studio-input-zoom" min="70" max="250" value="100" class="w-full accent-amber-600 cursor-pointer">
@@ -749,17 +749,17 @@
                             </div>
 
                             <!-- لوحة الأسهم الرباعية السريعة (D-Pad) -->
-                            <div class="sm:col-span-4 flex flex-col items-center justify-center bg-stone-50 p-2 rounded-xl border border-stone-200">
-                                <span class="text-[9.5px] font-bold text-stone-500 mb-1">أسهم تحريك دقيقة</span>
-                                <div class="grid grid-cols-3 gap-1 w-24" dir="ltr">
+                            <div class="sm:col-span-4 flex flex-col items-center justify-center bg-stone-50 p-2.5 rounded-xl border border-stone-200">
+                                <span class="text-[10px] font-bold text-stone-500 mb-1.5">أسهم تحريك دقيقة</span>
+                                <div class="grid grid-cols-3 gap-1.5 w-28" dir="ltr">
                                     <div></div>
-                                    <button type="button" id="studio-btn-dpad-up" class="h-7 bg-white hover:bg-amber-50 text-stone-800 hover:text-amber-950 font-black rounded-md border border-stone-200 shadow-2xs flex items-center justify-center text-xs cursor-pointer transition active:scale-95" title="تحريك لأعلى">▲</button>
+                                    <button type="button" id="studio-btn-dpad-up" class="h-9 bg-white hover:bg-amber-50 text-stone-800 hover:text-amber-950 font-black rounded-lg border border-stone-200 shadow-2xs flex items-center justify-center text-sm cursor-pointer transition active:scale-95" title="تحريك لأعلى">▲</button>
                                     <div></div>
-                                    <button type="button" id="studio-btn-dpad-left" class="h-7 bg-white hover:bg-amber-50 text-stone-800 hover:text-amber-950 font-black rounded-md border border-stone-200 shadow-2xs flex items-center justify-center text-xs cursor-pointer transition active:scale-95" title="تحريك لليسار">◄</button>
-                                    <button type="button" id="studio-btn-dpad-center" class="h-7 bg-amber-500 hover:bg-amber-600 text-white font-black rounded-md shadow-2xs flex items-center justify-center text-[10px] cursor-pointer transition active:scale-95" title="إعادة ضبط الموضع للوسط">●</button>
-                                    <button type="button" id="studio-btn-dpad-right" class="h-7 bg-white hover:bg-amber-50 text-stone-800 hover:text-amber-950 font-black rounded-md border border-stone-200 shadow-2xs flex items-center justify-center text-xs cursor-pointer transition active:scale-95" title="تحريك لليمين">►</button>
+                                    <button type="button" id="studio-btn-dpad-left" class="h-9 bg-white hover:bg-amber-50 text-stone-800 hover:text-amber-950 font-black rounded-lg border border-stone-200 shadow-2xs flex items-center justify-center text-sm cursor-pointer transition active:scale-95" title="تحريك لليسار">◄</button>
+                                    <button type="button" id="studio-btn-dpad-center" class="h-9 bg-amber-500 hover:bg-amber-600 text-white font-black rounded-lg shadow-2xs flex items-center justify-center text-xs cursor-pointer transition active:scale-95" title="إعادة ضبط الموضع للوسط">●</button>
+                                    <button type="button" id="studio-btn-dpad-right" class="h-9 bg-white hover:bg-amber-50 text-stone-800 hover:text-amber-950 font-black rounded-lg border border-stone-200 shadow-2xs flex items-center justify-center text-sm cursor-pointer transition active:scale-95" title="تحريك لليمين">►</button>
                                     <div></div>
-                                    <button type="button" id="studio-btn-dpad-down" class="h-7 bg-white hover:bg-amber-50 text-stone-800 hover:text-amber-950 font-black rounded-md border border-stone-200 shadow-2xs flex items-center justify-center text-xs cursor-pointer transition active:scale-95" title="تحريك لأسفل">▼</button>
+                                    <button type="button" id="studio-btn-dpad-down" class="h-9 bg-white hover:bg-amber-50 text-stone-800 hover:text-amber-950 font-black rounded-lg border border-stone-200 shadow-2xs flex items-center justify-center text-sm cursor-pointer transition active:scale-95" title="تحريك لأسفل">▼</button>
                                     <div></div>
                                 </div>
                             </div>
@@ -793,88 +793,88 @@
                             </div>
                             <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
                                 <!-- 1. أبيض ناصع -->
-                                <button type="button" data-logo-variant="white" class="studio-logo-btn p-2 rounded-xl border border-stone-200 bg-stone-900 hover:bg-black text-white flex items-center gap-2 cursor-pointer transition text-right ring-2 ring-amber-500 border-amber-500">
-                                    <div class="w-7 h-7 rounded-lg bg-stone-800 flex items-center justify-center p-1 shrink-0">
+                                <button type="button" data-logo-variant="white" class="studio-logo-btn min-h-[56px] p-2.5 rounded-xl border border-stone-200 bg-stone-900 hover:bg-black text-white flex items-center gap-2 cursor-pointer transition text-right ring-2 ring-amber-500 border-amber-500">
+                                    <div class="w-8 h-8 rounded-lg bg-stone-800 flex items-center justify-center p-1 shrink-0">
                                         <img src="../images/logo_white.png" class="w-full h-full object-contain" alt="White Logo">
                                     </div>
                                     <div class="overflow-hidden">
-                                        <span class="block text-[11px] font-bold leading-tight truncate">أبيض ناصع</span>
-                                        <span class="block text-[9px] text-amber-300">للستوري والشادو ⭐</span>
+                                        <span class="block text-xs font-bold leading-tight truncate">أبيض ناصع</span>
+                                        <span class="block text-[9.5px] text-amber-300 mt-0.5">للستوري والشادو ⭐</span>
                                     </div>
                                 </button>
 
                                 <!-- 2. مذهب ملكي -->
-                                <button type="button" data-logo-variant="gold" class="studio-logo-btn p-2 rounded-xl border border-stone-200 bg-stone-900 hover:bg-black text-white flex items-center gap-2 cursor-pointer transition text-right">
-                                    <div class="w-7 h-7 rounded-lg bg-stone-800 flex items-center justify-center p-1 shrink-0">
+                                <button type="button" data-logo-variant="gold" class="studio-logo-btn min-h-[56px] p-2.5 rounded-xl border border-stone-200 bg-stone-900 hover:bg-black text-white flex items-center gap-2 cursor-pointer transition text-right">
+                                    <div class="w-8 h-8 rounded-lg bg-stone-800 flex items-center justify-center p-1 shrink-0">
                                         <img src="../images/logo_gold.png" class="w-full h-full object-contain" alt="Gold Logo">
                                     </div>
                                     <div class="overflow-hidden">
-                                        <span class="block text-[11px] font-bold leading-tight truncate">مُذهّب ملكي</span>
-                                        <span class="block text-[9px] text-amber-400">فخامة ملكية 👑</span>
+                                        <span class="block text-xs font-bold leading-tight truncate">مُذهّب ملكي</span>
+                                        <span class="block text-[9.5px] text-amber-400 mt-0.5">فخامة ملكية 👑</span>
                                     </div>
                                 </button>
 
                                 <!-- 3. عنابي تطريز شفاف -->
-                                <button type="button" data-logo-variant="transparent-burgundy" class="studio-logo-btn p-2 rounded-xl border border-stone-200 bg-stone-50 hover:bg-stone-100 text-stone-900 flex items-center gap-2 cursor-pointer transition text-right">
-                                    <div class="w-7 h-7 rounded-lg bg-white border border-stone-200 flex items-center justify-center p-1 shrink-0">
+                                <button type="button" data-logo-variant="transparent-burgundy" class="studio-logo-btn min-h-[56px] p-2.5 rounded-xl border border-stone-200 bg-stone-50 hover:bg-stone-100 text-stone-900 flex items-center gap-2 cursor-pointer transition text-right">
+                                    <div class="w-8 h-8 rounded-lg bg-white border border-stone-200 flex items-center justify-center p-1 shrink-0">
                                         <img src="../images/logo_transparent.png" class="w-full h-full object-contain" alt="Burgundy Logo">
                                     </div>
                                     <div class="overflow-hidden">
-                                        <span class="block text-[11px] font-bold leading-tight truncate">عنابي الموقع</span>
-                                        <span class="block text-[9px] text-stone-500">هوية الدار الرسمية</span>
+                                        <span class="block text-xs font-bold leading-tight truncate">عنابي الموقع</span>
+                                        <span class="block text-[9.5px] text-stone-500 mt-0.5">هوية الدار الرسمية</span>
                                     </div>
                                 </button>
 
                                 <!-- 4. ذهبي وهيبة شفاف -->
-                                <button type="button" data-logo-variant="transparent-gold" class="studio-logo-btn p-2 rounded-xl border border-stone-200 bg-stone-50 hover:bg-stone-100 text-stone-900 flex items-center gap-2 cursor-pointer transition text-right">
-                                    <div class="w-7 h-7 rounded-lg bg-white border border-stone-200 flex items-center justify-center p-1 shrink-0">
+                                <button type="button" data-logo-variant="transparent-gold" class="studio-logo-btn min-h-[56px] p-2.5 rounded-xl border border-stone-200 bg-stone-50 hover:bg-stone-100 text-stone-900 flex items-center gap-2 cursor-pointer transition text-right">
+                                    <div class="w-8 h-8 rounded-lg bg-white border border-stone-200 flex items-center justify-center p-1 shrink-0">
                                         <img src="../images/logoY_transparent.png" class="w-full h-full object-contain" alt="Amber Gold Logo">
                                     </div>
                                     <div class="overflow-hidden">
-                                        <span class="block text-[11px] font-bold leading-tight truncate">ذهبي وهيبة</span>
-                                        <span class="block text-[9px] text-stone-500">رمال الصحراء</span>
+                                        <span class="block text-xs font-bold leading-tight truncate">ذهبي وهيبة</span>
+                                        <span class="block text-[9.5px] text-stone-500 mt-0.5">رمال الصحراء</span>
                                     </div>
                                 </button>
 
                                 <!-- 5. زمردي ظفار شفاف -->
-                                <button type="button" data-logo-variant="transparent-emerald" class="studio-logo-btn p-2 rounded-xl border border-stone-200 bg-stone-50 hover:bg-stone-100 text-stone-900 flex items-center gap-2 cursor-pointer transition text-right">
-                                    <div class="w-7 h-7 rounded-lg bg-white border border-stone-200 flex items-center justify-center p-1 shrink-0">
+                                <button type="button" data-logo-variant="transparent-emerald" class="studio-logo-btn min-h-[56px] p-2.5 rounded-xl border border-stone-200 bg-stone-50 hover:bg-stone-100 text-stone-900 flex items-center gap-2 cursor-pointer transition text-right">
+                                    <div class="w-8 h-8 rounded-lg bg-white border border-stone-200 flex items-center justify-center p-1 shrink-0">
                                         <img src="../images/logoG_transparent.png" class="w-full h-full object-contain" alt="Emerald Logo">
                                     </div>
                                     <div class="overflow-hidden">
-                                        <span class="block text-[11px] font-bold leading-tight truncate">زمردي ملكي</span>
-                                        <span class="block text-[9px] text-stone-500">واحة ظفار</span>
+                                        <span class="block text-xs font-bold leading-tight truncate">زمردي ملكي</span>
+                                        <span class="block text-[9.5px] text-stone-500 mt-0.5">واحة ظفار</span>
                                     </div>
                                 </button>
 
                                 <!-- 6. كحلي مسقط شفاف -->
-                                <button type="button" data-logo-variant="transparent-navy" class="studio-logo-btn p-2 rounded-xl border border-stone-200 bg-stone-50 hover:bg-stone-100 text-stone-900 flex items-center gap-2 cursor-pointer transition text-right">
-                                    <div class="w-7 h-7 rounded-lg bg-white border border-stone-200 flex items-center justify-center p-1 shrink-0">
+                                <button type="button" data-logo-variant="transparent-navy" class="studio-logo-btn min-h-[56px] p-2.5 rounded-xl border border-stone-200 bg-stone-50 hover:bg-stone-100 text-stone-900 flex items-center gap-2 cursor-pointer transition text-right">
+                                    <div class="w-8 h-8 rounded-lg bg-white border border-stone-200 flex items-center justify-center p-1 shrink-0">
                                         <img src="../images/logoB_transparent.png" class="w-full h-full object-contain" alt="Navy Logo">
                                     </div>
                                     <div class="overflow-hidden">
-                                        <span class="block text-[11px] font-bold leading-tight truncate">كحلي نيلي</span>
-                                        <span class="block text-[9px] text-stone-500">بحر مسقط</span>
+                                        <span class="block text-xs font-bold leading-tight truncate">كحلي نيلي</span>
+                                        <span class="block text-[9.5px] text-stone-500 mt-0.5">بحر مسقط</span>
                                     </div>
                                 </button>
 
                                 <!-- 7. أسود فحمي شفاف -->
-                                <button type="button" data-logo-variant="black" class="studio-logo-btn p-2 rounded-xl border border-stone-200 bg-stone-50 hover:bg-stone-100 text-stone-900 flex items-center gap-2 cursor-pointer transition text-right">
-                                    <div class="w-7 h-7 rounded-lg bg-white border border-stone-200 flex items-center justify-center p-1 shrink-0">
+                                <button type="button" data-logo-variant="black" class="studio-logo-btn min-h-[56px] p-2.5 rounded-xl border border-stone-200 bg-stone-50 hover:bg-stone-100 text-stone-900 flex items-center gap-2 cursor-pointer transition text-right">
+                                    <div class="w-8 h-8 rounded-lg bg-white border border-stone-200 flex items-center justify-center p-1 shrink-0">
                                         <img src="../images/logo_black.png" class="w-full h-full object-contain" alt="Black Logo">
                                     </div>
                                     <div class="overflow-hidden">
-                                        <span class="block text-[11px] font-bold leading-tight truncate">أسود كربوني</span>
-                                        <span class="block text-[9px] text-stone-500">للخلفيات الفاتحة</span>
+                                        <span class="block text-xs font-bold leading-tight truncate">أسود كربوني</span>
+                                        <span class="block text-[9.5px] text-stone-500 mt-0.5">للخلفيات الفاتحة</span>
                                     </div>
                                 </button>
 
                                 <!-- 8. لون مخصص حر -->
-                                <div data-logo-variant="custom" class="studio-logo-btn p-2 rounded-xl border border-stone-200 bg-gradient-to-br from-amber-50 to-orange-50 hover:from-amber-100 hover:to-orange-100 text-stone-900 flex items-center gap-2 cursor-pointer transition text-right relative overflow-hidden">
-                                    <input type="color" id="studio-input-logo-custom-color" value="#fef08a" class="w-7 h-7 rounded-lg border border-amber-300 p-0 cursor-pointer shrink-0">
+                                <div data-logo-variant="custom" class="studio-logo-btn min-h-[56px] p-2.5 rounded-xl border border-stone-200 bg-gradient-to-br from-amber-50 to-orange-50 hover:from-amber-100 hover:to-orange-100 text-stone-900 flex items-center gap-2 cursor-pointer transition text-right relative overflow-hidden">
+                                    <input type="color" id="studio-input-logo-custom-color" value="#fef08a" class="w-8 h-8 rounded-lg border border-amber-300 p-0 cursor-pointer shrink-0">
                                     <div class="overflow-hidden">
-                                        <span class="block text-[11px] font-bold leading-tight truncate">لون مخصص</span>
-                                        <span class="block text-[9px] text-amber-700">اختر أي لون 🎨</span>
+                                        <span class="block text-xs font-bold leading-tight truncate">لون مخصص</span>
+                                        <span class="block text-[9.5px] text-amber-700 mt-0.5">اختر أي لون 🎨</span>
                                     </div>
                                 </div>
                             </div>
@@ -885,10 +885,10 @@
                             <!-- حجم الشعار -->
                             <div class="flex items-center justify-between text-xs">
                                 <span class="font-bold text-stone-600">حجم الشعار:</span>
-                                <div class="flex items-center gap-1">
-                                    <button type="button" data-logo-size="small" class="studio-logo-size-btn px-2.5 py-1 rounded-lg text-[10.5px] font-bold border border-stone-200 bg-white text-stone-700 cursor-pointer hover:bg-stone-50">صغير</button>
-                                    <button type="button" data-logo-size="medium" class="studio-logo-size-btn px-2.5 py-1 rounded-lg text-[10.5px] font-bold border border-amber-500 bg-amber-50 text-amber-900 cursor-pointer">متوسط</button>
-                                    <button type="button" data-logo-size="large" class="studio-logo-size-btn px-2.5 py-1 rounded-lg text-[10.5px] font-bold border border-stone-200 bg-white text-stone-700 cursor-pointer hover:bg-stone-50">كبير</button>
+                                <div class="flex items-center gap-1.5">
+                                    <button type="button" data-logo-size="small" class="studio-logo-size-btn min-h-[38px] px-3.5 py-1.5 rounded-xl text-xs font-bold border border-stone-200 bg-white text-stone-700 cursor-pointer hover:bg-stone-50 flex items-center justify-center">صغير</button>
+                                    <button type="button" data-logo-size="medium" class="studio-logo-size-btn min-h-[38px] px-3.5 py-1.5 rounded-xl text-xs font-bold border border-amber-500 bg-amber-50 text-amber-900 cursor-pointer flex items-center justify-center">متوسط</button>
+                                    <button type="button" data-logo-size="large" class="studio-logo-size-btn min-h-[38px] px-3.5 py-1.5 rounded-xl text-xs font-bold border border-stone-200 bg-white text-stone-700 cursor-pointer hover:bg-stone-50 flex items-center justify-center">كبير</button>
                                 </div>
                             </div>
 
@@ -1114,15 +1114,15 @@
 
                             <!-- أزرار المحاذاة الأفقية السريعة للشعار في الستوري -->
                             <div class="grid grid-cols-3 gap-2">
-                                <button type="button" data-align="right" class="studio-story-logo-align-btn p-2 rounded-xl border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 font-bold text-xs flex items-center justify-center gap-1.5 cursor-pointer transition">
+                                <button type="button" data-align="right" class="studio-story-logo-align-btn min-h-[42px] py-2.5 px-3 rounded-xl border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 font-bold text-xs sm:text-[13px] flex items-center justify-center gap-1.5 cursor-pointer transition">
                                     <span>➡️</span>
                                     <span>محاذاة لليمين</span>
                                 </button>
-                                <button type="button" data-align="center" class="studio-story-logo-align-btn p-2 rounded-xl border-amber-500 bg-amber-50 text-amber-900 font-bold text-xs flex items-center justify-center gap-1.5 cursor-pointer transition ring-2 ring-amber-400/30">
+                                <button type="button" data-align="center" class="studio-story-logo-align-btn min-h-[42px] py-2.5 px-3 rounded-xl border-amber-500 bg-amber-50 text-amber-900 font-bold text-xs sm:text-[13px] flex items-center justify-center gap-1.5 cursor-pointer transition ring-2 ring-amber-400/30">
                                     <span>⏺️</span>
                                     <span>بالمنتصف</span>
                                 </button>
-                                <button type="button" data-align="left" class="studio-story-logo-align-btn p-2 rounded-xl border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 font-bold text-xs flex items-center justify-center gap-1.5 cursor-pointer transition">
+                                <button type="button" data-align="left" class="studio-story-logo-align-btn min-h-[42px] py-2.5 px-3 rounded-xl border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 font-bold text-xs sm:text-[13px] flex items-center justify-center gap-1.5 cursor-pointer transition">
                                     <span>⬅️</span>
                                     <span>محاذاة لليسار</span>
                                 </button>
@@ -1167,29 +1167,29 @@
                             <!-- حقل إدخال العبارة -->
                             <div>
                                 <label class="block text-[11px] font-bold text-stone-700 mb-1">نص العبارة المميزة:</label>
-                                <input type="text" id="studio-input-story-phrase" value="- 🌟 عمل مُتقن -" class="w-full h-9.5 bg-stone-50 border border-stone-300 rounded-xl px-3 text-xs sm:text-sm font-bold text-stone-900 outline-none focus:border-brand shadow-2xs">
+                                <input type="text" id="studio-input-story-phrase" value="- 🌟 عمل مُتقن -" class="w-full h-11 bg-stone-50 border border-stone-300 rounded-xl px-3.5 text-xs sm:text-[13px] font-bold text-stone-900 outline-none focus:border-brand shadow-2xs leading-normal">
                             </div>
 
                             <!-- شرائح الاقتراحات السريعة -->
                             <div>
                                 <span class="block text-[10.5px] font-medium text-stone-500 mb-1.5">أو اختر عبارة بنقرة واحدة:</span>
                                 <div class="flex flex-wrap gap-1.5">
-                                    <button type="button" data-phrase="- 🌟 عمل مُتقن -" class="studio-phrase-chip px-2.5 py-1 rounded-lg text-[11px] font-bold bg-amber-50 hover:bg-amber-100 text-amber-950 border border-amber-300 transition cursor-pointer">
+                                    <button type="button" data-phrase="- 🌟 عمل مُتقن -" class="studio-phrase-chip min-h-[36px] px-3.5 py-1.5 rounded-xl text-xs font-bold bg-amber-50 hover:bg-amber-100 text-amber-950 border border-amber-300 transition cursor-pointer flex items-center justify-center">
                                         - 🌟 عمل مُتقن -
                                     </button>
-                                    <button type="button" data-phrase="- 👑 تحفة ملكية نادرة -" class="studio-phrase-chip px-2.5 py-1 rounded-lg text-[11px] font-bold bg-stone-100 hover:bg-amber-50 text-stone-800 hover:text-amber-950 border border-stone-200 transition cursor-pointer">
+                                    <button type="button" data-phrase="- 👑 تحفة ملكية نادرة -" class="studio-phrase-chip min-h-[36px] px-3.5 py-1.5 rounded-xl text-xs font-bold bg-stone-100 hover:bg-amber-50 text-stone-800 hover:text-amber-950 border border-stone-200 transition cursor-pointer flex items-center justify-center">
                                         - 👑 تحفة ملكية نادرة -
                                     </button>
-                                    <button type="button" data-phrase="- 💎 إتقان يدوي أصيل -" class="studio-phrase-chip px-2.5 py-1 rounded-lg text-[11px] font-bold bg-stone-100 hover:bg-amber-50 text-stone-800 hover:text-amber-950 border border-stone-200 transition cursor-pointer">
+                                    <button type="button" data-phrase="- 💎 إتقان يدوي أصيل -" class="studio-phrase-chip min-h-[36px] px-3.5 py-1.5 rounded-xl text-xs font-bold bg-stone-100 hover:bg-amber-50 text-stone-800 hover:text-amber-950 border border-stone-200 transition cursor-pointer flex items-center justify-center">
                                         - 💎 إتقان يدوي أصيل -
                                     </button>
-                                    <button type="button" data-phrase="- ✨ خيوط من ذهب وأصالة -" class="studio-phrase-chip px-2.5 py-1 rounded-lg text-[11px] font-bold bg-stone-100 hover:bg-amber-50 text-stone-800 hover:text-amber-950 border border-stone-200 transition cursor-pointer">
+                                    <button type="button" data-phrase="- ✨ خيوط من ذهب وأصالة -" class="studio-phrase-chip min-h-[36px] px-3.5 py-1.5 rounded-xl text-xs font-bold bg-stone-100 hover:bg-amber-50 text-stone-800 hover:text-amber-950 border border-stone-200 transition cursor-pointer flex items-center justify-center">
                                         - ✨ خيوط من ذهب وأصالة -
                                     </button>
-                                    <button type="button" data-phrase="- 🧶 صُنعت بشغف وإتقان -" class="studio-phrase-chip px-2.5 py-1 rounded-lg text-[11px] font-bold bg-stone-100 hover:bg-amber-50 text-stone-800 hover:text-amber-950 border border-stone-200 transition cursor-pointer">
+                                    <button type="button" data-phrase="- 🧶 صُنعت بشغف وإتقان -" class="studio-phrase-chip min-h-[36px] px-3.5 py-1.5 rounded-xl text-xs font-bold bg-stone-100 hover:bg-amber-50 text-stone-800 hover:text-amber-950 border border-stone-200 transition cursor-pointer flex items-center justify-center">
                                         - 🧶 صُنعت بشغف وإتقان -
                                     </button>
-                                    <button type="button" data-phrase="- 🏛️ فخامة تليق بمجلسك -" class="studio-phrase-chip px-2.5 py-1 rounded-lg text-[11px] font-bold bg-stone-100 hover:bg-amber-50 text-stone-800 hover:text-amber-950 border border-stone-200 transition cursor-pointer">
+                                    <button type="button" data-phrase="- 🏛️ فخامة تليق بمجلسك -" class="studio-phrase-chip min-h-[36px] px-3.5 py-1.5 rounded-xl text-xs font-bold bg-stone-100 hover:bg-amber-50 text-stone-800 hover:text-amber-950 border border-stone-200 transition cursor-pointer flex items-center justify-center">
                                         - 🏛️ فخامة تليق بمجلسك -
                                     </button>
                                 </div>
@@ -1199,15 +1199,15 @@
                             <div class="space-y-1.5 pt-1.5 border-t border-stone-100">
                                 <span class="text-[11px] font-bold text-stone-600 block">محاذاة العبارة:</span>
                                 <div class="grid grid-cols-3 gap-2">
-                                    <button type="button" data-align="right" class="studio-story-phrase-align-btn p-2 rounded-xl border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 font-bold text-xs flex items-center justify-center gap-1.5 cursor-pointer transition">
+                                    <button type="button" data-align="right" class="studio-story-phrase-align-btn min-h-[42px] py-2.5 px-3 rounded-xl border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 font-bold text-xs sm:text-[13px] flex items-center justify-center gap-1.5 cursor-pointer transition">
                                         <span>➡️</span>
                                         <span>يمين</span>
                                     </button>
-                                    <button type="button" data-align="center" class="studio-story-phrase-align-btn p-2 rounded-xl border-amber-500 bg-amber-50 text-amber-900 font-bold text-xs flex items-center justify-center gap-1.5 cursor-pointer transition ring-2 ring-amber-400/30">
+                                    <button type="button" data-align="center" class="studio-story-phrase-align-btn min-h-[42px] py-2.5 px-3 rounded-xl border-amber-500 bg-amber-50 text-amber-900 font-bold text-xs sm:text-[13px] flex items-center justify-center gap-1.5 cursor-pointer transition ring-2 ring-amber-400/30">
                                         <span>⏺️</span>
                                         <span>بالمنتصف</span>
                                     </button>
-                                    <button type="button" data-align="left" class="studio-story-phrase-align-btn p-2 rounded-xl border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 font-bold text-xs flex items-center justify-center gap-1.5 cursor-pointer transition">
+                                    <button type="button" data-align="left" class="studio-story-phrase-align-btn min-h-[42px] py-2.5 px-3 rounded-xl border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 font-bold text-xs sm:text-[13px] flex items-center justify-center gap-1.5 cursor-pointer transition">
                                         <span>⬅️</span>
                                         <span>يسار</span>
                                     </button>
@@ -1248,7 +1248,7 @@
                                     </span>
                                     <span id="studio-story-phrase-font-badge" class="text-[10.5px] font-bold text-amber-900 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">المسيري 👑</span>
                                 </div>
-                                <select id="studio-select-story-phrase-font" class="w-full h-9 bg-white border border-stone-300 rounded-xl px-2.5 text-xs font-bold text-stone-800 outline-none focus:border-brand shadow-2xs cursor-pointer">
+                                <select id="studio-select-story-phrase-font" class="w-full h-11 bg-white border border-stone-300 rounded-xl px-3 text-xs sm:text-[13px] font-bold text-stone-800 outline-none focus:border-brand shadow-2xs cursor-pointer leading-normal">
                                     <optgroup label="✨ خطوط عربية فاخرة (Arabic Luxury Fonts)">
                                         <option value="el-messiri" selected>المسيري الملكي (El Messiri) - خط تطريزة 👑</option>
                                         <option value="tajawal">تجوال (Tajawal) - عصري متزن ✨</option>
@@ -1276,20 +1276,20 @@
                                 </select>
 
                                 <!-- شرائح الوصول السريع لأشهر الخطوط -->
-                                <div class="flex flex-wrap gap-1">
-                                    <button type="button" class="studio-phrase-font-chip px-2 py-0.5 rounded-lg text-[10px] font-bold border border-amber-500 bg-amber-50 text-amber-950 transition cursor-pointer" data-font="el-messiri">المسيري 👑</button>
-                                    <button type="button" class="studio-phrase-font-chip px-2 py-0.5 rounded-lg text-[10px] font-bold border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition cursor-pointer" data-font="tajawal">تجوال ✨</button>
-                                    <button type="button" class="studio-phrase-font-chip px-2 py-0.5 rounded-lg text-[10px] font-bold border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition cursor-pointer" data-font="amiri">أميري 📜</button>
-                                    <button type="button" class="studio-phrase-font-chip px-2 py-0.5 rounded-lg text-[10px] font-bold border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition cursor-pointer" data-font="aref-ruqaa">رقعة ✍️</button>
-                                    <button type="button" class="studio-phrase-font-chip px-2 py-0.5 rounded-lg text-[10px] font-bold border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition cursor-pointer" data-font="cairo">القاهرة 🔥</button>
-                                    <button type="button" class="studio-phrase-font-chip px-2 py-0.5 rounded-lg text-[10px] font-bold border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition cursor-pointer" data-font="playfair">Playfair 👑</button>
-                                    <button type="button" class="studio-phrase-font-chip px-2 py-0.5 rounded-lg text-[10px] font-bold border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition cursor-pointer" data-font="great-vibes">Great Vibes ✒️</button>
-                                    <button type="button" class="studio-phrase-font-chip px-2 py-0.5 rounded-lg text-[10px] font-bold border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition cursor-pointer" data-font="cinzel">Cinzel 🏛️</button>
+                                <div class="flex flex-wrap gap-1.5">
+                                    <button type="button" class="studio-phrase-font-chip min-h-[34px] px-3 py-1.5 rounded-lg text-xs font-bold border border-amber-500 bg-amber-50 text-amber-950 transition cursor-pointer flex items-center justify-center" data-font="el-messiri">المسيري 👑</button>
+                                    <button type="button" class="studio-phrase-font-chip min-h-[34px] px-3 py-1.5 rounded-lg text-xs font-bold border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition cursor-pointer flex items-center justify-center" data-font="tajawal">تجوال ✨</button>
+                                    <button type="button" class="studio-phrase-font-chip min-h-[34px] px-3 py-1.5 rounded-lg text-xs font-bold border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition cursor-pointer flex items-center justify-center" data-font="amiri">أميري 📜</button>
+                                    <button type="button" class="studio-phrase-font-chip min-h-[34px] px-3 py-1.5 rounded-lg text-xs font-bold border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition cursor-pointer flex items-center justify-center" data-font="aref-ruqaa">رقعة ✍️</button>
+                                    <button type="button" class="studio-phrase-font-chip min-h-[34px] px-3 py-1.5 rounded-lg text-xs font-bold border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition cursor-pointer flex items-center justify-center" data-font="cairo">القاهرة 🔥</button>
+                                    <button type="button" class="studio-phrase-font-chip min-h-[34px] px-3 py-1.5 rounded-lg text-xs font-bold border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition cursor-pointer flex items-center justify-center" data-font="playfair">Playfair 👑</button>
+                                    <button type="button" class="studio-phrase-font-chip min-h-[34px] px-3 py-1.5 rounded-lg text-xs font-bold border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition cursor-pointer flex items-center justify-center" data-font="great-vibes">Great Vibes ✒️</button>
+                                    <button type="button" class="studio-phrase-font-chip min-h-[34px] px-3 py-1.5 rounded-lg text-xs font-bold border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition cursor-pointer flex items-center justify-center" data-font="cinzel">Cinzel 🏛️</button>
                                 </div>
 
                                 <!-- حقل الخط المخصص إن تم اختياره -->
                                 <div id="studio-story-phrase-custom-font-wrap" class="hidden">
-                                    <input type="text" id="studio-input-story-phrase-custom-font" placeholder="اكتب اسم الخط المثبت لديك (مثال: Traditional Arabic أو Didot)..." class="w-full h-8.5 bg-stone-50 border border-stone-300 rounded-lg px-2.5 text-xs text-stone-800 outline-none focus:border-brand shadow-2xs">
+                                    <input type="text" id="studio-input-story-phrase-custom-font" placeholder="اكتب اسم الخط المثبت لديك (مثال: Traditional Arabic أو Didot)..." class="w-full h-10 bg-stone-50 border border-stone-300 rounded-xl px-3 text-xs font-bold text-stone-800 outline-none focus:border-brand shadow-2xs">
                                 </div>
                             </div>
 
@@ -1297,11 +1297,11 @@
                             <div class="space-y-2 pt-2 border-t border-stone-100">
                                 <div class="flex items-center justify-between text-xs">
                                     <span class="font-bold text-stone-600">حجم خط العبارة:</span>
-                                    <div class="flex items-center gap-1">
-                                        <button type="button" data-size="sm" class="studio-story-phrase-size-btn px-2.5 py-1 rounded-lg text-[10.5px] font-bold border border-stone-200 bg-white text-stone-700 cursor-pointer hover:bg-stone-50">صغير</button>
-                                        <button type="button" data-size="md" class="studio-story-phrase-size-btn px-2.5 py-1 rounded-lg text-[10.5px] font-bold border border-amber-500 bg-amber-50 text-amber-900 cursor-pointer">متوسط</button>
-                                        <button type="button" data-size="lg" class="studio-story-phrase-size-btn px-2.5 py-1 rounded-lg text-[10.5px] font-bold border border-stone-200 bg-white text-stone-700 cursor-pointer hover:bg-stone-50">كبير</button>
-                                        <button type="button" data-size="xl" class="studio-story-phrase-size-btn px-2.5 py-1 rounded-lg text-[10.5px] font-bold border border-stone-200 bg-white text-stone-700 cursor-pointer hover:bg-stone-50">عريض</button>
+                                    <div class="flex items-center gap-1.5">
+                                        <button type="button" data-size="sm" class="studio-story-phrase-size-btn flex-1 min-h-[38px] py-2 px-2.5 rounded-xl text-xs font-bold border border-stone-200 bg-white text-stone-700 cursor-pointer hover:bg-stone-50 flex items-center justify-center">صغير</button>
+                                        <button type="button" data-size="md" class="studio-story-phrase-size-btn flex-1 min-h-[38px] py-2 px-2.5 rounded-xl text-xs font-bold border border-amber-500 bg-amber-50 text-amber-900 cursor-pointer flex items-center justify-center">متوسط</button>
+                                        <button type="button" data-size="lg" class="studio-story-phrase-size-btn flex-1 min-h-[38px] py-2 px-2.5 rounded-xl text-xs font-bold border border-stone-200 bg-white text-stone-700 cursor-pointer hover:bg-stone-50 flex items-center justify-center">كبير</button>
+                                        <button type="button" data-size="xl" class="studio-story-phrase-size-btn flex-1 min-h-[38px] py-2 px-2.5 rounded-xl text-xs font-bold border border-stone-200 bg-white text-stone-700 cursor-pointer hover:bg-stone-50 flex items-center justify-center">عريض</button>
                                     </div>
                                 </div>
 
@@ -1309,38 +1309,38 @@
                                 <div class="space-y-1">
                                     <span class="text-[11px] font-bold text-stone-600 block">لون خط العبارة المميزة:</span>
                                     <div class="flex flex-wrap items-center gap-1.5">
-                                        <button type="button" data-color="default" class="studio-story-phrase-color-btn px-2 py-1 rounded-lg text-[10px] font-bold border border-amber-500 bg-amber-50 text-amber-950 cursor-pointer">
+                                        <button type="button" data-color="default" class="studio-story-phrase-color-btn min-h-[36px] px-3 py-1.5 rounded-lg text-[11px] sm:text-xs font-bold border border-amber-500 bg-amber-50 text-amber-950 cursor-pointer flex items-center justify-center">
                                             <span>⭐ تلقائي ثيم الشادو</span>
                                         </button>
-                                        <button type="button" data-color="#ffffff" class="studio-story-phrase-color-btn px-2 py-1 rounded-lg text-[10px] font-bold border border-stone-200 bg-white text-stone-800 cursor-pointer flex items-center gap-1 hover:bg-stone-50">
-                                            <span class="w-2.5 h-2.5 rounded-full bg-white border border-stone-300 inline-block"></span>
+                                        <button type="button" data-color="#ffffff" class="studio-story-phrase-color-btn min-h-[36px] px-3 py-1.5 rounded-lg text-[11px] sm:text-xs font-bold border border-stone-200 bg-white text-stone-800 cursor-pointer flex items-center gap-1.5 hover:bg-stone-50">
+                                            <span class="w-3 h-3 rounded-full bg-white border border-stone-300 inline-block shrink-0"></span>
                                             <span>أبيض</span>
                                         </button>
-                                        <button type="button" data-color="#fde047" class="studio-story-phrase-color-btn px-2 py-1 rounded-lg text-[10px] font-bold border border-stone-200 bg-white text-stone-800 cursor-pointer flex items-center gap-1 hover:bg-stone-50">
-                                            <span class="w-2.5 h-2.5 rounded-full bg-yellow-300 inline-block"></span>
+                                        <button type="button" data-color="#fde047" class="studio-story-phrase-color-btn min-h-[36px] px-3 py-1.5 rounded-lg text-[11px] sm:text-xs font-bold border border-stone-200 bg-white text-stone-800 cursor-pointer flex items-center gap-1.5 hover:bg-stone-50">
+                                            <span class="w-3 h-3 rounded-full bg-yellow-300 inline-block shrink-0"></span>
                                             <span>ذهبي مشرق</span>
                                         </button>
-                                        <button type="button" data-color="#7c1d3c" class="studio-story-phrase-color-btn px-2 py-1 rounded-lg text-[10px] font-bold border border-stone-200 bg-white text-stone-800 cursor-pointer flex items-center gap-1 hover:bg-stone-50">
-                                            <span class="w-2.5 h-2.5 rounded-full bg-[#7c1d3c] inline-block"></span>
+                                        <button type="button" data-color="#7c1d3c" class="studio-story-phrase-color-btn min-h-[36px] px-3 py-1.5 rounded-lg text-[11px] sm:text-xs font-bold border border-stone-200 bg-white text-stone-800 cursor-pointer flex items-center gap-1.5 hover:bg-stone-50">
+                                            <span class="w-3 h-3 rounded-full bg-[#7c1d3c] inline-block shrink-0"></span>
                                             <span>عنابي الموقع</span>
                                         </button>
-                                        <button type="button" data-color="#c59b27" class="studio-story-phrase-color-btn px-2 py-1 rounded-lg text-[10px] font-bold border border-stone-200 bg-white text-stone-800 cursor-pointer flex items-center gap-1 hover:bg-stone-50">
-                                            <span class="w-2.5 h-2.5 rounded-full bg-[#c59b27] inline-block"></span>
+                                        <button type="button" data-color="#c59b27" class="studio-story-phrase-color-btn min-h-[36px] px-3 py-1.5 rounded-lg text-[11px] sm:text-xs font-bold border border-stone-200 bg-white text-stone-800 cursor-pointer flex items-center gap-1.5 hover:bg-stone-50">
+                                            <span class="w-3 h-3 rounded-full bg-[#c59b27] inline-block shrink-0"></span>
                                             <span>ذهبي وهيبة</span>
                                         </button>
-                                        <button type="button" data-color="#435838" class="studio-story-phrase-color-btn px-2 py-1 rounded-lg text-[10px] font-bold border border-stone-200 bg-white text-stone-800 cursor-pointer flex items-center gap-1 hover:bg-stone-50">
-                                            <span class="w-2.5 h-2.5 rounded-full bg-[#435838] inline-block"></span>
+                                        <button type="button" data-color="#435838" class="studio-story-phrase-color-btn min-h-[36px] px-3 py-1.5 rounded-lg text-[11px] sm:text-xs font-bold border border-stone-200 bg-white text-stone-800 cursor-pointer flex items-center gap-1.5 hover:bg-stone-50">
+                                            <span class="w-3 h-3 rounded-full bg-[#435838] inline-block shrink-0"></span>
                                             <span>زمردي ظفار</span>
                                         </button>
-                                        <button type="button" data-color="#2d5f75" class="studio-story-phrase-color-btn px-2 py-1 rounded-lg text-[10px] font-bold border border-stone-200 bg-white text-stone-800 cursor-pointer flex items-center gap-1 hover:bg-stone-50">
-                                            <span class="w-2.5 h-2.5 rounded-full bg-[#2d5f75] inline-block"></span>
+                                        <button type="button" data-color="#2d5f75" class="studio-story-phrase-color-btn min-h-[36px] px-3 py-1.5 rounded-lg text-[11px] sm:text-xs font-bold border border-stone-200 bg-white text-stone-800 cursor-pointer flex items-center gap-1.5 hover:bg-stone-50">
+                                            <span class="w-3 h-3 rounded-full bg-[#2d5f75] inline-block shrink-0"></span>
                                             <span>كحلي مسقط</span>
                                         </button>
-                                        <button type="button" data-color="#18181b" class="studio-story-phrase-color-btn px-2 py-1 rounded-lg text-[10px] font-bold border border-stone-200 bg-white text-stone-800 cursor-pointer flex items-center gap-1 hover:bg-stone-50">
-                                            <span class="w-2.5 h-2.5 rounded-full bg-black inline-block"></span>
+                                        <button type="button" data-color="#18181b" class="studio-story-phrase-color-btn min-h-[36px] px-3 py-1.5 rounded-lg text-[11px] sm:text-xs font-bold border border-stone-200 bg-white text-stone-800 cursor-pointer flex items-center gap-1.5 hover:bg-stone-50">
+                                            <span class="w-3 h-3 rounded-full bg-black inline-block shrink-0"></span>
                                             <span>أسود</span>
                                         </button>
-                                        <input type="color" id="studio-input-story-phrase-custom-color" value="#ffffff" class="w-7 h-7 rounded border border-stone-300 p-0 cursor-pointer" title="اختر لون مخصص للعبارة">
+                                        <input type="color" id="studio-input-story-phrase-custom-color" value="#ffffff" class="w-9 h-9 rounded-lg border border-stone-300 p-0 cursor-pointer shrink-0" title="اختر لون مخصص للعبارة">
                                     </div>
                                 </div>
                             </div>
@@ -1359,22 +1359,22 @@
                             <!-- حقل الحساب -->
                             <div>
                                 <label class="block text-[11px] font-bold text-stone-700 mb-1">اسم وتوقيع الحساب في الأسفل:</label>
-                                <input type="text" id="studio-input-story-handle" value="@TATRIZA_22" class="w-full h-9 bg-stone-50 border border-stone-300 rounded-xl px-3 text-xs font-mono font-bold tracking-widest text-stone-800 outline-none focus:border-brand shadow-2xs" dir="ltr">
+                                <input type="text" id="studio-input-story-handle" value="@TATRIZA_22" class="w-full h-11 bg-stone-50 border border-stone-300 rounded-xl px-3.5 text-xs sm:text-[13px] font-mono font-bold tracking-widest text-stone-800 outline-none focus:border-brand shadow-2xs leading-normal" dir="ltr">
                             </div>
 
                             <!-- أزرار المحاذاة الأفقية السريعة -->
                             <div class="space-y-1.5">
                                 <span class="text-[11px] font-bold text-stone-600 block">محاذاة توقيع الحساب:</span>
                                 <div class="grid grid-cols-3 gap-2">
-                                    <button type="button" data-align="right" class="studio-story-handle-align-btn p-2 rounded-xl border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 font-bold text-xs flex items-center justify-center gap-1.5 cursor-pointer transition">
+                                    <button type="button" data-align="right" class="studio-story-handle-align-btn min-h-[42px] py-2.5 px-3 rounded-xl border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 font-bold text-xs sm:text-[13px] flex items-center justify-center gap-1.5 cursor-pointer transition">
                                         <span>➡️</span>
                                         <span>محاذاة لليمين</span>
                                     </button>
-                                    <button type="button" data-align="center" class="studio-story-handle-align-btn p-2 rounded-xl border-amber-500 bg-amber-50 text-amber-900 font-bold text-xs flex items-center justify-center gap-1.5 cursor-pointer transition ring-2 ring-amber-400/30">
+                                    <button type="button" data-align="center" class="studio-story-handle-align-btn min-h-[42px] py-2.5 px-3 rounded-xl border-amber-500 bg-amber-50 text-amber-900 font-bold text-xs sm:text-[13px] flex items-center justify-center gap-1.5 cursor-pointer transition ring-2 ring-amber-400/30">
                                         <span>⏺️</span>
                                         <span>بالمنتصف</span>
                                     </button>
-                                    <button type="button" data-align="left" class="studio-story-handle-align-btn p-2 rounded-xl border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 font-bold text-xs flex items-center justify-center gap-1.5 cursor-pointer transition">
+                                    <button type="button" data-align="left" class="studio-story-handle-align-btn min-h-[42px] py-2.5 px-3 rounded-xl border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 font-bold text-xs sm:text-[13px] flex items-center justify-center gap-1.5 cursor-pointer transition">
                                         <span>⬅️</span>
                                         <span>محاذاة لليسار</span>
                                     </button>
@@ -1415,7 +1415,7 @@
                                     </span>
                                     <span id="studio-story-handle-font-badge" class="text-[10.5px] font-bold text-amber-900 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">Space Mono 💻</span>
                                 </div>
-                                <select id="studio-select-story-handle-font" class="w-full h-9 bg-white border border-stone-300 rounded-xl px-2.5 text-xs font-bold text-stone-800 outline-none focus:border-brand shadow-2xs cursor-pointer">
+                                <select id="studio-select-story-handle-font" class="w-full h-11 bg-white border border-stone-300 rounded-xl px-3 text-xs sm:text-[13px] font-bold text-stone-800 outline-none focus:border-brand shadow-2xs cursor-pointer leading-normal">
                                     <optgroup label="💎 خطوط إنجليزية وتواقيع عالمية (Handle & Signatures)">
                                         <option value="mono" selected>Space Mono / Courier - كود تقني متباعد 💻</option>
                                         <option value="montserrat">Montserrat - مودرن عالمي واسع التباعد 💎</option>
@@ -1439,18 +1439,18 @@
                                 </select>
 
                                 <!-- شرائح الوصول السريع لأشهر خطوط التوقيع -->
-                                <div class="flex flex-wrap gap-1">
-                                    <button type="button" class="studio-handle-font-chip px-2 py-0.5 rounded-lg text-[10px] font-bold border border-amber-500 bg-amber-50 text-amber-950 transition cursor-pointer" data-font="mono">Mono 💻</button>
-                                    <button type="button" class="studio-handle-font-chip px-2 py-0.5 rounded-lg text-[10px] font-bold border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition cursor-pointer" data-font="montserrat">Montserrat 💎</button>
-                                    <button type="button" class="studio-handle-font-chip px-2 py-0.5 rounded-lg text-[10px] font-bold border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition cursor-pointer" data-font="great-vibes">Great Vibes ✒️</button>
-                                    <button type="button" class="studio-handle-font-chip px-2 py-0.5 rounded-lg text-[10px] font-bold border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition cursor-pointer" data-font="cinzel">Cinzel 🏛️</button>
-                                    <button type="button" class="studio-handle-font-chip px-2 py-0.5 rounded-lg text-[10px] font-bold border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition cursor-pointer" data-font="tajawal">تجوال ✨</button>
-                                    <button type="button" class="studio-handle-font-chip px-2 py-0.5 rounded-lg text-[10px] font-bold border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition cursor-pointer" data-font="el-messiri">المسيري 👑</button>
+                                <div class="flex flex-wrap gap-1.5">
+                                    <button type="button" class="studio-handle-font-chip min-h-[34px] px-3 py-1.5 rounded-lg text-xs font-bold border border-amber-500 bg-amber-50 text-amber-950 transition cursor-pointer flex items-center justify-center" data-font="mono">Mono 💻</button>
+                                    <button type="button" class="studio-handle-font-chip min-h-[34px] px-3 py-1.5 rounded-lg text-xs font-bold border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition cursor-pointer flex items-center justify-center" data-font="montserrat">Montserrat 💎</button>
+                                    <button type="button" class="studio-handle-font-chip min-h-[34px] px-3 py-1.5 rounded-lg text-xs font-bold border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition cursor-pointer flex items-center justify-center" data-font="great-vibes">Great Vibes ✒️</button>
+                                    <button type="button" class="studio-handle-font-chip min-h-[34px] px-3 py-1.5 rounded-lg text-xs font-bold border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition cursor-pointer flex items-center justify-center" data-font="cinzel">Cinzel 🏛️</button>
+                                    <button type="button" class="studio-handle-font-chip min-h-[34px] px-3 py-1.5 rounded-lg text-xs font-bold border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition cursor-pointer flex items-center justify-center" data-font="tajawal">تجوال ✨</button>
+                                    <button type="button" class="studio-handle-font-chip min-h-[34px] px-3 py-1.5 rounded-lg text-xs font-bold border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition cursor-pointer flex items-center justify-center" data-font="el-messiri">المسيري 👑</button>
                                 </div>
 
                                 <!-- حقل الخط المخصص للتوقيع إن تم اختياره -->
                                 <div id="studio-story-handle-custom-font-wrap" class="hidden">
-                                    <input type="text" id="studio-input-story-handle-custom-font" placeholder="اكتب اسم الخط المثبت لديك للتوقيع..." class="w-full h-8.5 bg-stone-50 border border-stone-300 rounded-lg px-2.5 text-xs text-stone-800 outline-none focus:border-brand shadow-2xs">
+                                    <input type="text" id="studio-input-story-handle-custom-font" placeholder="اكتب اسم الخط المثبت لديك للتوقيع..." class="w-full h-10 bg-stone-50 border border-stone-300 rounded-xl px-3 text-xs font-bold text-stone-800 outline-none focus:border-brand shadow-2xs">
                                 </div>
                             </div>
 
@@ -1458,47 +1458,47 @@
                             <div class="space-y-1.5 pt-1.5 border-t border-stone-100">
                                 <span class="text-[11px] font-bold text-stone-600 block">لون توقيع الحساب:</span>
                                 <div class="flex flex-wrap items-center gap-1.5">
-                                    <button type="button" data-color="default" class="studio-story-handle-color-btn px-2 py-1 rounded-lg text-[10px] font-bold border border-amber-500 bg-amber-50 text-amber-950 cursor-pointer">
+                                    <button type="button" data-color="default" class="studio-story-handle-color-btn min-h-[36px] px-3 py-1.5 rounded-lg text-[11px] sm:text-xs font-bold border border-amber-500 bg-amber-50 text-amber-950 cursor-pointer flex items-center justify-center">
                                         <span>⭐ تلقائي ثيم الشادو</span>
                                     </button>
-                                    <button type="button" data-color="#fde68a" class="studio-story-handle-color-btn px-2 py-1 rounded-lg text-[10px] font-bold border border-stone-200 bg-white text-stone-700 cursor-pointer flex items-center gap-1 hover:bg-stone-50">
-                                        <span class="w-2.5 h-2.5 rounded-full bg-amber-300 inline-block"></span>
+                                    <button type="button" data-color="#fde68a" class="studio-story-handle-color-btn min-h-[36px] px-3 py-1.5 rounded-lg text-[11px] sm:text-xs font-bold border border-stone-200 bg-white text-stone-700 cursor-pointer flex items-center gap-1.5 hover:bg-stone-50">
+                                        <span class="w-3 h-3 rounded-full bg-amber-300 inline-block shrink-0"></span>
                                         <span>ذهبي فاتح</span>
                                     </button>
-                                    <button type="button" data-color="#ffffff" class="studio-story-handle-color-btn px-2 py-1 rounded-lg text-[10px] font-bold border border-stone-200 bg-white text-stone-700 cursor-pointer flex items-center gap-1 hover:bg-stone-50">
-                                        <span class="w-2.5 h-2.5 rounded-full bg-white border border-stone-300 inline-block"></span>
+                                    <button type="button" data-color="#ffffff" class="studio-story-handle-color-btn min-h-[36px] px-3 py-1.5 rounded-lg text-[11px] sm:text-xs font-bold border border-stone-200 bg-white text-stone-700 cursor-pointer flex items-center gap-1.5 hover:bg-stone-50">
+                                        <span class="w-3 h-3 rounded-full bg-white border border-stone-300 inline-block shrink-0"></span>
                                         <span>أبيض ناصع</span>
                                     </button>
-                                    <button type="button" data-color="#7c1d3c" class="studio-story-handle-color-btn px-2 py-1 rounded-lg text-[10px] font-bold border border-stone-200 bg-white text-stone-700 cursor-pointer flex items-center gap-1 hover:bg-stone-50">
-                                        <span class="w-2.5 h-2.5 rounded-full bg-[#7c1d3c] inline-block"></span>
+                                    <button type="button" data-color="#7c1d3c" class="studio-story-handle-color-btn min-h-[36px] px-3 py-1.5 rounded-lg text-[11px] sm:text-xs font-bold border border-stone-200 bg-white text-stone-700 cursor-pointer flex items-center gap-1.5 hover:bg-stone-50">
+                                        <span class="w-3 h-3 rounded-full bg-[#7c1d3c] inline-block shrink-0"></span>
                                         <span>عنابي الموقع</span>
                                     </button>
-                                    <button type="button" data-color="#c59b27" class="studio-story-handle-color-btn px-2 py-1 rounded-lg text-[10px] font-bold border border-stone-200 bg-white text-stone-700 cursor-pointer flex items-center gap-1 hover:bg-stone-50">
-                                        <span class="w-2.5 h-2.5 rounded-full bg-[#c59b27] inline-block"></span>
+                                    <button type="button" data-color="#c59b27" class="studio-story-handle-color-btn min-h-[36px] px-3 py-1.5 rounded-lg text-[11px] sm:text-xs font-bold border border-stone-200 bg-white text-stone-700 cursor-pointer flex items-center gap-1.5 hover:bg-stone-50">
+                                        <span class="w-3 h-3 rounded-full bg-[#c59b27] inline-block shrink-0"></span>
                                         <span>ذهبي وهيبة</span>
                                     </button>
-                                    <button type="button" data-color="#435838" class="studio-story-handle-color-btn px-2 py-1 rounded-lg text-[10px] font-bold border border-stone-200 bg-white text-stone-700 cursor-pointer flex items-center gap-1 hover:bg-stone-50">
-                                        <span class="w-2.5 h-2.5 rounded-full bg-[#435838] inline-block"></span>
+                                    <button type="button" data-color="#435838" class="studio-story-handle-color-btn min-h-[36px] px-3 py-1.5 rounded-lg text-[11px] sm:text-xs font-bold border border-stone-200 bg-white text-stone-700 cursor-pointer flex items-center gap-1.5 hover:bg-stone-50">
+                                        <span class="w-3 h-3 rounded-full bg-[#435838] inline-block shrink-0"></span>
                                         <span>زمردي ظفار</span>
                                     </button>
-                                    <button type="button" data-color="#2d5f75" class="studio-story-handle-color-btn px-2 py-1 rounded-lg text-[10px] font-bold border border-stone-200 bg-white text-stone-700 cursor-pointer flex items-center gap-1 hover:bg-stone-50">
-                                        <span class="w-2.5 h-2.5 rounded-full bg-[#2d5f75] inline-block"></span>
+                                    <button type="button" data-color="#2d5f75" class="studio-story-handle-color-btn min-h-[36px] px-3 py-1.5 rounded-lg text-[11px] sm:text-xs font-bold border border-stone-200 bg-white text-stone-700 cursor-pointer flex items-center gap-1.5 hover:bg-stone-50">
+                                        <span class="w-3 h-3 rounded-full bg-[#2d5f75] inline-block shrink-0"></span>
                                         <span>كحلي مسقط</span>
                                     </button>
-                                    <button type="button" data-color="#18181b" class="studio-story-handle-color-btn px-2 py-1 rounded-lg text-[10px] font-bold border border-stone-200 bg-white text-stone-700 cursor-pointer flex items-center gap-1 hover:bg-stone-50">
-                                        <span class="w-2.5 h-2.5 rounded-full bg-black inline-block"></span>
+                                    <button type="button" data-color="#18181b" class="studio-story-handle-color-btn min-h-[36px] px-3 py-1.5 rounded-lg text-[11px] sm:text-xs font-bold border border-stone-200 bg-white text-stone-700 cursor-pointer flex items-center gap-1.5 hover:bg-stone-50">
+                                        <span class="w-3 h-3 rounded-full bg-black inline-block shrink-0"></span>
                                         <span>أسود فاحم</span>
                                     </button>
-                                    <input type="color" id="studio-input-story-handle-custom-color" value="#fde68a" class="w-7 h-7 rounded border border-stone-300 p-0 cursor-pointer" title="اختر أي لون لتوقيع الحساب">
+                                    <input type="color" id="studio-input-story-handle-custom-color" value="#fde68a" class="w-9 h-9 rounded-lg border border-stone-300 p-0 cursor-pointer shrink-0" title="اختر أي لون لتوقيع الحساب">
                                 </div>
                             </div>
 
                             <!-- نمط العرض: نص مباشر أم كبسولة زجاجية -->
                             <div class="flex items-center justify-between text-xs pt-1.5 border-t border-stone-100">
                                 <span class="font-bold text-stone-600">شكل عرض التوقيع:</span>
-                                <div class="flex items-center gap-1">
-                                    <button type="button" data-style="plain" class="studio-story-handle-style-btn px-2.5 py-1 rounded-lg text-[10.5px] font-bold border border-amber-500 bg-amber-50 text-amber-900 cursor-pointer">نص مباشر نقي (كالأصل)</button>
-                                    <button type="button" data-style="pill" class="studio-story-handle-style-btn px-2.5 py-1 rounded-lg text-[10.5px] font-bold border border-stone-200 bg-white text-stone-700 cursor-pointer hover:bg-stone-50">كبسولة زجاجية سينمائية 💊</button>
+                                <div class="flex items-center gap-1.5">
+                                    <button type="button" data-style="plain" class="studio-story-handle-style-btn min-h-[38px] px-3.5 py-1.5 rounded-xl text-xs font-bold border border-amber-500 bg-amber-50 text-amber-900 cursor-pointer flex items-center justify-center">نص مباشر نقي (كالأصل)</button>
+                                    <button type="button" data-style="pill" class="studio-story-handle-style-btn min-h-[38px] px-3.5 py-1.5 rounded-xl text-xs font-bold border border-stone-200 bg-white text-stone-700 cursor-pointer hover:bg-stone-50 flex items-center justify-center">كبسولة زجاجية سينمائية 💊</button>
                                 </div>
                             </div>
                         </div>
@@ -1510,10 +1510,10 @@
                                 <span>طريقة احتواء الصورة / الفيديو داخل الستوري:</span>
                             </span>
                             <div class="grid grid-cols-2 gap-2">
-                                <button type="button" data-fit="cover" class="studio-story-fit-btn p-2 rounded-xl text-center border border-amber-500 bg-amber-50 text-amber-950 font-bold text-xs cursor-pointer">
+                                <button type="button" data-fit="cover" class="studio-story-fit-btn min-h-[42px] py-2.5 px-3 rounded-xl text-center border border-amber-500 bg-amber-50 text-amber-950 font-bold text-xs sm:text-[13px] cursor-pointer flex items-center justify-center">
                                     <span>🎬 ملء كامل الشاشة (Cover)</span>
                                 </button>
-                                <button type="button" data-fit="contain" class="studio-story-fit-btn p-2 rounded-xl text-center border border-stone-200 bg-white text-stone-700 font-bold text-xs cursor-pointer hover:bg-stone-50">
+                                <button type="button" data-fit="contain" class="studio-story-fit-btn min-h-[42px] py-2.5 px-3 rounded-xl text-center border border-stone-200 bg-white text-stone-700 font-bold text-xs sm:text-[13px] cursor-pointer hover:bg-stone-50 flex items-center justify-center">
                                     <span>🖼️ احتواء كامل بدون قص (Contain)</span>
                                 </button>
                             </div>
@@ -1561,15 +1561,15 @@
 
                             <!-- أزرار المحاذاة الأفقية السريعة -->
                             <div class="grid grid-cols-3 gap-2">
-                                <button type="button" data-align="right" class="studio-minimal-logo-align-btn p-2 rounded-xl border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 font-bold text-xs flex items-center justify-center gap-1.5 cursor-pointer transition">
+                                <button type="button" data-align="right" class="studio-minimal-logo-align-btn min-h-[42px] py-2.5 px-3 rounded-xl border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 font-bold text-xs sm:text-[13px] flex items-center justify-center gap-1.5 cursor-pointer transition">
                                     <span>➡️</span>
                                     <span>محاذاة لليمين</span>
                                 </button>
-                                <button type="button" data-align="center" class="studio-minimal-logo-align-btn p-2 rounded-xl border-amber-500 bg-amber-50 text-amber-900 font-bold text-xs flex items-center justify-center gap-1.5 cursor-pointer transition ring-2 ring-amber-400/30">
+                                <button type="button" data-align="center" class="studio-minimal-logo-align-btn min-h-[42px] py-2.5 px-3 rounded-xl border-amber-500 bg-amber-50 text-amber-900 font-bold text-xs sm:text-[13px] flex items-center justify-center gap-1.5 cursor-pointer transition ring-2 ring-amber-400/30">
                                     <span>⏺️</span>
                                     <span>بالمنتصف</span>
                                 </button>
-                                <button type="button" data-align="left" class="studio-minimal-logo-align-btn p-2 rounded-xl border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 font-bold text-xs flex items-center justify-center gap-1.5 cursor-pointer transition">
+                                <button type="button" data-align="left" class="studio-minimal-logo-align-btn min-h-[42px] py-2.5 px-3 rounded-xl border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 font-bold text-xs sm:text-[13px] flex items-center justify-center gap-1.5 cursor-pointer transition">
                                     <span>⬅️</span>
                                     <span>محاذاة لليسار</span>
                                 </button>
@@ -1611,20 +1611,20 @@
                             <!-- حقل تعديل اسم الحساب -->
                             <div class="space-y-1">
                                 <label class="text-[11px] font-bold text-stone-600 block">اسم الحساب (أو توقيع الدار):</label>
-                                <input type="text" id="studio-input-minimal-handle" value="@TATRIZA_22" class="w-full px-3 py-1.5 text-xs font-mono font-bold tracking-wider rounded-xl border border-stone-200 focus:border-amber-500 focus:ring-2 focus:ring-amber-200 text-stone-800" dir="ltr" placeholder="@TATRIZA_22">
+                                <input type="text" id="studio-input-minimal-handle" value="@TATRIZA_22" class="w-full h-11 px-3.5 text-xs sm:text-[13px] font-mono font-bold tracking-wider rounded-xl border border-stone-200 focus:border-amber-500 focus:ring-2 focus:ring-amber-200 text-stone-800 leading-normal" dir="ltr" placeholder="@TATRIZA_22">
                             </div>
 
                             <!-- أزرار المحاذاة الأفقية لحساب الإنستقرام -->
                             <div class="grid grid-cols-3 gap-2">
-                                <button type="button" data-align="right" class="studio-minimal-handle-align-btn p-2 rounded-xl border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 font-bold text-xs flex items-center justify-center gap-1.5 cursor-pointer transition">
+                                <button type="button" data-align="right" class="studio-minimal-handle-align-btn min-h-[42px] py-2.5 px-3 rounded-xl border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 font-bold text-xs sm:text-[13px] flex items-center justify-center gap-1.5 cursor-pointer transition">
                                     <span>➡️</span>
                                     <span>محاذاة لليمين</span>
                                 </button>
-                                <button type="button" data-align="center" class="studio-minimal-handle-align-btn p-2 rounded-xl border-amber-500 bg-amber-50 text-amber-900 font-bold text-xs flex items-center justify-center gap-1.5 cursor-pointer transition ring-2 ring-amber-400/30">
+                                <button type="button" data-align="center" class="studio-minimal-handle-align-btn min-h-[42px] py-2.5 px-3 rounded-xl border-amber-500 bg-amber-50 text-amber-900 font-bold text-xs sm:text-[13px] flex items-center justify-center gap-1.5 cursor-pointer transition ring-2 ring-amber-400/30">
                                     <span>⏺️</span>
                                     <span>بالمنتصف</span>
                                 </button>
-                                <button type="button" data-align="left" class="studio-minimal-handle-align-btn p-2 rounded-xl border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 font-bold text-xs flex items-center justify-center gap-1.5 cursor-pointer transition">
+                                <button type="button" data-align="left" class="studio-minimal-handle-align-btn min-h-[42px] py-2.5 px-3 rounded-xl border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 font-bold text-xs sm:text-[13px] flex items-center justify-center gap-1.5 cursor-pointer transition">
                                     <span>⬅️</span>
                                     <span>محاذاة لليسار</span>
                                 </button>
@@ -1657,38 +1657,38 @@
                                 <span class="text-[11px] font-bold text-stone-600 block">لون توقيع الإنستقرام:</span>
                                 <div class="flex flex-wrap gap-1.5 items-center">
                                     <!-- رمادي كالأصل -->
-                                    <button type="button" data-handle-color="#6b7280" class="studio-handle-color-btn px-2.5 py-1 rounded-lg text-[10px] font-bold border border-amber-500 bg-amber-50 text-stone-800 cursor-pointer flex items-center gap-1">
-                                        <span class="w-2.5 h-2.5 rounded-full bg-gray-500 inline-block"></span>
+                                    <button type="button" data-handle-color="#6b7280" class="studio-handle-color-btn min-h-[36px] px-3 py-1.5 rounded-lg text-[11px] sm:text-xs font-bold border border-amber-500 bg-amber-50 text-stone-800 cursor-pointer flex items-center gap-1.5">
+                                        <span class="w-3 h-3 rounded-full bg-gray-500 inline-block shrink-0"></span>
                                         <span>رمادي كالأصل</span>
                                     </button>
                                     <!-- عنابي الموقع -->
-                                    <button type="button" data-handle-color="#7c1d3c" class="studio-handle-color-btn px-2.5 py-1 rounded-lg text-[10px] font-bold border border-stone-200 bg-white text-stone-700 cursor-pointer flex items-center gap-1 hover:bg-stone-50">
-                                        <span class="w-2.5 h-2.5 rounded-full bg-[#7c1d3c] inline-block"></span>
+                                    <button type="button" data-handle-color="#7c1d3c" class="studio-handle-color-btn min-h-[36px] px-3 py-1.5 rounded-lg text-[11px] sm:text-xs font-bold border border-stone-200 bg-white text-stone-700 cursor-pointer flex items-center gap-1.5 hover:bg-stone-50">
+                                        <span class="w-3 h-3 rounded-full bg-[#7c1d3c] inline-block shrink-0"></span>
                                         <span>عنابي الموقع</span>
                                     </button>
                                     <!-- ذهبي وهيبة -->
-                                    <button type="button" data-handle-color="#c59b27" class="studio-handle-color-btn px-2.5 py-1 rounded-lg text-[10px] font-bold border border-stone-200 bg-white text-stone-700 cursor-pointer flex items-center gap-1 hover:bg-stone-50">
-                                        <span class="w-2.5 h-2.5 rounded-full bg-[#c59b27] inline-block"></span>
+                                    <button type="button" data-handle-color="#c59b27" class="studio-handle-color-btn min-h-[36px] px-3 py-1.5 rounded-lg text-[11px] sm:text-xs font-bold border border-stone-200 bg-white text-stone-700 cursor-pointer flex items-center gap-1.5 hover:bg-stone-50">
+                                        <span class="w-3 h-3 rounded-full bg-[#c59b27] inline-block shrink-0"></span>
                                         <span>ذهبي وهيبة</span>
                                     </button>
                                     <!-- زمردي ظفار -->
-                                    <button type="button" data-handle-color="#435838" class="studio-handle-color-btn px-2.5 py-1 rounded-lg text-[10px] font-bold border border-stone-200 bg-white text-stone-700 cursor-pointer flex items-center gap-1 hover:bg-stone-50">
-                                        <span class="w-2.5 h-2.5 rounded-full bg-[#435838] inline-block"></span>
+                                    <button type="button" data-handle-color="#435838" class="studio-handle-color-btn min-h-[36px] px-3 py-1.5 rounded-lg text-[11px] sm:text-xs font-bold border border-stone-200 bg-white text-stone-700 cursor-pointer flex items-center gap-1.5 hover:bg-stone-50">
+                                        <span class="w-3 h-3 rounded-full bg-[#435838] inline-block shrink-0"></span>
                                         <span>زمردي ظفار</span>
                                     </button>
                                     <!-- كحلي مسقط -->
-                                    <button type="button" data-handle-color="#2d5f75" class="studio-handle-color-btn px-2.5 py-1 rounded-lg text-[10px] font-bold border border-stone-200 bg-white text-stone-700 cursor-pointer flex items-center gap-1 hover:bg-stone-50">
-                                        <span class="w-2.5 h-2.5 rounded-full bg-[#2d5f75] inline-block"></span>
+                                    <button type="button" data-handle-color="#2d5f75" class="studio-handle-color-btn min-h-[36px] px-3 py-1.5 rounded-lg text-[11px] sm:text-xs font-bold border border-stone-200 bg-white text-stone-700 cursor-pointer flex items-center gap-1.5 hover:bg-stone-50">
+                                        <span class="w-3 h-3 rounded-full bg-[#2d5f75] inline-block shrink-0"></span>
                                         <span>كحلي مسقط</span>
                                     </button>
                                     <!-- أسود فاحم -->
-                                    <button type="button" data-handle-color="#18181b" class="studio-handle-color-btn px-2.5 py-1 rounded-lg text-[10px] font-bold border border-stone-200 bg-white text-stone-700 cursor-pointer flex items-center gap-1 hover:bg-stone-50">
-                                        <span class="w-2.5 h-2.5 rounded-full bg-black inline-block"></span>
+                                    <button type="button" data-handle-color="#18181b" class="studio-handle-color-btn min-h-[36px] px-3 py-1.5 rounded-lg text-[11px] sm:text-xs font-bold border border-stone-200 bg-white text-stone-700 cursor-pointer flex items-center gap-1.5 hover:bg-stone-50">
+                                        <span class="w-3 h-3 rounded-full bg-black inline-block shrink-0"></span>
                                         <span>أسود فاحم</span>
                                     </button>
                                     <!-- أبيض ناصع -->
-                                    <button type="button" data-handle-color="#ffffff" class="studio-handle-color-btn px-2.5 py-1 rounded-lg text-[10px] font-bold border border-stone-200 bg-white text-stone-700 cursor-pointer flex items-center gap-1 hover:bg-stone-50">
-                                        <span class="w-2.5 h-2.5 rounded-full bg-white border border-stone-300 inline-block"></span>
+                                    <button type="button" data-handle-color="#ffffff" class="studio-handle-color-btn min-h-[36px] px-3 py-1.5 rounded-lg text-[11px] sm:text-xs font-bold border border-stone-200 bg-white text-stone-700 cursor-pointer flex items-center gap-1.5 hover:bg-stone-50">
+                                        <span class="w-3 h-3 rounded-full bg-white border border-stone-300 inline-block shrink-0"></span>
                                         <span>أبيض</span>
                                     </button>
                                 </div>
@@ -1697,9 +1697,9 @@
                             <!-- نمط العرض: نص نقي أم كبسولة زجاجية -->
                             <div class="flex items-center justify-between text-xs pt-1.5 border-t border-stone-100">
                                 <span class="font-bold text-stone-600">شكل عرض التوقيع:</span>
-                                <div class="flex items-center gap-1">
-                                    <button type="button" data-style="plain" class="studio-minimal-handle-style-btn px-2.5 py-1 rounded-lg text-[10.5px] font-bold border border-amber-500 bg-amber-50 text-amber-900 cursor-pointer">نص مباشر نقي (كالأصل)</button>
-                                    <button type="button" data-style="pill" class="studio-minimal-handle-style-btn px-2.5 py-1 rounded-lg text-[10.5px] font-bold border border-stone-200 bg-white text-stone-700 cursor-pointer hover:bg-stone-50">كبسولة زجاجية 💊</button>
+                                <div class="flex items-center gap-1.5">
+                                    <button type="button" data-style="plain" class="studio-minimal-handle-style-btn min-h-[38px] px-3.5 py-1.5 rounded-xl text-xs font-bold border border-amber-500 bg-amber-50 text-amber-900 cursor-pointer flex items-center justify-center">نص مباشر نقي (كالأصل)</button>
+                                    <button type="button" data-style="pill" class="studio-minimal-handle-style-btn min-h-[38px] px-3.5 py-1.5 rounded-xl text-xs font-bold border border-stone-200 bg-white text-stone-700 cursor-pointer hover:bg-stone-50 flex items-center justify-center">كبسولة زجاجية 💊</button>
                                 </div>
                             </div>
                         </div>
@@ -1715,11 +1715,11 @@
                                 <!-- طريقة الاحتواء -->
                                 <div class="space-y-1">
                                     <span class="text-[11px] font-bold text-stone-600 block">طريقة عرض القطعة:</span>
-                                    <div class="grid grid-cols-2 gap-1.5">
-                                        <button type="button" data-fit="contain" class="studio-minimal-fit-btn p-2 rounded-xl text-center border border-amber-500 bg-amber-50 text-amber-950 font-bold text-[11px] cursor-pointer">
+                                    <div class="grid grid-cols-2 gap-2">
+                                        <button type="button" data-fit="contain" class="studio-minimal-fit-btn min-h-[42px] py-2.5 px-3 rounded-xl text-center border border-amber-500 bg-amber-50 text-amber-950 font-bold text-xs sm:text-[13px] cursor-pointer flex items-center justify-center">
                                             <span>🍓 احتواء نقي (كالأصل)</span>
                                         </button>
-                                        <button type="button" data-fit="cover" class="studio-minimal-fit-btn p-2 rounded-xl text-center border border-stone-200 bg-white text-stone-700 font-bold text-[11px] cursor-pointer hover:bg-stone-50">
+                                        <button type="button" data-fit="cover" class="studio-minimal-fit-btn min-h-[42px] py-2.5 px-3 rounded-xl text-center border border-stone-200 bg-white text-stone-700 font-bold text-xs sm:text-[13px] cursor-pointer hover:bg-stone-50 flex items-center justify-center">
                                             <span>📐 ملء الإطار (Cover)</span>
                                         </button>
                                     </div>
@@ -1728,12 +1728,12 @@
                                 <!-- لون الخلفية -->
                                 <div class="space-y-1">
                                     <span class="text-[11px] font-bold text-stone-600 block">لون خلفية التصميم:</span>
-                                    <div class="flex items-center gap-1.5">
-                                        <button type="button" data-bg="#ffffff" class="studio-minimal-bg-btn w-8 h-8 rounded-lg border-2 border-amber-500 ring-2 ring-amber-400/40 bg-white cursor-pointer shadow-2xs" title="أبيض ناصع (كالأصل)"></button>
-                                        <button type="button" data-bg="#fdfbf7" class="studio-minimal-bg-btn w-8 h-8 rounded-lg border border-stone-300 bg-[#fdfbf7] cursor-pointer hover:border-amber-400 shadow-2xs" title="عاجي دافئ"></button>
-                                        <button type="button" data-bg="#f4f4f5" class="studio-minimal-bg-btn w-8 h-8 rounded-lg border border-stone-300 bg-[#f4f4f5] cursor-pointer hover:border-amber-400 shadow-2xs" title="رمادي فاتح"></button>
-                                        <button type="button" data-bg="#18181b" class="studio-minimal-bg-btn w-8 h-8 rounded-lg border border-stone-300 bg-[#18181b] cursor-pointer hover:border-amber-400 shadow-2xs" title="أسود فاحم"></button>
-                                        <input type="color" id="studio-input-minimal-custom-bg" value="#ffffff" class="w-8 h-8 rounded-lg border border-stone-300 p-0 cursor-pointer" title="اختر أي لون للخلفية">
+                                    <div class="flex items-center gap-2">
+                                        <button type="button" data-bg="#ffffff" class="studio-minimal-bg-btn w-9 h-9 rounded-xl border-2 border-amber-500 ring-2 ring-amber-400/40 bg-white cursor-pointer shadow-2xs" title="أبيض ناصع (كالأصل)"></button>
+                                        <button type="button" data-bg="#fdfbf7" class="studio-minimal-bg-btn w-9 h-9 rounded-xl border border-stone-300 bg-[#fdfbf7] cursor-pointer hover:border-amber-400 shadow-2xs" title="عاجي دافئ"></button>
+                                        <button type="button" data-bg="#f4f4f5" class="studio-minimal-bg-btn w-9 h-9 rounded-xl border border-stone-300 bg-[#f4f4f5] cursor-pointer hover:border-amber-400 shadow-2xs" title="رمادي فاتح"></button>
+                                        <button type="button" data-bg="#18181b" class="studio-minimal-bg-btn w-9 h-9 rounded-xl border border-stone-300 bg-[#18181b] cursor-pointer hover:border-amber-400 shadow-2xs" title="أسود فاحم"></button>
+                                        <input type="color" id="studio-input-minimal-custom-bg" value="#ffffff" class="w-9 h-9 rounded-xl border border-stone-300 p-0 cursor-pointer" title="اختر أي لون للخلفية">
                                     </div>
                                 </div>
                             </div>
@@ -1823,19 +1823,19 @@
                             <div class="space-y-1.5">
                                 <span class="text-[11px] font-bold text-stone-600 block">موضع الكارت على التصميم:</span>
                                 <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                                    <button type="button" data-pos="bottom" class="studio-card-pos-btn p-2 rounded-xl border-amber-500 bg-amber-50 text-amber-950 font-bold text-xs flex items-center justify-center gap-1.5 cursor-pointer transition ring-2 ring-amber-400/30">
+                                    <button type="button" data-pos="bottom" class="studio-card-pos-btn min-h-[42px] py-2.5 px-3 rounded-xl border-amber-500 bg-amber-50 text-amber-950 font-bold text-xs sm:text-[13px] flex items-center justify-center gap-1.5 cursor-pointer transition ring-2 ring-amber-400/30">
                                         <span>⬇️</span>
                                         <span>أسفل عائم</span>
                                     </button>
-                                    <button type="button" data-pos="dock" class="studio-card-pos-btn p-2 rounded-xl border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 font-bold text-xs flex items-center justify-center gap-1.5 cursor-pointer transition">
+                                    <button type="button" data-pos="dock" class="studio-card-pos-btn min-h-[42px] py-2.5 px-3 rounded-xl border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 font-bold text-xs sm:text-[13px] flex items-center justify-center gap-1.5 cursor-pointer transition">
                                         <span>🔲</span>
                                         <span>شريط ممتد</span>
                                     </button>
-                                    <button type="button" data-pos="top" class="studio-card-pos-btn p-2 rounded-xl border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 font-bold text-xs flex items-center justify-center gap-1.5 cursor-pointer transition">
+                                    <button type="button" data-pos="top" class="studio-card-pos-btn min-h-[42px] py-2.5 px-3 rounded-xl border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 font-bold text-xs sm:text-[13px] flex items-center justify-center gap-1.5 cursor-pointer transition">
                                         <span>⬆️</span>
                                         <span>أعلى الكارت</span>
                                     </button>
-                                    <button type="button" data-pos="center" class="studio-card-pos-btn p-2 rounded-xl border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 font-bold text-xs flex items-center justify-center gap-1.5 cursor-pointer transition">
+                                    <button type="button" data-pos="center" class="studio-card-pos-btn min-h-[42px] py-2.5 px-3 rounded-xl border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 font-bold text-xs sm:text-[13px] flex items-center justify-center gap-1.5 cursor-pointer transition">
                                         <span>⏺️</span>
                                         <span>بالمنتصف</span>
                                     </button>
@@ -1846,15 +1846,15 @@
                             <div class="space-y-1.5 pt-2 border-t border-stone-100">
                                 <span class="text-[11px] font-bold text-stone-600 block">محاذاة نصوص الكارت:</span>
                                 <div class="grid grid-cols-3 gap-2">
-                                    <button type="button" data-align="right" class="studio-card-align-btn p-2 rounded-xl border-amber-500 bg-amber-50 text-amber-950 font-bold text-xs flex items-center justify-center gap-1.5 cursor-pointer transition ring-2 ring-amber-400/30">
+                                    <button type="button" data-align="right" class="studio-card-align-btn min-h-[42px] py-2.5 px-3 rounded-xl border-amber-500 bg-amber-50 text-amber-950 font-bold text-xs sm:text-[13px] flex items-center justify-center gap-1.5 cursor-pointer transition ring-2 ring-amber-400/30">
                                         <span>➡️</span>
                                         <span>يمين (عربي)</span>
                                     </button>
-                                    <button type="button" data-align="center" class="studio-card-align-btn p-2 rounded-xl border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 font-bold text-xs flex items-center justify-center gap-1.5 cursor-pointer transition">
+                                    <button type="button" data-align="center" class="studio-card-align-btn min-h-[42px] py-2.5 px-3 rounded-xl border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 font-bold text-xs sm:text-[13px] flex items-center justify-center gap-1.5 cursor-pointer transition">
                                         <span>⏺️</span>
                                         <span>بالمنتصف</span>
                                     </button>
-                                    <button type="button" data-align="left" class="studio-card-align-btn p-2 rounded-xl border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 font-bold text-xs flex items-center justify-center gap-1.5 cursor-pointer transition">
+                                    <button type="button" data-align="left" class="studio-card-align-btn min-h-[42px] py-2.5 px-3 rounded-xl border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 font-bold text-xs sm:text-[13px] flex items-center justify-center gap-1.5 cursor-pointer transition">
                                         <span>⬅️</span>
                                         <span>يسار (إنجليزي)</span>
                                     </button>
@@ -1887,20 +1887,20 @@
                                 <!-- الحشوة والارتفاع -->
                                 <div class="space-y-1">
                                     <span class="text-[11px] font-bold text-stone-600 block">حجم وارتفاع الحشوة:</span>
-                                    <div class="flex items-center gap-1">
-                                        <button type="button" data-pad="compact" class="studio-card-pad-btn flex-1 py-1 rounded-lg text-[10px] font-bold border border-stone-200 bg-white text-stone-700 cursor-pointer hover:bg-stone-50">مدمج نحيف</button>
-                                        <button type="button" data-pad="balanced" class="studio-card-pad-btn flex-1 py-1 rounded-lg text-[10px] font-bold border border-amber-500 bg-amber-50 text-amber-950 cursor-pointer">متوازن 👑</button>
-                                        <button type="button" data-pad="spacious" class="studio-card-pad-btn flex-1 py-1 rounded-lg text-[10px] font-bold border border-stone-200 bg-white text-stone-700 cursor-pointer hover:bg-stone-50">رحب فخم</button>
+                                    <div class="flex items-center gap-1.5">
+                                        <button type="button" data-pad="compact" class="studio-card-pad-btn flex-1 min-h-[38px] py-2 px-2.5 rounded-xl text-xs font-bold border border-stone-200 bg-white text-stone-700 cursor-pointer hover:bg-stone-50 flex items-center justify-center">مدمج نحيف</button>
+                                        <button type="button" data-pad="balanced" class="studio-card-pad-btn flex-1 min-h-[38px] py-2 px-2.5 rounded-xl text-xs font-bold border border-amber-500 bg-amber-50 text-amber-950 cursor-pointer flex items-center justify-center">متوازن 👑</button>
+                                        <button type="button" data-pad="spacious" class="studio-card-pad-btn flex-1 min-h-[38px] py-2 px-2.5 rounded-xl text-xs font-bold border border-stone-200 bg-white text-stone-700 cursor-pointer hover:bg-stone-50 flex items-center justify-center">رحب فخم</button>
                                     </div>
                                 </div>
 
                                 <!-- استدارة الحواف -->
                                 <div class="space-y-1">
                                     <span class="text-[11px] font-bold text-stone-600 block">استدارة زوايا الكارت:</span>
-                                    <div class="flex items-center gap-1">
-                                        <button type="button" data-radius="sharp" class="studio-card-radius-btn flex-1 py-1 rounded-lg text-[10px] font-bold border border-stone-200 bg-white text-stone-700 cursor-pointer hover:bg-stone-50">مستطيل 12px</button>
-                                        <button type="button" data-radius="rounded" class="studio-card-radius-btn flex-1 py-1 rounded-lg text-[10px] font-bold border border-amber-500 bg-amber-50 text-amber-950 cursor-pointer">مستدير 22px 👑</button>
-                                        <button type="button" data-radius="pill" class="studio-card-radius-btn flex-1 py-1 rounded-lg text-[10px] font-bold border border-stone-200 bg-white text-stone-700 cursor-pointer hover:bg-stone-50">كبسولي 34px</button>
+                                    <div class="flex items-center gap-1.5">
+                                        <button type="button" data-radius="sharp" class="studio-card-radius-btn flex-1 min-h-[38px] py-2 px-2.5 rounded-xl text-xs font-bold border border-stone-200 bg-white text-stone-700 cursor-pointer hover:bg-stone-50 flex items-center justify-center">مستطيل 12px</button>
+                                        <button type="button" data-radius="rounded" class="studio-card-radius-btn flex-1 min-h-[38px] py-2 px-2.5 rounded-xl text-xs font-bold border border-amber-500 bg-amber-50 text-amber-950 cursor-pointer flex items-center justify-center">مستدير 22px 👑</button>
+                                        <button type="button" data-radius="pill" class="studio-card-radius-btn flex-1 min-h-[38px] py-2 px-2.5 rounded-xl text-xs font-bold border border-stone-200 bg-white text-stone-700 cursor-pointer hover:bg-stone-50 flex items-center justify-center">كبسولي 34px</button>
                                     </div>
                                 </div>
                             </div>
@@ -1939,19 +1939,19 @@
                             <div class="space-y-1.5 pt-2 border-t border-stone-100">
                                 <span class="text-[11px] font-bold text-stone-600 block">نمط الإطار الملكي والتوهج:</span>
                                 <div class="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
-                                    <button type="button" data-border="gold-glow" class="studio-card-border-btn p-1.5 rounded-xl border-amber-500 bg-amber-50 text-amber-950 font-bold text-[10.5px] flex items-center justify-center gap-1 cursor-pointer transition ring-2 ring-amber-400/30">
+                                    <button type="button" data-border="gold-glow" class="studio-card-border-btn min-h-[38px] py-2 px-2 rounded-xl border-amber-500 bg-amber-50 text-amber-950 font-bold text-xs flex items-center justify-center gap-1 cursor-pointer transition ring-2 ring-amber-400/30">
                                         <span>✨</span>
                                         <span>توهج ذهبي</span>
                                     </button>
-                                    <button type="button" data-border="white-subtle" class="studio-card-border-btn p-1.5 rounded-xl border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 font-bold text-[10.5px] flex items-center justify-center gap-1 cursor-pointer transition">
+                                    <button type="button" data-border="white-subtle" class="studio-card-border-btn min-h-[38px] py-2 px-2 rounded-xl border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 font-bold text-xs flex items-center justify-center gap-1 cursor-pointer transition">
                                         <span>🤍</span>
                                         <span>أبيض شفاف</span>
                                     </button>
-                                    <button type="button" data-border="solid-accent" class="studio-card-border-btn p-1.5 rounded-xl border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 font-bold text-[10.5px] flex items-center justify-center gap-1 cursor-pointer transition">
+                                    <button type="button" data-border="solid-accent" class="studio-card-border-btn min-h-[38px] py-2 px-2 rounded-xl border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 font-bold text-xs flex items-center justify-center gap-1 cursor-pointer transition">
                                         <span>🎨</span>
                                         <span>لون الهوية</span>
                                     </button>
-                                    <button type="button" data-border="none" class="studio-card-border-btn p-1.5 rounded-xl border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 font-bold text-[10.5px] flex items-center justify-center gap-1 cursor-pointer transition">
+                                    <button type="button" data-border="none" class="studio-card-border-btn min-h-[38px] py-2 px-2 rounded-xl border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 font-bold text-xs flex items-center justify-center gap-1 cursor-pointer transition">
                                         <span>🚫</span>
                                         <span>بدون إطار</span>
                                     </button>
@@ -1971,7 +1971,7 @@
 
                             <!-- قائمة نوع الخط لعنوان القطعة -->
                             <div class="space-y-1.5">
-                                <select id="studio-select-card-title-font" class="w-full h-9 bg-white border border-stone-300 rounded-xl px-2.5 text-xs font-bold text-stone-800 outline-none focus:border-brand shadow-2xs cursor-pointer">
+                                <select id="studio-select-card-title-font" class="w-full h-11 bg-white border border-stone-300 rounded-xl px-3 text-xs sm:text-[13px] font-bold text-stone-800 outline-none focus:border-brand shadow-2xs cursor-pointer leading-normal">
                                     <optgroup label="✨ خطوط عربية فاخرة (Arabic Luxury Fonts)">
                                         <option value="el-messiri" selected>المسيري الملكي (El Messiri) - خط تطريزة 👑</option>
                                         <option value="tajawal">تجوال (Tajawal) - عصري متزن ✨</option>
@@ -1998,19 +1998,19 @@
                                 </select>
 
                                 <!-- شرائح الوصول السريع لأشهر الخطوط -->
-                                <div class="flex flex-wrap gap-1">
-                                    <button type="button" class="studio-card-title-font-chip px-2 py-0.5 rounded-lg text-[10px] font-bold border border-amber-500 bg-amber-50 text-amber-950 transition cursor-pointer" data-font="el-messiri">المسيري 👑</button>
-                                    <button type="button" class="studio-card-title-font-chip px-2 py-0.5 rounded-lg text-[10px] font-bold border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition cursor-pointer" data-font="tajawal">تجوال ✨</button>
-                                    <button type="button" class="studio-card-title-font-chip px-2 py-0.5 rounded-lg text-[10px] font-bold border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition cursor-pointer" data-font="amiri">أميري 📜</button>
-                                    <button type="button" class="studio-card-title-font-chip px-2 py-0.5 rounded-lg text-[10px] font-bold border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition cursor-pointer" data-font="aref-ruqaa">رقعة ✍️</button>
-                                    <button type="button" class="studio-card-title-font-chip px-2 py-0.5 rounded-lg text-[10px] font-bold border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition cursor-pointer" data-font="cairo">القاهرة 🔥</button>
-                                    <button type="button" class="studio-card-title-font-chip px-2 py-0.5 rounded-lg text-[10px] font-bold border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition cursor-pointer" data-font="alexandria">الإسكندرية 🏛️</button>
-                                    <button type="button" class="studio-card-title-font-chip px-2 py-0.5 rounded-lg text-[10px] font-bold border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition cursor-pointer" data-font="playfair">Playfair 👑</button>
+                                <div class="flex flex-wrap gap-1.5">
+                                    <button type="button" class="studio-card-title-font-chip min-h-[34px] px-3 py-1.5 rounded-lg text-xs font-bold border border-amber-500 bg-amber-50 text-amber-950 transition cursor-pointer flex items-center justify-center" data-font="el-messiri">المسيري 👑</button>
+                                    <button type="button" class="studio-card-title-font-chip min-h-[34px] px-3 py-1.5 rounded-lg text-xs font-bold border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition cursor-pointer flex items-center justify-center" data-font="tajawal">تجوال ✨</button>
+                                    <button type="button" class="studio-card-title-font-chip min-h-[34px] px-3 py-1.5 rounded-lg text-xs font-bold border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition cursor-pointer flex items-center justify-center" data-font="amiri">أميري 📜</button>
+                                    <button type="button" class="studio-card-title-font-chip min-h-[34px] px-3 py-1.5 rounded-lg text-xs font-bold border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition cursor-pointer flex items-center justify-center" data-font="aref-ruqaa">رقعة ✍️</button>
+                                    <button type="button" class="studio-card-title-font-chip min-h-[34px] px-3 py-1.5 rounded-lg text-xs font-bold border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition cursor-pointer flex items-center justify-center" data-font="cairo">القاهرة 🔥</button>
+                                    <button type="button" class="studio-card-title-font-chip min-h-[34px] px-3 py-1.5 rounded-lg text-xs font-bold border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition cursor-pointer flex items-center justify-center" data-font="alexandria">الإسكندرية 🏛️</button>
+                                    <button type="button" class="studio-card-title-font-chip min-h-[34px] px-3 py-1.5 rounded-lg text-xs font-bold border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition cursor-pointer flex items-center justify-center" data-font="playfair">Playfair 👑</button>
                                 </div>
 
                                 <!-- حقل الخط المخصص إن تم اختياره -->
                                 <div id="studio-card-title-custom-font-wrap" class="hidden">
-                                    <input type="text" id="studio-input-card-title-custom-font" placeholder="اكتب اسم الخط المثبت لديك (مثال: Traditional Arabic أو Bodoni)..." class="w-full h-8.5 bg-stone-50 border border-stone-300 rounded-lg px-2.5 text-xs text-stone-800 outline-none focus:border-brand shadow-2xs">
+                                    <input type="text" id="studio-input-card-title-custom-font" placeholder="اكتب اسم الخط المثبت لديك (مثال: Traditional Arabic أو Bodoni)..." class="w-full h-10 bg-stone-50 border border-stone-300 rounded-xl px-3 text-xs font-bold text-stone-800 outline-none focus:border-brand shadow-2xs">
                                 </div>
                             </div>
 
@@ -2019,30 +2019,30 @@
                                 <!-- حجم خط العنوان -->
                                 <div class="space-y-1">
                                     <span class="text-[11px] font-bold text-stone-600 block">حجم خط العنوان:</span>
-                                    <div class="flex items-center gap-1">
-                                        <button type="button" data-size="sm" class="studio-card-title-size-btn flex-1 py-1 rounded-lg text-[10px] font-bold border border-stone-200 bg-white text-stone-700 cursor-pointer hover:bg-stone-50">صغير</button>
-                                        <button type="button" data-size="md" class="studio-card-title-size-btn flex-1 py-1 rounded-lg text-[10px] font-bold border border-amber-500 bg-amber-50 text-amber-950 cursor-pointer">متوسط 👑</button>
-                                        <button type="button" data-size="lg" class="studio-card-title-size-btn flex-1 py-1 rounded-lg text-[10px] font-bold border border-stone-200 bg-white text-stone-700 cursor-pointer hover:bg-stone-50">كبير</button>
-                                        <button type="button" data-size="xl" class="studio-card-title-size-btn flex-1 py-1 rounded-lg text-[10px] font-bold border border-stone-200 bg-white text-stone-700 cursor-pointer hover:bg-stone-50">عريض</button>
+                                    <div class="flex items-center gap-1.5">
+                                        <button type="button" data-size="sm" class="studio-card-title-size-btn flex-1 min-h-[38px] py-2 px-2.5 rounded-xl text-xs font-bold border border-stone-200 bg-white text-stone-700 cursor-pointer hover:bg-stone-50 flex items-center justify-center">صغير</button>
+                                        <button type="button" data-size="md" class="studio-card-title-size-btn flex-1 min-h-[38px] py-2 px-2.5 rounded-xl text-xs font-bold border border-amber-500 bg-amber-50 text-amber-950 cursor-pointer flex items-center justify-center">متوسط 👑</button>
+                                        <button type="button" data-size="lg" class="studio-card-title-size-btn flex-1 min-h-[38px] py-2 px-2.5 rounded-xl text-xs font-bold border border-stone-200 bg-white text-stone-700 cursor-pointer hover:bg-stone-50 flex items-center justify-center">كبير</button>
+                                        <button type="button" data-size="xl" class="studio-card-title-size-btn flex-1 min-h-[38px] py-2 px-2.5 rounded-xl text-xs font-bold border border-stone-200 bg-white text-stone-700 cursor-pointer hover:bg-stone-50 flex items-center justify-center">عريض</button>
                                     </div>
                                 </div>
 
                                 <!-- حجم شارة السعر -->
                                 <div class="space-y-1">
                                     <span class="text-[11px] font-bold text-stone-600 block">حجم شارة السعر:</span>
-                                    <div class="flex items-center gap-1">
-                                        <button type="button" data-size="sm" class="studio-card-price-size-btn flex-1 py-1 rounded-lg text-[10px] font-bold border border-stone-200 bg-white text-stone-700 cursor-pointer hover:bg-stone-50">مدمج</button>
-                                        <button type="button" data-size="md" class="studio-card-price-size-btn flex-1 py-1 rounded-lg text-[10px] font-bold border border-amber-500 bg-amber-50 text-amber-950 cursor-pointer">قياسي 👑</button>
-                                        <button type="button" data-size="lg" class="studio-card-price-size-btn flex-1 py-1 rounded-lg text-[10px] font-bold border border-stone-200 bg-white text-stone-700 cursor-pointer hover:bg-stone-50">ضخم بارز</button>
+                                    <div class="flex items-center gap-1.5">
+                                        <button type="button" data-size="sm" class="studio-card-price-size-btn flex-1 min-h-[38px] py-2 px-2.5 rounded-xl text-xs font-bold border border-stone-200 bg-white text-stone-700 cursor-pointer hover:bg-stone-50 flex items-center justify-center">مدمج</button>
+                                        <button type="button" data-size="md" class="studio-card-price-size-btn flex-1 min-h-[38px] py-2 px-2.5 rounded-xl text-xs font-bold border border-amber-500 bg-amber-50 text-amber-950 cursor-pointer flex items-center justify-center">قياسي 👑</button>
+                                        <button type="button" data-size="lg" class="studio-card-price-size-btn flex-1 min-h-[38px] py-2 px-2.5 rounded-xl text-xs font-bold border border-stone-200 bg-white text-stone-700 cursor-pointer hover:bg-stone-50 flex items-center justify-center">ضخم بارز</button>
                                     </div>
                                 </div>
 
                                 <!-- نمط عرض المواصفات -->
                                 <div class="space-y-1">
                                     <span class="text-[11px] font-bold text-stone-600 block">نمط المواصفات:</span>
-                                    <div class="flex items-center gap-1">
-                                        <button type="button" data-style="pills" class="studio-card-specs-style-btn flex-1 py-1 rounded-lg text-[10px] font-bold border border-amber-500 bg-amber-50 text-amber-950 cursor-pointer">كبسولات 👑</button>
-                                        <button type="button" data-style="inline" class="studio-card-specs-style-btn flex-1 py-1 rounded-lg text-[10px] font-bold border border-stone-200 bg-white text-stone-700 cursor-pointer hover:bg-stone-50">سطر متصل</button>
+                                    <div class="flex items-center gap-1.5">
+                                        <button type="button" data-style="pills" class="studio-card-specs-style-btn flex-1 min-h-[38px] py-2 px-2.5 rounded-xl text-xs font-bold border border-amber-500 bg-amber-50 text-amber-950 cursor-pointer flex items-center justify-center">كبسولات 👑</button>
+                                        <button type="button" data-style="inline" class="studio-card-specs-style-btn flex-1 min-h-[38px] py-2 px-2.5 rounded-xl text-xs font-bold border border-stone-200 bg-white text-stone-700 cursor-pointer hover:bg-stone-50 flex items-center justify-center">سطر متصل</button>
                                     </div>
                                 </div>
                             </div>
@@ -2059,26 +2059,26 @@
                             <div class="space-y-1">
                                 <span class="text-[11px] font-bold text-stone-600 block">لون عنوان القطعة:</span>
                                 <div class="flex flex-wrap items-center gap-1.5">
-                                    <button type="button" data-color="default" class="studio-card-title-color-btn px-2 py-1 rounded-lg text-[10px] font-bold border border-amber-500 bg-amber-50 text-amber-950 cursor-pointer">
+                                    <button type="button" data-color="default" class="studio-card-title-color-btn min-h-[36px] px-3 py-1.5 rounded-lg text-[11px] sm:text-xs font-bold border border-amber-500 bg-amber-50 text-amber-950 cursor-pointer flex items-center justify-center">
                                         <span>⭐ تلقائي ثيم الكارت</span>
                                     </button>
-                                    <button type="button" data-color="#ffffff" class="studio-card-title-color-btn px-2 py-1 rounded-lg text-[10px] font-bold border border-stone-200 bg-white text-stone-800 cursor-pointer flex items-center gap-1 hover:bg-stone-50">
-                                        <span class="w-2.5 h-2.5 rounded-full bg-white border border-stone-300 inline-block"></span>
+                                    <button type="button" data-color="#ffffff" class="studio-card-title-color-btn min-h-[36px] px-3 py-1.5 rounded-lg text-[11px] sm:text-xs font-bold border border-stone-200 bg-white text-stone-800 cursor-pointer flex items-center gap-1.5 hover:bg-stone-50">
+                                        <span class="w-3 h-3 rounded-full bg-white border border-stone-300 inline-block shrink-0"></span>
                                         <span>أبيض ناصع</span>
                                     </button>
-                                    <button type="button" data-color="#fde047" class="studio-card-title-color-btn px-2 py-1 rounded-lg text-[10px] font-bold border border-stone-200 bg-white text-stone-800 cursor-pointer flex items-center gap-1 hover:bg-stone-50">
-                                        <span class="w-2.5 h-2.5 rounded-full bg-yellow-300 inline-block"></span>
+                                    <button type="button" data-color="#fde047" class="studio-card-title-color-btn min-h-[36px] px-3 py-1.5 rounded-lg text-[11px] sm:text-xs font-bold border border-stone-200 bg-white text-stone-800 cursor-pointer flex items-center gap-1.5 hover:bg-stone-50">
+                                        <span class="w-3 h-3 rounded-full bg-yellow-300 inline-block shrink-0"></span>
                                         <span>ذهبي مشرق</span>
                                     </button>
-                                    <button type="button" data-color="#c59b27" class="studio-card-title-color-btn px-2 py-1 rounded-lg text-[10px] font-bold border border-stone-200 bg-white text-stone-800 cursor-pointer flex items-center gap-1 hover:bg-stone-50">
-                                        <span class="w-2.5 h-2.5 rounded-full bg-[#c59b27] inline-block"></span>
+                                    <button type="button" data-color="#c59b27" class="studio-card-title-color-btn min-h-[36px] px-3 py-1.5 rounded-lg text-[11px] sm:text-xs font-bold border border-stone-200 bg-white text-stone-800 cursor-pointer flex items-center gap-1.5 hover:bg-stone-50">
+                                        <span class="w-3 h-3 rounded-full bg-[#c59b27] inline-block shrink-0"></span>
                                         <span>ذهبي وهيبة</span>
                                     </button>
-                                    <button type="button" data-color="#7c1d3c" class="studio-card-title-color-btn px-2 py-1 rounded-lg text-[10px] font-bold border border-stone-200 bg-white text-stone-800 cursor-pointer flex items-center gap-1 hover:bg-stone-50">
-                                        <span class="w-2.5 h-2.5 rounded-full bg-[#7c1d3c] inline-block"></span>
+                                    <button type="button" data-color="#7c1d3c" class="studio-card-title-color-btn min-h-[36px] px-3 py-1.5 rounded-lg text-[11px] sm:text-xs font-bold border border-stone-200 bg-white text-stone-800 cursor-pointer flex items-center gap-1.5 hover:bg-stone-50">
+                                        <span class="w-3 h-3 rounded-full bg-[#7c1d3c] inline-block shrink-0"></span>
                                         <span>عنابي تطريزة</span>
                                     </button>
-                                    <input type="color" id="studio-input-card-title-custom-color" value="#fde047" class="w-7 h-7 rounded border border-stone-300 p-0 cursor-pointer" title="اختر لون مخصص للعنوان">
+                                    <input type="color" id="studio-input-card-title-custom-color" value="#fde047" class="w-9 h-9 rounded-lg border border-stone-300 p-0 cursor-pointer shrink-0" title="اختر لون مخصص للعنوان">
                                 </div>
                             </div>
 
@@ -2086,22 +2086,22 @@
                             <div class="space-y-1 pt-1.5 border-t border-stone-100">
                                 <span class="text-[11px] font-bold text-stone-600 block">لون شارة ورقم السعر:</span>
                                 <div class="flex flex-wrap items-center gap-1.5">
-                                    <button type="button" data-color="default" class="studio-card-price-color-btn px-2 py-1 rounded-lg text-[10px] font-bold border border-amber-500 bg-amber-50 text-amber-950 cursor-pointer">
+                                    <button type="button" data-color="default" class="studio-card-price-color-btn min-h-[36px] px-3 py-1.5 rounded-lg text-[11px] sm:text-xs font-bold border border-amber-500 bg-amber-50 text-amber-950 cursor-pointer flex items-center justify-center">
                                         <span>⭐ تلقائي ثيم الكارت</span>
                                     </button>
-                                    <button type="button" data-color="#fde047" class="studio-card-price-color-btn px-2 py-1 rounded-lg text-[10px] font-bold border border-stone-200 bg-white text-stone-800 cursor-pointer flex items-center gap-1 hover:bg-stone-50">
-                                        <span class="w-2.5 h-2.5 rounded-full bg-yellow-300 inline-block"></span>
+                                    <button type="button" data-color="#fde047" class="studio-card-price-color-btn min-h-[36px] px-3 py-1.5 rounded-lg text-[11px] sm:text-xs font-bold border border-stone-200 bg-white text-stone-800 cursor-pointer flex items-center gap-1.5 hover:bg-stone-50">
+                                        <span class="w-3 h-3 rounded-full bg-yellow-300 inline-block shrink-0"></span>
                                         <span>ذهبي مشرق</span>
                                     </button>
-                                    <button type="button" data-color="#ffffff" class="studio-card-price-color-btn px-2 py-1 rounded-lg text-[10px] font-bold border border-stone-200 bg-white text-stone-800 cursor-pointer flex items-center gap-1 hover:bg-stone-50">
-                                        <span class="w-2.5 h-2.5 rounded-full bg-white border border-stone-300 inline-block"></span>
+                                    <button type="button" data-color="#ffffff" class="studio-card-price-color-btn min-h-[36px] px-3 py-1.5 rounded-lg text-[11px] sm:text-xs font-bold border border-stone-200 bg-white text-stone-800 cursor-pointer flex items-center gap-1.5 hover:bg-stone-50">
+                                        <span class="w-3 h-3 rounded-full bg-white border border-stone-300 inline-block shrink-0"></span>
                                         <span>أبيض ناصع</span>
                                     </button>
-                                    <button type="button" data-color="#10b981" class="studio-card-price-color-btn px-2 py-1 rounded-lg text-[10px] font-bold border border-stone-200 bg-white text-stone-800 cursor-pointer flex items-center gap-1 hover:bg-stone-50">
-                                        <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block"></span>
+                                    <button type="button" data-color="#10b981" class="studio-card-price-color-btn min-h-[36px] px-3 py-1.5 rounded-lg text-[11px] sm:text-xs font-bold border border-stone-200 bg-white text-stone-800 cursor-pointer flex items-center gap-1.5 hover:bg-stone-50">
+                                        <span class="w-3 h-3 rounded-full bg-emerald-500 inline-block shrink-0"></span>
                                         <span>أخضر زمردي</span>
                                     </button>
-                                    <input type="color" id="studio-input-card-price-custom-color" value="#fde047" class="w-7 h-7 rounded border border-stone-300 p-0 cursor-pointer" title="اختر لون مخصص للسعر">
+                                    <input type="color" id="studio-input-card-price-custom-color" value="#fde047" class="w-9 h-9 rounded-lg border border-stone-300 p-0 cursor-pointer shrink-0" title="اختر لون مخصص للسعر">
                                 </div>
                             </div>
                         </div>
@@ -2116,32 +2116,32 @@
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                                 <div class="sm:col-span-2">
                                     <label class="block text-[11px] font-bold text-stone-600 mb-1">عنوان القطعة الرئيسي</label>
-                                    <input type="text" id="studio-input-title" class="w-full h-9 bg-stone-50 border border-stone-300 rounded-xl px-3 text-xs text-stone-800 outline-none focus:border-brand">
+                                    <input type="text" id="studio-input-title" class="w-full h-11 bg-stone-50 border border-stone-300 rounded-xl px-3.5 text-xs sm:text-[13px] font-bold text-stone-800 outline-none focus:border-brand shadow-2xs leading-normal">
                                 </div>
 
                                 <div class="sm:col-span-2">
                                     <label class="block text-[11px] font-bold text-stone-600 mb-1">العبارة التسويقية الفرعية</label>
-                                    <input type="text" id="studio-input-subtitle" class="w-full h-9 bg-stone-50 border border-stone-300 rounded-xl px-3 text-xs text-stone-800 outline-none focus:border-brand">
+                                    <input type="text" id="studio-input-subtitle" class="w-full h-11 bg-stone-50 border border-stone-300 rounded-xl px-3.5 text-xs sm:text-[13px] font-bold text-stone-800 outline-none focus:border-brand shadow-2xs leading-normal">
                                 </div>
 
                                 <div>
                                     <label class="block text-[11px] font-bold text-stone-600 mb-1">المقاسات</label>
-                                    <input type="text" id="studio-input-dim" class="w-full h-9 bg-stone-50 border border-stone-300 rounded-xl px-3 text-xs text-stone-800 outline-none focus:border-brand">
+                                    <input type="text" id="studio-input-dim" class="w-full h-11 bg-stone-50 border border-stone-300 rounded-xl px-3.5 text-xs sm:text-[13px] font-bold text-stone-800 outline-none focus:border-brand shadow-2xs leading-normal">
                                 </div>
 
                                 <div>
                                     <label class="block text-[11px] font-bold text-stone-600 mb-1">نوع الخامة</label>
-                                    <input type="text" id="studio-input-mat" class="w-full h-9 bg-stone-50 border border-stone-300 rounded-xl px-3 text-xs text-stone-800 outline-none focus:border-brand">
+                                    <input type="text" id="studio-input-mat" class="w-full h-11 bg-stone-50 border border-stone-300 rounded-xl px-3.5 text-xs sm:text-[13px] font-bold text-stone-800 outline-none focus:border-brand shadow-2xs leading-normal">
                                 </div>
 
                                 <div>
                                     <label class="block text-[11px] font-bold text-stone-600 mb-1">السعر</label>
-                                    <input type="text" id="studio-input-price" class="w-full h-9 bg-stone-50 border border-stone-300 rounded-xl px-3 text-xs text-stone-800 outline-none focus:border-brand">
+                                    <input type="text" id="studio-input-price" class="w-full h-11 bg-stone-50 border border-stone-300 rounded-xl px-3.5 text-xs sm:text-[13px] font-bold text-stone-800 outline-none focus:border-brand shadow-2xs leading-normal">
                                 </div>
 
                                 <div>
                                     <label class="block text-[11px] font-bold text-stone-600 mb-1">العملة</label>
-                                    <input type="text" id="studio-input-curr" class="w-full h-9 bg-stone-50 border border-stone-300 rounded-xl px-3 text-xs text-stone-800 outline-none focus:border-brand">
+                                    <input type="text" id="studio-input-curr" class="w-full h-11 bg-stone-50 border border-stone-300 rounded-xl px-3.5 text-xs sm:text-[13px] font-bold text-stone-800 outline-none focus:border-brand shadow-2xs leading-normal">
                                 </div>
                             </div>
 
@@ -2163,7 +2163,7 @@
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                                 <div>
                                     <label class="block text-[11px] font-bold text-stone-600 mb-1">الشارة الترويجية (Sticker)</label>
-                                    <select id="studio-select-sticker" class="w-full h-9 bg-stone-50 border border-stone-300 rounded-xl px-2.5 text-xs text-stone-800 outline-none focus:border-brand cursor-pointer">
+                                    <select id="studio-select-sticker" class="w-full h-11 bg-stone-50 border border-stone-300 rounded-xl px-3.5 text-xs sm:text-[13px] font-bold text-stone-800 outline-none focus:border-brand cursor-pointer shadow-2xs leading-normal">
                                         <option value="exclusive">🏷️ قطعة حصرية فريدة (1 of 1)</option>
                                         <option value="silk">💎 حرير طبيعي خالص 100%</option>
                                         <option value="wool">🐑 صوف جبلي مغزول يدوياً</option>
@@ -2176,7 +2176,7 @@
 
                                 <div>
                                     <label class="block text-[11px] font-bold text-stone-600 mb-1">رقم هاتف الواتساب</label>
-                                    <input type="text" id="studio-input-wa" class="w-full h-9 bg-stone-50 border border-stone-300 rounded-xl px-3 text-xs text-stone-800 outline-none focus:border-brand" dir="ltr">
+                                    <input type="text" id="studio-input-wa" class="w-full h-11 bg-stone-50 border border-stone-300 rounded-xl px-3.5 text-xs sm:text-[13px] font-mono font-bold text-stone-800 outline-none focus:border-brand shadow-2xs leading-normal" dir="ltr">
                                 </div>
                             </div>
 
