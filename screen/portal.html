@@ -529,57 +529,79 @@
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 items-start">
                 
                 <!-- ============================================== -->
-                <!-- العمود الأيمن: المسرح الحي الثابت في مكانه أثناء التمرير (lg:col-span-5 xl:col-span-4 2xl:col-span-4 lg:sticky lg:top-24) -->
+                <!-- مسرح المعاينة الحي: مثبت في مكانه أثناء التمرير على الجوال والكمبيوتر (Mobile Sticky Split View & Desktop Sticky) -->
                 <!-- ============================================== -->
-                <div class="lg:col-span-5 xl:col-span-4 2xl:col-span-4 lg:sticky lg:top-24 space-y-4 max-h-[calc(100vh-7rem)] overflow-y-auto no-scrollbar">
+                <div id="studio-preview-col" class="sticky top-[72px] lg:top-24 z-30 lg:col-span-5 xl:col-span-4 2xl:col-span-4 space-y-2 sm:space-y-4 max-h-[calc(100vh-5rem)] overflow-y-auto no-scrollbar transition-all duration-300">
                     
-                    <div class="bg-white/95 rounded-3xl p-4 sm:p-5 border border-stone-200/90 shadow-lg space-y-3.5">
-                        <!-- محول الأبعاد السريع فوق المعاينة مباشرة -->
-                        <div class="w-full flex items-center justify-center gap-1 sm:gap-2 p-1.5 bg-stone-100 rounded-xl border border-stone-200 shadow-2xs">
-                            <button type="button" data-ratio="1:1" class="studio-ratio-btn flex-1 min-h-[38px] py-2 px-2.5 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer">
-                                <span>📸</span>
-                                <span>مربع 1:1</span>
-                            </button>
-                            <button type="button" data-ratio="9:16" class="studio-ratio-btn flex-1 min-h-[38px] py-2 px-2.5 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer">
-                                <span>📱</span>
-                                <span>ستوري 9:16</span>
-                            </button>
-                            <button type="button" data-ratio="4:5" class="studio-ratio-btn flex-1 min-h-[38px] py-2 px-2.5 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer">
-                                <span>🖼️</span>
-                                <span>طولي 4:5</span>
-                            </button>
+                    <div id="studio-preview-card" class="bg-white/95 backdrop-blur-md rounded-2xl sm:rounded-3xl p-2.5 sm:p-5 border border-stone-200/90 shadow-md sm:shadow-lg space-y-2 sm:space-y-3.5 transition-all duration-300">
+                        
+                        <!-- الشريط العلوي للمعاينة: محول الأبعاد + أدوات وضع الجوال المنقسم السريع -->
+                        <div class="flex items-center justify-between gap-1.5 sm:gap-2">
+                            <!-- محول الأبعاد السريع -->
+                            <div class="flex-1 flex items-center justify-center gap-1 p-1 bg-stone-100 rounded-xl border border-stone-200 shadow-2xs">
+                                <button type="button" data-ratio="1:1" class="studio-ratio-btn flex-1 h-8 sm:h-9 py-1 px-1.5 sm:px-2 rounded-lg text-[11px] sm:text-xs font-bold transition flex items-center justify-center gap-1 cursor-pointer">
+                                    <span>📸</span>
+                                    <span>1:1</span>
+                                </button>
+                                <button type="button" data-ratio="9:16" class="studio-ratio-btn flex-1 h-8 sm:h-9 py-1 px-1.5 sm:px-2 rounded-lg text-[11px] sm:text-xs font-bold transition flex items-center justify-center gap-1 cursor-pointer">
+                                    <span>📱</span>
+                                    <span>9:16</span>
+                                </button>
+                                <button type="button" data-ratio="4:5" class="studio-ratio-btn flex-1 h-8 sm:h-9 py-1 px-1.5 sm:px-2 rounded-lg text-[11px] sm:text-xs font-bold transition flex items-center justify-center gap-1 cursor-pointer">
+                                    <span>🖼️</span>
+                                    <span>4:5</span>
+                                </button>
+                            </div>
+
+                            <!-- أزرار الجوال الخاصة: تبديل وضع المعاينة (منقسم / موسع) + تصدير سريع -->
+                            <div class="lg:hidden flex items-center gap-1 shrink-0">
+                                <button type="button" id="studio-mobile-view-toggle" onclick="window.toggleStudioMobileView()" class="h-8 sm:h-9 px-2.5 rounded-xl bg-amber-100/90 hover:bg-amber-200 text-amber-950 font-bold text-[11px] border border-amber-300/80 flex items-center gap-1 cursor-pointer transition shadow-2xs" title="تبديل حجم المعاينة على شاشة الجوال">
+                                    <span id="studio-mobile-toggle-icon">🔍</span>
+                                    <span id="studio-mobile-toggle-text">تكبير</span>
+                                </button>
+                                <button type="button" onclick="exportStudioHDImage()" class="btn-liquid-metal text-white h-8 sm:h-9 px-2.5 rounded-xl font-black text-[11px] flex items-center gap-1 cursor-pointer shadow-xs border border-amber-300/50" title="تحميل عالي الدقة HD">
+                                    <span>📥</span>
+                                    <span>HD</span>
+                                </button>
+                            </div>
                         </div>
 
-                        <!-- حاوية مسرح المعاينة الحية (Dynamic Live Stage) -->
-                        <div class="w-full flex items-center justify-center py-1">
-                            <div id="studio-live-stage" class="relative w-full max-w-[360px] mx-auto rounded-3xl overflow-hidden shadow-2xl transition-all duration-300 flex flex-col justify-between p-4 select-none aspect-square">
+                        <!-- حاوية مسرح المعاينة الحية (Dynamic Live Stage) متجاوبة مع وضع الجوال المنقسم -->
+                        <div id="studio-stage-wrapper" class="w-full flex items-center justify-center py-0.5 sm:py-1 transition-all duration-300">
+                            <div id="studio-live-stage" class="relative w-full max-w-[340px] sm:max-w-[360px] max-h-[175px] xs:max-h-[195px] sm:max-h-[235px] lg:max-h-none mx-auto rounded-2xl sm:rounded-3xl overflow-hidden shadow-xl sm:shadow-2xl transition-all duration-300 flex flex-col justify-between p-3 sm:p-4 select-none aspect-square">
                                 <!-- يتم بناؤها وتحديثها حياً بواسطة updateStudioPreview() في studio.js -->
                             </div>
                         </div>
 
-                        <!-- أزرار الإجراءات والتصدير المباشر -->
-                        <div class="w-full space-y-2.5 pt-2 border-t border-stone-100">
+                        <!-- شريط توجيهي للمعاينة الحية على الجوال -->
+                        <div class="lg:hidden flex items-center justify-between text-[10px] text-amber-950 bg-gradient-to-r from-amber-50 to-orange-50 px-2.5 py-1 rounded-lg border border-amber-200/70 font-semibold">
+                            <span class="flex items-center gap-1"><span>👀</span><span>المعاينة مثبتة في الأعلى؛ عدّل الخيارات بالأسفل وتتغير أمامك فوراً!</span></span>
+                            <span class="text-amber-800 font-bold">مباشر ⚡</span>
+                        </div>
+
+                        <!-- أزرار الإجراءات والتصدير المباشر (تظهر بالكامل على الكمبيوتر ومدمجة على الجوال) -->
+                        <div class="w-full space-y-2 pt-2 border-t border-stone-100 hidden lg:block">
                             <!-- زر التصدير والتحميل بدقة فائقة -->
-                            <button type="button" id="studio-btn-export" onclick="exportStudioHDImage()" class="w-full btn-liquid-metal text-white font-extrabold text-xs sm:text-sm h-12 rounded-xl sm:rounded-2xl shadow-md transition flex items-center justify-center gap-2 cursor-pointer border border-amber-300/40">
+                            <button type="button" id="studio-btn-export" onclick="exportStudioHDImage()" class="w-full btn-liquid-metal text-white font-extrabold text-xs sm:text-sm h-11 sm:h-12 rounded-xl sm:rounded-2xl shadow-md transition flex items-center justify-center gap-2 cursor-pointer border border-amber-300/40">
                                 <span class="text-base sm:text-lg">📥</span>
                                 <span>تحميل التصميم بدقة فائقة (HD PNG)</span>
                             </button>
 
                             <div class="grid grid-cols-2 gap-2">
                                 <!-- نسخ نص البوست الجاهز والهاشتاقات -->
-                                <button type="button" onclick="copyStudioCaption()" class="bg-stone-50 hover:bg-stone-100 text-stone-800 border border-stone-200 font-bold text-xs sm:text-[13px] min-h-[42px] h-10.5 rounded-xl transition shadow-2xs flex items-center justify-center gap-1.5 cursor-pointer" title="نسخ الكابشن والهاشتاقات">
+                                <button type="button" onclick="copyStudioCaption()" class="bg-stone-50 hover:bg-stone-100 text-stone-800 border border-stone-200 font-bold text-xs sm:text-[13px] min-h-[40px] h-10 rounded-xl transition shadow-2xs flex items-center justify-center gap-1.5 cursor-pointer" title="نسخ الكابشن والهاشتاقات">
                                     <span>📋</span>
                                     <span>نسخ نص الإعلان</span>
                                 </button>
 
                                 <!-- مشاركة واتساب سريعة -->
-                                <button type="button" onclick="shareStudioToWhatsApp()" class="btn-liquid-emerald font-bold text-xs sm:text-[13px] min-h-[42px] h-10.5 rounded-xl transition shadow-2xs flex items-center justify-center gap-1.5 cursor-pointer" title="مشاركة عبر الواتساب">
+                                <button type="button" onclick="shareStudioToWhatsApp()" class="btn-liquid-emerald font-bold text-xs sm:text-[13px] min-h-[40px] h-10 rounded-xl transition shadow-2xs flex items-center justify-center gap-1.5 cursor-pointer" title="مشاركة عبر الواتساب">
                                     <span>💬</span>
                                     <span>مشاركة واتساب</span>
                                 </button>
                             </div>
 
-                            <div class="flex items-center justify-between text-[10px] text-stone-400 font-medium px-1 pt-1">
+                            <div class="flex items-center justify-between text-[10px] text-stone-400 font-medium px-1 pt-0.5">
                                 <span>المعاينة حية بدقة متجاوبة</span>
                                 <span>التصدير HD: 1080×1080 / 1080×1920</span>
                             </div>
@@ -902,6 +924,151 @@
                                     <span id="studio-logo-opacity-val" class="font-mono text-stone-800 text-[10px]">100%</span>
                                 </div>
                                 <input type="range" id="studio-input-logo-opacity" min="40" max="100" value="100" class="w-full accent-amber-600 cursor-pointer">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 1.7 لون خلفية المنشور وتأطير وتنسيق الصورة (Post Background Color & Framing) -->
+                    <div class="bg-white p-3.5 sm:p-4 rounded-2xl border border-stone-200/90 shadow-2xs space-y-3.5">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs sm:text-sm font-black text-stone-900 flex items-center gap-1.5">
+                                <span>🎨</span>
+                                <span>لون خلفية المنشور وتأطير المنتج:</span>
+                            </span>
+                            <div class="flex items-center gap-1.5">
+                                <span id="studio-active-post-bg-name" class="text-[11px] font-bold text-amber-900 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">أبيض ناصع</span>
+                                <div id="studio-active-post-bg-preview" class="w-5 h-5 rounded-md border border-stone-300 shadow-2xs" style="background-color: #ffffff;"></div>
+                            </div>
+                        </div>
+
+                        <!-- 1. باليتات ألوان فاخرة منتقاة خصيصاً للسجاد والمنشورات المربعة -->
+                        <div class="space-y-1.5">
+                            <span class="text-[10.5px] font-bold text-stone-500 flex items-center gap-1">
+                                <span>✨</span><span>ألوان راقية متناسقة مع السجاد والبوستات (اختر ما يناسب سجادتك):</span>
+                            </span>
+                            <div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-2">
+                                <!-- أبيض ناصع -->
+                                <button type="button" data-post-bg="#ffffff" data-name="أبيض ناصع" class="studio-post-bg-btn p-2 rounded-xl border border-amber-500 ring-2 ring-amber-400/40 bg-white text-stone-800 flex items-center gap-2 cursor-pointer transition text-right shadow-2xs">
+                                    <span class="w-5 h-5 rounded-lg bg-white border border-stone-300 shrink-0 shadow-2xs"></span>
+                                    <span class="text-xs font-bold truncate">أبيض ناصع</span>
+                                </button>
+                                <!-- عاجي وسكري -->
+                                <button type="button" data-post-bg="#f8f6f0" data-name="عاجي وسكري" class="studio-post-bg-btn p-2 rounded-xl border border-stone-200 bg-[#f8f6f0] text-stone-800 flex items-center gap-2 cursor-pointer transition text-right hover:border-amber-400 shadow-2xs">
+                                    <span class="w-5 h-5 rounded-lg bg-[#f8f6f0] border border-stone-300 shrink-0 shadow-2xs"></span>
+                                    <span class="text-xs font-bold truncate">عاجي وسكري</span>
+                                </button>
+                                <!-- بيج كشميري -->
+                                <button type="button" data-post-bg="#f0ece1" data-name="بيج كشميري" class="studio-post-bg-btn p-2 rounded-xl border border-stone-200 bg-[#f0ece1] text-stone-800 flex items-center gap-2 cursor-pointer transition text-right hover:border-amber-400 shadow-2xs">
+                                    <span class="w-5 h-5 rounded-lg bg-[#f0ece1] border border-stone-300 shrink-0 shadow-2xs"></span>
+                                    <span class="text-xs font-bold truncate">بيج كشميري</span>
+                                </button>
+                                <!-- رملي ملكي -->
+                                <button type="button" data-post-bg="#e8dfd1" data-name="رملي ملكي" class="studio-post-bg-btn p-2 rounded-xl border border-stone-200 bg-[#e8dfd1] text-stone-800 flex items-center gap-2 cursor-pointer transition text-right hover:border-amber-400 shadow-2xs">
+                                    <span class="w-5 h-5 rounded-lg bg-[#e8dfd1] border border-stone-300 shrink-0 shadow-2xs"></span>
+                                    <span class="text-xs font-bold truncate">رملي دافئ</span>
+                                </button>
+                                <!-- عنابي تطريز الرسمي -->
+                                <button type="button" data-post-bg="#7c1d3c" data-name="عنابي تطريز" class="studio-post-bg-btn p-2 rounded-xl border border-stone-200 bg-[#7c1d3c] text-white flex items-center gap-2 cursor-pointer transition text-right hover:border-amber-400 shadow-2xs">
+                                    <span class="w-5 h-5 rounded-lg bg-[#7c1d3c] border border-amber-300/40 shrink-0 shadow-2xs"></span>
+                                    <span class="text-xs font-bold truncate">عنابي الدار 🍷</span>
+                                </button>
+                                <!-- عنابي داكن مخملي -->
+                                <button type="button" data-post-bg="#440c1a" data-name="عنابي مخملي" class="studio-post-bg-btn p-2 rounded-xl border border-stone-200 bg-[#440c1a] text-white flex items-center gap-2 cursor-pointer transition text-right hover:border-amber-400 shadow-2xs">
+                                    <span class="w-5 h-5 rounded-lg bg-[#440c1a] border border-amber-300/30 shrink-0 shadow-2xs"></span>
+                                    <span class="text-xs font-bold truncate">عنابي مخملي</span>
+                                </button>
+                                <!-- ذهبي وهيبة -->
+                                <button type="button" data-post-bg="#c59b27" data-name="ذهبي وهيبة" class="studio-post-bg-btn p-2 rounded-xl border border-stone-200 bg-[#c59b27] text-stone-950 flex items-center gap-2 cursor-pointer transition text-right hover:border-amber-400 shadow-2xs">
+                                    <span class="w-5 h-5 rounded-lg bg-[#c59b27] border border-amber-600 shrink-0 shadow-2xs"></span>
+                                    <span class="text-xs font-bold truncate">ذهبي وهيبة 🏜️</span>
+                                </button>
+                                <!-- زمردي ظفار -->
+                                <button type="button" data-post-bg="#1e3b2b" data-name="زمردي ظفار" class="studio-post-bg-btn p-2 rounded-xl border border-stone-200 bg-[#1e3b2b] text-white flex items-center gap-2 cursor-pointer transition text-right hover:border-amber-400 shadow-2xs">
+                                    <span class="w-5 h-5 rounded-lg bg-[#1e3b2b] border border-emerald-400/40 shrink-0 shadow-2xs"></span>
+                                    <span class="text-xs font-bold truncate">زمردي ملكي 🌿</span>
+                                </button>
+                                <!-- كحلي مسقط -->
+                                <button type="button" data-post-bg="#1a2936" data-name="كحلي مسقط" class="studio-post-bg-btn p-2 rounded-xl border border-stone-200 bg-[#1a2936] text-white flex items-center gap-2 cursor-pointer transition text-right hover:border-amber-400 shadow-2xs">
+                                    <span class="w-5 h-5 rounded-lg bg-[#1a2936] border border-sky-400/40 shrink-0 shadow-2xs"></span>
+                                    <span class="text-xs font-bold truncate">كحلي بحر 🌊</span>
+                                </button>
+                                <!-- أسود كربوني فاحم -->
+                                <button type="button" data-post-bg="#0a0a0c" data-name="أسود كربوني" class="studio-post-bg-btn p-2 rounded-xl border border-stone-200 bg-[#0a0a0c] text-white flex items-center gap-2 cursor-pointer transition text-right hover:border-amber-400 shadow-2xs">
+                                    <span class="w-5 h-5 rounded-lg bg-[#0a0a0c] border border-stone-700 shrink-0 shadow-2xs"></span>
+                                    <span class="text-xs font-bold truncate">أسود كربوني ⚫</span>
+                                </button>
+                                <!-- غرافيت داكن -->
+                                <button type="button" data-post-bg="#18191c" data-name="غرافيت سينمائي" class="studio-post-bg-btn p-2 rounded-xl border border-stone-200 bg-[#18191c] text-white flex items-center gap-2 cursor-pointer transition text-right hover:border-amber-400 shadow-2xs">
+                                    <span class="w-5 h-5 rounded-lg bg-[#18191c] border border-stone-600 shrink-0 shadow-2xs"></span>
+                                    <span class="text-xs font-bold truncate">رمادي غرافيت</span>
+                                </button>
+                                <!-- كابتشينو دافئ -->
+                                <button type="button" data-post-bg="#241813" data-name="كابتشينو دافئ" class="studio-post-bg-btn p-2 rounded-xl border border-stone-200 bg-[#241813] text-white flex items-center gap-2 cursor-pointer transition text-right hover:border-amber-400 shadow-2xs">
+                                    <span class="w-5 h-5 rounded-lg bg-[#241813] border border-amber-900/40 shrink-0 shadow-2xs"></span>
+                                    <span class="text-xs font-bold truncate">بني كابتشينو ☕</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- 2. محدد لون مخصص حر + قطارة سحب اللون من الصورة -->
+                        <div class="pt-2 border-t border-stone-100 flex flex-wrap items-center justify-between gap-2.5">
+                            <div class="flex items-center gap-2">
+                                <span class="text-xs font-bold text-stone-700 flex items-center gap-1">
+                                    <span>🎨</span><span>اختر لوناً مخصصاً:</span>
+                                </span>
+                                <input type="color" id="studio-input-post-bg-color" value="#ffffff" class="w-9 h-9 rounded-xl border border-stone-300 p-0 cursor-pointer shadow-2xs" title="اختر أي لون دقيق">
+                                <input type="text" id="studio-input-post-bg-hex" value="#ffffff" placeholder="#FFFFFF" maxlength="7" class="w-24 h-9 px-2 text-xs font-mono font-bold uppercase rounded-xl border border-stone-300 text-stone-800 focus:border-amber-500 outline-none text-center shadow-2xs">
+                            </div>
+
+                            <!-- زر قطارة اللون السحرية -->
+                            <button type="button" id="studio-btn-eyedropper" onclick="window.pickStudioColorFromStage()" class="min-h-[38px] px-3.5 py-1.5 rounded-xl text-xs font-bold bg-amber-50 hover:bg-amber-100 text-amber-950 border border-amber-300/80 transition flex items-center gap-1.5 cursor-pointer shadow-2xs">
+                                <span>💧</span>
+                                <span>سحب لون من صورة السجادة</span>
+                            </button>
+                        </div>
+
+                        <!-- 3. خيارات ملاءمة وتأطير الصورة المربعة (Framing & Padding) -->
+                        <div class="pt-2 border-t border-stone-100 space-y-2.5">
+                            <div class="flex items-center justify-between text-xs">
+                                <span class="font-bold text-stone-700 flex items-center gap-1">
+                                    <span>📐</span><span>طريقة احتواء وتأطير الصورة فوق الخلفية:</span>
+                                </span>
+                                <div class="flex items-center gap-1.5">
+                                    <button type="button" data-fit="contain" class="studio-fit-mode-btn min-h-[34px] px-3 py-1 rounded-xl text-xs font-bold border border-amber-500 bg-amber-50 text-amber-950 cursor-pointer flex items-center gap-1 shadow-2xs">
+                                        <span>🖼️</span><span>احتواء مؤطر</span>
+                                    </button>
+                                    <button type="button" data-fit="cover" class="studio-fit-mode-btn min-h-[34px] px-3 py-1 rounded-xl text-xs font-bold border border-stone-200 bg-white text-stone-700 cursor-pointer hover:bg-stone-50 flex items-center gap-1">
+                                        <span>📐</span><span>ملء الإطار</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                                <!-- شريط هامش الإطار حول الصورة -->
+                                <div class="space-y-1">
+                                    <div class="flex items-center justify-between text-[11px] font-bold text-stone-600">
+                                        <span>هامش الإطار حول الصورة:</span>
+                                        <span id="studio-frame-padding-val" class="font-mono text-stone-800 text-[10px]">0%</span>
+                                    </div>
+                                    <input type="range" id="studio-slider-frame-padding" min="0" max="25" value="0" class="w-full accent-amber-600 cursor-pointer">
+                                </div>
+
+                                <!-- انحناء حواف الصورة + ظل البروز -->
+                                <div class="space-y-1">
+                                    <div class="flex items-center justify-between text-[11px] font-bold text-stone-600">
+                                        <span>انحناء حواف الصورة:</span>
+                                        <span id="studio-corner-radius-val" class="font-mono text-stone-800 text-[10px]">0px</span>
+                                    </div>
+                                    <input type="range" id="studio-slider-corner-radius" min="0" max="32" value="0" class="w-full accent-amber-600 cursor-pointer">
+                                </div>
+                            </div>
+
+                            <div class="flex items-center justify-between pt-1 text-xs">
+                                <label class="flex items-center gap-2 cursor-pointer font-bold text-stone-700">
+                                    <input type="checkbox" id="studio-toggle-image-shadow" checked class="accent-amber-600 rounded cursor-pointer">
+                                    <span>إضافة ظل ثلاثي الأبعاد (Drop Shadow) لبروز السجادة فوق الخلفية</span>
+                                </label>
+                                <span class="text-[10px] text-stone-400">يجعل الصورة تبدو عائمة وفخمة</span>
                             </div>
                         </div>
                     </div>

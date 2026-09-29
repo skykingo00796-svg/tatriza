@@ -991,6 +991,16 @@ let studioState = {
     minimalFitMode: 'contain', // 'contain' أو 'cover'
     minimalBgColor: '#ffffff', // أبيض كالأصل
     
+    // لون وتأطير خلفية المنشور الموحد لجميع الأنماط
+    postBgColor: '#ffffff',
+    postBgName: 'أبيض ناصع',
+    postBgCustomized: false,
+    imageFitMode: 'contain', // 'contain' (احتواء مؤطر) أو 'cover' (ملء كامل)
+    imageFramePadding: 0, // 0 to 25%
+    imageCornerRadius: 0, // 0 to 32px
+    imageElevationShadow: true,
+    mobileViewMode: 'split', // 'split' أو 'expanded'
+
     // وضع تشغيل الاستوديو: 'custom' (تصميم حر من الجهاز) أو 'product' (تصميم لمنتج محدد من المتجر)
     studioMode: 'custom',
     selectedCarpetId: null,
@@ -1058,6 +1068,13 @@ export function resetStudioToBlankCustomMode() {
     studioState.mediaZoom = 100;
     studioState.mediaPanX = 0;
     studioState.mediaPanY = 0;
+    studioState.postBgColor = '#ffffff';
+    studioState.postBgName = 'أبيض ناصع';
+    studioState.postBgCustomized = false;
+    studioState.imageFitMode = 'contain';
+    studioState.imageFramePadding = 0;
+    studioState.imageCornerRadius = 0;
+    studioState.imageElevationShadow = true;
 }
 
 export function clearStudioCustomMedia() {
@@ -1071,6 +1088,65 @@ export function clearStudioCustomMedia() {
     }
 }
 window.clearStudioCustomMedia = clearStudioCustomMedia;
+
+export function toggleStudioMobileView() {
+    const stage = document.getElementById('studio-live-stage');
+    const toggleIcon = document.getElementById('studio-mobile-toggle-icon');
+    const toggleText = document.getElementById('studio-mobile-toggle-text');
+    if (!stage) return;
+
+    if (studioState.mobileViewMode === 'split') {
+        studioState.mobileViewMode = 'expanded';
+        stage.classList.remove('max-h-[175px]', 'xs:max-h-[195px]', 'sm:max-h-[235px]');
+        stage.classList.add('max-h-[48vh]');
+        if (toggleIcon) toggleIcon.innerText = '📐';
+        if (toggleText) toggleText.innerText = 'منقسم';
+        showToast('تم تكبير مساحة المعاينة لتفحص التفاصيل بدقة', 'info', 'معاينة موسعة');
+    } else {
+        studioState.mobileViewMode = 'split';
+        stage.classList.remove('max-h-[48vh]');
+        stage.classList.add('max-h-[175px]', 'xs:max-h-[195px]', 'sm:max-h-[235px]');
+        if (toggleIcon) toggleIcon.innerText = '🔍';
+        if (toggleText) toggleText.innerText = 'تكبير';
+        showToast('تم تفعيل وضع العمل المنقسم المريح للجوال', 'info', 'وضع منقسم');
+    }
+}
+window.toggleStudioMobileView = toggleStudioMobileView;
+
+export async function pickStudioColorFromStage() {
+    if (window.EyeDropper) {
+        try {
+            const eyeDropper = new EyeDropper();
+            const result = await eyeDropper.open();
+            if (result && result.sRGBHex) {
+                setStudioPostBgColor(result.sRGBHex, 'لون مسحوب من السجادة');
+                showToast(`تم التقاط اللون ${result.sRGBHex} بنجاح من صورتك!`, 'success', 'قطارة اللون');
+            }
+        } catch (e) {
+            // Canceled
+        }
+    } else {
+        const colorInput = document.getElementById('studio-input-post-bg-color');
+        if (colorInput) {
+            colorInput.click();
+        }
+    }
+}
+window.pickStudioColorFromStage = pickStudioColorFromStage;
+
+export function setStudioPostBgColor(color, name = '') {
+    if (!color) return;
+    studioState.postBgColor = color;
+    studioState.postBgName = name || color;
+    studioState.storyBgColor = color;
+    studioState.minimalBgColor = color;
+    studioState.postBgCustomized = true;
+
+    updatePostBgControlStates();
+    updateStudioPreview();
+}
+window.setStudioPostBgColor = setStudioPostBgColor;
+
 
 export function renderStudioHeaderModeBanner() {
     const titleEl = document.getElementById('studio-header-title');
@@ -1324,6 +1400,14 @@ function applyCarpetToStudioState(carpet) {
     } else {
         studioState.videoSrc = '';
     }
+
+    studioState.postBgColor = '#ffffff';
+    studioState.postBgName = 'أبيض ناصع';
+    studioState.postBgCustomized = false;
+    studioState.imageFitMode = 'contain';
+    studioState.imageFramePadding = 0;
+    studioState.imageCornerRadius = 0;
+    studioState.imageElevationShadow = true;
 }
 
 // مزامنة حقول الإدخال مع الحالة الحالية
@@ -1424,10 +1508,60 @@ function syncStudioControlsFromState() {
     // تفعيل أزرار الأبعاد والثيمات
     updateRatioButtonStates();
     updateThemeButtonStates();
+    updatePostBgControlStates();
     renderCarpetGalleryThumbs();
 
     // تحديث زر التصدير
     updateExportButtonText();
+}
+
+export function updatePostBgControlStates() {
+    const postBgColorIn = document.getElementById('studio-input-post-bg-color');
+    const postBgHexIn = document.getElementById('studio-input-post-bg-hex');
+    const postBgNameEl = document.getElementById('studio-active-post-bg-name');
+    const postBgPrevEl = document.getElementById('studio-active-post-bg-preview');
+    if (postBgColorIn) postBgColorIn.value = studioState.postBgColor || '#ffffff';
+    if (postBgHexIn) postBgHexIn.value = (studioState.postBgColor || '#FFFFFF').toUpperCase();
+    if (postBgNameEl) postBgNameEl.innerText = studioState.postBgName || 'أبيض ناصع';
+    if (postBgPrevEl) postBgPrevEl.style.backgroundColor = studioState.postBgColor || '#ffffff';
+
+    const framePadIn = document.getElementById('studio-slider-frame-padding');
+    const framePadVal = document.getElementById('studio-frame-padding-val');
+    if (framePadIn) framePadIn.value = studioState.imageFramePadding || 0;
+    if (framePadVal) framePadVal.innerText = `${studioState.imageFramePadding || 0}%`;
+
+    const cornerRadIn = document.getElementById('studio-slider-corner-radius');
+    const cornerRadVal = document.getElementById('studio-corner-radius-val');
+    if (cornerRadIn) cornerRadIn.value = studioState.imageCornerRadius || 0;
+    if (cornerRadVal) cornerRadVal.innerText = `${studioState.imageCornerRadius || 0}px`;
+
+    const imgShadowToggle = document.getElementById('studio-toggle-image-shadow');
+    if (imgShadowToggle) imgShadowToggle.checked = studioState.imageElevationShadow !== false;
+
+    // أزرار ملاءمة الصورة (احتواء مؤطر / ملء الإطار)
+    document.querySelectorAll('.studio-fit-mode-btn').forEach(btn => {
+        const fit = btn.getAttribute('data-fit');
+        if (fit === studioState.imageFitMode) {
+            btn.classList.add('border-amber-500', 'bg-amber-50', 'text-amber-950', 'shadow-2xs');
+            btn.classList.remove('border-stone-200', 'bg-white', 'text-stone-700');
+        } else {
+            btn.classList.remove('border-amber-500', 'bg-amber-50', 'text-amber-950', 'shadow-2xs');
+            btn.classList.add('border-stone-200', 'bg-white', 'text-stone-700');
+        }
+    });
+
+    // أزرار باليتات ألوان الخلفية
+    const isBgActive = studioState.layoutMode !== 'card' || studioState.postBgCustomized;
+    document.querySelectorAll('.studio-post-bg-btn').forEach(btn => {
+        const bg = btn.getAttribute('data-post-bg');
+        if (isBgActive && bg && bg.toLowerCase() === (studioState.postBgColor || '').toLowerCase()) {
+            btn.classList.add('border-amber-500', 'ring-2', 'ring-amber-400/40', 'scale-[1.02]');
+            btn.classList.remove('border-stone-200');
+        } else {
+            btn.classList.remove('border-amber-500', 'ring-2', 'ring-amber-400/40', 'scale-[1.02]');
+            btn.classList.add('border-stone-200');
+        }
+    });
 }
 
 function syncPanZoomSlidersOnly() {
@@ -2166,6 +2300,17 @@ export function updateStudioPreview() {
     const panY = studioState.mediaPanY || 0;
     const transformStyle = `translate3d(${panX}%, ${panY}%, 0) scale(${zoom})`;
 
+    // إعدادات وضع الجوال المنقسم وخلفية المنشور الموحدة
+    const isMobileSplit = studioState.mobileViewMode === 'split';
+    const mobileStageClass = isMobileSplit ? 'max-h-[175px] xs:max-h-[195px] sm:max-h-[235px] lg:max-h-none' : 'max-h-[48vh] lg:max-h-none';
+    const activeBgColor = studioState.postBgColor || '#ffffff';
+
+    const isContain = studioState.imageFitMode === 'contain';
+    const padVal = isContain ? (studioState.imageFramePadding || 0) : 0;
+    const radVal = isContain ? (studioState.imageCornerRadius || 0) : 0;
+    const shadowFilter = (isContain && studioState.imageElevationShadow !== false) ? 'drop-shadow(0 15px 35px rgba(0,0,0,0.42))' : '';
+    const mediaStyle = `transform: ${transformStyle}; transform-origin: center center; padding: ${padVal}%; border-radius: ${radVal}px; filter: ${shadowFilter};`;
+
     // -------------------------------------------------------------
     // الحالة الأولى: نمط ستوري وريلز إنستقرام كامل الشاشة مع الشادو الناعم
     // -------------------------------------------------------------
@@ -2173,17 +2318,17 @@ export function updateStudioPreview() {
         const vig = getActiveVignette();
         
         // تعيين نسبة الأبعاد للحاوية
-        stage.className = `relative w-full max-w-[340px] sm:max-w-[360px] mx-auto rounded-3xl overflow-hidden shadow-2xl transition-all duration-300 flex flex-col justify-between p-0 select-none ${ratio.aspectClass} bg-stone-900 cursor-grab active:cursor-grabbing`;
-        stage.style.background = studioState.storyFitMode === 'contain' ? (studioState.storyBgColor || '#121214') : '#1a1a1a';
+        stage.className = `relative w-full max-w-[340px] sm:max-w-[360px] ${mobileStageClass} mx-auto rounded-3xl overflow-hidden shadow-2xl transition-all duration-300 flex flex-col justify-between p-0 select-none ${ratio.aspectClass} cursor-grab active:cursor-grabbing`;
+        stage.style.background = activeBgColor;
         stage.style.backgroundImage = 'none';
 
         // محتوى الميديا (فيديو أو صورة) داخل غلاف قابل للقص أو احتواء كامل
-        const fitClass = studioState.storyFitMode === 'contain' ? 'object-contain' : 'object-cover';
+        const fitClass = isContain ? 'object-contain' : 'object-cover';
         let mediaHtml = '';
         if (studioState.mediaType === 'video' && studioState.videoSrc) {
             mediaHtml = `
                 <div class="absolute inset-0 w-full h-full overflow-hidden z-0 pointer-events-none flex items-center justify-center">
-                    <video id="studio-live-video" src="${studioState.videoSrc}" autoplay loop muted playsinline class="w-full h-full ${fitClass} select-none transition-transform duration-75" style="transform: ${transformStyle}; transform-origin: center center;"></video>
+                    <video id="studio-live-video" src="${studioState.videoSrc}" autoplay loop muted playsinline class="w-full h-full ${fitClass} select-none transition-transform duration-75" style="${mediaStyle}"></video>
                 </div>
                 <div class="absolute top-3 left-3 z-30 bg-black/50 backdrop-blur-md text-white text-[9px] px-2 py-0.5 rounded-full flex items-center gap-1 pointer-events-none">
                     <span>🎥</span>
@@ -2193,7 +2338,7 @@ export function updateStudioPreview() {
         } else if (studioState.customImageSrc) {
             mediaHtml = `
                 <div class="absolute inset-0 w-full h-full overflow-hidden z-0 pointer-events-none flex items-center justify-center">
-                    <img id="studio-live-img" src="${studioState.customImageSrc}" alt="Story Carpet" class="w-full h-full ${fitClass} select-none transition-transform duration-75 pointer-events-none" style="transform: ${transformStyle}; transform-origin: center center;">
+                    <img id="studio-live-img" src="${studioState.customImageSrc}" alt="Story Carpet" class="w-full h-full ${fitClass} select-none transition-transform duration-75 pointer-events-none" style="${mediaStyle}">
                 </div>
             `;
         } else {
@@ -2242,11 +2387,12 @@ export function updateStudioPreview() {
     // المطابق لبوست الفراولة tufted بدون شادو مع تحكم كامل بموضع الشعار والحساب
     // -------------------------------------------------------------
     if (studioState.layoutMode === 'minimal_showcase') {
-        const bgColor = studioState.minimalBgColor || '#ffffff';
-        const fitClass = (studioState.minimalFitMode || 'contain') === 'contain' ? 'object-contain p-4 sm:p-6' : 'object-cover';
+        const fitClass = isContain ? 'object-contain' : 'object-cover';
+        const minPadVal = isContain ? (studioState.imageFramePadding !== undefined ? studioState.imageFramePadding : 6) : 0;
+        const minMediaStyle = `transform: ${transformStyle}; transform-origin: center center; padding: ${minPadVal}%; border-radius: ${radVal}px; filter: ${shadowFilter};`;
 
-        stage.className = `relative w-full max-w-[340px] sm:max-w-[360px] mx-auto rounded-3xl overflow-hidden shadow-2xl transition-all duration-300 flex flex-col justify-between p-0 select-none ${ratio.aspectClass} cursor-grab active:cursor-grabbing`;
-        stage.style.background = bgColor;
+        stage.className = `relative w-full max-w-[340px] sm:max-w-[360px] ${mobileStageClass} mx-auto rounded-3xl overflow-hidden shadow-2xl transition-all duration-300 flex flex-col justify-between p-0 select-none ${ratio.aspectClass} cursor-grab active:cursor-grabbing`;
+        stage.style.background = activeBgColor;
         stage.style.backgroundImage = 'none';
 
         // محتوى الميديا (صورة أو فيديو)
@@ -2254,7 +2400,7 @@ export function updateStudioPreview() {
         if (studioState.mediaType === 'video' && studioState.videoSrc) {
             mediaHtml = `
                 <div class="absolute inset-0 w-full h-full overflow-hidden z-0 pointer-events-none flex items-center justify-center">
-                    <video id="studio-live-video" src="${studioState.videoSrc}" autoplay loop muted playsinline class="w-full h-full ${fitClass} select-none transition-transform duration-75" style="transform: ${transformStyle}; transform-origin: center center;"></video>
+                    <video id="studio-live-video" src="${studioState.videoSrc}" autoplay loop muted playsinline class="w-full h-full ${fitClass} select-none transition-transform duration-75" style="${minMediaStyle}"></video>
                 </div>
                 <div class="absolute top-3 left-3 z-30 bg-black/50 backdrop-blur-md text-white text-[9px] px-2 py-0.5 rounded-full flex items-center gap-1 pointer-events-none">
                     <span>🎥</span>
@@ -2264,7 +2410,7 @@ export function updateStudioPreview() {
         } else if (studioState.customImageSrc) {
             mediaHtml = `
                 <div class="absolute inset-0 w-full h-full overflow-hidden z-0 pointer-events-none flex items-center justify-center">
-                    <img id="studio-live-img" src="${studioState.customImageSrc}" alt="Minimal Carpet" class="w-full h-full ${fitClass} select-none transition-transform duration-75 pointer-events-none" style="transform: ${transformStyle}; transform-origin: center center;">
+                    <img id="studio-live-img" src="${studioState.customImageSrc}" alt="Minimal Carpet" class="w-full h-full ${fitClass} select-none transition-transform duration-75 pointer-events-none" style="${minMediaStyle}">
                 </div>
             `;
         } else {
@@ -2299,10 +2445,13 @@ export function updateStudioPreview() {
     // -------------------------------------------------------------
     const theme = STUDIO_THEMES[studioState.theme] || STUDIO_THEMES['royal-burgundy'];
 
-    stage.className = `relative w-full max-w-[360px] mx-auto rounded-3xl overflow-hidden shadow-2xl transition-all duration-300 flex flex-col justify-between select-none ${ratio.aspectClass} cursor-grab active:cursor-grabbing`;
+    stage.className = `relative w-full max-w-[360px] ${mobileStageClass} mx-auto rounded-3xl overflow-hidden shadow-2xl transition-all duration-300 flex flex-col justify-between select-none ${ratio.aspectClass} cursor-grab active:cursor-grabbing`;
 
     // تعيين الخلفية
-    if (theme.bgType === 'gradient') {
+    if (studioState.postBgCustomized && studioState.postBgColor) {
+        stage.style.background = studioState.postBgColor;
+        stage.style.backgroundImage = 'none';
+    } else if (theme.bgType === 'gradient') {
         stage.style.background = theme.bgValue;
         stage.style.backgroundImage = theme.bgValue;
     } else {
@@ -2704,8 +2853,11 @@ export async function exportStudioHDImage() {
 async function exportRoyalCardHD(canvas, ctx) {
     const theme = STUDIO_THEMES[studioState.theme] || STUDIO_THEMES['royal-burgundy'];
 
-    // 1. رسم خلفية الثيم الملكية
-    if (theme.bgType === 'gradient') {
+    // 1. رسم خلفية الكانفاس (إما لون المنشور المختار أو تدرج الثيم الملكي)
+    if (studioState.postBgCustomized && studioState.postBgColor) {
+        ctx.fillStyle = studioState.postBgColor;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+    } else if (theme.bgType === 'gradient') {
         const grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
         if (studioState.theme === 'royal-burgundy') {
             grad.addColorStop(0, '#2b0613');
@@ -3178,11 +3330,16 @@ async function exportStoryVignetteHD(canvas, ctx) {
     const zoom = (studioState.mediaZoom || 100) / 100;
     const panX = studioState.mediaPanX || 0;
     const panY = studioState.mediaPanY || 0;
+    const activeBg = studioState.postBgColor || studioState.storyBgColor || '#121214';
+    const isContain = studioState.imageFitMode === 'contain' || studioState.storyFitMode === 'contain';
     
-    if (studioState.storyFitMode === 'contain') {
-        ctx.fillStyle = studioState.storyBgColor || '#121214';
+    if (isContain) {
+        ctx.fillStyle = activeBg;
         ctx.fillRect(0, 0, canvas.width, canvas.height);
-        await drawContainImageOnCanvas(ctx, carpetSrc, 0, 0, canvas.width, canvas.height, zoom, panX, panY);
+        const pad = studioState.imageFramePadding || 0;
+        const rad = studioState.imageCornerRadius || 0;
+        const shadow = studioState.imageElevationShadow !== false;
+        await drawContainImageOnCanvas(ctx, carpetSrc, 0, 0, canvas.width, canvas.height, zoom, panX, panY, pad, rad, shadow);
     } else {
         await drawCoverImageOnCanvas(ctx, carpetSrc, 0, 0, canvas.width, canvas.height, zoom, panX, panY);
     }
@@ -3378,7 +3535,7 @@ async function exportStoryVignetteHD(canvas, ctx) {
 // دالة تصدير قالب العرض النقي والعلامة المائية عالي الدقة (Minimal Clean Showcase HD)
 async function exportMinimalShowcaseHD(canvas, ctx) {
     const carpetSrc = studioState.customImageSrc || '../images/client_room1.jpg';
-    const bgColor = studioState.minimalBgColor || '#ffffff';
+    const bgColor = studioState.postBgColor || studioState.minimalBgColor || '#ffffff';
 
     // 1. رسم خلفية الكانفاس النقية
     ctx.fillStyle = bgColor;
@@ -3388,10 +3545,13 @@ async function exportMinimalShowcaseHD(canvas, ctx) {
     const zoom = (studioState.mediaZoom || 100) / 100;
     const panX = studioState.mediaPanX || 0;
     const panY = studioState.mediaPanY || 0;
-    const fitMode = studioState.minimalFitMode || 'contain';
+    const isContain = (studioState.imageFitMode || studioState.minimalFitMode || 'contain') === 'contain';
 
-    if (fitMode === 'contain') {
-        await drawContainImageOnCanvas(ctx, carpetSrc, 0, 0, canvas.width, canvas.height, zoom, panX, panY);
+    if (isContain) {
+        const pad = studioState.imageFramePadding !== undefined ? studioState.imageFramePadding : 6;
+        const rad = studioState.imageCornerRadius || 0;
+        const shadow = studioState.imageElevationShadow !== false;
+        await drawContainImageOnCanvas(ctx, carpetSrc, 0, 0, canvas.width, canvas.height, zoom, panX, panY, pad, rad, shadow);
     } else {
         await drawCoverImageOnCanvas(ctx, carpetSrc, 0, 0, canvas.width, canvas.height, zoom, panX, panY);
     }
@@ -3592,40 +3752,70 @@ function drawCoverImageOnCanvas(ctx, src, x, y, w, h, zoom = 1.0, panXPercent = 
     });
 }
 
-// رسم الصورة في وضع الاحتواء (Contain) للحفاظ على الحواف النقية والخلفية كصورة الفراولة
-function drawContainImageOnCanvas(ctx, src, x, y, w, h, zoom = 1.0, panXPercent = 0, panYPercent = 0) {
+// رسم الصورة في وضع الاحتواء (Contain) للحفاظ على الحواف النقية والخلفية وتأطير السجاد المربع
+function drawContainImageOnCanvas(ctx, src, x, y, w, h, zoom = 1.0, panXPercent = 0, panYPercent = 0, paddingPercent = 0, cornerRadius = 0, hasShadow = false) {
     return new Promise((resolve) => {
         const img = new Image();
         img.crossOrigin = 'anonymous';
         img.src = src;
         img.onload = () => {
             ctx.save();
-            ctx.beginPath();
-            ctx.rect(x, y, w, h);
-            ctx.clip();
+
+            const padX = w * ((paddingPercent || 0) / 100);
+            const padY = h * ((paddingPercent || 0) / 100);
+            const availW = w - (padX * 2);
+            const availH = h - (padY * 2);
 
             const imgRatio = img.width / img.height;
-            const targetRatio = w / h;
+            const targetRatio = availW / availH;
             let baseW, baseH;
 
             if (imgRatio > targetRatio) {
-                baseW = w * 0.88;
+                baseW = availW * 0.94;
                 baseH = baseW / imgRatio;
             } else {
-                baseH = h * 0.82;
+                baseH = availH * 0.88;
                 baseW = baseH * imgRatio;
             }
 
             const finalW = baseW * zoom;
             const finalH = baseH * zoom;
 
-            const centerX = x + (w - finalW) / 2;
-            const centerY = y + (h - finalH) / 2;
+            const centerX = x + padX + (availW - finalW) / 2;
+            const centerY = y + padY + (availH - finalH) / 2;
 
             const offsetX = (w * (panXPercent / 100));
             const offsetY = (h * (panYPercent / 100));
 
-            ctx.drawImage(img, centerX + offsetX, centerY + offsetY, finalW, finalH);
+            const drawX = centerX + offsetX;
+            const drawY = centerY + offsetY;
+
+            if (hasShadow) {
+                ctx.save();
+                ctx.shadowColor = 'rgba(0, 0, 0, 0.45)';
+                ctx.shadowBlur = Math.round(w * 0.035);
+                ctx.shadowOffsetY = Math.round(h * 0.02);
+                if (cornerRadius > 0) {
+                    drawRoundedRect(ctx, drawX, drawY, finalW, finalH, cornerRadius);
+                    ctx.fillStyle = 'rgba(0,0,0,0.01)';
+                    ctx.fill();
+                } else {
+                    ctx.fillStyle = 'rgba(0,0,0,0.01)';
+                    ctx.fillRect(drawX, drawY, finalW, finalH);
+                }
+                ctx.restore();
+            }
+
+            if (cornerRadius > 0) {
+                ctx.save();
+                drawRoundedRect(ctx, drawX, drawY, finalW, finalH, cornerRadius);
+                ctx.clip();
+                ctx.drawImage(img, drawX, drawY, finalW, finalH);
+                ctx.restore();
+            } else {
+                ctx.drawImage(img, drawX, drawY, finalW, finalH);
+            }
+
             ctx.restore();
             resolve();
         };
@@ -4594,13 +4784,87 @@ export function initStudioEvents() {
         });
     }
 
+    // أحداث لون وتأطير خلفية المنشور (Post Background Color & Framing Events)
+    document.querySelectorAll('.studio-post-bg-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const bg = btn.getAttribute('data-post-bg');
+            const name = btn.getAttribute('data-name');
+            if (bg) {
+                setStudioPostBgColor(bg, name);
+            }
+        });
+    });
+
+    const postBgColorIn = document.getElementById('studio-input-post-bg-color');
+    if (postBgColorIn) {
+        postBgColorIn.addEventListener('input', (e) => {
+            setStudioPostBgColor(e.target.value, 'لون مخصص');
+        });
+    }
+
+    const postBgHexIn = document.getElementById('studio-input-post-bg-hex');
+    if (postBgHexIn) {
+        const handleHex = (e) => {
+            let val = e.target.value.trim();
+            if (!val.startsWith('#')) val = '#' + val;
+            if (/^#[0-9A-Fa-f]{6}$/.test(val)) {
+                setStudioPostBgColor(val, val.toUpperCase());
+            }
+        };
+        postBgHexIn.addEventListener('change', handleHex);
+        postBgHexIn.addEventListener('keyup', (e) => {
+            if (e.key === 'Enter') handleHex(e);
+        });
+    }
+
+    document.querySelectorAll('.studio-fit-mode-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const fit = btn.getAttribute('data-fit');
+            if (fit) {
+                studioState.imageFitMode = fit;
+                updatePostBgControlStates();
+                updateStudioPreview();
+            }
+        });
+    });
+
+    const framePadIn = document.getElementById('studio-slider-frame-padding');
+    const framePadVal = document.getElementById('studio-frame-padding-val');
+    if (framePadIn) {
+        framePadIn.addEventListener('input', (e) => {
+            studioState.imageFramePadding = Number(e.target.value);
+            if (framePadVal) framePadVal.innerText = `${studioState.imageFramePadding}%`;
+            updateStudioPreview();
+        });
+    }
+
+    const cornerRadIn = document.getElementById('studio-slider-corner-radius');
+    const cornerRadVal = document.getElementById('studio-corner-radius-val');
+    if (cornerRadIn) {
+        cornerRadIn.addEventListener('input', (e) => {
+            studioState.imageCornerRadius = Number(e.target.value);
+            if (cornerRadVal) cornerRadVal.innerText = `${studioState.imageCornerRadius}px`;
+            updateStudioPreview();
+        });
+    }
+
+    const imgShadowToggle = document.getElementById('studio-toggle-image-shadow');
+    if (imgShadowToggle) {
+        imgShadowToggle.addEventListener('change', (e) => {
+            studioState.imageElevationShadow = e.target.checked;
+            updateStudioPreview();
+        });
+    }
+
     // 8. بطاقات ثيمات الكارت الملكي
     document.querySelectorAll('.studio-theme-card').forEach(card => {
         card.addEventListener('click', () => {
             const themeId = card.getAttribute('data-theme');
             if (themeId && STUDIO_THEMES[themeId]) {
                 studioState.theme = themeId;
+                studioState.postBgCustomized = false;
                 updateThemeButtonStates();
+                updatePostBgControlStates();
                 updateStudioPreview();
             }
         });
@@ -4995,6 +5259,9 @@ export function initStudioEvents() {
     };
 
     window.clearStudioCustomMedia = clearStudioCustomMedia;
+    window.toggleStudioMobileView = toggleStudioMobileView;
+    window.pickStudioColorFromStage = pickStudioColorFromStage;
+    window.setStudioPostBgColor = setStudioPostBgColor;
     window.saveStudioDraft = saveStudioDraft;
     window.loadStudioDraft = loadStudioDraft;
     window.deleteStudioDraft = deleteStudioDraft;
