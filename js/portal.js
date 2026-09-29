@@ -2522,8 +2522,10 @@ window.addEventListener('DOMContentLoaded', () => {
         // التوجيه الفوري حسب Hash في الرابط إذا كانت الجلسة نشطة
         setTimeout(() => {
             const h = window.location.hash;
-            if (h === '#studio') {
-                switchPortalScreen('studio');
+            if (h.startsWith('#studio')) {
+                const urlParams = new URLSearchParams(h.includes('?') ? h.split('?')[1] : '');
+                const id = urlParams.get('id') || '';
+                switchPortalScreen('studio', id);
             } else if (h === '#banners') {
                 switchPortalScreen('banners');
             }
@@ -2632,8 +2634,9 @@ export function switchPortalScreen(screenName, carpetId = '', customCarpets = nu
         carpetsView.classList.add('hidden');
         bannersView.classList.add('hidden');
         studioView.classList.remove('hidden');
-        if (window.location.hash !== '#studio') {
-            window.location.hash = '#studio';
+        const targetHash = carpetId ? `#studio?id=${carpetId}` : '#studio';
+        if (window.location.hash !== targetHash) {
+            window.location.hash = targetHash;
         }
         window.scrollTo({ top: 0, behavior: 'smooth' });
 
@@ -2657,7 +2660,7 @@ export function switchPortalScreen(screenName, carpetId = '', customCarpets = nu
         studioView.classList.add('hidden');
         bannersView.classList.add('hidden');
         carpetsView.classList.remove('hidden');
-        if (window.location.hash === '#studio' || window.location.hash === '#banners') {
+        if (window.location.hash.startsWith('#studio') || window.location.hash === '#banners') {
             history.pushState(null, '', window.location.pathname + window.location.search);
         }
         window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -2673,8 +2676,10 @@ window.closeTatrizaStudioModal = () => switchPortalScreen('carpets');
 // توجيه المتصفح والأزرار السريعة
 window.addEventListener('hashchange', () => {
     const h = window.location.hash;
-    if (h === '#studio') {
-        switchPortalScreen('studio');
+    if (h.startsWith('#studio')) {
+        const urlParams = new URLSearchParams(h.includes('?') ? h.split('?')[1] : '');
+        const id = urlParams.get('id') || '';
+        switchPortalScreen('studio', id);
     } else if (h === '#banners') {
         switchPortalScreen('banners');
     } else {

@@ -991,6 +991,10 @@ let studioState = {
     minimalFitMode: 'contain', // 'contain' أو 'cover'
     minimalBgColor: '#ffffff', // أبيض كالأصل
     
+    // وضع تشغيل الاستوديو: 'custom' (تصميم حر من الجهاز) أو 'product' (تصميم لمنتج محدد من المتجر)
+    studioMode: 'custom',
+    selectedCarpetId: null,
+
     // الأبعاد والثيمات
     ratio: '9:16', // افتراضي 9:16 ليتطابق مع الستوري المطلوب
     theme: 'royal-burgundy',
@@ -1035,34 +1039,240 @@ let studioState = {
 
 // ==========================================
 // شاشة استوديو التصاميم المستقلة (Dedicated Tatriza Studio Screen)
+// تفصل كلياً بين:
+// 1. وضع التصميم الحر من الجهاز (عند الدخول من الزر العلوي) - شاشة فارغة دون وصول للمنتجات
+// 2. وضع تصميم منتج محدد (عند الدخول من بطاقة المنتج) - مخصص ومقفل لتلك القطعة فقط
 // ==========================================
+
+export function resetStudioToBlankCustomMode() {
+    studioState.studioMode = 'custom';
+    studioState.selectedCarpetId = null;
+    studioState.customImageSrc = ''; // خالية من صور المتجر تماماً!
+    studioState.videoSrc = '';
+    studioState.title = '';
+    studioState.subtitle = 'تصميم حصري ومميز من دار تطريز';
+    studioState.dimensions = '';
+    studioState.material = '';
+    studioState.price = '';
+    studioState.mediaType = 'image';
+    studioState.mediaZoom = 100;
+    studioState.mediaPanX = 0;
+    studioState.mediaPanY = 0;
+}
+
+export function clearStudioCustomMedia() {
+    resetStudioToBlankCustomMode();
+    renderStudioMediaSelectorArea();
+    renderCarpetGalleryThumbs();
+    syncStudioControlsFromState();
+    updateStudioPreview();
+    if (typeof showToast === 'function') {
+        showToast('تم إفراغ الشاشة بنجاح، يمكنك بدء تصميم جديد!', 'info', 'استوديو فارغ');
+    }
+}
+window.clearStudioCustomMedia = clearStudioCustomMedia;
+
+export function renderStudioHeaderModeBanner() {
+    const titleEl = document.getElementById('studio-header-title');
+    const badgeEl = document.getElementById('studio-header-badge');
+    const subtitleEl = document.getElementById('studio-header-subtitle');
+
+    if (studioState.studioMode === 'custom') {
+        if (titleEl) titleEl.innerText = 'استوديو التصميم الحر';
+        if (badgeEl) badgeEl.innerHTML = '<span class="hidden sm:inline">تصميم جديد </span><span>📱</span>';
+        if (subtitleEl) subtitleEl.innerText = 'تصميم بوستات وستوريات حرة من صور وفيديوهات جهازك وهاتفك دون تقييد';
+    } else {
+        const carpets = window.allPortalCarpets || [];
+        const currentCarpet = carpets.find(c => String(c.id) === String(studioState.selectedCarpetId));
+        const carpetName = currentCarpet ? currentCarpet.title : (studioState.title || 'المنتج المحدد');
+        if (titleEl) titleEl.innerText = `تصميم: ${carpetName}`;
+        if (badgeEl) badgeEl.innerHTML = `<span class="hidden sm:inline">منتج محدد </span><span>🔒</span>`;
+        if (subtitleEl) subtitleEl.innerText = `جلسة تصميم وبوست مخصصة حصرياً لقطعة السجادة المحددة`;
+    }
+}
+
+export function renderStudioMediaSelectorArea(carpets = null) {
+    const selectorWrapper = document.getElementById('studio-carpet-selector-wrapper') || document.getElementById('studio-carpet-select')?.parentElement;
+    if (!selectorWrapper) return;
+
+    const allCarpets = carpets || window.allPortalCarpets || [];
+
+    if (studioState.studioMode === 'custom') {
+        // وضع التصميم الحر الجديد من الجهاز (دون إمكانية الوصول لقائمة منتجات المتجر)
+        selectorWrapper.innerHTML = `
+            <div id="studio-mode-indicator-box" class="p-3 bg-gradient-to-r from-amber-500/10 via-rose-500/10 to-amber-500/15 rounded-xl border border-amber-300/80 flex items-center justify-between gap-2 shadow-2xs">
+                <div class="flex items-center gap-2.5 min-w-0">
+                    <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-amber-500/25 to-rose-500/25 text-amber-900 border border-amber-400/50 flex items-center justify-center text-lg shrink-0 shadow-2xs">
+                        ✨
+                    </div>
+                    <div class="min-w-0">
+                        <span class="text-xs sm:text-[13px] font-black text-amber-950 block truncate">وضع التصميم الحر الجديد</span>
+                        <span class="text-[10px] sm:text-[10.5px] text-stone-600 font-semibold block truncate">ارفع صورة أو فيديو من جهازك وصمم بحرية دون قيود المنتجات</span>
+                    </div>
+                </div>
+                <span class="text-[9.5px] font-extrabold px-2.5 py-1 bg-amber-200 text-amber-950 rounded-lg border border-amber-300/60 shrink-0 shadow-2xs whitespace-nowrap">
+                    رفع حر 📱
+                </span>
+            </div>
+            ${(studioState.customImageSrc || studioState.videoSrc) ? `
+                <div class="flex items-center justify-between mt-2 px-1 text-[11px]">
+                    <span class="text-emerald-800 font-bold flex items-center gap-1">
+                        <span>✅</span>
+                        <span>تم تجهيز وسائطك بنجاح</span>
+                    </span>
+                    <button type="button" onclick="window.clearStudioCustomMedia()" class="text-rose-700 hover:text-rose-900 font-bold flex items-center gap-1 cursor-pointer transition" title="إفراغ الشاشة للبدء من جديد">
+                        <span>🗑️</span>
+                        <span>تفريغ وبدء تصميم جديد</span>
+                    </button>
+                </div>
+            ` : ''}
+        `;
+    } else {
+        // وضع تصميم لمنتج محدد من المتجر (مقفل على السجادة المحددة فقط)
+        const currentCarpet = allCarpets.find(c => String(c.id) === String(studioState.selectedCarpetId));
+        if (currentCarpet) {
+            const thumbImg = (currentCarpet.images && currentCarpet.images[0]) || currentCarpet.image || '../images/logo.jpg';
+            selectorWrapper.innerHTML = `
+                <div id="studio-mode-indicator-box" class="p-2.5 bg-amber-50/90 rounded-xl border border-amber-300 flex items-center justify-between gap-2 shadow-2xs">
+                    <div class="flex items-center gap-2.5 min-w-0">
+                        <img src="${thumbImg}" alt="${currentCarpet.title}" class="w-10 h-10 rounded-lg object-cover border border-amber-300/80 bg-white shrink-0 shadow-2xs">
+                        <div class="min-w-0">
+                            <div class="flex items-center gap-1.5">
+                                <span class="text-xs sm:text-[13px] font-black text-amber-950 truncate">${currentCarpet.title}</span>
+                                <span class="text-[9.5px] font-black px-1.5 py-0.2 bg-amber-200 text-amber-900 rounded shrink-0">${Number(currentCarpet.price || 0).toLocaleString()} ر.ع.</span>
+                            </div>
+                            <span class="text-[10px] text-stone-600 font-bold block truncate">القطعة: #${currentCarpet.id} ${currentCarpet.dimensions ? `| المقاس: ${currentCarpet.dimensions}` : ''}</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-1 shrink-0">
+                        <span class="text-[9.5px] font-extrabold px-2 py-1 bg-amber-200/80 text-amber-950 border border-amber-300 rounded-lg flex items-center gap-1 shadow-2xs whitespace-nowrap" title="هذه الجلسة مقفلة حصرياً على تصميم هذه القطعة">
+                            <span>🔒</span>
+                            <span>منتج محدد</span>
+                        </span>
+                    </div>
+                </div>
+            `;
+        }
+    }
+}
+
+export function getStudioEmptyDropzoneHtml() {
+    return `
+        <div id="studio-empty-dropzone" class="absolute inset-0 w-full h-full flex flex-col items-center justify-center p-6 text-center z-20 cursor-pointer bg-gradient-to-b from-stone-900/90 via-stone-900/95 to-black/95 select-none" onclick="document.getElementById('studio-file-upload').click()">
+            <div class="w-16 h-16 rounded-3xl bg-gradient-to-br from-amber-500/20 via-rose-500/20 to-amber-500/30 border border-amber-400/40 text-amber-300 flex items-center justify-center text-3xl mb-3 shadow-xl ring-4 ring-amber-400/10">
+                📷
+            </div>
+            <h3 class="text-white font-black text-sm sm:text-base mb-1 tracking-wide">شاشة التصميم فارغة وجاهزة</h3>
+            <p class="text-stone-300 text-xs max-w-[260px] leading-relaxed mb-4">ارفع صورة أو فيديو من جهازك أو هاتفك للبدء فوراً في التعديل والتصميم</p>
+            <div class="flex items-center gap-2">
+                <button type="button" onclick="event.stopPropagation(); document.getElementById('studio-file-upload').click()" class="btn-liquid-metal text-white text-xs font-extrabold px-3.5 py-2 rounded-xl shadow-md flex items-center gap-1.5 cursor-pointer">
+                    <span>📷</span>
+                    <span>رفع صورة</span>
+                </button>
+                <button type="button" onclick="event.stopPropagation(); document.getElementById('studio-video-upload').click()" class="bg-white/10 hover:bg-white/20 text-amber-200 border border-amber-300/40 text-xs font-extrabold px-3.5 py-2 rounded-xl shadow-md flex items-center gap-1.5 cursor-pointer transition">
+                    <span>🎥</span>
+                    <span>رفع فيديو</span>
+                </button>
+            </div>
+            <span class="text-[10px] text-stone-400 mt-4 flex items-center gap-1">
+                <span>✨</span>
+                <span>أو اسحب وأفلت الملف هنا مباشرة</span>
+            </span>
+        </div>
+    `;
+}
+
+export function setupStageDragAndDropFile() {
+    const stage = document.getElementById('studio-live-stage');
+    if (!stage || stage.dataset.dndSetup) return;
+    stage.dataset.dndSetup = 'true';
+
+    stage.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        stage.classList.add('ring-4', 'ring-amber-400');
+    });
+
+    stage.addEventListener('dragleave', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        stage.classList.remove('ring-4', 'ring-amber-400');
+    });
+
+    stage.addEventListener('drop', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        stage.classList.remove('ring-4', 'ring-amber-400');
+
+        const files = e.dataTransfer && e.dataTransfer.files;
+        if (!files || files.length === 0) return;
+
+        const file = files[0];
+        if (file.type.startsWith('image/')) {
+            const reader = new FileReader();
+            reader.onload = (evt) => {
+                studioState.customImageSrc = evt.target.result;
+                studioState.videoSrc = null;
+                studioState.mediaType = 'image';
+                updateMediaButtonStates();
+                renderStudioMediaSelectorArea();
+                renderCarpetGalleryThumbs();
+                updateStudioPreview();
+                showToast('تم تحميل الصورة المسحوبة بنجاح!', 'success', 'صورة مخصصة');
+            };
+            reader.readAsDataURL(file);
+        } else if (file.type.startsWith('video/')) {
+            const blobUrl = URL.createObjectURL(file);
+            studioState.videoSrc = blobUrl;
+            studioState.customImageSrc = '';
+            studioState.mediaType = 'video';
+            updateMediaButtonStates();
+            updateExportButtonText();
+            renderStudioMediaSelectorArea();
+            renderCarpetGalleryThumbs();
+            updateStudioPreview();
+            showToast('تم تحميل الفيديو المسحوب بنجاح!', 'success', 'فيديو مخصص');
+        } else {
+            showToast('يرجى سحب ملف صورة أو فيديو صالح فقط.', 'error', 'تنبيه');
+        }
+    });
+}
+
 export function initStudioScreen(preselectedCarpetId = '', customCarpets = null) {
     // استخراج قائمة السجاد من سياق البوابة
     const carpets = customCarpets || window.allPortalCarpets || [];
 
-    // تعيين القطعة المحددة أو الأولى افتراضياً
-    let targetCarpet = null;
     if (preselectedCarpetId) {
-        targetCarpet = carpets.find(c => c.id === preselectedCarpetId);
-    }
-    if (!targetCarpet && carpets.length > 0) {
-        targetCarpet = carpets[0];
+        // ==========================================
+        // 1. وضع تصميم منتج محدد (Product Card Mode)
+        // مقفل حصرياً على تعديل وتصميم بوست هذه القطعة فقط
+        // ==========================================
+        const targetCarpet = carpets.find(c => String(c.id) === String(preselectedCarpetId));
+        if (targetCarpet) {
+            studioState.studioMode = 'product';
+            studioState.selectedCarpetId = targetCarpet.id;
+            applyCarpetToStudioState(targetCarpet);
+        } else {
+            studioState.studioMode = 'custom';
+            studioState.selectedCarpetId = null;
+            resetStudioToBlankCustomMode();
+        }
+    } else {
+        // ==========================================
+        // 2. وضع التصميم الحر الجديد (Top Big Button Mode)
+        // شاشة خالية من أي صور، لا إمكانية للوصول لمنتجات المتجر، رفع حر من الجهاز
+        // ==========================================
+        studioState.studioMode = 'custom';
+        studioState.selectedCarpetId = null;
+        resetStudioToBlankCustomMode();
     }
 
-    if (targetCarpet) {
-        applyCarpetToStudioState(targetCarpet);
-    } else if (!studioState.customImageSrc) {
-        studioState.title = 'تحفة فنية يدوية ملكية';
-        studioState.dimensions = '200 × 300 سم';
-        studioState.material = 'صوف طبيعي 100% مع حرير';
-        studioState.price = '180';
-        studioState.customImageSrc = '../images/client_room1.jpg';
-    }
-
-    populateCarpetDropdown(carpets);
+    renderStudioHeaderModeBanner();
+    renderStudioMediaSelectorArea(carpets);
     syncStudioControlsFromState();
     updateStudioPreview();
     renderStudioDraftsList();
+    setupStageDragAndDropFile();
 }
 window.initStudioScreen = initStudioScreen;
 
@@ -1105,30 +1315,15 @@ function applyCarpetToStudioState(carpet) {
     } else if (carpet.image) {
         studioState.customImageSrc = carpet.image;
     } else {
-        studioState.customImageSrc = '../images/client_room1.jpg';
+        studioState.customImageSrc = '';
     }
 
     // فحص ما إذا كان للسجادة فيديو مرفق
-    if (carpet.videoUrl) {
-        studioState.videoSrc = carpet.videoUrl;
+    if (carpet.videoUrl || carpet.video) {
+        studioState.videoSrc = carpet.videoUrl || carpet.video;
+    } else {
+        studioState.videoSrc = '';
     }
-}
-
-// تعبئة قائمة اختيار السجاد
-function populateCarpetDropdown(carpets) {
-    const select = document.getElementById('studio-carpet-select');
-    if (!select) return;
-
-    if (!carpets || carpets.length === 0) {
-        select.innerHTML = '<option value="">لا توجد قطع حالية (استخدم رفع صورة)</option>';
-        return;
-    }
-
-    select.innerHTML = carpets.map(c => `
-        <option value="${c.id}" ${c.id === studioState.selectedCarpetId ? 'selected' : ''}>
-            ${c.id} - ${c.title} (${c.price || 0} ر.ع.)
-        </option>
-    `).join('');
 }
 
 // مزامنة حقول الإدخال مع الحالة الحالية
@@ -1931,6 +2126,11 @@ function renderCarpetGalleryThumbs() {
     const container = document.getElementById('studio-thumbs-container');
     if (!container) return;
 
+    if (studioState.studioMode !== 'product') {
+        container.classList.add('hidden');
+        return;
+    }
+
     const carpets = window.allPortalCarpets || [];
     const currentCarpet = carpets.find(c => c.id === studioState.selectedCarpetId);
 
@@ -1958,7 +2158,7 @@ export function updateStudioPreview() {
     if (!stage) return;
 
     const ratio = STUDIO_RATIOS[studioState.ratio] || STUDIO_RATIOS['9:16'];
-    const carpetImg = studioState.customImageSrc || '../images/client_room1.jpg';
+    const carpetImg = studioState.customImageSrc || '';
 
     // حساب نسبة التكبير والإزاحة
     const zoom = (studioState.mediaZoom || 100) / 100;
@@ -1990,12 +2190,14 @@ export function updateStudioPreview() {
                     <span>معاينة فيديو حية</span>
                 </div>
             `;
-        } else {
+        } else if (studioState.customImageSrc) {
             mediaHtml = `
                 <div class="absolute inset-0 w-full h-full overflow-hidden z-0 pointer-events-none flex items-center justify-center">
-                    <img id="studio-live-img" src="${carpetImg}" alt="Story Carpet" class="w-full h-full ${fitClass} select-none transition-transform duration-75 pointer-events-none" style="transform: ${transformStyle}; transform-origin: center center;">
+                    <img id="studio-live-img" src="${studioState.customImageSrc}" alt="Story Carpet" class="w-full h-full ${fitClass} select-none transition-transform duration-75 pointer-events-none" style="transform: ${transformStyle}; transform-origin: center center;">
                 </div>
             `;
+        } else {
+            mediaHtml = getStudioEmptyDropzoneHtml();
         }
 
         // الشادو الدائري الناعم بالأعلى والأسفل مع تطبيق التحريك والبروز
@@ -2059,12 +2261,14 @@ export function updateStudioPreview() {
                     <span>معاينة فيديو</span>
                 </div>
             `;
-        } else {
+        } else if (studioState.customImageSrc) {
             mediaHtml = `
                 <div class="absolute inset-0 w-full h-full overflow-hidden z-0 pointer-events-none flex items-center justify-center">
-                    <img id="studio-live-img" src="${carpetImg}" alt="Minimal Carpet" class="w-full h-full ${fitClass} select-none transition-transform duration-75 pointer-events-none" style="transform: ${transformStyle}; transform-origin: center center;">
+                    <img id="studio-live-img" src="${studioState.customImageSrc}" alt="Minimal Carpet" class="w-full h-full ${fitClass} select-none transition-transform duration-75 pointer-events-none" style="transform: ${transformStyle}; transform-origin: center center;">
                 </div>
             `;
+        } else {
+            mediaHtml = getStudioEmptyDropzoneHtml();
         }
 
         // شعار الدار في الأعلى مع التحكم بالموضع الأفقي (يمين أو وسط أو يسار)
@@ -2169,17 +2373,30 @@ export function updateStudioPreview() {
     // أقصى ارتفاع للسجادة بحسب أبعاد البوست لكي لا تتداخل مع الكارد
     const carpetMaxHClass = studioState.ratio === '1:1' ? 'max-h-[160px] sm:max-h-[190px]' : (studioState.ratio === '4:5' ? 'max-h-[220px] sm:max-h-[270px]' : 'max-h-[260px] sm:max-h-[330px]');
 
-    const carpetStageHtml = `
-        <div class="flex-1 flex items-center justify-center p-2 relative z-10 my-auto overflow-hidden pointer-events-none">
-            <div id="studio-carpet-center-wrap" class="transition-transform duration-75 max-w-full max-h-full flex items-center justify-center" style="transform: translate3d(${panX}%, ${panY}%, 0) scale(${scaleFactor}); transform-origin: center center;">
-                <img 
-                    src="${carpetImg}" 
-                    alt="${studioState.title}" 
-                    class="max-w-full ${carpetMaxHClass} object-contain rounded-2xl border border-white/20 transition-all duration-300"
-                    style="${shadowStyle}">
+    let carpetStageHtml = '';
+    if (studioState.customImageSrc) {
+        carpetStageHtml = `
+            <div class="flex-1 flex items-center justify-center p-2 relative z-10 my-auto overflow-hidden pointer-events-none">
+                <div id="studio-carpet-center-wrap" class="transition-transform duration-75 max-w-full max-h-full flex items-center justify-center" style="transform: translate3d(${panX}%, ${panY}%, 0) scale(${scaleFactor}); transform-origin: center center;">
+                    <img 
+                        src="${studioState.customImageSrc}" 
+                        alt="${studioState.title}" 
+                        class="max-w-full ${carpetMaxHClass} object-contain rounded-2xl border border-white/20 transition-all duration-300"
+                        style="${shadowStyle}">
+                </div>
             </div>
-        </div>
-    `;
+        `;
+    } else {
+        carpetStageHtml = `
+            <div class="flex-1 flex items-center justify-center p-2 relative z-10 my-auto overflow-hidden">
+                <div onclick="document.getElementById('studio-file-upload').click()" class="cursor-pointer border-2 border-dashed border-amber-300/50 hover:border-amber-400 bg-black/30 hover:bg-black/40 backdrop-blur-md rounded-2xl p-5 text-center text-amber-200 transition flex flex-col items-center justify-center gap-2 max-w-[260px] select-none shadow-lg">
+                    <span class="text-3xl animate-bounce">📷</span>
+                    <span class="text-xs font-bold text-white">انقر لرفع صورة من جهازك</span>
+                    <span class="text-[10px] text-amber-200/80">أو اسحب وأفلت الصورة هنا</span>
+                </div>
+            </div>
+        `;
+    }
 
     // إعدادات وتخصيصات الكارد الملكي
     const pos = studioState.cardPosition || 'bottom';
@@ -2365,6 +2582,8 @@ function setupStageDragAndZoom() {
 
     stage.addEventListener('pointerdown', (e) => {
         if (e.button !== 0 && e.pointerType === 'mouse') return;
+        if (!studioState.customImageSrc && !studioState.videoSrc) return;
+        if (e.target.closest('button, input, select, label, a, .cursor-pointer, #studio-empty-dropzone')) return;
         isDraggingStage = true;
         dragStartX = e.clientX;
         dragStartY = e.clientY;
@@ -2407,6 +2626,7 @@ function setupStageDragAndZoom() {
 
     // التكبير والتصغير بعجلة الماوس
     stage.addEventListener('wheel', (e) => {
+        if (!studioState.customImageSrc && !studioState.videoSrc) return;
         e.preventDefault();
         const step = e.deltaY < 0 ? 5 : -5;
         const newZoom = Math.max(70, Math.min(250, (studioState.mediaZoom || 100) + step));
@@ -2420,6 +2640,11 @@ function setupStageDragAndZoom() {
 // تصدير الصورة بدقة عالية جداً عبر Canvas (HD Export)
 // ==========================================
 export async function exportStudioHDImage() {
+    if (!studioState.customImageSrc && !studioState.videoSrc) {
+        showToast('يرجى رفع صورة أو مقطع فيديو من جهازك أولاً لتصميم وتصدير البوست', 'error', 'شاشة فارغة');
+        return;
+    }
+
     const exportBtn = document.getElementById('studio-btn-export');
     const originalText = exportBtn ? exportBtn.innerHTML : '';
     if (exportBtn) {
@@ -4726,6 +4951,10 @@ export function initStudioEvents() {
             const reader = new FileReader();
             reader.onload = (evt) => {
                 studioState.customImageSrc = evt.target.result;
+                studioState.videoSrc = null;
+                studioState.mediaType = 'image';
+                renderStudioMediaSelectorArea();
+                renderCarpetGalleryThumbs();
                 updateStudioPreview();
                 showToast('تم تحميل صورتك بنجاح في الاستوديو!', 'success', 'صورة مخصصة');
             };
@@ -4747,7 +4976,10 @@ export function initStudioEvents() {
 
             const videoBlobUrl = URL.createObjectURL(file);
             studioState.videoSrc = videoBlobUrl;
+            studioState.customImageSrc = '';
             studioState.mediaType = 'video';
+            renderStudioMediaSelectorArea();
+            renderCarpetGalleryThumbs();
             updateMediaButtonStates();
             updateExportButtonText();
             updateStudioPreview();
@@ -4762,6 +4994,7 @@ export function initStudioEvents() {
         updateStudioPreview();
     };
 
+    window.clearStudioCustomMedia = clearStudioCustomMedia;
     window.saveStudioDraft = saveStudioDraft;
     window.loadStudioDraft = loadStudioDraft;
     window.deleteStudioDraft = deleteStudioDraft;

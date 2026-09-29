@@ -351,10 +351,10 @@
                         <span class="text-xs sm:text-sm">✨</span>
                         <span class="whitespace-nowrap">إدارة البنرات<span class="hidden sm:inline"> والترويج</span></span>
                     </button>
-                    <button type="button" onclick="switchPortalScreen('studio')" class="bg-gradient-to-r from-rose-900 via-amber-800 to-amber-900 hover:from-rose-950 hover:to-amber-950 text-white font-bold text-[11px] sm:text-sm h-9 sm:h-11 px-2.5 sm:px-4 rounded-xl shadow-xs transition flex items-center justify-center gap-1 sm:gap-1.5 cursor-pointer whitespace-nowrap shrink-0 border border-amber-300/40" title="استوديو تصاميم السوشيال ميديا وحالات الواتساب">
+                    <button type="button" onclick="switchPortalScreen('studio')" class="bg-gradient-to-r from-rose-900 via-amber-800 to-amber-900 hover:from-rose-950 hover:to-amber-950 text-white font-bold text-[11px] sm:text-sm h-9 sm:h-11 px-2.5 sm:px-4 rounded-xl shadow-xs transition flex items-center justify-center gap-1 sm:gap-1.5 cursor-pointer whitespace-nowrap shrink-0 border border-amber-300/40" title="تصميم حر جديد كلياً من صور وفيديوهات جهازك">
                         <span class="text-xs sm:text-sm">🎨</span>
                         <span class="whitespace-nowrap">استوديو التصاميم</span>
-                        <span class="text-[9px] px-1.5 py-0.2 bg-amber-400 text-amber-950 rounded-full font-black hidden md:inline">شاشة كاملة</span>
+                        <span class="text-[9px] px-1.5 py-0.2 bg-amber-400 text-amber-950 rounded-full font-black hidden md:inline">تصميم جديد 📱</span>
                     </button>
                 </div>
 
@@ -485,10 +485,10 @@
             <div class="floating-luxury-dock pointer-events-auto rounded-2xl sm:rounded-3xl w-full px-3.5 sm:px-5 md:px-8 h-16 sm:h-18 md:h-20 flex justify-between items-center transition-all duration-300 gap-2">
                 <!-- اليمين: زر العودة + هوية وعنوان الاستوديو (كبير وواضح وملفت) -->
                 <div class="flex items-center gap-2 sm:gap-2.5 md:gap-3 min-w-0">
-                    <button type="button" onclick="switchPortalScreen('carpets')" class="group flex items-center justify-center gap-1.5 bg-[#fffbf7] hover:bg-amber-50 text-stone-900 hover:text-amber-950 h-10 sm:h-10.5 md:h-11 w-10 sm:w-auto px-0 sm:px-3.5 md:px-4 rounded-xl sm:rounded-2xl border border-stone-300/90 hover:border-amber-400 transition-all duration-300 shadow-sm active:scale-95 cursor-pointer shrink-0" title="العودة للوحة التحكم" aria-label="العودة للوحة التحكم">
+                    <button type="button" onclick="switchPortalScreen('carpets')" class="group flex items-center justify-center gap-1.5 bg-[#fffbf7] hover:bg-amber-50 text-stone-900 hover:text-amber-950 h-10 sm:h-10.5 md:h-11 w-10 sm:w-auto px-0 sm:px-3.5 md:px-4 rounded-xl sm:rounded-2xl border border-stone-300/90 hover:border-amber-400 transition-all duration-300 shadow-sm active:scale-95 cursor-pointer shrink-0" title="العودة للمنتجات" aria-label="العودة للمنتجات">
                         <span class="text-base sm:text-lg font-black transition-transform group-hover:translate-x-1">➔</span>
                         <span class="text-xs md:text-sm font-bold hidden sm:inline lg:hidden">العودة</span>
-                        <span class="text-sm font-bold hidden lg:inline">العودة للوحة التحكم</span>
+                        <span class="text-sm font-bold hidden lg:inline">العودة للمنتجات</span>
                     </button>
                     <div class="h-6 w-px bg-stone-300 hidden sm:block shrink-0"></div>
                     <div class="flex items-center gap-2 sm:gap-2.5 min-w-0">
@@ -497,12 +497,12 @@
                         </div>
                         <div class="min-w-0">
                             <div class="flex items-center gap-1.5 sm:gap-2">
-                                <h1 class="font-black text-sm sm:text-base md:text-lg text-stone-900 tracking-wide truncate">استوديو التصاميم</h1>
-                                <span class="text-[9px] sm:text-[10px] font-black px-1.5 sm:px-2 py-0.5 rounded-md bg-gradient-to-r from-amber-500 via-rose-600 to-amber-600 text-white shadow-2xs shrink-0">
+                                <h1 id="studio-header-title" class="font-black text-sm sm:text-base md:text-lg text-stone-900 tracking-wide truncate">استوديو التصاميم</h1>
+                                <span id="studio-header-badge" class="text-[9px] sm:text-[10px] font-black px-1.5 sm:px-2 py-0.5 rounded-md bg-gradient-to-r from-amber-500 via-rose-600 to-amber-600 text-white shadow-2xs shrink-0">
                                     <span class="hidden xl:inline">احترافي </span>HD
                                 </span>
                             </div>
-                            <p class="text-[11px] font-bold hidden xl:block truncate max-w-sm" style="color: var(--brand-color);">بيئة توليد وتصدير بوستات وستوريات إنستقرام الفاخرة</p>
+                            <p id="studio-header-subtitle" class="text-[11px] font-bold hidden xl:block truncate max-w-sm" style="color: var(--brand-color);">بيئة توليد وتصدير بوستات وستوريات إنستقرام الفاخرة</p>
                         </div>
                     </div>
                 </div>
@@ -653,16 +653,19 @@
                             </div>
                         </div>
 
-                        <!-- قائمة السجاد من المخزون -->
-                        <div class="relative">
-                            <select id="studio-carpet-select" class="w-full h-11 bg-stone-50 border border-stone-300/90 rounded-xl pr-3.5 pl-8 text-xs sm:text-[13px] font-bold text-stone-800 outline-none focus:border-brand cursor-pointer shadow-2xs transition leading-normal">
-                                <!-- تملأ تلقائياً -->
+                        <!-- منطقة تحديد القطعة / نمط التصميم (تتغير ديناميكياً بحسب وضع الدخول) -->
+                        <div id="studio-carpet-selector-wrapper" class="relative">
+                            <select id="studio-carpet-select" class="hidden w-full h-11 bg-stone-50 border border-stone-300/90 rounded-xl pr-3.5 pl-8 text-xs sm:text-[13px] font-bold text-stone-800 outline-none focus:border-brand cursor-pointer shadow-2xs transition leading-normal">
+                                <!-- تملأ برمجياً -->
                             </select>
+                            <div id="studio-mode-indicator-box">
+                                <!-- يتم بناؤه وتحديثه ديناميكياً بواسطة renderStudioMediaSelectorArea() -->
+                            </div>
                         </div>
 
-                        <!-- مصغرات صور القطعة للتبديل بينها -->
+                        <!-- مصغرات صور القطعة للتبديل بينها (تظهر فقط في وضع تصميم منتج محدد) -->
                         <div id="studio-thumbs-container" class="hidden flex items-center gap-2 overflow-x-auto py-1 no-scrollbar">
-                            <!-- صور السجادة -->
+                            <!-- صور السجادة المحددة فقط -->
                         </div>
 
                         <!-- أزرار رفع الوسائط من الجهاز -->
