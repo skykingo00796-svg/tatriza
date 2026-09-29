@@ -1229,18 +1229,60 @@ export function scrollStudioSection(category = 'theme') {
         }, 1200);
     }
 
-    // تحديث الشريحة النشطة في شريط القفز
+    // تحديث الشريحة النشطة في شريط القفز بنمط كارت الكاتلوج الفاخر الموحد
     document.querySelectorAll('.studio-jump-pill').forEach(pill => {
-        if (pill.getAttribute('data-jump') === category) {
-            pill.classList.add('bg-amber-500', 'text-white', 'border-amber-600');
-            pill.classList.remove('bg-white', 'text-stone-700', 'border-stone-200');
-        } else {
-            pill.classList.remove('bg-amber-500', 'text-white', 'border-amber-600');
-            pill.classList.add('bg-white', 'text-stone-700', 'border-stone-200');
+        const isActive = (pill.getAttribute('data-jump') === category);
+        pill.classList.toggle('active', isActive);
+        if (isActive) {
+            pill.scrollIntoView({ behavior: 'smooth', inline: 'nearest', block: 'nearest' });
         }
     });
 }
 window.scrollStudioSection = scrollStudioSection;
+
+// مراقبة السكرول التلقائي لتحديث تبويبات أقسام الاستوديو تلقائياً
+let studioScrollSpyBound = false;
+export function initStudioSectionObserver() {
+    if (studioScrollSpyBound) return;
+    studioScrollSpyBound = true;
+
+    const categories = ['theme', 'media', 'branding', 'bg', 'text'];
+
+    const handleScrollSpy = () => {
+        // لا نحتاج للمراقبة إذا كان في وضع المعاينة على شاشات الجوال
+        if (window.innerWidth < 1024 && studioState.mobileActiveTab === 'preview') return;
+        
+        const headerContainer = document.getElementById('studio-sticky-header-container');
+        const offsetHeight = (headerContainer && headerContainer.offsetHeight > 0) ? headerContainer.offsetHeight : 150;
+        const scrollPosition = window.pageYOffset + offsetHeight + 60;
+
+        let activeCat = null;
+        for (const cat of categories) {
+            const el = document.querySelector(`[data-studio-category="${cat}"]`);
+            if (el) {
+                const top = el.getBoundingClientRect().top + window.pageYOffset;
+                if (scrollPosition >= top) {
+                    activeCat = cat;
+                }
+            }
+        }
+
+        if (activeCat) {
+            document.querySelectorAll('.studio-jump-pill').forEach(pill => {
+                const isMatch = (pill.getAttribute('data-jump') === activeCat);
+                if (pill.classList.contains('active') !== isMatch) {
+                    pill.classList.toggle('active', isMatch);
+                    if (isMatch) {
+                        pill.scrollIntoView({ behavior: 'smooth', inline: 'nearest', block: 'nearest' });
+                    }
+                }
+            });
+        }
+    };
+
+    window.addEventListener('scroll', handleScrollSpy, { passive: true });
+}
+window.initStudioSectionObserver = initStudioSectionObserver;
 
 // توفير دوال التوافق للخلف
 export function openStudioMobileDrawer(category = 'bg') {
@@ -1502,6 +1544,9 @@ export function initStudioScreen(preselectedCarpetId = '', customCarpets = null)
     if (window.innerWidth < 1024) {
         switchStudioMobileTab(preselectedCarpetId ? 'preview' : 'edit');
     }
+
+    // تفعيل مراقبة الأقسام وتحديث التبويب النشط
+    initStudioSectionObserver();
 }
 window.initStudioScreen = initStudioScreen;
 
@@ -1774,7 +1819,9 @@ function updateMediaButtonStates() {
 function updateRatioButtonStates() {
     document.querySelectorAll('.studio-ratio-btn').forEach(btn => {
         const ratio = btn.getAttribute('data-ratio');
-        if (ratio === studioState.ratio) {
+        const isActive = (ratio === studioState.ratio);
+        btn.classList.toggle('active', isActive);
+        if (isActive) {
             btn.classList.add('border-brand', 'bg-brand/10', 'text-brand', 'ring-2', 'ring-brand/20');
             btn.classList.remove('border-stone-200', 'bg-white', 'text-stone-700');
         } else {

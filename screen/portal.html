@@ -443,6 +443,10 @@
                         </div>
                     </div>
                 </div>
+
+            <!-- مسار تبويبات الكاتلوج الفاخر بإطار كارد موحد (مطابق للشاشة الرئيسية للزوار) -->
+            <div id="portal-catalog-filter-track" class="catalog-filter-track flex items-center overflow-x-auto whitespace-nowrap gap-1.5 sm:gap-2 py-1 px-1 sm:px-1.5 no-scrollbar my-2">
+                <!-- يتم بناؤها وتحديثها ديناميكياً بواسطة updatePortalCategoryOptions() -->
             </div>
 
             <!-- شبكة عرض وإدارة السجاد (متجاوبة بتسلسل فاخر: 2 للجوال ثم 3 ثم 4 ثم 5 وأقصى حجم 6) -->
@@ -590,13 +594,28 @@
                     </button>
                 </div>
 
-                <!-- 2. أزرار القفز السريع للأقسام أثناء وضع التعديل (Quick Section Jump Pills) -->
-                <div id="studio-mobile-jump-bar" class="overflow-x-auto no-scrollbar flex items-center gap-1.5 py-0.5 -mx-1 px-1">
-                    <button type="button" data-jump="theme" onclick="scrollStudioSection('theme')" class="studio-jump-pill shrink-0 px-2.5 py-1 rounded-xl text-[11px] font-bold bg-white text-stone-700 border border-stone-200 shadow-2xs hover:border-amber-400">👑 القالب</button>
-                    <button type="button" data-jump="bg" onclick="scrollStudioSection('bg')" class="studio-jump-pill shrink-0 px-2.5 py-1 rounded-xl text-[11px] font-bold bg-white text-stone-700 border border-stone-200 shadow-2xs hover:border-amber-400">🎨 الخلفية والتأطير</button>
-                    <button type="button" data-jump="text" onclick="scrollStudioSection('text')" class="studio-jump-pill shrink-0 px-2.5 py-1 rounded-xl text-[11px] font-bold bg-white text-stone-700 border border-stone-200 shadow-2xs hover:border-amber-400">✏️ النصوص والأسعار</button>
-                    <button type="button" data-jump="branding" onclick="scrollStudioSection('branding')" class="studio-jump-pill shrink-0 px-2.5 py-1 rounded-xl text-[11px] font-bold bg-white text-stone-700 border border-stone-200 shadow-2xs hover:border-amber-400">🏷️ الشارات</button>
-                    <button type="button" data-jump="media" onclick="scrollStudioSection('media')" class="studio-jump-pill shrink-0 px-2.5 py-1 rounded-xl text-[11px] font-bold bg-white text-stone-700 border border-stone-200 shadow-2xs hover:border-amber-400">📐 الميديا</button>
+                <!-- 2. أزرار القفز السريع للأقسام أثناء وضع التعديل بنمط كارت شريط الكتالوج الفاخر (Option 2: Mobile Catalog-Style Jump Track) -->
+                <div id="studio-mobile-jump-bar" class="catalog-filter-track flex items-center overflow-x-auto whitespace-nowrap gap-1 sm:gap-1.5 py-1 px-1.5 no-scrollbar shadow-xs">
+                    <button type="button" data-jump="theme" onclick="scrollStudioSection('theme')" class="studio-jump-pill catalog-tab-btn active group flex items-center gap-1.5 shrink-0">
+                        <span class="tab-icon">👑</span>
+                        <span class="font-display">القالب والمظهر</span>
+                    </button>
+                    <button type="button" data-jump="bg" onclick="scrollStudioSection('bg')" class="studio-jump-pill catalog-tab-btn group flex items-center gap-1.5 shrink-0">
+                        <span class="tab-icon">🎨</span>
+                        <span class="font-display">الخلفية والتأطير</span>
+                    </button>
+                    <button type="button" data-jump="text" onclick="scrollStudioSection('text')" class="studio-jump-pill catalog-tab-btn group flex items-center gap-1.5 shrink-0">
+                        <span class="tab-icon">✏️</span>
+                        <span class="font-display">النصوص والأسعار</span>
+                    </button>
+                    <button type="button" data-jump="branding" onclick="scrollStudioSection('branding')" class="studio-jump-pill catalog-tab-btn group flex items-center gap-1.5 shrink-0">
+                        <span class="tab-icon">🏷️</span>
+                        <span class="font-display">الشارات والشعار</span>
+                    </button>
+                    <button type="button" data-jump="media" onclick="scrollStudioSection('media')" class="studio-jump-pill catalog-tab-btn group flex items-center gap-1.5 shrink-0">
+                        <span class="tab-icon">📐</span>
+                        <span class="font-display">الوسائط والميديا</span>
+                    </button>
                 </div>
             </div>
         </div>
@@ -614,19 +633,19 @@
                         
                         <!-- الشريط العلوي للمعاينة: محول الأبعاد + زر العودة للتعديل على الجوال -->
                         <div class="flex items-center justify-between gap-1.5 sm:gap-2">
-                            <!-- محول الأبعاد السريع -->
-                            <div class="flex-1 flex items-center justify-center gap-1 p-1 bg-stone-100 rounded-xl border border-stone-200 shadow-2xs">
-                                <button type="button" data-ratio="1:1" class="studio-ratio-btn flex-1 h-8 sm:h-9 py-1 px-1.5 sm:px-2 rounded-lg text-[11px] sm:text-xs font-bold transition flex items-center justify-center gap-1 cursor-pointer">
-                                    <span>📸</span>
-                                    <span>1:1</span>
+                            <!-- محول الأبعاد السريع بنمط كارت الكاتلوج الفاخر -->
+                            <div class="catalog-filter-track flex-1 flex items-center justify-center gap-1 p-1">
+                                <button type="button" data-ratio="1:1" class="studio-ratio-btn catalog-tab-btn flex-1 h-8 sm:h-9 py-1 px-1.5 sm:px-2 rounded-lg flex items-center justify-center gap-1 cursor-pointer">
+                                    <span class="tab-icon">📸</span>
+                                    <span class="font-display">1:1</span>
                                 </button>
-                                <button type="button" data-ratio="9:16" class="studio-ratio-btn flex-1 h-8 sm:h-9 py-1 px-1.5 sm:px-2 rounded-lg text-[11px] sm:text-xs font-bold transition flex items-center justify-center gap-1 cursor-pointer">
-                                    <span>📱</span>
-                                    <span>9:16</span>
+                                <button type="button" data-ratio="9:16" class="studio-ratio-btn catalog-tab-btn active flex-1 h-8 sm:h-9 py-1 px-1.5 sm:px-2 rounded-lg flex items-center justify-center gap-1 cursor-pointer">
+                                    <span class="tab-icon">📱</span>
+                                    <span class="font-display">9:16</span>
                                 </button>
-                                <button type="button" data-ratio="4:5" class="studio-ratio-btn flex-1 h-8 sm:h-9 py-1 px-1.5 sm:px-2 rounded-lg text-[11px] sm:text-xs font-bold transition flex items-center justify-center gap-1 cursor-pointer">
-                                    <span>🖼️</span>
-                                    <span>4:5</span>
+                                <button type="button" data-ratio="4:5" class="studio-ratio-btn catalog-tab-btn flex-1 h-8 sm:h-9 py-1 px-1.5 sm:px-2 rounded-lg flex items-center justify-center gap-1 cursor-pointer">
+                                    <span class="tab-icon">🖼️</span>
+                                    <span class="font-display">4:5</span>
                                 </button>
                             </div>
 
@@ -696,6 +715,30 @@
                 <!-- ============================================== -->
                 <div id="studio-controls-col" class="lg:col-span-7 xl:col-span-8 2xl:col-span-8 w-full block lg:block pb-24 lg:pb-6">
                     <div id="studio-controls-body" class="w-full space-y-4">
+                    
+                    <!-- شريط التنقل والقفز السريع للأقسام لشاشات الكمبيوتر والتابلت بنمط كارت شريط الكتالوج الفاخر -->
+                    <div class="hidden lg:flex catalog-filter-track items-center overflow-x-auto whitespace-nowrap gap-1.5 py-1.5 px-2 no-scrollbar shadow-xs mb-1">
+                        <button type="button" data-jump="theme" onclick="scrollStudioSection('theme')" class="studio-jump-pill catalog-tab-btn active group flex items-center gap-1.5 shrink-0">
+                            <span class="tab-icon">👑</span>
+                            <span class="font-display">القالب والمظهر</span>
+                        </button>
+                        <button type="button" data-jump="bg" onclick="scrollStudioSection('bg')" class="studio-jump-pill catalog-tab-btn group flex items-center gap-1.5 shrink-0">
+                            <span class="tab-icon">🎨</span>
+                            <span class="font-display">الخلفية والتأطير</span>
+                        </button>
+                        <button type="button" data-jump="text" onclick="scrollStudioSection('text')" class="studio-jump-pill catalog-tab-btn group flex items-center gap-1.5 shrink-0">
+                            <span class="tab-icon">✏️</span>
+                            <span class="font-display">النصوص والأسعار</span>
+                        </button>
+                        <button type="button" data-jump="branding" onclick="scrollStudioSection('branding')" class="studio-jump-pill catalog-tab-btn group flex items-center gap-1.5 shrink-0">
+                            <span class="tab-icon">🏷️</span>
+                            <span class="font-display">الشارات والشعار</span>
+                        </button>
+                        <button type="button" data-jump="media" onclick="scrollStudioSection('media')" class="studio-jump-pill catalog-tab-btn group flex items-center gap-1.5 shrink-0">
+                            <span class="tab-icon">📐</span>
+                            <span class="font-display">الوسائط والميديا</span>
+                        </button>
+                    </div>
                     
                     <!-- 0. اختيار نمط الإخراج والتصميم (Layout Style Selector) -->
                     <div data-studio-category="theme" class="bg-gradient-to-r from-amber-500/10 via-amber-400/5 to-rose-500/10 p-3 sm:p-4 rounded-2xl border border-amber-300/80 shadow-2xs space-y-2.5">

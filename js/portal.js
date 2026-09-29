@@ -433,6 +433,7 @@ function initPortalSubscriptions() {
         allPortalCarpets = carpets || [];
         window.allPortalCarpets = allPortalCarpets;
         renderPortalDashboard();
+        updatePortalCategoryOptions();
     }, (err) => {
         console.warn("Carpets subscription error:", err);
     });
@@ -852,8 +853,33 @@ window.handlePortalSearch = function(query) {
 
 window.handlePortalCategoryFilter = function(cat) {
     portalCategoryFilter = cat;
+    const filterSelect = document.getElementById('portal-filter-category');
+    if (filterSelect && filterSelect.value !== cat) {
+        filterSelect.value = cat;
+    }
+    const track = document.getElementById('portal-catalog-filter-track');
+    if (track) {
+        track.querySelectorAll('.catalog-tab-btn').forEach(btn => {
+            const isMatch = (btn.getAttribute('data-cat') === String(cat));
+            btn.classList.toggle('active', isMatch);
+            const badge = btn.querySelector('.cat-badge');
+            if (badge) {
+                if (isMatch) {
+                    badge.classList.remove('bg-stone-200/80', 'text-stone-700');
+                    badge.classList.add('bg-white/20', 'text-white');
+                } else {
+                    badge.classList.remove('bg-white/20', 'text-white');
+                    badge.classList.add('bg-stone-200/80', 'text-stone-700');
+                }
+            }
+        });
+    }
     portalCurrentPage = 1;
     renderPortalProductsTable();
+};
+
+window.selectPortalCatalogTab = function(catId) {
+    window.handlePortalCategoryFilter(catId);
 };
 
 window.handlePortalStockFilter = function(stock) {
@@ -1099,6 +1125,7 @@ function updatePortalCategoryOptions() {
     const filterSelect = document.getElementById('portal-filter-category');
     const newCatSelect = document.getElementById('new-category');
     const editCatSelect = document.getElementById('edit-category');
+    const portalTrack = document.getElementById('portal-catalog-filter-track');
 
     const activeCats = getActiveCategories();
     const optionsHtml = activeCats.map(c => {
@@ -1109,12 +1136,41 @@ function updatePortalCategoryOptions() {
 
     if (filterSelect) {
         filterSelect.innerHTML = `<option value="all">جميع التصنيفات</option>` + optionsHtml;
+        filterSelect.value = portalCategoryFilter;
     }
     if (newCatSelect) {
         newCatSelect.innerHTML = optionsHtml;
     }
     if (editCatSelect) {
         editCatSelect.innerHTML = optionsHtml;
+    }
+
+    if (portalTrack) {
+        const allCarpets = window.allPortalCarpets || [];
+        const totalCount = allCarpets.length;
+        const isAllActive = (portalCategoryFilter === 'all');
+
+        let trackHtml = `
+            <button type="button" onclick="window.selectPortalCatalogTab('all')" data-cat="all" class="catalog-tab-btn group flex items-center gap-1.5 sm:gap-2 ${isAllActive ? 'active' : ''}">
+                <span class="tab-icon">✨</span>
+                <span class="font-display">الكل</span>
+                <span class="cat-badge px-1.5 sm:px-2 py-0.2 rounded-full font-black ${isAllActive ? 'bg-white/20 text-white' : 'bg-stone-200/80 text-stone-700'} transition">${totalCount}</span>
+            </button>
+        `;
+
+        activeCats.forEach(cat => {
+            const count = allCarpets.filter(c => c.category === cat.id || c.category === cat.name).length;
+            const isActive = (portalCategoryFilter === cat.id || portalCategoryFilter === cat.name);
+            trackHtml += `
+                <button type="button" onclick="window.selectPortalCatalogTab('${cat.id}')" data-cat="${cat.id}" class="catalog-tab-btn group flex items-center gap-1.5 sm:gap-2 ${isActive ? 'active' : ''}">
+                    <span class="tab-icon">${cat.icon || '🏷️'}</span>
+                    <span class="font-display">${cat.name}</span>
+                    <span class="cat-badge px-1.5 sm:px-2 py-0.2 rounded-full font-black ${isActive ? 'bg-white/20 text-white' : 'bg-stone-200/80 text-stone-700'} transition">${count}</span>
+                </button>
+            `;
+        });
+
+        portalTrack.innerHTML = trackHtml;
     }
 }
 
