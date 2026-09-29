@@ -1000,6 +1000,8 @@ let studioState = {
     imageCornerRadius: 0, // 0 to 32px
     imageElevationShadow: true,
     mobileViewMode: 'split', // 'split' أو 'expanded'
+    mobileActiveTab: 'edit', // 'edit' أو 'preview' للجوال
+    savedEditScrollY: 0, // حفظ موضع السكرول الدقيق أثناء التعديل
 
     // وضع تشغيل الاستوديو: 'custom' (تصميم حر من الجهاز) أو 'product' (تصميم لمنتج محدد من المتجر)
     studioMode: 'custom',
@@ -1090,11 +1092,33 @@ export function clearStudioCustomMedia() {
 window.clearStudioCustomMedia = clearStudioCustomMedia;
 
 // ==============================================
-// الخيار الثاني: نظام التبويب السلس مع الزر العائم السريع للجوال
-// (Option 2: Smooth Mobile Tabbed System & Floating Quick Switcher)
+// الخيار الثاني: نظام التبويب السلس مع الزر العائم والذاكرة الذكية لموضع التمرير
+// (Option 2: Mobile Tabbed System, Floating Switcher & Smart Scroll Memory)
 // ==============================================
 
-export function switchStudioMobileTab(tab = 'edit') {
+let isRestoringEditScroll = false;
+
+// حفظ موضع التمرير بشكل دائم ومستمر أثناء تصفح خيارات التعديل على الجوال
+window.addEventListener('scroll', () => {
+    if (isRestoringEditScroll) return;
+    if (window.innerWidth < 1024 && studioState && studioState.mobileActiveTab === 'edit') {
+        const sy = window.pageYOffset || document.documentElement.scrollTop || 0;
+        studioState.savedEditScrollY = sy;
+    }
+}, { passive: true });
+
+export function switchStudioMobileTab(tab = 'edit', options = {}) {
+    const previousTab = studioState.mobileActiveTab || 'edit';
+    const source = options.source || (tab === 'edit' ? 'bottom' : 'default');
+
+    // إذا كان الانتقال من التعديل إلى المعاينة، نحفظ فوراً إحداثيات السكرول قبل إخفاء لوحة التحكم
+    if (previousTab === 'edit' && tab === 'preview') {
+        const currentY = window.pageYOffset || document.documentElement.scrollTop || 0;
+        if (currentY > 0) {
+            studioState.savedEditScrollY = currentY;
+        }
+    }
+
     studioState.mobileActiveTab = tab;
 
     const previewCol = document.getElementById('studio-preview-col');
@@ -1133,7 +1157,7 @@ export function switchStudioMobileTab(tab = 'edit') {
         updateStudioPreview();
 
         // التمرير لأعلى الشاشة لعرض التصميم كاملاً
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        window.scrollTo({ top: 0, behavior: 'instant' });
 
     } else {
         // وضع التعديل (Edit Mode): إتاحة 100% من مساحة الشاشة للتمرير السلس
@@ -1156,6 +1180,28 @@ export function switchStudioMobileTab(tab = 'edit') {
         // تحديث الأزرار العائمة
         if (fabToPreview) fabToPreview.classList.remove('hidden');
         if (fabToEdit) fabToEdit.classList.add('hidden');
+
+        // إدارة موضع التمرير الذكي (Smart Scroll Restoration):
+        // إذا ضغط المستخدم على التاب العلوي "خيارات التعديل": يبدأ من البداية وأعلى الصفحة
+        // إذا ضغط على الزر السفلي (العائم أو داخل الكرت): يعود لنفس المكان الدقيق الذي كان يعدل فيه
+        if (source === 'top') {
+            studioState.savedEditScrollY = 0;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        } else if (source === 'bottom') {
+            const targetY = studioState.savedEditScrollY || 0;
+            if (targetY > 0) {
+                isRestoringEditScroll = true;
+                requestAnimationFrame(() => {
+                    window.scrollTo({ top: targetY, behavior: 'instant' });
+                    setTimeout(() => {
+                        window.scrollTo({ top: targetY, behavior: 'instant' });
+                        setTimeout(() => {
+                            isRestoringEditScroll = false;
+                        }, 120);
+                    }, 40);
+                });
+            }
+        }
     }
 }
 window.switchStudioMobileTab = switchStudioMobileTab;
@@ -1163,7 +1209,7 @@ window.switchStudioMobileTab = switchStudioMobileTab;
 export function scrollStudioSection(category = 'theme') {
     // إذا كان المستخدم في وضع المعاينة، نحوله أولاً لوضع التعديل
     if (window.innerWidth < 1024 && studioState.mobileActiveTab === 'preview') {
-        switchStudioMobileTab('edit');
+        switchStudioMobileTab('edit', { source: 'jump' });
     }
 
     // البحث عن القسم المستهدف
@@ -1172,8 +1218,9 @@ export function scrollStudioSection(category = 'theme') {
         const headerContainer = document.getElementById('studio-sticky-header-container');
         const offsetHeight = (headerContainer && headerContainer.offsetHeight > 0) ? headerContainer.offsetHeight : 150;
         const yOffset = -offsetHeight - 12; // مسافة كافية ودقيقة لتفادي التوب بار وشريط التبويب
-        const y = targetEl.getBoundingClientRect().top + window.pageYOffset + yOffset;
-        window.scrollTo({ top: Math.max(0, y), behavior: 'smooth' });
+        const y = Math.max(0, targetEl.getBoundingClientRect().top + window.pageYOffset + yOffset);
+        studioState.savedEditScrollY = y;
+        window.scrollTo({ top: y, behavior: 'smooth' });
 
         // وميض تأكيدي بصري جميل
         targetEl.classList.add('ring-2', 'ring-amber-500', 'transition-all');

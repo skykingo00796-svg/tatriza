@@ -547,7 +547,7 @@
             <div id="studio-mobile-tab-nav" class="px-3 sm:px-6 pt-1 pb-2 lg:hidden space-y-1.5 pointer-events-auto">
                 <!-- 1. شريط التبديل الرئيسي: خيارات التعديل مقابل المعاينة الحية الفاخرة -->
                 <div class="bg-stone-200/80 p-1 rounded-2xl flex items-center shadow-inner border border-stone-300/80">
-                    <button type="button" id="studio-tab-btn-edit" onclick="switchStudioMobileTab('edit')" class="flex-1 py-2 px-3 rounded-xl text-xs font-black transition-all flex items-center justify-center gap-1.5 cursor-pointer bg-gradient-to-r from-amber-500 via-amber-600 to-rose-600 text-white shadow-xs">
+                    <button type="button" id="studio-tab-btn-edit" onclick="switchStudioMobileTab('edit', { source: 'top' })" class="flex-1 py-2 px-3 rounded-xl text-xs font-black transition-all flex items-center justify-center gap-1.5 cursor-pointer bg-gradient-to-r from-amber-500 via-amber-600 to-rose-600 text-white shadow-xs">
                         <span>⚙️</span>
                         <span>خيارات التعديل</span>
                     </button>
@@ -600,7 +600,7 @@
 
                             <!-- زر العودة السريع للتعديل على الجوال -->
                             <div class="lg:hidden flex items-center gap-1.5 shrink-0">
-                                <button type="button" onclick="switchStudioMobileTab('edit')" class="h-8 sm:h-9 px-3 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-bold text-[11px] flex items-center gap-1.5 cursor-pointer transition shadow-xs border border-amber-400" title="العودة لأدوات التعديل">
+                                <button type="button" onclick="switchStudioMobileTab('edit', { source: 'bottom' })" class="h-8 sm:h-9 px-3 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-bold text-[11px] flex items-center gap-1.5 cursor-pointer transition shadow-xs border border-amber-400" title="العودة لأدوات التعديل">
                                     <span>✏️</span>
                                     <span>التعديل</span>
                                 </button>
@@ -615,7 +615,7 @@
                         </div>
 
                         <!-- شريط توجيهي للمعاينة الحية على الجوال -->
-                        <div class="lg:hidden flex items-center justify-between text-[11px] text-amber-950 bg-gradient-to-r from-amber-50 to-orange-50 px-3 py-2 rounded-xl border border-amber-200/80 font-bold cursor-pointer transition hover:bg-amber-100" onclick="switchStudioMobileTab('edit')">
+                        <div class="lg:hidden flex items-center justify-between text-[11px] text-amber-950 bg-gradient-to-r from-amber-50 to-orange-50 px-3 py-2 rounded-xl border border-amber-200/80 font-bold cursor-pointer transition hover:bg-amber-100" onclick="switchStudioMobileTab('edit', { source: 'bottom' })">
                             <span class="flex items-center gap-1.5">
                                 <span>✨</span>
                                 <span>المعاينة كاملة بنسبتها الحقيقية بدون تداخل! انقر لمتابعة التعديل</span>
@@ -632,7 +632,7 @@
                             </button>
 
                             <!-- زر العودة لأدوات التعديل على الجوال -->
-                            <button type="button" onclick="switchStudioMobileTab('edit')" class="w-full lg:hidden bg-stone-100 hover:bg-amber-50 text-stone-800 hover:text-amber-950 border border-stone-300 font-bold text-xs h-10 rounded-xl transition shadow-2xs flex items-center justify-center gap-1.5 cursor-pointer">
+                            <button type="button" onclick="switchStudioMobileTab('edit', { source: 'bottom' })" class="w-full lg:hidden bg-stone-100 hover:bg-amber-50 text-stone-800 hover:text-amber-950 border border-stone-300 font-bold text-xs h-10 rounded-xl transition shadow-2xs flex items-center justify-center gap-1.5 cursor-pointer">
                                 <span>✏️</span>
                                 <span>العودة لخيارات وأدوات التعديل</span>
                             </button>
@@ -2604,7 +2604,7 @@
             </button>
 
             <!-- زر العودة للتعديل السريع (يظهر أثناء المعاينة بلمسة واحدة) -->
-            <button type="button" id="studio-fab-to-edit" onclick="switchStudioMobileTab('edit')" class="hidden bg-stone-900/95 hover:bg-black text-white font-bold text-xs h-12 px-4 rounded-2xl shadow-2xl border border-stone-700 backdrop-blur-md flex items-center gap-2 cursor-pointer active:scale-95 transition-all" title="العودة لخيارات التعديل">
+            <button type="button" id="studio-fab-to-edit" onclick="switchStudioMobileTab('edit', { source: 'bottom' })" class="hidden bg-stone-900/95 hover:bg-black text-white font-bold text-xs h-12 px-4 rounded-2xl shadow-2xl border border-stone-700 backdrop-blur-md flex items-center gap-2 cursor-pointer active:scale-95 transition-all" title="العودة لخيارات التعديل">
                 <span class="text-base">✏️</span>
                 <span>لوحة التعديل</span>
             </button>
