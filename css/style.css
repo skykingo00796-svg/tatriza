@@ -2019,10 +2019,11 @@ button[type="submit"]:active {
         letter-spacing: -0.01em !important;
     }
     #welcome-hero-banner p {
-        font-size: 1.25rem !important;
-        line-height: 1.95 !important;
-        max-width: 56rem !important;
-        margin-bottom: 2.25rem !important;
+        font-size: 1.22rem !important;
+        line-height: 1.85 !important;
+        max-width: 100% !important;
+        width: 100% !important;
+        margin-bottom: 2rem !important;
         color: rgba(255, 255, 255, 0.95) !important;
         text-shadow: 0 2px 10px rgba(0, 0, 0, 0.45);
     }
@@ -2067,10 +2068,11 @@ button[type="submit"]:active {
         line-height: 1.4 !important;
     }
     #welcome-hero-banner p {
-        font-size: 1.38rem !important;
-        line-height: 2 !important;
-        max-width: 62rem !important;
-        margin-bottom: 2.65rem !important;
+        font-size: 1.32rem !important;
+        line-height: 1.85 !important;
+        max-width: 100% !important;
+        width: 100% !important;
+        margin-bottom: 2.25rem !important;
     }
 }
 
