@@ -144,6 +144,13 @@
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
+        /* إخفاء الأقسام غير المحددة في الدرج السفلي للجوال فقط مع إبقائها ظاهرة بالكامل على الكمبيوتر */
+        @media (max-width: 1023px) {
+            .mobile-drawer-hidden {
+                display: none !important;
+            }
+        }
+
         .btn-liquid-emerald:hover {
             box-shadow: 0 6px 20px rgba(5, 150, 105, 0.35);
             transform: translateY(-1px);
@@ -525,17 +532,17 @@
         </header>
 
         <!-- المحتوى الرئيسي للاستوديو (موسع بمحاذاة التوب بار تماماً: مسرح المعاينة ثابت يميناً، وأدوات التحكم يساراً) -->
-        <main class="flex-1 w-full px-3 sm:px-6 md:px-12 py-4 sm:py-6">
+        <main class="flex-1 w-full px-3 sm:px-6 md:px-12 py-4 sm:py-6 pb-24 lg:pb-6">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 items-start">
                 
                 <!-- ============================================== -->
                 <!-- مسرح المعاينة الحي: مثبت في مكانه أثناء التمرير على الجوال والكمبيوتر (Mobile Sticky Split View & Desktop Sticky) -->
                 <!-- ============================================== -->
-                <div id="studio-preview-col" class="sticky top-[72px] lg:top-24 z-30 lg:col-span-5 xl:col-span-4 2xl:col-span-4 space-y-2 sm:space-y-4 max-h-[calc(100vh-5rem)] overflow-y-auto no-scrollbar transition-all duration-300">
+                <div id="studio-preview-col" class="sticky top-[72px] lg:top-24 z-30 lg:col-span-5 xl:col-span-4 2xl:col-span-4 space-y-2 sm:space-y-4 max-h-[calc(100vh-5rem)] overflow-y-auto no-scrollbar transition-all duration-300 pb-16 lg:pb-0">
                     
                     <div id="studio-preview-card" class="bg-white/95 backdrop-blur-md rounded-2xl sm:rounded-3xl p-2.5 sm:p-5 border border-stone-200/90 shadow-md sm:shadow-lg space-y-2 sm:space-y-3.5 transition-all duration-300">
                         
-                        <!-- الشريط العلوي للمعاينة: محول الأبعاد + أدوات وضع الجوال المنقسم السريع -->
+                        <!-- الشريط العلوي للمعاينة: محول الأبعاد + أدوات فتح درج خيارات التعديل السريع -->
                         <div class="flex items-center justify-between gap-1.5 sm:gap-2">
                             <!-- محول الأبعاد السريع -->
                             <div class="flex-1 flex items-center justify-center gap-1 p-1 bg-stone-100 rounded-xl border border-stone-200 shadow-2xs">
@@ -553,11 +560,11 @@
                                 </button>
                             </div>
 
-                            <!-- أزرار الجوال الخاصة: تبديل وضع المعاينة (منقسم / موسع) + تصدير سريع -->
-                            <div class="lg:hidden flex items-center gap-1 shrink-0">
-                                <button type="button" id="studio-mobile-view-toggle" onclick="window.toggleStudioMobileView()" class="h-8 sm:h-9 px-2.5 rounded-xl bg-amber-100/90 hover:bg-amber-200 text-amber-950 font-bold text-[11px] border border-amber-300/80 flex items-center gap-1 cursor-pointer transition shadow-2xs" title="تبديل حجم المعاينة على شاشة الجوال">
-                                    <span id="studio-mobile-toggle-icon">🔍</span>
-                                    <span id="studio-mobile-toggle-text">تكبير</span>
+                            <!-- أزرار الجوال الخاصة: فتح درج التعديل السريع (Canva Mode) + تصدير سريع -->
+                            <div class="lg:hidden flex items-center gap-1.5 shrink-0">
+                                <button type="button" onclick="openStudioMobileDrawer('bg')" class="h-8 sm:h-9 px-3 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-bold text-[11px] flex items-center gap-1.5 cursor-pointer transition shadow-xs border border-amber-400" title="فتح أدوات التعديل">
+                                    <span>⚙️</span>
+                                    <span>الأدوات</span>
                                 </button>
                                 <button type="button" onclick="exportStudioHDImage()" class="btn-liquid-metal text-white h-8 sm:h-9 px-2.5 rounded-xl font-black text-[11px] flex items-center gap-1 cursor-pointer shadow-xs border border-amber-300/50" title="تحميل عالي الدقة HD">
                                     <span>📥</span>
@@ -566,17 +573,20 @@
                             </div>
                         </div>
 
-                        <!-- حاوية مسرح المعاينة الحية (Dynamic Live Stage) متجاوبة مع وضع الجوال المنقسم -->
+                        <!-- حاوية مسرح المعاينة الحية (Dynamic Live Stage) - أبعاد طبيعية تحافظ على تناسق النصوص دون أي تداخل -->
                         <div id="studio-stage-wrapper" class="w-full flex items-center justify-center py-0.5 sm:py-1 transition-all duration-300">
-                            <div id="studio-live-stage" class="relative w-full max-w-[340px] sm:max-w-[360px] max-h-[175px] xs:max-h-[195px] sm:max-h-[235px] lg:max-h-none mx-auto rounded-2xl sm:rounded-3xl overflow-hidden shadow-xl sm:shadow-2xl transition-all duration-300 flex flex-col justify-between p-3 sm:p-4 select-none aspect-square">
+                            <div id="studio-live-stage" class="relative w-full max-w-[340px] sm:max-w-[360px] max-h-[42vh] xs:max-h-[46vh] sm:max-h-[50vh] lg:max-h-none mx-auto rounded-2xl sm:rounded-3xl overflow-hidden shadow-xl sm:shadow-2xl transition-all duration-300 flex flex-col justify-between p-3 sm:p-4 select-none aspect-square">
                                 <!-- يتم بناؤها وتحديثها حياً بواسطة updateStudioPreview() في studio.js -->
                             </div>
                         </div>
 
                         <!-- شريط توجيهي للمعاينة الحية على الجوال -->
-                        <div class="lg:hidden flex items-center justify-between text-[10px] text-amber-950 bg-gradient-to-r from-amber-50 to-orange-50 px-2.5 py-1 rounded-lg border border-amber-200/70 font-semibold">
-                            <span class="flex items-center gap-1"><span>👀</span><span>المعاينة مثبتة في الأعلى؛ عدّل الخيارات بالأسفل وتتغير أمامك فوراً!</span></span>
-                            <span class="text-amber-800 font-bold">مباشر ⚡</span>
+                        <div class="lg:hidden flex items-center justify-between text-[10.5px] text-amber-950 bg-gradient-to-r from-amber-50 to-orange-50 px-3 py-1.5 rounded-xl border border-amber-200/80 font-bold cursor-pointer transition hover:bg-amber-100" onclick="openStudioMobileDrawer('bg')">
+                            <span class="flex items-center gap-1.5">
+                                <span>✨</span>
+                                <span>المعاينة كاملة وواضحة! انقر لفتح درج أدوات التعديل السريع</span>
+                            </span>
+                            <span class="text-amber-800 bg-amber-200/80 px-2 py-0.5 rounded-lg text-[10px] shrink-0">أدوات ⚙️</span>
                         </div>
 
                         <!-- أزرار الإجراءات والتصدير المباشر (تظهر بالكامل على الكمبيوتر ومدمجة على الجوال) -->
@@ -609,13 +619,62 @@
                     </div>
                 </div>
 
+                <!-- خلفية معتمة خفيفة للدرج السفلي على شاشات الجوال -->
+                <div id="studio-mobile-backdrop" onclick="closeStudioMobileDrawer()" class="hidden fixed inset-0 bg-black/50 backdrop-blur-xs z-40 lg:hidden transition-opacity duration-300 opacity-0 pointer-events-none"></div>
+
                 <!-- ============================================== -->
-                <!-- العمود الأيسر: خيارات التخصيص والمحتوى والتحكم الدقيق (lg:col-span-7) -->
+                <!-- العمود الأيسر: خيارات التخصيص والدرج السفلي المتجاوب (Mobile Bottom Sheet & Desktop Column) -->
                 <!-- ============================================== -->
-                <div class="lg:col-span-7 xl:col-span-8 2xl:col-span-8 space-y-4">
+                <div id="studio-controls-col" class="lg:col-span-7 xl:col-span-8 2xl:col-span-8 fixed lg:static inset-x-0 bottom-0 z-50 lg:z-auto bg-white lg:bg-transparent rounded-t-3xl lg:rounded-none shadow-2xl lg:shadow-none border-t border-amber-500/20 lg:border-none max-h-[56vh] lg:max-h-none flex flex-col lg:block transform translate-y-full lg:translate-y-0 transition-transform duration-300 ease-out">
+
+                    <!-- ترويسة الدرج السفلي الذكي لشاشات الجوال (Canva & Instagram Style Drawer Header) -->
+                    <div id="studio-mobile-drawer-header" class="lg:hidden shrink-0 bg-white/98 backdrop-blur-md border-b border-stone-200/90 px-3.5 pt-2 pb-2 rounded-t-3xl shadow-xs">
+                        <div class="w-12 h-1 bg-stone-300 rounded-full mx-auto mb-2 cursor-pointer" onclick="closeStudioMobileDrawer()" title="انقر للإغلاق"></div>
+                        
+                        <div class="flex items-center justify-between gap-2 mb-2">
+                            <span id="studio-mobile-drawer-title" class="text-xs font-black text-stone-900 flex items-center gap-1.5 truncate">
+                                <span>🎨</span>
+                                <span>لون خلفية المنشور وتأطير السجادة</span>
+                            </span>
+                            <div class="flex items-center gap-1.5 shrink-0">
+                                <button type="button" onclick="exportStudioHDImage()" class="h-7 px-2.5 rounded-lg bg-amber-500 text-white font-black text-[10.5px] flex items-center gap-1 shadow-2xs cursor-pointer">
+                                    <span>📥</span>
+                                    <span>HD</span>
+                                </button>
+                                <button type="button" onclick="closeStudioMobileDrawer()" class="h-7 w-7 rounded-lg bg-stone-100 hover:bg-stone-200 text-stone-700 flex items-center justify-center font-bold text-xs cursor-pointer" title="إغلاق الدرج وعرض المعاينة الكاملة">
+                                    ✕
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- أزرار التبويب السريعة للتنقل الفوري بين أدوات الدرج -->
+                        <div class="flex items-center gap-1 overflow-x-auto no-scrollbar py-0.5 -mx-1 px-1">
+                            <button type="button" data-drawer-tab="bg" onclick="switchStudioMobileDrawerTab('bg')" class="studio-drawer-tab-btn shrink-0 px-2.5 py-1 rounded-xl text-[11px] font-bold border transition flex items-center gap-1 bg-amber-500 text-white border-amber-600 shadow-2xs">
+                                <span>🎨</span><span>الخلفية والتأطير</span>
+                            </button>
+                            <button type="button" data-drawer-tab="text" onclick="switchStudioMobileDrawerTab('text')" class="studio-drawer-tab-btn shrink-0 px-2.5 py-1 rounded-xl text-[11px] font-bold border transition flex items-center gap-1 bg-stone-100 text-stone-700 border-stone-200">
+                                <span>✏️</span><span>النصوص والأسعار</span>
+                            </button>
+                            <button type="button" data-drawer-tab="theme" onclick="switchStudioMobileDrawerTab('theme')" class="studio-drawer-tab-btn shrink-0 px-2.5 py-1 rounded-xl text-[11px] font-bold border transition flex items-center gap-1 bg-stone-100 text-stone-700 border-stone-200">
+                                <span>👑</span><span>القالب والثيم</span>
+                            </button>
+                            <button type="button" data-drawer-tab="branding" onclick="switchStudioMobileDrawerTab('branding')" class="studio-drawer-tab-btn shrink-0 px-2.5 py-1 rounded-xl text-[11px] font-bold border transition flex items-center gap-1 bg-stone-100 text-stone-700 border-stone-200">
+                                <span>🏷️</span><span>الشارات والهوية</span>
+                            </button>
+                            <button type="button" data-drawer-tab="media" onclick="switchStudioMobileDrawerTab('media')" class="studio-drawer-tab-btn shrink-0 px-2.5 py-1 rounded-xl text-[11px] font-bold border transition flex items-center gap-1 bg-stone-100 text-stone-700 border-stone-200">
+                                <span>📐</span><span>الميديا والتحريك</span>
+                            </button>
+                            <button type="button" data-drawer-tab="all" onclick="switchStudioMobileDrawerTab('all')" class="studio-drawer-tab-btn shrink-0 px-2.5 py-1 rounded-xl text-[11px] font-bold border transition flex items-center gap-1 bg-stone-100 text-stone-700 border-stone-200">
+                                <span>📋</span><span>كل الأدوات</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- جسم خيارات التحكم (ممرر بشكل مستقل داخل الدرج على الجوال وعادي على الكمبيوتر) -->
+                    <div id="studio-controls-body" class="flex-1 overflow-y-auto p-3.5 sm:p-4 lg:p-0 space-y-4 no-scrollbar">
                     
                     <!-- 0. اختيار نمط الإخراج والتصميم (Layout Style Selector) -->
-                    <div class="bg-gradient-to-r from-amber-500/10 via-amber-400/5 to-rose-500/10 p-3 sm:p-4 rounded-2xl border border-amber-300/80 shadow-2xs space-y-2.5">
+                    <div data-studio-category="theme" class="bg-gradient-to-r from-amber-500/10 via-amber-400/5 to-rose-500/10 p-3 sm:p-4 rounded-2xl border border-amber-300/80 shadow-2xs space-y-2.5">
                         <div class="flex items-center justify-between">
                             <span class="text-xs sm:text-sm font-black text-stone-900 flex items-center gap-1.5">
                                 <span>🎨</span>
@@ -655,7 +714,7 @@
                     </div>
 
                     <!-- 1. اختيار القطعة والصورة / مقطع الفيديو -->
-                    <div class="bg-white p-3.5 sm:p-4 rounded-2xl border border-stone-200/90 shadow-2xs space-y-3">
+                    <div data-studio-category="media" class="bg-white p-3.5 sm:p-4 rounded-2xl border border-stone-200/90 shadow-2xs space-y-3">
                         <div class="flex items-center justify-between">
                             <span class="text-xs sm:text-sm font-black text-stone-900 flex items-center gap-1.5">
                                 <span>1️⃣</span>
@@ -798,7 +857,7 @@
                     </div>
 
                     <!-- 1.6 خيارات وألوان شعار الدار والعلامة المائية (Logo & Transparency) -->
-                    <div class="bg-white p-3.5 sm:p-4 rounded-2xl border border-stone-200/90 shadow-2xs space-y-3">
+                    <div data-studio-category="branding" class="bg-white p-3.5 sm:p-4 rounded-2xl border border-stone-200/90 shadow-2xs space-y-3">
                         <div class="flex items-center justify-between">
                             <span class="text-xs sm:text-sm font-black text-stone-900 flex items-center gap-1.5">
                                 <span>🛡️</span>
@@ -929,7 +988,7 @@
                     </div>
 
                     <!-- 1.7 لون خلفية المنشور وتأطير وتنسيق الصورة (Post Background Color & Framing) -->
-                    <div class="bg-white p-3.5 sm:p-4 rounded-2xl border border-stone-200/90 shadow-2xs space-y-3.5">
+                    <div data-studio-category="bg" class="bg-white p-3.5 sm:p-4 rounded-2xl border border-stone-200/90 shadow-2xs space-y-3.5">
                         <div class="flex items-center justify-between">
                             <span class="text-xs sm:text-sm font-black text-stone-900 flex items-center gap-1.5">
                                 <span>🎨</span>
@@ -2008,7 +2067,7 @@
                     <div id="studio-controls-card" class="hidden space-y-3.5">
                         
                         <!-- 1. الثيمات والخلفيات الفاخرة المتاحة للكارت والهالة الملكية -->
-                        <div class="bg-white p-3.5 sm:p-4 rounded-2xl border border-stone-200/90 shadow-2xs space-y-3">
+                        <div data-studio-category="theme" class="bg-white p-3.5 sm:p-4 rounded-2xl border border-stone-200/90 shadow-2xs space-y-3">
                             <div class="flex items-center justify-between">
                                 <span class="text-xs sm:text-sm font-black text-stone-900 flex items-center gap-1.5">
                                     <span>👑</span>
@@ -2121,7 +2180,7 @@
                         </div>
 
                         <!-- 2. أبعاد وموضع وتثبيت كارد التفاصيل -->
-                        <div class="bg-white p-3.5 sm:p-4 rounded-2xl border border-stone-200/90 shadow-2xs space-y-3">
+                        <div data-studio-category="theme" class="bg-white p-3.5 sm:p-4 rounded-2xl border border-stone-200/90 shadow-2xs space-y-3">
                             <div class="flex items-center justify-between">
                                 <span class="text-xs sm:text-sm font-black text-stone-900 flex items-center gap-1.5">
                                     <span>📐</span>
@@ -2218,7 +2277,7 @@
                         </div>
 
                         <!-- 3. تأثيرات الزجاج والشفافية والإطار الملكي (Glassmorphism & Border) -->
-                        <div class="bg-white p-3.5 sm:p-4 rounded-2xl border border-stone-200/90 shadow-2xs space-y-3">
+                        <div data-studio-category="theme" class="bg-white p-3.5 sm:p-4 rounded-2xl border border-stone-200/90 shadow-2xs space-y-3">
                             <div class="flex items-center justify-between">
                                 <span class="text-xs sm:text-sm font-black text-stone-900 flex items-center gap-1.5">
                                     <span>✨</span>
@@ -2271,7 +2330,7 @@
                         </div>
 
                         <!-- 4. خطوط الكارت وأحجام النصوص والسعر والمواصفات -->
-                        <div class="bg-white p-3.5 sm:p-4 rounded-2xl border border-stone-200/90 shadow-2xs space-y-3">
+                        <div data-studio-category="text" class="bg-white p-3.5 sm:p-4 rounded-2xl border border-stone-200/90 shadow-2xs space-y-3">
                             <div class="flex items-center justify-between">
                                 <span class="text-xs sm:text-sm font-black text-stone-900 flex items-center gap-1.5">
                                     <span>🔤</span>
@@ -2360,7 +2419,7 @@
                         </div>
 
                         <!-- 5. ألوان نصوص الكارت والسعر والشارات -->
-                        <div class="bg-white p-3.5 sm:p-4 rounded-2xl border border-stone-200/90 shadow-2xs space-y-3">
+                        <div data-studio-category="text" class="bg-white p-3.5 sm:p-4 rounded-2xl border border-stone-200/90 shadow-2xs space-y-3">
                             <span class="text-xs sm:text-sm font-black text-stone-900 flex items-center gap-1.5">
                                 <span>🎨</span>
                                 <span>ألوان نصوص الكارت وشارة السعر:</span>
@@ -2418,7 +2477,7 @@
                         </div>
 
                         <!-- 6. نصوص وبيانات السجادة ومقياس الحجم -->
-                        <div class="bg-white p-3.5 sm:p-4 rounded-2xl border border-stone-200/90 shadow-2xs space-y-3">
+                        <div data-studio-category="text" class="bg-white p-3.5 sm:p-4 rounded-2xl border border-stone-200/90 shadow-2xs space-y-3">
                             <span class="text-xs sm:text-sm font-black text-stone-900 flex items-center gap-1.5">
                                 <span>📝</span>
                                 <span>نصوص وبيانات القطعة:</span>
@@ -2465,7 +2524,7 @@
                         </div>
 
                         <!-- 7. الشارات الترويجية وأزرار التفعيل للكارت -->
-                        <div class="bg-white p-3.5 sm:p-4 rounded-2xl border border-stone-200/90 shadow-2xs space-y-3">
+                        <div data-studio-category="branding" class="bg-white p-3.5 sm:p-4 rounded-2xl border border-stone-200/90 shadow-2xs space-y-3">
                             <span class="text-xs sm:text-sm font-black text-stone-900 flex items-center gap-1.5">
                                 <span>🏷️</span>
                                 <span>الشارات وشريط الواتساب ومفاتيح الظهور:</span>
@@ -2523,7 +2582,7 @@
                     </div>
 
                     <!-- 5. قسم المسودات المحفوظة لكلا النمطين -->
-                    <div class="bg-stone-50 p-3.5 sm:p-4 rounded-2xl border border-stone-200/90 space-y-2">
+                    <div data-studio-category="common" class="bg-stone-50 p-3.5 sm:p-4 rounded-2xl border border-stone-200/90 space-y-2">
                         <div class="flex items-center justify-between">
                             <span class="text-xs font-bold text-stone-800 flex items-center gap-1.5">
                                 <span>📂</span>
@@ -2536,11 +2595,40 @@
                         <div id="studio-drafts-list" class="space-y-1.5 max-h-36 overflow-y-auto no-scrollbar">
                             <!-- قائمة المسودات المحفوظة -->
                         </div>
-                    </div>
+                    </div> <!-- نهاية studio-drafts -->
+                    </div> <!-- نهاية studio-controls-body -->
 
-                </div>
+                </div> <!-- نهاية studio-controls-col -->
             </div>
         </main>
+
+        <!-- الشريط السفلي الثابت لأدوات التعديل على الجوال (Canva-style Mobile Bottom Bar) -->
+        <div id="studio-mobile-bottom-bar" class="fixed bottom-0 inset-x-0 z-35 bg-white/95 backdrop-blur-xl border-t border-stone-200/90 px-2 py-1.5 shadow-[0_-8px_30px_rgba(0,0,0,0.1)] flex items-center justify-between gap-1 lg:hidden">
+            <button type="button" onclick="openStudioMobileDrawer('bg')" class="flex-1 py-1 px-0.5 rounded-xl text-stone-700 hover:text-amber-950 hover:bg-amber-50 flex flex-col items-center justify-center gap-0.5 cursor-pointer transition">
+                <span class="text-base leading-none">🎨</span>
+                <span class="text-[10px] font-bold">الخلفية</span>
+            </button>
+            <button type="button" onclick="openStudioMobileDrawer('text')" class="flex-1 py-1 px-0.5 rounded-xl text-stone-700 hover:text-amber-950 hover:bg-amber-50 flex flex-col items-center justify-center gap-0.5 cursor-pointer transition">
+                <span class="text-base leading-none">✏️</span>
+                <span class="text-[10px] font-bold">النصوص</span>
+            </button>
+            <button type="button" onclick="openStudioMobileDrawer('theme')" class="flex-1 py-1 px-0.5 rounded-xl text-stone-700 hover:text-amber-950 hover:bg-amber-50 flex flex-col items-center justify-center gap-0.5 cursor-pointer transition">
+                <span class="text-base leading-none">👑</span>
+                <span class="text-[10px] font-bold">القالب</span>
+            </button>
+            <button type="button" onclick="openStudioMobileDrawer('branding')" class="flex-1 py-1 px-0.5 rounded-xl text-stone-700 hover:text-amber-950 hover:bg-amber-50 flex flex-col items-center justify-center gap-0.5 cursor-pointer transition">
+                <span class="text-base leading-none">🏷️</span>
+                <span class="text-[10px] font-bold">الشارات</span>
+            </button>
+            <button type="button" onclick="openStudioMobileDrawer('media')" class="flex-1 py-1 px-0.5 rounded-xl text-stone-700 hover:text-amber-950 hover:bg-amber-50 flex flex-col items-center justify-center gap-0.5 cursor-pointer transition">
+                <span class="text-base leading-none">📐</span>
+                <span class="text-[10px] font-bold">الميديا</span>
+            </button>
+            <button type="button" onclick="exportStudioHDImage()" class="h-10 px-3 rounded-xl btn-liquid-metal text-white font-black text-xs flex items-center gap-1 shadow-xs border border-amber-300/40 shrink-0 cursor-pointer" title="تصدير وتحميل HD">
+                <span>📥</span>
+                <span>HD</span>
+            </button>
+        </div>
     </div>
     <!-- نهاية شاشة استوديو التصاميم المستقلة -->
 

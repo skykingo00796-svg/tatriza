@@ -1089,29 +1089,90 @@ export function clearStudioCustomMedia() {
 }
 window.clearStudioCustomMedia = clearStudioCustomMedia;
 
-export function toggleStudioMobileView() {
-    const stage = document.getElementById('studio-live-stage');
-    const toggleIcon = document.getElementById('studio-mobile-toggle-icon');
-    const toggleText = document.getElementById('studio-mobile-toggle-text');
-    if (!stage) return;
+export function openStudioMobileDrawer(category = 'bg') {
+    const col = document.getElementById('studio-controls-col');
+    const backdrop = document.getElementById('studio-mobile-backdrop');
+    if (!col) return;
 
-    if (studioState.mobileViewMode === 'split') {
-        studioState.mobileViewMode = 'expanded';
-        stage.classList.remove('max-h-[175px]', 'xs:max-h-[195px]', 'sm:max-h-[235px]');
-        stage.classList.add('max-h-[48vh]');
-        if (toggleIcon) toggleIcon.innerText = '📐';
-        if (toggleText) toggleText.innerText = 'منقسم';
-        showToast('تم تكبير مساحة المعاينة لتفحص التفاصيل بدقة', 'info', 'معاينة موسعة');
-    } else {
-        studioState.mobileViewMode = 'split';
-        stage.classList.remove('max-h-[48vh]');
-        stage.classList.add('max-h-[175px]', 'xs:max-h-[195px]', 'sm:max-h-[235px]');
-        if (toggleIcon) toggleIcon.innerText = '🔍';
-        if (toggleText) toggleText.innerText = 'تكبير';
-        showToast('تم تفعيل وضع العمل المنقسم المريح للجوال', 'info', 'وضع منقسم');
+    switchStudioMobileDrawerTab(category);
+
+    col.classList.remove('translate-y-full');
+    col.classList.add('translate-y-0');
+
+    if (backdrop) {
+        backdrop.classList.remove('hidden', 'pointer-events-none');
+        requestAnimationFrame(() => {
+            backdrop.classList.remove('opacity-0');
+            backdrop.classList.add('opacity-100');
+        });
     }
 }
-window.toggleStudioMobileView = toggleStudioMobileView;
+window.openStudioMobileDrawer = openStudioMobileDrawer;
+
+export function closeStudioMobileDrawer() {
+    const col = document.getElementById('studio-controls-col');
+    const backdrop = document.getElementById('studio-mobile-backdrop');
+    if (!col) return;
+
+    col.classList.remove('translate-y-0');
+    col.classList.add('translate-y-full');
+
+    if (backdrop) {
+        backdrop.classList.remove('opacity-100');
+        backdrop.classList.add('opacity-0');
+        setTimeout(() => {
+            backdrop.classList.add('hidden', 'pointer-events-none');
+        }, 300);
+    }
+}
+window.closeStudioMobileDrawer = closeStudioMobileDrawer;
+
+export function switchStudioMobileDrawerTab(category = 'bg') {
+    studioState.activeDrawerCategory = category;
+
+    // تحديث مظهر أزرار التبويب في ترويسة الدرج
+    document.querySelectorAll('.studio-drawer-tab-btn').forEach(btn => {
+        const tab = btn.getAttribute('data-drawer-tab');
+        if (tab === category) {
+            btn.classList.add('bg-amber-500', 'text-white', 'border-amber-600', 'shadow-2xs');
+            btn.classList.remove('bg-stone-100', 'text-stone-700', 'border-stone-200');
+        } else {
+            btn.classList.remove('bg-amber-500', 'text-white', 'border-amber-600', 'shadow-2xs');
+            btn.classList.add('bg-stone-100', 'text-stone-700', 'border-stone-200');
+        }
+    });
+
+    // تحديث عنوان الدرج
+    const titleEl = document.getElementById('studio-mobile-drawer-title');
+    const titles = {
+        'bg': '🎨 لون خلفية المنشور وتأطير السجادة',
+        'text': '✏️ نصوص وبيانات السجادة والأسعار والخطوط',
+        'theme': '👑 قالب الإخراج وثيمات الكارت والتأثيرات',
+        'branding': '🏷️ الشارات الترويجية وهوية دار تطريز',
+        'media': '📐 اختيار ومصدر الميديا وأدوات التحريك',
+        'all': '📋 جميع خيارات وأدوات الاستوديو'
+    };
+    if (titleEl && titles[category]) {
+        titleEl.innerText = titles[category];
+    }
+
+    // تصفية وإظهار الأقسام المناسبة داخل الدرج على الجوال فقط
+    const sections = document.querySelectorAll('[data-studio-category]');
+    sections.forEach(sec => {
+        const cat = sec.getAttribute('data-studio-category');
+        if (category === 'all' || cat === category || cat === 'common') {
+            sec.classList.remove('mobile-drawer-hidden');
+        } else {
+            sec.classList.add('mobile-drawer-hidden');
+        }
+    });
+
+    // التمرير لأعلى محتوى الدرج
+    const body = document.getElementById('studio-controls-body');
+    if (body) body.scrollTop = 0;
+}
+window.switchStudioMobileDrawerTab = switchStudioMobileDrawerTab;
+window.toggleStudioMobileView = openStudioMobileDrawer;
 
 export async function pickStudioColorFromStage() {
     if (window.EyeDropper) {
@@ -2300,9 +2361,8 @@ export function updateStudioPreview() {
     const panY = studioState.mediaPanY || 0;
     const transformStyle = `translate3d(${panX}%, ${panY}%, 0) scale(${zoom})`;
 
-    // إعدادات وضع الجوال المنقسم وخلفية المنشور الموحدة
-    const isMobileSplit = studioState.mobileViewMode === 'split';
-    const mobileStageClass = isMobileSplit ? 'max-h-[175px] xs:max-h-[195px] sm:max-h-[235px] lg:max-h-none' : 'max-h-[48vh] lg:max-h-none';
+    // إعدادات حجم مسرح المعاينة المريح لشاشات الجوال وخلفية المنشور
+    const mobileStageClass = 'max-h-[42vh] xs:max-h-[46vh] sm:max-h-[50vh] lg:max-h-none';
     const activeBgColor = studioState.postBgColor || '#ffffff';
 
     const isContain = studioState.imageFitMode === 'contain';
@@ -2502,7 +2562,7 @@ export function updateStudioPreview() {
     }
 
     const topHeaderHtml = `
-        <div class="w-full flex items-center justify-between gap-2 p-4 sm:p-5 relative z-10 pointer-events-none">
+        <div class="w-full shrink-0 flex items-center justify-between gap-2 p-3 sm:p-5 relative z-10 pointer-events-none">
             ${logoHtml}
             ${stickerHtml}
         </div>
@@ -2519,25 +2579,22 @@ export function updateStudioPreview() {
     const cardShadowAlpha = Math.min(0.95, 0.55 * (cardVigOpacity / 0.95)).toFixed(2);
     const shadowStyle = studioState.carpetShadow ? `filter: drop-shadow(0 ${cardShadowY}px ${cardShadowBlur}px rgba(0,0,0,${cardShadowAlpha}));` : '';
 
-    // أقصى ارتفاع للسجادة بحسب أبعاد البوست لكي لا تتداخل مع الكارد
-    const carpetMaxHClass = studioState.ratio === '1:1' ? 'max-h-[160px] sm:max-h-[190px]' : (studioState.ratio === '4:5' ? 'max-h-[220px] sm:max-h-[270px]' : 'max-h-[260px] sm:max-h-[330px]');
-
     let carpetStageHtml = '';
     if (studioState.customImageSrc) {
         carpetStageHtml = `
-            <div class="flex-1 flex items-center justify-center p-2 relative z-10 my-auto overflow-hidden pointer-events-none">
+            <div class="flex-1 min-h-0 flex items-center justify-center p-2 relative z-10 my-auto overflow-hidden pointer-events-none">
                 <div id="studio-carpet-center-wrap" class="transition-transform duration-75 max-w-full max-h-full flex items-center justify-center" style="transform: translate3d(${panX}%, ${panY}%, 0) scale(${scaleFactor}); transform-origin: center center;">
                     <img 
                         src="${studioState.customImageSrc}" 
                         alt="${studioState.title}" 
-                        class="max-w-full ${carpetMaxHClass} object-contain rounded-2xl border border-white/20 transition-all duration-300"
-                        style="${shadowStyle}">
+                        class="max-w-full max-h-full object-contain rounded-2xl border border-white/20 transition-all duration-300"
+                        style="${shadowStyle} border-radius: ${studioState.imageCornerRadius || 16}px; padding: ${studioState.imageFramePadding || 0}%;">
                 </div>
             </div>
         `;
     } else {
         carpetStageHtml = `
-            <div class="flex-1 flex items-center justify-center p-2 relative z-10 my-auto overflow-hidden">
+            <div class="flex-1 min-h-0 flex items-center justify-center p-2 relative z-10 my-auto overflow-hidden">
                 <div onclick="document.getElementById('studio-file-upload').click()" class="cursor-pointer border-2 border-dashed border-amber-300/50 hover:border-amber-400 bg-black/30 hover:bg-black/40 backdrop-blur-md rounded-2xl p-5 text-center text-amber-200 transition flex flex-col items-center justify-center gap-2 max-w-[260px] select-none shadow-lg">
                     <span class="text-3xl animate-bounce">📷</span>
                     <span class="text-xs font-bold text-white">انقر لرفع صورة من جهازك</span>
@@ -2667,7 +2724,7 @@ export function updateStudioPreview() {
     }
 
     const cardBoxHtml = `
-        <div id="studio-royal-card-box" class="relative z-10 transition-all duration-200 pointer-events-none ${radiusClass} ${paddingClass}" style="${cardBoxStyles}">
+        <div id="studio-royal-card-box" class="relative z-10 shrink-0 transition-all duration-200 pointer-events-none ${radiusClass} ${paddingClass}" style="${cardBoxStyles}">
             <div class="flex items-start justify-between gap-2.5">
                 <div class="flex-1 min-w-0 ${textAlignClass}">
                     <h3 class="font-bold leading-tight line-clamp-1 ${titleSizeClass}" style="font-family: ${titleFontFamily}; color: ${titleColor};">
@@ -5259,7 +5316,10 @@ export function initStudioEvents() {
     };
 
     window.clearStudioCustomMedia = clearStudioCustomMedia;
-    window.toggleStudioMobileView = toggleStudioMobileView;
+    window.openStudioMobileDrawer = openStudioMobileDrawer;
+    window.closeStudioMobileDrawer = closeStudioMobileDrawer;
+    window.switchStudioMobileDrawerTab = switchStudioMobileDrawerTab;
+    window.toggleStudioMobileView = openStudioMobileDrawer;
     window.pickStudioColorFromStage = pickStudioColorFromStage;
     window.setStudioPostBgColor = setStudioPostBgColor;
     window.saveStudioDraft = saveStudioDraft;
