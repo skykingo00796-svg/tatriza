@@ -2002,7 +2002,8 @@ button[type="submit"]:active {
         font-size: 0.48rem !important; /* ~7.5px */
         line-height: 1 !important;
     }
-    .card-btn-preview {
+    .card-btn-preview,
+    .card-btn-studio {
         width: auto !important;
         min-width: 52px !important;
         height: 1.55rem !important; /* ~25px */
@@ -2012,7 +2013,8 @@ button[type="submit"]:active {
         gap: 0.25rem !important;
         white-space: nowrap !important;
     }
-    .card-btn-preview span {
+    .card-btn-preview span,
+    .card-btn-studio span {
         white-space: nowrap !important;
         overflow: visible !important;
         text-overflow: clip !important;
@@ -2040,6 +2042,7 @@ button[type="submit"]:active {
         gap: 0.2rem !important;
     }
     .card-btn-preview span,
+    .card-btn-studio span,
     .card-btn-delete span,
     .card-btn-edit span {
         font-size: 0.52rem !important;
@@ -2094,6 +2097,13 @@ button[type="submit"]:active {
         font-size: 0.58rem !important;
     }
     .card-btn-preview,
+    .card-btn-studio {
+        width: auto !important;
+        min-width: 56px !important;
+        height: 1.65rem !important;
+        font-size: 0.58rem !important;
+        padding: 0 0.45rem !important;
+    }
     .card-btn-delete {
         width: 54px !important;
         min-width: 54px !important;
@@ -2141,6 +2151,13 @@ button[type="submit"]:active {
         font-size: 0.66rem !important;
     }
     .card-btn-preview,
+    .card-btn-studio {
+        width: auto !important;
+        min-width: 66px !important;
+        height: 1.85rem !important;
+        font-size: 0.64rem !important;
+        padding: 0 0.55rem !important;
+    }
     .card-btn-delete {
         width: 64px !important;
         min-width: 64px !important;
@@ -2184,6 +2201,8 @@ input[type="submit"],
 .btn-liquid-emerald *,
 .card-btn-preview,
 .card-btn-preview *,
+.card-btn-studio,
+.card-btn-studio *,
 .card-btn-edit,
 .card-btn-edit *,
 .card-btn-delete,
@@ -2213,9 +2232,11 @@ input[type="submit"],
 .card-btn-edit,
 .card-btn-delete,
 .card-btn-preview,
+.card-btn-studio,
 .card-btn-edit *,
 .card-btn-delete *,
 .card-btn-preview *,
+.card-btn-studio *,
 button[type="submit"],
 button[type="submit"] *,
 .btn-liquid-metal,

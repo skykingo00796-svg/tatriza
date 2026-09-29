@@ -3414,9 +3414,13 @@
                         <!-- أزرار الإجراءات الإدارية المباشرة داخل نافذة المعاينة -->
                         <div class="flex items-center gap-2">
                             <button id="modal-add-btn" class="hidden"></button>
+                            <button type="button" onclick="window.portalModalOpenStudio()" class="btn-liquid-metal text-white font-bold py-3 px-3.5 rounded-2xl text-xs sm:text-sm transition flex items-center justify-center gap-1.5 cursor-pointer shadow-xs border border-amber-300/40 shrink-0" title="تصميم بوست أو ستوري في الاستوديو">
+                                <span>🎨</span>
+                                <span>الاستوديو</span>
+                            </button>
                             <button type="button" onclick="window.portalModalEditCarpet()" class="flex-1 bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200/80 font-bold py-3 px-3 rounded-2xl text-xs sm:text-sm transition flex items-center justify-center gap-1.5 cursor-pointer shadow-xs">
                                 <span>✏️</span>
-                                <span>تعديل السجادة</span>
+                                <span>تعديل</span>
                             </button>
                             <button type="button" onclick="window.portalModalToggleStock()" class="flex-1 bg-stone-100 hover:bg-stone-200 text-stone-900 border border-stone-300 font-bold py-3 px-3 rounded-2xl text-xs sm:text-sm transition flex items-center justify-center gap-1.5 cursor-pointer shadow-xs">
                                 <span>🔄</span>
