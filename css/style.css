@@ -1986,6 +1986,94 @@ button[type="submit"]:active {
     overflow-wrap: break-word;
 }
 
+/* تكبير وتوسيع أبعاد ونصوص البطاقة الترحيبية على شاشات الكمبيوتر لتكون أكثر إثارة وفخامة وأناقة مع الحفاظ التام على أناقة الجوال */
+@media (min-width: 1024px) {
+    #welcome-hero-banner {
+        min-height: 450px !important;
+        padding: 4.5rem 5rem !important;
+        border-radius: 2.25rem !important;
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: center !important;
+    }
+    #welcome-hero-banner span.font-heritage {
+        font-size: 1.05rem !important;
+        padding: 0.55rem 1.4rem !important;
+        margin-bottom: 1.65rem !important;
+        gap: 0.65rem !important;
+    }
+    .hero-brand-headline {
+        gap: 1.35rem !important;
+        margin-bottom: 1.65rem !important;
+    }
+    .hero-brand-title {
+        font-size: clamp(3.5rem, 5.2vw, 5.8rem) !important;
+        letter-spacing: 0.02em !important;
+    }
+    .hero-brand-divider {
+        font-size: clamp(3.8rem, 5.6vw, 6.2rem) !important;
+    }
+    .hero-motivational-text {
+        font-size: clamp(1.65rem, 2.5vw, 2.85rem) !important;
+        line-height: 1.35 !important;
+        letter-spacing: -0.01em !important;
+    }
+    #welcome-hero-banner p {
+        font-size: 1.25rem !important;
+        line-height: 1.95 !important;
+        max-width: 56rem !important;
+        margin-bottom: 2.25rem !important;
+        color: rgba(255, 255, 255, 0.95) !important;
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.45);
+    }
+    .welcome-story-btn {
+        gap: 1rem !important;
+        padding: 0.65rem 1.65rem 0.65rem 0.95rem !important;
+        font-size: 1.05rem !important;
+    }
+    .welcome-story-arrow {
+        width: 2.25rem !important;
+        height: 2.25rem !important;
+    }
+    .welcome-story-arrow svg {
+        width: 1.15rem !important;
+        height: 1.15rem !important;
+    }
+}
+
+@media (min-width: 1280px) {
+    #welcome-hero-banner {
+        min-height: 500px !important;
+        padding: 5.5rem 6.5rem !important;
+        border-radius: 2.5rem !important;
+    }
+    #welcome-hero-banner span.font-heritage {
+        font-size: 1.12rem !important;
+        padding: 0.65rem 1.6rem !important;
+        margin-bottom: 1.85rem !important;
+    }
+    .hero-brand-headline {
+        gap: 1.65rem !important;
+        margin-bottom: 1.85rem !important;
+    }
+    .hero-brand-title {
+        font-size: clamp(4rem, 5.8vw, 6.4rem) !important;
+    }
+    .hero-brand-divider {
+        font-size: clamp(4.2rem, 6.2vw, 6.8rem) !important;
+    }
+    .hero-motivational-text {
+        font-size: clamp(1.85rem, 2.7vw, 3.1rem) !important;
+        line-height: 1.4 !important;
+    }
+    #welcome-hero-banner p {
+        font-size: 1.38rem !important;
+        line-height: 2 !important;
+        max-width: 62rem !important;
+        margin-bottom: 2.65rem !important;
+    }
+}
+
 
 /* ==========================================================================
    نظام التجاوب الذكي لبطاقات السجاد عبر الحاويات (Card Container Query Engine)
