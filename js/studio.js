@@ -1169,7 +1169,9 @@ export function scrollStudioSection(category = 'theme') {
     // البحث عن القسم المستهدف
     const targetEl = document.querySelector(`[data-studio-category="${category}"]`);
     if (targetEl) {
-        const yOffset = -140; // مسافة كافية لتفادي التوب بار وشريط التبويب
+        const headerContainer = document.getElementById('studio-sticky-header-container');
+        const offsetHeight = (headerContainer && headerContainer.offsetHeight > 0) ? headerContainer.offsetHeight : 150;
+        const yOffset = -offsetHeight - 12; // مسافة كافية ودقيقة لتفادي التوب بار وشريط التبويب
         const y = targetEl.getBoundingClientRect().top + window.pageYOffset + yOffset;
         window.scrollTo({ top: Math.max(0, y), behavior: 'smooth' });
 
