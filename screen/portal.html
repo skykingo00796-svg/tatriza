@@ -10,7 +10,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@400;600;700;800;900&family=Almarai:wght@400;700;800&family=Amiri:ital,wght@0,400;0,700;1,400&family=Aref+Ruqaa:wght@400;700&family=Cairo:wght@400;600;700;800;900&family=Cinzel:wght@500;700;900&family=El+Messiri:wght@400;500;600;700&family=Great+Vibes&family=Kufam:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Marhey:wght@400;600;700&family=Montserrat:wght@400;600;700;800&family=Noto+Serif+Arabic:wght@400;600;700;800;900&family=Outfit:wght@400;600;700&family=Playfair+Display:ital,wght@0,600;0,700;0,900;1,600&family=Reem+Kufi:wght@400;600;700&family=Tajawal:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     
-    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/style.css?v=2.9">
     <!-- محرك التوثيق الفوري لمنع وميض شاشة تسجيل الدخول نهائياً (Zero-Flicker Admin Auth Engine) -->
     <style id="zero-flicker-pre-style">
         /* إخفاء شاشة تسجيل الدخول فورياً وبشكل قطعي لمنع أي وميض */
@@ -163,6 +163,38 @@
                 backdrop-filter: blur(16px);
                 -webkit-backdrop-filter: blur(16px);
             }
+        }
+
+        /* إخفاء تام لأي شريط تمرير أفقي في البوابة واستوديو التصاميم مع بقاء السحب الأفقي سلساً */
+        ::-webkit-scrollbar:horizontal {
+            display: none !important;
+            width: 0 !important;
+            height: 0 !important;
+            background: transparent !important;
+        }
+        ::-webkit-scrollbar-thumb:horizontal,
+        ::-webkit-scrollbar-track:horizontal {
+            display: none !important;
+            background: transparent !important;
+        }
+        .no-scrollbar,
+        .scrollbar-none,
+        .overflow-x-auto,
+        .overflow-x-scroll,
+        [class*="overflow-x-"] {
+            -ms-overflow-style: none !important;
+            scrollbar-width: none !important;
+            -webkit-overflow-scrolling: touch;
+        }
+        .no-scrollbar::-webkit-scrollbar,
+        .scrollbar-none::-webkit-scrollbar,
+        .overflow-x-auto::-webkit-scrollbar,
+        .overflow-x-scroll::-webkit-scrollbar,
+        [class*="overflow-x-"]::-webkit-scrollbar {
+            display: none !important;
+            width: 0 !important;
+            height: 0 !important;
+            background: transparent !important;
         }
 
         .modal-glass-backdrop {

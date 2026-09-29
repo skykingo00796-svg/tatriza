@@ -72,28 +72,69 @@ input[type="file"]::file-selector-button:hover {
     background-color: var(--brand-hover);
 }
 
-/* تخصيص السكرول بار */
+/* تخصيص السكرول بار العمودي فقط وإخفاء أي سكرول بار أفقي في النظام بالكامل */
 ::-webkit-scrollbar {
     width: 8px;
+    height: 0px !important; /* يلغي ظهور أي شريط تمرير أفقي */
 }
-::-webkit-scrollbar-track {
+::-webkit-scrollbar-track:vertical {
     background: #c2b5a5;
 }
-::-webkit-scrollbar-thumb {
+::-webkit-scrollbar-thumb:vertical {
     background: #a89a8b;
     border-radius: 4px;
 }
-::-webkit-scrollbar-thumb:hover {
-    background: var(--brand-color); /* أصبح يتغير ديناميكياً مع لون الثيم المختار! */
+::-webkit-scrollbar-thumb:vertical:hover {
+    background: var(--brand-color);
 }
 
-/* إخفاء أشرطة التمرير للسكرول الأفقي للصور */
-.scrollbar-none::-webkit-scrollbar {
-    display: none;
+/* إخفاء تام لأي شريط تمرير أفقي في المتصفح */
+::-webkit-scrollbar:horizontal {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+    background: transparent !important;
 }
-.scrollbar-none {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
+::-webkit-scrollbar-track:horizontal {
+    display: none !important;
+    background: transparent !important;
+}
+::-webkit-scrollbar-thumb:horizontal {
+    display: none !important;
+    background: transparent !important;
+}
+
+/* إخفاء أشرطة التمرير الأفقية لجميع العناصر مع الحفاظ الكامل على سلاسة التمرير باللمس أو السحب */
+.no-scrollbar,
+.scrollbar-none,
+.overflow-x-auto,
+.overflow-x-scroll,
+[class*="overflow-x-"] {
+    -ms-overflow-style: none !important; /* IE and Edge */
+    scrollbar-width: none !important;    /* Firefox */
+    -webkit-overflow-scrolling: touch;   /* سكرول فائق النعومة للموبايل */
+}
+
+.no-scrollbar::-webkit-scrollbar,
+.scrollbar-none::-webkit-scrollbar,
+.overflow-x-auto::-webkit-scrollbar,
+.overflow-x-scroll::-webkit-scrollbar,
+[class*="overflow-x-"]::-webkit-scrollbar {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+    background: transparent !important;
+}
+
+.no-scrollbar::-webkit-scrollbar:horizontal,
+.scrollbar-none::-webkit-scrollbar:horizontal,
+.overflow-x-auto::-webkit-scrollbar:horizontal,
+.overflow-x-scroll::-webkit-scrollbar:horizontal,
+[class*="overflow-x-"]::-webkit-scrollbar:horizontal {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+    background: transparent !important;
 }
 
 /* بطاقات السجاد التفاعلية الفاخرة - نصوص وأزرار واضحة وطبيعية 100% */
