@@ -1089,90 +1089,128 @@ export function clearStudioCustomMedia() {
 }
 window.clearStudioCustomMedia = clearStudioCustomMedia;
 
-export function openStudioMobileDrawer(category = 'bg') {
-    const col = document.getElementById('studio-controls-col');
-    const backdrop = document.getElementById('studio-mobile-backdrop');
-    if (!col) return;
+// ==============================================
+// الخيار الثاني: نظام التبويب السلس مع الزر العائم السريع للجوال
+// (Option 2: Smooth Mobile Tabbed System & Floating Quick Switcher)
+// ==============================================
 
-    switchStudioMobileDrawerTab(category);
+export function switchStudioMobileTab(tab = 'edit') {
+    studioState.mobileActiveTab = tab;
 
-    col.classList.remove('translate-y-full');
-    col.classList.add('translate-y-0');
+    const previewCol = document.getElementById('studio-preview-col');
+    const controlsCol = document.getElementById('studio-controls-col');
+    const tabBtnEdit = document.getElementById('studio-tab-btn-edit');
+    const tabBtnPreview = document.getElementById('studio-tab-btn-preview');
+    const jumpBar = document.getElementById('studio-mobile-jump-bar');
+    const fabToPreview = document.getElementById('studio-fab-to-preview');
+    const fabToEdit = document.getElementById('studio-fab-to-edit');
 
-    if (backdrop) {
-        backdrop.classList.remove('hidden', 'pointer-events-none');
-        requestAnimationFrame(() => {
-            backdrop.classList.remove('opacity-0');
-            backdrop.classList.add('opacity-100');
-        });
+    if (!previewCol || !controlsCol) return;
+
+    if (tab === 'preview') {
+        // إظهار عمود المعاينة الكامل وإخفاء لوحة التحكم على الجوال فقط
+        previewCol.classList.remove('hidden');
+        previewCol.classList.add('block');
+        controlsCol.classList.add('hidden');
+        controlsCol.classList.remove('block');
+
+        // تحديث مظهر زر تبويب المعاينة
+        if (tabBtnPreview) {
+            tabBtnPreview.className = "flex-1 py-2 px-3 rounded-xl text-xs font-black transition-all flex items-center justify-center gap-1.5 cursor-pointer bg-gradient-to-r from-amber-500 via-amber-600 to-rose-600 text-white shadow-xs";
+        }
+        if (tabBtnEdit) {
+            tabBtnEdit.className = "flex-1 py-2 px-3 rounded-xl text-xs font-black transition-all flex items-center justify-center gap-1.5 cursor-pointer text-stone-700 hover:text-stone-900";
+        }
+
+        // إخفاء شريط القفز الخاص بالأدوات في وضع المعاينة
+        if (jumpBar) jumpBar.classList.add('hidden');
+
+        // تحديث الأزرار العائمة
+        if (fabToPreview) fabToPreview.classList.add('hidden');
+        if (fabToEdit) fabToEdit.classList.remove('hidden');
+
+        // تحديث المعاينة الحية فوراً
+        updateStudioPreview();
+
+        // التمرير لأعلى الشاشة لعرض التصميم كاملاً
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    } else {
+        // وضع التعديل (Edit Mode): إتاحة 100% من مساحة الشاشة للتمرير السلس
+        previewCol.classList.add('hidden');
+        previewCol.classList.remove('block');
+        controlsCol.classList.remove('hidden');
+        controlsCol.classList.add('block');
+
+        // تحديث مظهر زر تبويب التعديل
+        if (tabBtnEdit) {
+            tabBtnEdit.className = "flex-1 py-2 px-3 rounded-xl text-xs font-black transition-all flex items-center justify-center gap-1.5 cursor-pointer bg-gradient-to-r from-amber-500 via-amber-600 to-rose-600 text-white shadow-xs";
+        }
+        if (tabBtnPreview) {
+            tabBtnPreview.className = "flex-1 py-2 px-3 rounded-xl text-xs font-black transition-all flex items-center justify-center gap-1.5 cursor-pointer text-stone-700 hover:text-stone-900";
+        }
+
+        // إظهار شريط القفز للأقسام
+        if (jumpBar) jumpBar.classList.remove('hidden');
+
+        // تحديث الأزرار العائمة
+        if (fabToPreview) fabToPreview.classList.remove('hidden');
+        if (fabToEdit) fabToEdit.classList.add('hidden');
     }
+}
+window.switchStudioMobileTab = switchStudioMobileTab;
+
+export function scrollStudioSection(category = 'theme') {
+    // إذا كان المستخدم في وضع المعاينة، نحوله أولاً لوضع التعديل
+    if (window.innerWidth < 1024 && studioState.mobileActiveTab === 'preview') {
+        switchStudioMobileTab('edit');
+    }
+
+    // البحث عن القسم المستهدف
+    const targetEl = document.querySelector(`[data-studio-category="${category}"]`);
+    if (targetEl) {
+        const yOffset = -140; // مسافة كافية لتفادي التوب بار وشريط التبويب
+        const y = targetEl.getBoundingClientRect().top + window.pageYOffset + yOffset;
+        window.scrollTo({ top: Math.max(0, y), behavior: 'smooth' });
+
+        // وميض تأكيدي بصري جميل
+        targetEl.classList.add('ring-2', 'ring-amber-500', 'transition-all');
+        setTimeout(() => {
+            targetEl.classList.remove('ring-2', 'ring-amber-500');
+        }, 1200);
+    }
+
+    // تحديث الشريحة النشطة في شريط القفز
+    document.querySelectorAll('.studio-jump-pill').forEach(pill => {
+        if (pill.getAttribute('data-jump') === category) {
+            pill.classList.add('bg-amber-500', 'text-white', 'border-amber-600');
+            pill.classList.remove('bg-white', 'text-stone-700', 'border-stone-200');
+        } else {
+            pill.classList.remove('bg-amber-500', 'text-white', 'border-amber-600');
+            pill.classList.add('bg-white', 'text-stone-700', 'border-stone-200');
+        }
+    });
+}
+window.scrollStudioSection = scrollStudioSection;
+
+// توفير دوال التوافق للخلف
+export function openStudioMobileDrawer(category = 'bg') {
+    switchStudioMobileTab('edit');
+    if (category) scrollStudioSection(category);
 }
 window.openStudioMobileDrawer = openStudioMobileDrawer;
-
 export function closeStudioMobileDrawer() {
-    const col = document.getElementById('studio-controls-col');
-    const backdrop = document.getElementById('studio-mobile-backdrop');
-    if (!col) return;
-
-    col.classList.remove('translate-y-0');
-    col.classList.add('translate-y-full');
-
-    if (backdrop) {
-        backdrop.classList.remove('opacity-100');
-        backdrop.classList.add('opacity-0');
-        setTimeout(() => {
-            backdrop.classList.add('hidden', 'pointer-events-none');
-        }, 300);
-    }
+    switchStudioMobileTab('preview');
 }
 window.closeStudioMobileDrawer = closeStudioMobileDrawer;
-
 export function switchStudioMobileDrawerTab(category = 'bg') {
-    studioState.activeDrawerCategory = category;
-
-    // تحديث مظهر أزرار التبويب في ترويسة الدرج
-    document.querySelectorAll('.studio-drawer-tab-btn').forEach(btn => {
-        const tab = btn.getAttribute('data-drawer-tab');
-        if (tab === category) {
-            btn.classList.add('bg-amber-500', 'text-white', 'border-amber-600', 'shadow-2xs');
-            btn.classList.remove('bg-stone-100', 'text-stone-700', 'border-stone-200');
-        } else {
-            btn.classList.remove('bg-amber-500', 'text-white', 'border-amber-600', 'shadow-2xs');
-            btn.classList.add('bg-stone-100', 'text-stone-700', 'border-stone-200');
-        }
-    });
-
-    // تحديث عنوان الدرج
-    const titleEl = document.getElementById('studio-mobile-drawer-title');
-    const titles = {
-        'bg': '🎨 لون خلفية المنشور وتأطير السجادة',
-        'text': '✏️ نصوص وبيانات السجادة والأسعار والخطوط',
-        'theme': '👑 قالب الإخراج وثيمات الكارت والتأثيرات',
-        'branding': '🏷️ الشارات الترويجية وهوية دار تطريز',
-        'media': '📐 اختيار ومصدر الميديا وأدوات التحريك',
-        'all': '📋 جميع خيارات وأدوات الاستوديو'
-    };
-    if (titleEl && titles[category]) {
-        titleEl.innerText = titles[category];
-    }
-
-    // تصفية وإظهار الأقسام المناسبة داخل الدرج على الجوال فقط
-    const sections = document.querySelectorAll('[data-studio-category]');
-    sections.forEach(sec => {
-        const cat = sec.getAttribute('data-studio-category');
-        if (category === 'all' || cat === category || cat === 'common') {
-            sec.classList.remove('mobile-drawer-hidden');
-        } else {
-            sec.classList.add('mobile-drawer-hidden');
-        }
-    });
-
-    // التمرير لأعلى محتوى الدرج
-    const body = document.getElementById('studio-controls-body');
-    if (body) body.scrollTop = 0;
+    scrollStudioSection(category);
 }
 window.switchStudioMobileDrawerTab = switchStudioMobileDrawerTab;
-window.toggleStudioMobileView = openStudioMobileDrawer;
+window.toggleStudioMobileView = function() {
+    const nextTab = studioState.mobileActiveTab === 'preview' ? 'edit' : 'preview';
+    switchStudioMobileTab(nextTab);
+};
 
 export async function pickStudioColorFromStage() {
     if (window.EyeDropper) {
@@ -1410,6 +1448,11 @@ export function initStudioScreen(preselectedCarpetId = '', customCarpets = null)
     updateStudioPreview();
     renderStudioDraftsList();
     setupStageDragAndDropFile();
+
+    // ضبط التبويب النشط على الجوال (معاينة إذا كان لمنتج وتعديل إذا كان تصميم حر)
+    if (window.innerWidth < 1024) {
+        switchStudioMobileTab(preselectedCarpetId ? 'preview' : 'edit');
+    }
 }
 window.initStudioScreen = initStudioScreen;
 
@@ -2361,8 +2404,8 @@ export function updateStudioPreview() {
     const panY = studioState.mediaPanY || 0;
     const transformStyle = `translate3d(${panX}%, ${panY}%, 0) scale(${zoom})`;
 
-    // إعدادات حجم مسرح المعاينة المريح لشاشات الجوال وخلفية المنشور
-    const mobileStageClass = 'max-h-[42vh] xs:max-h-[46vh] sm:max-h-[50vh] lg:max-h-none';
+    // إعدادات حجم مسرح المعاينة المريح لشاشات الجوال وخلفية المنشور (في وضع المعاينة المستقل مساحة مريحة وكاملة)
+    const mobileStageClass = 'max-h-[66vh] lg:max-h-none';
     const activeBgColor = studioState.postBgColor || '#ffffff';
 
     const isContain = studioState.imageFitMode === 'contain';
@@ -5316,10 +5359,12 @@ export function initStudioEvents() {
     };
 
     window.clearStudioCustomMedia = clearStudioCustomMedia;
+    window.switchStudioMobileTab = switchStudioMobileTab;
+    window.scrollStudioSection = scrollStudioSection;
     window.openStudioMobileDrawer = openStudioMobileDrawer;
     window.closeStudioMobileDrawer = closeStudioMobileDrawer;
     window.switchStudioMobileDrawerTab = switchStudioMobileDrawerTab;
-    window.toggleStudioMobileView = openStudioMobileDrawer;
+    window.toggleStudioMobileView = toggleStudioMobileView;
     window.pickStudioColorFromStage = pickStudioColorFromStage;
     window.setStudioPostBgColor = setStudioPostBgColor;
     window.saveStudioDraft = saveStudioDraft;
@@ -5328,4 +5373,18 @@ export function initStudioEvents() {
     window.exportStudioHDImage = exportStudioHDImage;
     window.copyStudioCaption = copyStudioCaption;
     window.shareStudioToWhatsApp = shareStudioToWhatsApp;
+
+    // مراقبة حجم الشاشة للتنقل السلس بين وضع الجوال والكمبيوتر
+    window.addEventListener('resize', () => {
+        const previewCol = document.getElementById('studio-preview-col');
+        const controlsCol = document.getElementById('studio-controls-col');
+        if (window.innerWidth >= 1024) {
+            if (previewCol) previewCol.classList.remove('hidden');
+            if (controlsCol) controlsCol.classList.remove('hidden');
+        } else {
+            if (studioState.mobileActiveTab) {
+                switchStudioMobileTab(studioState.mobileActiveTab);
+            }
+        }
+    });
 }
