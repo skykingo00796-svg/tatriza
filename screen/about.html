@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar" dir="rtl" class="h-full">
 
 <head>
     <meta charset="UTF-8">
@@ -45,13 +45,13 @@
     </script>
 </head>
 
-<body class="text-stone-800 font-interface" style="background-color: #d1c5b6;">
+<body class="text-stone-800 font-interface min-h-screen min-h-[100dvh] flex flex-col justify-between" style="background-color: #d1c5b6;">
     
     <!-- حاوية الإشعارات الفاخرة (Toast Container) -->
     <div id="toast-container"></div>
     
     <!-- شريط التنقل العلوي الفاخر بنمط الجزيرة العائمة (Floating Luxury Dock) -->
-    <header class="sticky top-2 sm:top-3.5 z-40 w-full px-3 sm:px-6 md:px-12 pointer-events-none transition-all duration-300">
+    <header class="sticky top-2 sm:top-3.5 z-40 w-full px-3 sm:px-6 md:px-12 pointer-events-none transition-all duration-300 shrink-0">
         <div class="floating-luxury-dock pointer-events-auto rounded-2xl sm:rounded-3xl w-full px-4 sm:px-6 md:px-8 h-16 sm:h-20 flex justify-between items-center transition-all duration-300">
             
             <!-- اللوجو واسم الدار -->
@@ -84,8 +84,8 @@
     </header>
 
     <!-- المحتوى الرئيسي -->
-    <main class="w-full px-4 sm:px-6 md:px-12 py-6 sm:py-10 md:py-14 relative">
-        <div class="w-full rounded-3xl p-6 sm:p-10 md:p-16 shadow-2xl relative overflow-hidden text-white border border-white/25" style="background-color: var(--brand-color);">
+    <main class="w-full flex-1 flex flex-col justify-center items-center px-4 sm:px-6 md:px-8 py-6 sm:py-8 md:py-10 relative">
+        <div class="w-full max-w-2xl lg:max-w-3xl rounded-3xl p-6 sm:p-8 md:p-10 lg:p-12 shadow-2xl relative overflow-hidden text-white border border-white/25 mx-auto" style="background-color: var(--brand-color);">
             <!-- محرك الجزيئات وخيوط الذهب ثلاثية الأبعاد -->
             <canvas id="ambient-3d-canvas" class="rounded-3xl"></canvas>
             
@@ -93,7 +93,7 @@
             <div class="absolute inset-0 bg-cover bg-center opacity-30 filter blur-[0.5px] pointer-events-none theme-bg-logo" style="background-image: url('../images/logo.jpg');"></div>
             <div class="absolute inset-0 opacity-90" style="background: linear-gradient(to bottom right, var(--brand-color), var(--brand-hover));"></div>
 
-            <div class="relative z-10 text-center w-full max-w-5xl mx-auto">
+            <div class="relative z-10 text-center w-full mx-auto">
                 <div class="flex justify-center mb-6 md:mb-8">
                     <img src="../images/logo.jpg" alt="Tatriza Logo" class="w-24 h-24 md:w-32 md:h-32 rounded-3xl object-cover border-4 border-white/25 cursor-pointer logo-card-interactive" onclick="openCurrentLogoLightbox(event)" title="انقر لعرض شعار الدار بدقة عالية">
                 </div>
@@ -189,7 +189,7 @@
 
     <!-- ربط ملف الـ JavaScript الرئيسي بنظام الوحدات -->
     <!-- الشريط السفلي المبسط لدار تطريز (Footer) في منتصف الشريط تماماً -->
-    <footer class="mt-12 sm:mt-16 border-t border-stone-200/70 bg-[#fffbf7]/75 backdrop-blur-xs py-3.5 w-full transition-all duration-300" dir="rtl">
+    <footer class="mt-auto border-t border-stone-200/70 bg-[#fffbf7]/75 backdrop-blur-xs py-3.5 w-full shrink-0 transition-all duration-300" dir="rtl">
         <div class="w-full px-3 sm:px-6 md:px-12 flex flex-wrap items-center justify-center gap-2 text-center text-[11px] sm:text-xs text-stone-600 font-medium">
             <img src="../images/logo.jpg" alt="Tatriza Logo" class="theme-logo-img w-5 h-5 rounded-md object-cover border border-stone-200 shadow-2xs">
             <span class="font-bold text-stone-800">دار التطريز TATRIZA</span>
