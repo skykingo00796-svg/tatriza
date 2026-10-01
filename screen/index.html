@@ -200,23 +200,7 @@
                     <!-- مؤشر الانزلاق الخلفي الفاخر (Active Slider Pill) -->
                     <div id="catalog-mode-glider" class="catalog-mode-glider"></div>
 
-                    <!-- التاب 1: تسليم فوري (جاهز للاقتناء) -->
-                    <button 
-                        type="button" 
-                        role="tab" 
-                        id="tab-mode-instant" 
-                        aria-selected="false" 
-                        onclick="window.switchCatalogMode('instant')" 
-                        class="catalog-mode-btn relative z-10 flex items-center justify-center gap-1 sm:gap-2 py-2 sm:py-2.5 px-2 sm:px-3 rounded-xl text-[11px] sm:text-xs md:text-sm font-bold transition-all duration-300 cursor-pointer select-none text-center">
-                        <span class="text-xs sm:text-base leading-none shrink-0">⚡</span>
-                        <span class="font-display tracking-tight whitespace-nowrap">
-                            <span>تسليم فوري</span>
-                            <span class="hidden sm:inline font-normal text-[11px] opacity-85"> (جاهز للاقتناء)</span>
-                        </span>
-                        <span id="badge-count-instant" class="mode-badge-count px-1.5 py-0.2 rounded-full text-[9.5px] sm:text-[11px] font-black transition shrink-0">0</span>
-                    </button>
-
-                    <!-- التاب 2: حياكة حسب الطلب (تصاميم الدار) - الوضع الافتراضي -->
+                    <!-- التاب 1 (اليمين - البداية): حياكة حسب الطلب (تصاميم الدار) - الوضع الافتراضي -->
                     <button 
                         type="button" 
                         role="tab" 
@@ -231,10 +215,26 @@
                         </span>
                         <span id="badge-count-ondemand" class="mode-badge-count px-1.5 py-0.2 rounded-full text-[9.5px] sm:text-[11px] font-black transition shrink-0">0</span>
                     </button>
+
+                    <!-- التاب 2 (اليسار): تسليم فوري (جاهز للاقتناء) -->
+                    <button 
+                        type="button" 
+                        role="tab" 
+                        id="tab-mode-instant" 
+                        aria-selected="false" 
+                        onclick="window.switchCatalogMode('instant')" 
+                        class="catalog-mode-btn relative z-10 flex items-center justify-center gap-1 sm:gap-2 py-2 sm:py-2.5 px-2 sm:px-3 rounded-xl text-[11px] sm:text-xs md:text-sm font-bold transition-all duration-300 cursor-pointer select-none text-center">
+                        <span class="text-xs sm:text-base leading-none shrink-0">⚡</span>
+                        <span class="font-display tracking-tight whitespace-nowrap">
+                            <span>تسليم فوري</span>
+                            <span class="hidden sm:inline font-normal text-[11px] opacity-85"> (جاهز للاقتناء)</span>
+                        </span>
+                        <span id="badge-count-instant" class="mode-badge-count px-1.5 py-0.2 rounded-full text-[9.5px] sm:text-[11px] font-black transition shrink-0">0</span>
+                    </button>
                 </div>
 
-                <!-- شريط الإرشاد التوضيحي الديناميكي الملهم -->
-                <div id="catalog-mode-caption" class="catalog-mode-caption-box flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-stone-700 text-[10.5px] sm:text-xs font-medium text-center transition-all duration-300 w-full">
+                <!-- شريط الإرشاد التوضيحي الفاخر في حدود النص فقط وليس بكبر حجم الشاشه -->
+                <div id="catalog-mode-caption" class="catalog-mode-caption-box inline-flex items-center justify-center gap-1.5 sm:gap-2 px-3.5 sm:px-5 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-stone-700 text-[10.5px] sm:text-xs font-medium text-center transition-all duration-300 w-fit max-w-[95%] sm:max-w-none mx-auto shadow-2xs">
                     <span id="catalog-mode-caption-icon" class="text-xs sm:text-sm shrink-0">🪄</span>
                     <span id="catalog-mode-caption-text" class="leading-relaxed">تصاميم حصرية من إرث دار التطريز؛ ننسجها لك يدوياً بأبعادك وباليت ألوانك المفضلة.</span>
                 </div>

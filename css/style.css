@@ -2826,11 +2826,11 @@ button[type="submit"] *,
     }
 }
 
-.catalog-segmented-container.is-instant .catalog-mode-glider {
+.catalog-segmented-container.is-ondemand .catalog-mode-glider {
     transform: translateX(0) !important;
 }
 
-.catalog-segmented-container.is-ondemand .catalog-mode-glider {
+.catalog-segmented-container.is-instant .catalog-mode-glider {
     transform: translateX(-100%) !important;
 }
 
@@ -2865,6 +2865,8 @@ button[type="submit"] *,
 }
 
 .catalog-mode-caption-box {
+    width: fit-content !important;
+    max-width: 95% !important;
     animation: fadeInModeCaption 0.35s ease-out;
 }
 
