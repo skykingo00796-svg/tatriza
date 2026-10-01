@@ -571,7 +571,7 @@ export async function toggleStockStatus(carpetId, allCarpets, callback) {
     localStorage.setItem('tatr_carpets', JSON.stringify(allCarpets));
     if (callback) callback(allCarpets);
 
-    showToast(newStatus === 'out_of_stock' ? `تم تعليم "${carpet.title}" كـ غير متوفرة` : `تمت إعادة توفير "${carpet.title}" في المعرض`, 'info', 'المخزون');
+    showToast(newStatus === 'out_of_stock' ? `تم تحويل "${carpet.title}" إلى قسم (حياكة حسب الطلب) 🪄` : `تم تحويل "${carpet.title}" إلى قسم (تسليم فوري) ⚡`, 'info', 'نمط التوفر');
 
     // 2. مزامنة سحابية مع Firebase إن كانت مهيأة
     if (isFirebaseConfigured()) {
@@ -864,7 +864,10 @@ export async function handleAddProduct(event, allCarpets, callback) {
         price: Number(document.getElementById('new-price').value),
         currency: 'ر.ع.',
         description: document.getElementById('new-desc').value.trim(),
-        status: 'available',
+        status: (() => {
+            const statusEl = document.getElementById('new-status');
+            return (statusEl && statusEl.value) ? statusEl.value : 'out_of_stock';
+        })(),
         createdAt: now,
         createdDate: readableDate,
         updatedAt: now,
@@ -985,7 +988,32 @@ export function openAddModal(allCarpets = []) {
             updateNewProductSkuPreview(allCarpets);
         });
     }
+
+    // ضبط خيار نمط التوفر الافتراضي عند فتح نافذة الإضافة
+    const radioOndemand = document.querySelector('input[name="new-status-radio"][value="out_of_stock"]');
+    if (radioOndemand) {
+        radioOndemand.checked = true;
+    }
+    updateNewStatusRadio('out_of_stock');
 }
+
+export function updateNewStatusRadio(value) {
+    const statusHidden = document.getElementById('new-status');
+    const statusBadge = document.getElementById('new-status-badge');
+    if (statusHidden) {
+        statusHidden.value = value;
+    }
+    if (statusBadge) {
+        if (value === 'available') {
+            statusBadge.className = 'text-[10.5px] font-bold text-emerald-900 bg-emerald-100 border border-emerald-300 px-2.5 py-0.5 rounded-full transition';
+            statusBadge.innerHTML = '⚡ متوفرة للتسليم الفوري';
+        } else {
+            statusBadge.className = 'text-[10.5px] font-bold text-amber-900 bg-amber-100 border border-amber-300 px-2.5 py-0.5 rounded-full transition';
+            statusBadge.innerHTML = '🪄 حياكة وتفصيل بالطلب';
+        }
+    }
+}
+window.updateNewStatusRadio = updateNewStatusRadio;
 
 export function closeAddModal() {
     const modal = document.getElementById('add-product-modal');

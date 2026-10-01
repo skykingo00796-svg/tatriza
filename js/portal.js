@@ -44,7 +44,8 @@ import {
     openFirebaseConfigModal, 
     saveFirebaseConfigHandler, 
     closeFirebaseConfigModal,
-    checkAdminPermission
+    checkAdminPermission,
+    updateNewStatusRadio
 } from './admin.js';
 
 import { 
@@ -502,7 +503,7 @@ export function portalOpenProductModal(carpetId) {
     const isOutOfStock = carpet.status === 'out_of_stock';
     const stockBtnText = document.getElementById('modal-admin-stock-text');
     if (stockBtnText) {
-        stockBtnText.innerText = isOutOfStock ? 'إعادة توفير القطعة' : 'تعليم كـ غير متوفرة';
+        stockBtnText.innerText = isOutOfStock ? 'تحويل للتسليم الفوري ⚡' : 'تحويل للحياكة بالطلب 🪄';
     }
 }
 window.portalOpenProductModal = portalOpenProductModal;
@@ -632,16 +633,16 @@ function renderPortalProductsTable(shouldScroll = false) {
                         </span>
 
                         <!-- شارة حالة التوفر في أعلى اليسار (زجاجي كريستالي شفاف وملون فاخر) -->
-                        <button type="button" onclick="event.stopPropagation(); window.portalToggleStock('${c.id}')" class="card-badge-stock absolute top-1.5 left-1.5 px-2 rounded-lg text-[8px] sm:text-[9px] font-bold shadow-xs transition inline-flex items-center justify-center gap-1 cursor-pointer backdrop-blur-md leading-none text-center z-30 select-none ${isOutOfStock ? 'bg-rose-950/40 hover:bg-rose-950/60 text-rose-200 border border-rose-400/30' : 'bg-emerald-950/40 hover:bg-emerald-950/60 text-emerald-200 border border-emerald-400/30'}" title="انقر للتبديل الفوري لحالة التوفر">
-                            <span class="stock-dot w-1.5 h-1.5 rounded-full ${isOutOfStock ? 'bg-rose-400' : 'bg-emerald-400'} shrink-0 shadow-2xs"></span>
-                            <span class="whitespace-nowrap">${isOutOfStock ? 'نفدت' : 'متوفرة'}</span>
+                        <button type="button" onclick="event.stopPropagation(); window.portalToggleStock('${c.id}')" class="card-badge-stock absolute top-1.5 left-1.5 px-2 rounded-lg text-[8px] sm:text-[9px] font-bold shadow-xs transition inline-flex items-center justify-center gap-1 cursor-pointer backdrop-blur-md leading-none text-center z-30 select-none ${isOutOfStock ? 'bg-amber-950/40 hover:bg-amber-950/60 text-amber-200 border border-amber-400/30' : 'bg-emerald-950/40 hover:bg-emerald-950/60 text-emerald-200 border border-emerald-400/30'}" title="انقر للتبديل الفوري لحالة التوفر">
+                            <span class="stock-dot w-1.5 h-1.5 rounded-full ${isOutOfStock ? 'bg-amber-400' : 'bg-emerald-400'} shrink-0 shadow-2xs"></span>
+                            <span class="whitespace-nowrap">${isOutOfStock ? '🪄 حياكة بالطلب' : '⚡ تسليم فوري'}</span>
                         </button>
 
-                        <!-- طبقة تغطية زجاجية خفيفة وشفافة تماماً إن كانت نافدة -->
+                        <!-- طبقة تغطية زجاجية خفيفة وأنيقة إن كانت حياكة بالطلب -->
                         ${isOutOfStock ? `
-                            <div class="absolute inset-0 bg-black/15 backdrop-blur-[0.5px] flex items-center justify-center z-20 pointer-events-none p-1">
-                                <span class="h-6 sm:h-6.5 px-2.5 bg-black/40 backdrop-blur-md text-amber-200 border border-white/20 text-[8.5px] sm:text-[9.5px] font-bold rounded-lg shadow-md inline-flex items-center justify-center leading-none text-center select-none">
-                                    نفدت الكمية
+                            <div class="absolute inset-0 bg-black/10 backdrop-blur-[0.5px] flex items-center justify-center z-20 pointer-events-none p-1">
+                                <span class="h-6 sm:h-6.5 px-2.5 bg-black/45 backdrop-blur-md text-amber-200 border border-amber-400/30 text-[8.5px] sm:text-[9.5px] font-bold rounded-lg shadow-md inline-flex items-center justify-center leading-none text-center select-none">
+                                    🪄 حياكة وتفصيل بالطلب
                                 </span>
                             </div>
                         ` : ''}

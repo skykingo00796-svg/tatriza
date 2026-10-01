@@ -3335,6 +3335,48 @@
                     </div>
                 </div>
 
+                <!-- خيار نمط التوفر وتحديد قسم العرض (تسليم فوري vs حياكة بالطلب) -->
+                <div class="bg-amber-50/70 border border-amber-200/90 rounded-2xl p-3.5 sm:p-4 space-y-2.5">
+                    <div class="flex items-center justify-between">
+                        <label class="block text-xs font-bold text-stone-900 flex items-center gap-1.5">
+                            <span>🏷️ نمط التوفر وقسم العرض في المعرض</span>
+                        </label>
+                        <span id="new-status-badge" class="text-[10.5px] font-bold text-amber-900 bg-amber-100 border border-amber-300 px-2.5 py-0.5 rounded-full transition">
+                            🪄 حياكة وتفصيل بالطلب
+                        </span>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                        <!-- الخيار 1: حياكة بالطلب (الوضع الافتراضي) -->
+                        <label class="relative flex items-center gap-2.5 p-3 rounded-xl border border-stone-200 bg-white hover:border-amber-400 cursor-pointer transition shadow-2xs has-[:checked]:border-[#7c1d3c] has-[:checked]:bg-[#7c1d3c]/5 has-[:checked]:ring-1.5 has-[:checked]:ring-[#7c1d3c]">
+                            <input type="radio" name="new-status-radio" value="out_of_stock" checked onchange="window.updateNewStatusRadio(this.value)" class="text-[#7c1d3c] focus:ring-[#7c1d3c] w-4 h-4 cursor-pointer">
+                            <div class="flex flex-col min-w-0">
+                                <span class="text-xs font-bold text-stone-900 flex items-center gap-1">
+                                    <span>🪄</span>
+                                    <span>حياكة بالطلب</span>
+                                    <span class="text-[9.5px] text-amber-800 bg-amber-100/90 border border-amber-300/60 px-1.5 py-0.2 rounded-full font-semibold">افتراضي</span>
+                                </span>
+                                <span class="text-[10px] text-stone-500 mt-0.5">من تصاميم الدار وتُحاك حسب رغبة ومقاسات العميل</span>
+                            </div>
+                        </label>
+
+                        <!-- الخيار 2: تسليم فوري -->
+                        <label class="relative flex items-center gap-2.5 p-3 rounded-xl border border-stone-200 bg-white hover:border-amber-400 cursor-pointer transition shadow-2xs has-[:checked]:border-[#7c1d3c] has-[:checked]:bg-[#7c1d3c]/5 has-[:checked]:ring-1.5 has-[:checked]:ring-[#7c1d3c]">
+                            <input type="radio" name="new-status-radio" value="available" onchange="window.updateNewStatusRadio(this.value)" class="text-[#7c1d3c] focus:ring-[#7c1d3c] w-4 h-4 cursor-pointer">
+                            <div class="flex flex-col min-w-0">
+                                <span class="text-xs font-bold text-stone-900 flex items-center gap-1">
+                                    <span>⚡</span>
+                                    <span>تسليم فوري</span>
+                                </span>
+                                <span class="text-[10px] text-stone-500 mt-0.5">قطعة جاهزة في المعرض للشحن والتسليم المباشر</span>
+                            </div>
+                        </label>
+                    </div>
+
+                    <!-- الحقل المخفي المتزامن لمعالجة النموذج -->
+                    <input type="hidden" id="new-status" value="out_of_stock">
+                </div>
+
                 <div>
                     <label class="block text-xs font-bold text-stone-700 mb-1">صور السجادة (اختر صورة أو عدة صور من جهازك)</label>
                     <input type="file" id="new-image-files" accept="image/*" multiple class="w-full text-xs text-stone-600 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-[#7c1d3c] file:text-white hover:file:bg-[#631730] cursor-pointer bg-stone-100 border border-stone-300 rounded-xl p-1.5">
