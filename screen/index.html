@@ -89,7 +89,7 @@
     </header>
 
     <!-- المحتوى الرئيسي -->
-    <main class="w-full px-6 md:px-12 pb-20 pt-8">
+    <main class="w-full px-3 sm:px-6 md:px-12 pb-20 pt-8">
         
         <!-- البانر الترحيبي ثلاثي الأبعاد مع خيوط وجزيئات الذهب التفاعلية (ThreeUI Ambient) -->
         <section class="w-full py-4 sm:py-6 relative">
@@ -194,8 +194,8 @@
 
             <!-- مفتاح نمط المعرض الملكي (التسليم الفوري vs حياكة حسب الطلب) -->
             <div class="catalog-mode-switch-wrapper w-full flex flex-col items-center justify-center gap-2 pt-1 pb-1">
-                <!-- الكبسولة الثنائية المنزلقة الفاخرة (Dual Tab Segmented Control) -->
-                <div id="catalog-segmented-container" class="catalog-segmented-container is-instant relative grid grid-cols-2 p-1 sm:p-1.5 rounded-2xl bg-stone-100/90 border border-stone-200/90 shadow-inner backdrop-blur-md max-w-md sm:max-w-lg md:max-w-xl w-full mx-auto" dir="rtl" role="tablist" aria-label="أنماط طلب السجاد">
+                <!-- الكبسولة الثنائية المنزلقة الفاخرة بعرض كامل متطابق مع حدود المعرض والتوب بار -->
+                <div id="catalog-segmented-container" class="catalog-segmented-container is-ondemand relative grid grid-cols-2 p-1 sm:p-1.5 rounded-2xl bg-stone-100/90 border border-stone-200/90 shadow-inner backdrop-blur-md w-full" dir="rtl" role="tablist" aria-label="أنماط طلب السجاد">
                     
                     <!-- مؤشر الانزلاق الخلفي الفاخر (Active Slider Pill) -->
                     <div id="catalog-mode-glider" class="catalog-mode-glider"></div>
@@ -205,9 +205,9 @@
                         type="button" 
                         role="tab" 
                         id="tab-mode-instant" 
-                        aria-selected="true" 
+                        aria-selected="false" 
                         onclick="window.switchCatalogMode('instant')" 
-                        class="catalog-mode-btn active relative z-10 flex items-center justify-center gap-1 sm:gap-2 py-2 sm:py-2.5 px-2 sm:px-3 rounded-xl text-[11px] sm:text-xs md:text-sm font-bold transition-all duration-300 cursor-pointer select-none text-center">
+                        class="catalog-mode-btn relative z-10 flex items-center justify-center gap-1 sm:gap-2 py-2 sm:py-2.5 px-2 sm:px-3 rounded-xl text-[11px] sm:text-xs md:text-sm font-bold transition-all duration-300 cursor-pointer select-none text-center">
                         <span class="text-xs sm:text-base leading-none shrink-0">⚡</span>
                         <span class="font-display tracking-tight whitespace-nowrap">
                             <span>تسليم فوري</span>
@@ -216,14 +216,14 @@
                         <span id="badge-count-instant" class="mode-badge-count px-1.5 py-0.2 rounded-full text-[9.5px] sm:text-[11px] font-black transition shrink-0">0</span>
                     </button>
 
-                    <!-- التاب 2: حياكة حسب الطلب (تصاميم الدار) -->
+                    <!-- التاب 2: حياكة حسب الطلب (تصاميم الدار) - الوضع الافتراضي -->
                     <button 
                         type="button" 
                         role="tab" 
                         id="tab-mode-ondemand" 
-                        aria-selected="false" 
+                        aria-selected="true" 
                         onclick="window.switchCatalogMode('ondemand')" 
-                        class="catalog-mode-btn relative z-10 flex items-center justify-center gap-1 sm:gap-2 py-2 sm:py-2.5 px-2 sm:px-3 rounded-xl text-[11px] sm:text-xs md:text-sm font-bold transition-all duration-300 cursor-pointer select-none text-center">
+                        class="catalog-mode-btn active relative z-10 flex items-center justify-center gap-1 sm:gap-2 py-2 sm:py-2.5 px-2 sm:px-3 rounded-xl text-[11px] sm:text-xs md:text-sm font-bold transition-all duration-300 cursor-pointer select-none text-center">
                         <span class="text-xs sm:text-base leading-none shrink-0">🪄</span>
                         <span class="font-display tracking-tight whitespace-nowrap">
                             <span>حياكة بالطلب</span>
@@ -234,9 +234,9 @@
                 </div>
 
                 <!-- شريط الإرشاد التوضيحي الديناميكي الملهم -->
-                <div id="catalog-mode-caption" class="catalog-mode-caption-box flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-stone-700 text-[10.5px] sm:text-xs font-medium text-center transition-all duration-300 max-w-full">
-                    <span id="catalog-mode-caption-icon" class="text-xs sm:text-sm shrink-0">📦</span>
-                    <span id="catalog-mode-caption-text" class="leading-relaxed">قطع نادرة متوفرة في صالة العرض، جاهزة للشحن والتسليم الفوري لمنزلك خلال 24-48 ساعة.</span>
+                <div id="catalog-mode-caption" class="catalog-mode-caption-box flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-stone-700 text-[10.5px] sm:text-xs font-medium text-center transition-all duration-300 w-full">
+                    <span id="catalog-mode-caption-icon" class="text-xs sm:text-sm shrink-0">🪄</span>
+                    <span id="catalog-mode-caption-text" class="leading-relaxed">تصاميم حصرية من إرث دار التطريز؛ ننسجها لك يدوياً بأبعادك وباليت ألوانك المفضلة.</span>
                 </div>
             </div>
             

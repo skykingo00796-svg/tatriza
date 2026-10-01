@@ -52,7 +52,7 @@ let allCarpets = [];
 let currentFilter = 'all';
 let currentSearchQuery = '';
 let currentSortOption = 'default';
-let currentCatalogMode = 'instant'; // 'instant' | 'ondemand'
+let currentCatalogMode = 'ondemand'; // 'instant' | 'ondemand' (حياكة حسب الطلب هو الوضع الافتراضي)
 
 // إعدادات الترقيم المدمجة الفاخرة (18 قطعة لكل صفحة - متناسقة مع شبكة العرض)
 const CARPETS_PER_PAGE = 18;
@@ -1246,6 +1246,7 @@ window.addEventListener('DOMContentLoaded', () => {
     });
 
     loadCarpets();
+    switchCatalogMode('ondemand');
     initDynamicShowcase();
 });
 
