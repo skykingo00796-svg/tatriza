@@ -55,6 +55,39 @@ body {
     scroll-behavior: smooth;
 }
 
+/* تنسيقات حتمية لتثبيت الشريط السفلي (Sticky Footer) ومنع أي فراغ تحته في الشاشات العريضة والطويلة */
+html.about-page-html,
+body.about-page-body {
+    height: 100% !important;
+    min-height: 100vh !important;
+    min-height: 100dvh !important;
+}
+
+body.about-page-body {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background-color: #d1c5b6 !important;
+}
+
+.about-page-body main {
+    flex: 1 0 auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    align-items: center !important;
+    width: 100% !important;
+}
+
+.about-page-body footer {
+    margin-top: auto !important;
+    flex-shrink: 0 !important;
+    width: 100% !important;
+}
+
+
 /* ربط زر اختيار الملفات بمتغيرات الهوية النشطة */
 input[type="file"]::file-selector-button {
     background-color: var(--brand-color);
