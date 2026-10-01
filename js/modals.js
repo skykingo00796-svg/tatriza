@@ -295,7 +295,7 @@ export function inquireCurrentModalWhatsApp() {
     const isOutOfStock = carpet.status === 'out_of_stock';
     const storePhone = "96890000000";
 
-    let message = `مرحباً دار تطريز 🏛️\n`;
+    let message = `مرحباً دار التطريز 🏛️\n`;
     message += `أود الاستفسار عن هذه التحفة المعروضة في متجركم:\n\n`;
     message += `▪️ *اسم القطعة:* ${carpet.title}\n`;
     if (carpet.id) message += `▪️ *رمز القطعة (SKU):* ${carpet.id}\n`;
@@ -951,7 +951,7 @@ export function sendCartToWhatsApp() {
         return;
     }
 
-    let message = `🏛️ *طلب شراء جديد - دار تطريز (Tatriza)*\n`;
+    let message = `🏛️ *طلب شراء جديد - دار التطريز (Tatriza)*\n`;
     message += `━━━━━━━━━━━━━━━━━━━━\n\n`;
     message += `🛍️ *قائمة القطع المطلوبة:*\n\n`;
 
@@ -996,7 +996,7 @@ export function submitCustomOrder(event) {
     const notes = document.getElementById('cust-notes').value;
 
     const message = encodeURIComponent(
-        `🎨 *طلب تفصيل تصميم خاص - دار تطريز*\n` +
+        `🎨 *طلب تفصيل تصميم خاص - دار التطريز*\n` +
         `━━━━━━━━━━━━━━━━━━━━\n\n` +
         `👤 *اسم العميل:* ${name}\n` +
         `📐 *الأبعاد المطلوبة:* الطول ${length} × العرض ${width}\n\n` +
