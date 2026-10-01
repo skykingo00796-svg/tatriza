@@ -2199,33 +2199,33 @@ button[type="submit"]:active {
         overflow: visible !important;
         text-overflow: clip !important;
     }
+    .card-btn-delete,
+    .card-btn-edit {
+        height: 1.6rem !important;
+        font-size: 0.58rem !important;
+        padding: 0 0.35rem !important;
+        border-radius: 0.45rem !important;
+        gap: 0.2rem !important;
+        overflow: visible !important;
+    }
     .card-btn-delete {
         width: 50px !important;
         min-width: 50px !important;
-        height: 1.55rem !important; /* ~25px */
-        font-size: 0.56rem !important;
-        padding: 0 0.25rem !important;
-        border-radius: 0.45rem !important;
-        gap: 0.2rem !important;
-        white-space: nowrap !important;
     }
-    .card-btn-delete span {
+    .card-btn-delete span,
+    .card-btn-edit span {
         white-space: nowrap !important;
         overflow: visible !important;
         text-overflow: clip !important;
-    }
-    .card-btn-edit {
-        height: 1.45rem !important;
-        font-size: 0.54rem !important;
-        padding: 0 0.3rem !important;
-        border-radius: 0.45rem !important;
-        gap: 0.2rem !important;
+        line-height: 1.35 !important;
+        padding-bottom: 1.5px !important;
+        font-size: 0.56rem !important;
     }
     .card-btn-preview span,
-    .card-btn-studio span,
-    .card-btn-delete span,
-    .card-btn-edit span {
-        font-size: 0.52rem !important;
+    .card-btn-studio span {
+        font-size: 0.55rem !important;
+        line-height: 1.35 !important;
+        overflow: visible !important;
     }
     .card-actions-row {
         gap: 0.25rem !important;
@@ -2284,15 +2284,23 @@ button[type="submit"]:active {
         font-size: 0.58rem !important;
         padding: 0 0.45rem !important;
     }
+    .card-btn-delete,
+    .card-btn-edit {
+        height: 1.7rem !important;
+        font-size: 0.62rem !important;
+        overflow: visible !important;
+    }
     .card-btn-delete {
         width: 54px !important;
         min-width: 54px !important;
-        height: 1.65rem !important;
-        font-size: 0.58rem !important;
     }
-    .card-btn-edit {
-        height: 1.65rem !important;
-        font-size: 0.6rem !important;
+    .card-btn-delete span,
+    .card-btn-edit span {
+        white-space: nowrap !important;
+        overflow: visible !important;
+        text-overflow: clip !important;
+        line-height: 1.35 !important;
+        padding-bottom: 1.5px !important;
     }
     .card-actions-row {
         gap: 0.35rem !important;
@@ -2338,15 +2346,23 @@ button[type="submit"]:active {
         font-size: 0.64rem !important;
         padding: 0 0.55rem !important;
     }
-    .card-btn-delete {
-        width: 64px !important;
-        min-width: 64px !important;
-        height: 1.85rem !important;
-        font-size: 0.64rem !important;
-    }
+    .card-btn-delete,
     .card-btn-edit {
         height: 1.85rem !important;
         font-size: 0.66rem !important;
+        overflow: visible !important;
+    }
+    .card-btn-delete {
+        width: 64px !important;
+        min-width: 64px !important;
+    }
+    .card-btn-delete span,
+    .card-btn-edit span {
+        white-space: nowrap !important;
+        overflow: visible !important;
+        text-overflow: clip !important;
+        line-height: 1.35 !important;
+        padding-bottom: 2px !important;
     }
     .card-actions-row {
         gap: 0.45rem !important;
@@ -2425,6 +2441,24 @@ button[type="submit"] *,
 .btn-liquid-emerald * {
     font-weight: 800 !important;
 }
+
+/* منع قص الحروف العربية ونقاط الياء السفلية في أزرار البطاقات نهائياً */
+.card-btn-edit,
+.card-btn-delete,
+.card-btn-studio {
+    overflow: visible !important;
+}
+
+.card-btn-edit span,
+.card-btn-delete span,
+.card-btn-studio span {
+    overflow: visible !important;
+    text-overflow: clip !important;
+    white-space: nowrap !important;
+    line-height: 1.35 !important;
+    padding-bottom: 1.5px !important;
+}
+
 
 /* ==========================================================================
    بطاقات إحصائيات لوحة الإدارة الفاخرة (Portal Stat Cards - Vertical Centered)
