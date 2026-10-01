@@ -59,10 +59,16 @@ import {
 export function getCategoryCode(category) {
     if (!category) return 'A';
 
-    // 1. فحص التصنيفات المخصصة المحفوظة
+    // 1. فحص التصنيفات المخصصة المحفوظة (بالمعرف، الرمز، الاسم العربي، أو الاسم الإنجليزي)
     try {
         const customCats = JSON.parse(localStorage.getItem('tatr_custom_categories') || '[]');
-        const found = customCats.find(c => c.id === category || c.code === category || c.name === category);
+        const target = String(category).trim().toLowerCase();
+        const found = customCats.find(c => 
+            (c.id && c.id.toLowerCase() === target) ||
+            (c.code && c.code.toLowerCase() === target) ||
+            (c.name && c.name.trim().toLowerCase() === target) ||
+            (c.englishName && c.englishName.trim().toLowerCase() === target)
+        );
         if (found && found.code) {
             return String(found.code).trim();
         }
@@ -77,11 +83,12 @@ export function getCategoryCode(category) {
         wool: 'W'
     };
 
-    if (defaultMap[category]) {
-        return defaultMap[category];
+    const catKey = String(category).trim().toLowerCase();
+    if (defaultMap[catKey]) {
+        return defaultMap[catKey];
     }
 
-    return String(category).trim().slice(0, 3).toUpperCase();
+    return String(category).trim().slice(0, 2);
 }
 
 export function generateNextProductId(category, allCarpets = []) {
@@ -1087,7 +1094,18 @@ export function openEditModal(carpetId, allCarpets) {
 
     if (idInput) idInput.value = carpet.id;
     if (titleInput) titleInput.value = carpet.title || '';
-    if (catInput) catInput.value = carpet.category || 'traditional';
+    if (catInput) {
+        catInput.value = carpet.category || 'traditional';
+        if (!catInput.value || catInput.selectedIndex < 0) {
+            const target = String(carpet.category || '').toLowerCase();
+            for (let opt of catInput.options) {
+                if (opt.value.toLowerCase() === target || opt.text.toLowerCase().includes(target)) {
+                    catInput.value = opt.value;
+                    break;
+                }
+            }
+        }
+    }
     if (priceInput) priceInput.value = carpet.price || 0;
     // تم إسناد الأبعاد عبر الحقلين المنفصلين الطول والعرض
     if (matInput) matInput.value = carpet.material || '';

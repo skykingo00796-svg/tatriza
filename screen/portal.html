@@ -2714,33 +2714,50 @@
                     <span class="text-[10px] text-stone-500 font-medium">تحديد الاسم ورمز الكود (SKU)</span>
                 </div>
 
-                <!-- حقول الإدخال: الأيقونة + اسم التصنيف + رمز الكود (متطابقة الارتفاع تماماً) -->
-                <div class="grid grid-cols-1 sm:grid-cols-12 gap-2.5">
-                    <div class="sm:col-span-2">
-                        <div class="h-5 flex items-center mb-1">
-                            <label class="text-[10px] font-bold text-stone-600">الأيقونة</label>
+                <!-- حقول الإدخال: الأيقونة + اسم التصنيف بالعربي + اسم التصنيف بالإنجليزي + رمز الكود -->
+                <div class="space-y-2.5">
+                    <!-- السطر الأول: الأيقونة واسم التصنيف بالعربي -->
+                    <div class="grid grid-cols-1 sm:grid-cols-12 gap-2.5">
+                        <div class="sm:col-span-3">
+                            <div class="h-5 flex items-center mb-1">
+                                <label class="text-[10px] font-bold text-stone-600">الأيقونة</label>
+                            </div>
+                            <input type="text" id="new-cat-icon" value="✨" maxlength="4" class="w-full h-11 text-center text-lg bg-white border border-stone-300 rounded-xl outline-none focus:border-brand shadow-2xs box-border flex items-center justify-center" title="أيقونة التصنيف">
                         </div>
-                        <input type="text" id="new-cat-icon" value="✨" maxlength="4" class="w-full h-11 text-center text-lg bg-white border border-stone-300 rounded-xl outline-none focus:border-brand shadow-2xs box-border flex items-center justify-center" title="أيقونة التصنيف">
+                        <div class="sm:col-span-9">
+                            <div class="h-5 flex items-center mb-1">
+                                <label class="text-[10px] font-bold text-stone-600">اسم التصنيف (بالعربي)</label>
+                            </div>
+                            <input type="text" id="new-cat-name" placeholder="مثال: سجاد رياضي، وسائد..." required class="w-full h-11 bg-white border border-stone-300 rounded-xl px-3 text-xs sm:text-sm text-stone-900 outline-none focus:border-brand font-medium shadow-2xs box-border">
+                        </div>
                     </div>
-                    <div class="sm:col-span-6">
-                        <div class="h-5 flex items-center mb-1">
-                            <label class="text-[10px] font-bold text-stone-600">اسم التصنيف (بالعربي)</label>
+
+                    <!-- السطر الثاني: اسم التصنيف بالإنجليزي (أعلى رمز الكود) + رمز الكود التلقائي (SKU) -->
+                    <div class="grid grid-cols-1 sm:grid-cols-12 gap-2.5">
+                        <div class="sm:col-span-7">
+                            <div class="h-5 flex items-center justify-between mb-1">
+                                <label class="text-[10px] font-bold text-stone-700 flex items-center gap-1">
+                                    <span>اسم التصنيف (بالإنجليزي)</span>
+                                    <span class="text-rose-500 font-bold">*</span>
+                                </label>
+                                <span class="text-[9px] text-brand font-bold bg-brand/5 border border-brand/20 px-1.5 py-0.2 rounded">لبطاقة المنتج والـ Firebase</span>
+                            </div>
+                            <input type="text" id="new-cat-en-name" placeholder="مثال: Sport أو Royal" dir="ltr" required class="w-full h-11 bg-white border border-stone-300 rounded-xl px-3 text-xs sm:text-sm text-stone-900 outline-none focus:border-brand font-semibold shadow-2xs box-border" oninput="window.handleCatEnglishNameInput(this.value)">
                         </div>
-                        <input type="text" id="new-cat-name" placeholder="مثال: سجاد الرياضي، وسائد..." required class="w-full h-11 bg-white border border-stone-300 rounded-xl px-3 text-xs sm:text-sm text-stone-900 outline-none focus:border-brand font-medium shadow-2xs box-border">
-                    </div>
-                    <div class="sm:col-span-4">
-                        <div class="h-5 flex items-center justify-between mb-1">
-                            <label class="text-[10px] font-bold text-stone-600">رمز الكود (SKU)</label>
-                            <span class="text-[9px] text-amber-800 font-bold bg-amber-50 border border-amber-200/60 px-1.5 py-0.5 rounded">فريد</span>
+                        <div class="sm:col-span-5">
+                            <div class="h-5 flex items-center justify-between mb-1">
+                                <label class="text-[10px] font-bold text-stone-700">رمز الكود (SKU)</label>
+                                <span class="text-[9px] text-amber-800 font-bold bg-amber-50 border border-amber-200/60 px-1.5 py-0.2 rounded">تلقائي (أول حرفين)</span>
+                            </div>
+                            <input type="text" id="new-cat-code" placeholder="مثال: Sp" maxlength="6" dir="ltr" required class="w-full h-11 bg-white border border-stone-300 rounded-xl px-3 text-xs sm:text-sm text-stone-900 outline-none focus:border-brand font-mono font-black text-center shadow-2xs box-border" oninput="window.handleCatCodeInput(this.value)">
                         </div>
-                        <input type="text" id="new-cat-code" placeholder="مثال: Sp أو R" maxlength="6" dir="ltr" required class="w-full h-11 bg-white border border-stone-300 rounded-xl px-3 text-xs sm:text-sm text-stone-900 outline-none focus:border-brand font-mono font-black uppercase text-center shadow-2xs box-border" oninput="window.handleCatCodeInput(this.value)">
                     </div>
                 </div>
 
                 <!-- شريط الملاحظات والمعاينة التفاعلية للكود لمنع التكرار -->
                 <div id="new-cat-code-feedback" class="text-[11px] p-2.5 rounded-xl border bg-stone-50 border-stone-200 text-stone-600 flex items-center gap-1.5 transition-all">
                     <span>💡</span>
-                    <span id="new-cat-code-feedback-text">أدخل رمزاً بالإنجليزية لتوليد كود المنتجات تلقائياً (مثال: TATR-0010Sp)</span>
+                    <span id="new-cat-code-feedback-text">أدخل اسم التصنيف بالإنجليزي (مثل Sport) ليتم توليد الرمز تلقائياً (Sp) وتخصيص كود المنتجات</span>
                 </div>
 
                 <!-- زر الإضافة -->

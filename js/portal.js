@@ -95,11 +95,11 @@ let portalCurrentPage = 1;
 // التصنيفات الافتراضية وإدارتها في البوابة
 // ==========================================
 export const DEFAULT_CATEGORIES = [
-    { id: 'ajami', name: 'نقشات عجمية', icon: '✨', code: 'A' },
-    { id: 'silk', name: 'سجاد حريري', icon: '🧵', code: 'S' },
-    { id: 'traditional', name: 'تراثي أصيل', icon: '🏛️', code: 'T' },
-    { id: 'modern', name: 'مودرن معاصر', icon: '🎨', code: 'M' },
-    { id: 'wool', name: 'صوف فاخر', icon: '🧶', code: 'W' }
+    { id: 'ajami', name: 'نقشات عجمية', englishName: 'Ajami', icon: '✨', code: 'A' },
+    { id: 'silk', name: 'سجاد حريري', englishName: 'Silk', icon: '🧵', code: 'S' },
+    { id: 'traditional', name: 'تراثي أصيل', englishName: 'Traditional', icon: '🏛️', code: 'T' },
+    { id: 'modern', name: 'مودرن معاصر', englishName: 'Modern', icon: '🎨', code: 'M' },
+    { id: 'wool', name: 'صوف فاخر', englishName: 'Wool', icon: '🧶', code: 'W' }
 ];
 
 export const DEFAULT_QUICK_ICONS = ['👑', '💎', '🏺', '🕌', '⚜️', '🪡', '🛋️', '🪄', '🌸', '✨', '🧵', '🏛️', '🎨', '🧶'];
@@ -172,6 +172,71 @@ export function getActiveCategories() {
     const custom = getCustomCategories();
     return [...activeDefaults, ...custom];
 }
+
+// دالة مساعدة محترفة لاستخراج وعرض اسم الكاتلوج بالإنجليزي في بطاقة المنتج
+export function getCategoryEnglishName(catKey) {
+    if (!catKey) return 'Heritage';
+
+    const normalized = String(catKey).trim();
+
+    // 1. خريطة الترجمة للتصنيفات الأساسية والشائعة
+    const standardMap = {
+        'ajami': 'Ajami',
+        'silk': 'Silk',
+        'traditional': 'Traditional',
+        'modern': 'Modern',
+        'wool': 'Wool',
+        'نقشات عجمية': 'Ajami',
+        'سجاد حريري': 'Silk',
+        'تراثي أصيل': 'Traditional',
+        'تراثي': 'Traditional',
+        'مودرن معاصر': 'Modern',
+        'مودرن': 'Modern',
+        'صوف فاخر': 'Wool',
+        'صوف': 'Wool'
+    };
+
+    if (standardMap[normalized.toLowerCase()]) {
+        return standardMap[normalized.toLowerCase()];
+    }
+    if (standardMap[normalized]) {
+        return standardMap[normalized];
+    }
+
+    // 2. البحث في التصنيفات النشطة والمخصصة
+    try {
+        const activeCats = getActiveCategories();
+        const found = activeCats.find(c => 
+            (c.id && c.id.toLowerCase() === normalized.toLowerCase()) ||
+            (c.name && c.name.trim() === normalized) ||
+            (c.englishName && c.englishName.toLowerCase() === normalized.toLowerCase()) ||
+            (c.code && c.code.toLowerCase() === normalized.toLowerCase())
+        );
+
+        if (found) {
+            if (found.englishName && found.englishName.trim()) {
+                return found.englishName.trim();
+            }
+            if (found.id && !found.id.startsWith('cat_') && /^[A-Za-z0-9\s_-]+$/.test(found.id)) {
+                return found.id.charAt(0).toUpperCase() + found.id.slice(1);
+            }
+            if (found.name) return found.name;
+        }
+    } catch (e) {}
+
+    // 3. منع ظهور معرفات الهاش العشوائية مثل cat_m8k2f1
+    if (normalized.startsWith('cat_')) {
+        return 'Custom Collection';
+    }
+
+    // 4. إذا كان نصاً إنجليزياً واضحاً
+    if (/^[A-Za-z0-9\s_-]+$/.test(normalized)) {
+        return normalized.charAt(0).toUpperCase() + normalized.slice(1);
+    }
+
+    return normalized;
+}
+window.getCategoryEnglishName = getCategoryEnglishName;
 
 
 // ==========================================
@@ -571,13 +636,24 @@ function renderPortalProductsTable(shouldScroll = false) {
             (c.title && c.title.toLowerCase().includes(q)) ||
             (c.id && c.id.toLowerCase().includes(q)) ||
             (c.category && c.category.toLowerCase().includes(q)) ||
-            (c.material && c.material.toLowerCase().includes(q))
+            (c.material && c.material.toLowerCase().includes(q)) ||
+            (getCategoryEnglishName(c.category).toLowerCase().includes(q))
         );
     }
 
     // فلتر التصنيف
     if (portalCategoryFilter !== 'all') {
-        list = list.filter(c => c.category === portalCategoryFilter);
+        list = list.filter(c => {
+            if (c.category === portalCategoryFilter) return true;
+            const activeCats = getActiveCategories();
+            const selectedCat = activeCats.find(cat => cat.id === portalCategoryFilter);
+            if (selectedCat) {
+                return c.category === selectedCat.id || 
+                       c.category === selectedCat.name || 
+                       (selectedCat.englishName && c.category && c.category.toLowerCase() === selectedCat.englishName.toLowerCase());
+            }
+            return false;
+        });
     }
 
     // فلتر الحالة
@@ -668,8 +744,8 @@ function renderPortalProductsTable(shouldScroll = false) {
                 <!-- الكتلة السفلية: خطوط وأزرار بمحاذاة مركزية تامة وارتفاعات متساوية -->
                 <div class="card-content-wrap p-2 sm:p-2.5 flex-1 flex flex-col justify-between bg-white border-t border-stone-200/70 relative z-20">
                     <div class="mb-1">
-                        <span class="card-category-label text-[8px] sm:text-[9px] text-stone-500 font-medium leading-none block truncate">
-                            ${c.category || 'تراثي'}
+                        <span class="card-category-label text-[8px] sm:text-[9px] text-stone-500 font-medium leading-none block truncate" title="${getCategoryEnglishName(c.category)}">
+                            ${getCategoryEnglishName(c.category)}
                         </span>
                         <h4 class="card-title-text font-royal-carpet font-bold text-stone-900 text-[10px] sm:text-[11px] leading-snug truncate group-hover:text-brand transition mt-1" title="${c.title}">${c.title}</h4>
                     </div>
@@ -903,8 +979,9 @@ export function getExistingCategoryCodes() {
         const dMatch = DEFAULT_CATEGORIES.find(d => d.id === cat.id);
         const code = cat.code || (dMatch ? dMatch.code : cat.id.charAt(0).toUpperCase());
         codes.push({
-            code: String(code).trim().toUpperCase(),
+            code: String(code).trim(),
             name: cat.name,
+            englishName: cat.englishName || (dMatch ? dMatch.englishName : ''),
             id: cat.id
         });
     });
@@ -912,11 +989,11 @@ export function getExistingCategoryCodes() {
 }
 
 export function validateCategoryCode(code) {
-    const cleanCode = String(code || '').trim().toUpperCase();
+    const cleanCode = String(code || '').trim();
     if (!cleanCode) {
         return { 
             valid: false, 
-            message: 'أدخل رمزاً بالإنجليزية لتوليد كود المنتجات تلقائياً (مثال: Sp أو R)' 
+            message: 'أدخل اسم التصنيف بالإنجليزي لتوليد الرمز تلقائياً (مثال: Sport ➔ Sp)' 
         };
     }
     if (!/^[A-Za-z0-9]+$/.test(cleanCode)) {
@@ -927,13 +1004,13 @@ export function validateCategoryCode(code) {
     }
 
     const existing = getExistingCategoryCodes();
-    const conflict = existing.find(item => item.code === cleanCode);
+    const conflict = existing.find(item => item.code.toUpperCase() === cleanCode.toUpperCase());
     if (conflict) {
         return {
             valid: false,
             isDuplicate: true,
             conflictName: conflict.name,
-            message: `⚠️ الرمز (${cleanCode}) مستخدم مسبقاً لتصنيف «${conflict.name}». يرجى استخدام رمز آخر (مثال: ${cleanCode}p أو ${cleanCode}1).`
+            message: `⚠️ الرمز (${cleanCode}) مستخدم مسبقاً لتصنيف «${conflict.name}». يرجى استخدام رمز آخر (مثال: ${cleanCode}1).`
         };
     }
 
@@ -944,6 +1021,32 @@ export function validateCategoryCode(code) {
         message: `✅ الرمز متاح! نموذج الكود التلقائي للمنتجات: TATR-0010${cleanCode}`
     };
 }
+
+export function handleCatEnglishNameInput(enName) {
+    const codeInput = document.getElementById('new-cat-code');
+    if (!enName || !enName.trim()) {
+        if (codeInput) {
+            codeInput.value = '';
+            handleCatCodeInput('');
+        }
+        return;
+    }
+
+    // استخراج أول حرفين بالإنجليزية (الحرف الأول كبير والثاني صغير مثل Sp من Sport)
+    const letters = String(enName).trim().replace(/[^a-zA-Z]/g, '');
+    let autoCode = '';
+    if (letters.length >= 2) {
+        autoCode = letters.charAt(0).toUpperCase() + letters.charAt(1).toLowerCase();
+    } else if (letters.length === 1) {
+        autoCode = letters.charAt(0).toUpperCase();
+    }
+
+    if (codeInput) {
+        codeInput.value = autoCode;
+        handleCatCodeInput(autoCode);
+    }
+}
+window.handleCatEnglishNameInput = handleCatEnglishNameInput;
 
 export function handleCatCodeInput(value) {
     const feedbackBox = document.getElementById('new-cat-code-feedback');
@@ -982,10 +1085,12 @@ export function openAddCategoryModal() {
     modal.classList.remove('hidden');
 
     const nameInput = document.getElementById('new-cat-name');
+    const enNameInput = document.getElementById('new-cat-en-name');
     const codeInput = document.getElementById('new-cat-code');
     const iconInput = document.getElementById('new-cat-icon');
 
     if (nameInput) nameInput.value = '';
+    if (enNameInput) enNameInput.value = '';
     if (codeInput) codeInput.value = '';
     if (iconInput) iconInput.value = '✨';
 
@@ -1011,9 +1116,22 @@ window.setNewCatIcon = setNewCatIcon;
 export function submitNewCategory(e) {
     if (e) e.preventDefault();
     const nameInput = document.getElementById('new-cat-name');
+    const enNameInput = document.getElementById('new-cat-en-name');
     const iconInput = document.getElementById('new-cat-icon');
     const codeInput = document.getElementById('new-cat-code');
-    if (!nameInput || !nameInput.value.trim()) return;
+    
+    if (!nameInput || !nameInput.value.trim()) {
+        showToast('يرجى إدخال اسم التصنيف بالعربي.', 'warning', 'بيانات ناقصة');
+        if (nameInput) nameInput.focus();
+        return;
+    }
+
+    const rawEnName = enNameInput ? enNameInput.value.trim() : '';
+    if (!rawEnName) {
+        showToast('يرجى إدخال اسم التصنيف بالإنجليزي (مثل Sport).', 'warning', 'بيانات ناقصة');
+        if (enNameInput) enNameInput.focus();
+        return;
+    }
 
     const name = nameInput.value.trim();
     const icon = iconInput && iconInput.value.trim() ? iconInput.value.trim() : '✨';
@@ -1027,17 +1145,25 @@ export function submitNewCategory(e) {
     }
 
     const cleanCode = validation.code;
-    const id = 'cat_' + Date.now().toString(36);
+
+    // توليد معرف نظيف وسلس مستند للاسم الإنجليزي للحفظ في الفيربيس (مثل sport)
+    const cleanId = rawEnName.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9_-]/g, '') || ('cat_' + Date.now().toString(36));
 
     const newCat = { 
-        id, 
+        id: cleanId, 
         name, 
+        englishName: rawEnName,
         icon,
         code: cleanCode
     };
 
     const customCats = getCustomCategories();
-    customCats.push(newCat);
+    const existingIndex = customCats.findIndex(c => c.id === cleanId || (c.englishName && c.englishName.toLowerCase() === rawEnName.toLowerCase()));
+    if (existingIndex >= 0) {
+        customCats[existingIndex] = newCat;
+    } else {
+        customCats.push(newCat);
+    }
     saveCustomCategories(customCats);
 
     saveCategoryToCloud(newCat);
@@ -1045,7 +1171,7 @@ export function submitNewCategory(e) {
     updatePortalCategoryOptions();
     closeAddCategoryModal();
 
-    showToast(`تمت إضافة تصنيف «${name}» برمز [${cleanCode}] بنجاح.`, 'success', 'إدارة التصنيفات');
+    showToast(`تمت إضافة تصنيف «${name} (${rawEnName})» برمز [${cleanCode}] بنجاح.`, 'success', 'إدارة التصنيفات');
 }
 window.submitNewCategory = submitNewCategory;
 
@@ -1102,14 +1228,16 @@ function renderPortalCategoriesList() {
 
     const activeCats = getActiveCategories();
     listEl.innerHTML = activeCats.map(cat => {
-        const count = allPortalCarpets.filter(c => c.category === cat.id).length;
+        const count = allPortalCarpets.filter(c => c.category === cat.id || c.category === cat.name || (cat.englishName && c.category && c.category.toLowerCase() === cat.englishName.toLowerCase())).length;
         const dMatch = DEFAULT_CATEGORIES.find(d => d.id === cat.id);
         const catCode = cat.code || (dMatch ? dMatch.code : cat.id.charAt(0).toUpperCase());
+        const enDisplayName = cat.englishName || (dMatch ? dMatch.englishName : cat.id);
         return `
             <div class="flex items-center justify-between p-2.5 rounded-xl bg-stone-50 border border-stone-200">
-                <div class="flex items-center gap-2">
+                <div class="flex items-center gap-2 flex-wrap">
                     <span class="text-base">${cat.icon || '📁'}</span>
                     <span class="font-display font-bold text-xs text-stone-800">${cat.name}</span>
+                    <span class="text-[10px] font-semibold text-stone-500 font-sans" dir="ltr">(${enDisplayName})</span>
                     <span class="font-mono text-[10px] font-black px-2 py-0.5 rounded-md bg-amber-100 text-amber-900 border border-amber-300/80 shadow-2xs">
                         كود: ${catCode}
                     </span>
@@ -1133,7 +1261,9 @@ function updatePortalCategoryOptions() {
     const optionsHtml = activeCats.map(c => {
         const dMatch = DEFAULT_CATEGORIES.find(d => d.id === c.id);
         const code = c.code || (dMatch ? dMatch.code : c.id.charAt(0).toUpperCase());
-        return `<option value="${c.id}">${c.icon || ''} ${c.name} (${code})</option>`;
+        const enDisplayName = c.englishName || (dMatch ? dMatch.englishName : '');
+        const label = enDisplayName ? `${c.name} - ${enDisplayName} (${code})` : `${c.name} (${code})`;
+        return `<option value="${c.id}">${c.icon || ''} ${label}</option>`;
     }).join('');
 
     if (filterSelect) {
@@ -1161,8 +1291,8 @@ function updatePortalCategoryOptions() {
         `;
 
         activeCats.forEach(cat => {
-            const count = allCarpets.filter(c => c.category === cat.id || c.category === cat.name).length;
-            const isActive = (portalCategoryFilter === cat.id || portalCategoryFilter === cat.name);
+            const count = allCarpets.filter(c => c.category === cat.id || c.category === cat.name || (cat.englishName && c.category && c.category.toLowerCase() === cat.englishName.toLowerCase())).length;
+            const isActive = (portalCategoryFilter === cat.id || portalCategoryFilter === cat.name || (cat.englishName && portalCategoryFilter && portalCategoryFilter.toLowerCase() === cat.englishName.toLowerCase()));
             trackHtml += `
                 <button type="button" onclick="window.selectPortalCatalogTab('${cat.id}')" data-cat="${cat.id}" class="catalog-tab-btn group flex items-center gap-1.5 sm:gap-2 ${isActive ? 'active' : ''}">
                     <span class="tab-icon">${cat.icon || '🏷️'}</span>
