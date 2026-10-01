@@ -190,6 +190,46 @@
                         </div>
                     </div>
                 </div>
+            <!-- مفتاح نمط المعرض الملكي (التسليم الفوري vs حياكة حسب الطلب) -->
+            <div class="catalog-mode-switch-wrapper w-full flex flex-col items-center justify-center gap-2 pt-1 pb-1">
+                <!-- الكبسولة الثنائية المنزلقة الفاخرة (Dual Tab Segmented Control) -->
+                <div id="catalog-segmented-container" class="catalog-segmented-container is-instant relative flex items-center p-1 sm:p-1.5 rounded-2xl bg-stone-100/90 border border-stone-200/90 shadow-inner backdrop-blur-md max-w-full sm:max-w-xl w-full" dir="rtl" role="tablist" aria-label="أنماط طلب السجاد">
+                    
+                    <!-- مؤشر الانزلاق الخلفي الفاخر (Active Slider Pill) -->
+                    <div id="catalog-mode-glider" class="catalog-mode-glider absolute top-1 sm:top-1.5 right-1 sm:right-1.5 bottom-1 sm:bottom-1.5 w-[calc(50%-4px)] sm:w-[calc(50%-6px)] rounded-xl bg-gradient-to-r from-brand to-[#9b2c4d] shadow-md transition-all duration-300 ease-out z-0"></div>
+
+                    <!-- التاب 1: تسليم فوري (جاهز للاقتناء) -->
+                    <button 
+                        type="button" 
+                        role="tab" 
+                        id="tab-mode-instant" 
+                        aria-selected="true" 
+                        onclick="window.switchCatalogMode('instant')" 
+                        class="catalog-mode-btn active flex-1 relative z-10 flex items-center justify-center gap-1.5 sm:gap-2 py-2 sm:py-2.5 px-2 sm:px-3 rounded-xl text-xs sm:text-sm font-bold transition-all duration-300 cursor-pointer select-none">
+                        <span class="text-sm sm:text-base leading-none">⚡</span>
+                        <span class="font-display tracking-tight whitespace-nowrap">تسليم فوري (جاهز للاقتناء)</span>
+                        <span id="badge-count-instant" class="mode-badge-count px-1.5 py-0.2 rounded-full text-[10px] sm:text-[11px] font-black transition">0</span>
+                    </button>
+
+                    <!-- التاب 2: حياكة حسب الطلب (تصاميم الدار) -->
+                    <button 
+                        type="button" 
+                        role="tab" 
+                        id="tab-mode-ondemand" 
+                        aria-selected="false" 
+                        onclick="window.switchCatalogMode('ondemand')" 
+                        class="catalog-mode-btn flex-1 relative z-10 flex items-center justify-center gap-1.5 sm:gap-2 py-2 sm:py-2.5 px-2 sm:px-3 rounded-xl text-xs sm:text-sm font-bold transition-all duration-300 cursor-pointer select-none">
+                        <span class="text-sm sm:text-base leading-none">🪄</span>
+                        <span class="font-display tracking-tight whitespace-nowrap">حياكة حسب الطلب (تصاميم الدار)</span>
+                        <span id="badge-count-ondemand" class="mode-badge-count px-1.5 py-0.2 rounded-full text-[10px] sm:text-[11px] font-black transition">0</span>
+                    </button>
+                </div>
+
+                <!-- شريط الإرشاد التوضيحي الديناميكي الملهم -->
+                <div id="catalog-mode-caption" class="catalog-mode-caption-box flex items-center justify-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-stone-700 text-[11px] sm:text-xs font-medium text-center transition-all duration-300">
+                    <span id="catalog-mode-caption-icon" class="text-xs sm:text-sm">📦</span>
+                    <span id="catalog-mode-caption-text">قطع نادرة متوفرة في صالة العرض، جاهزة للشحن والتسليم الفوري لمنزلك خلال 24-48 ساعة.</span>
+                </div>
             </div>
             
             <!-- مسار التبويبات بحجم أصغر وملموم في جميع الشاشات وخاصة الجوال -->
@@ -799,7 +839,7 @@
                                     <span>💎</span>
                                     <span>جاهزية الاستلام</span>
                                 </span>
-                                <span class="font-display text-xs sm:text-sm font-black text-emerald-700 mt-1">تسليم فوري ومباشر</span>
+                                <span id="modal-availability-text" class="font-display text-xs sm:text-sm font-black text-emerald-700 mt-1">تسليم فوري ومباشر</span>
                             </div>
 
                             <div class="lux-spec-card flex flex-col">

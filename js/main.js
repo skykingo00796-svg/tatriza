@@ -52,6 +52,7 @@ let allCarpets = [];
 let currentFilter = 'all';
 let currentSearchQuery = '';
 let currentSortOption = 'default';
+let currentCatalogMode = 'instant'; // 'instant' | 'ondemand'
 
 // إعدادات الترقيم المدمجة الفاخرة (18 قطعة لكل صفحة - متناسقة مع شبكة العرض)
 const CARPETS_PER_PAGE = 18;
@@ -60,6 +61,8 @@ let filteredCarpetsList = [];
 
 // ربط الدوال بالـ window لتعمل عبر الأحداث المباشرة في ملفات الـ HTML
 window.getAllCarpetsGlobal = () => allCarpets;
+window.switchCatalogMode = switchCatalogMode;
+window.getCurrentCatalogMode = () => currentCatalogMode;
 window.isProductNew = isProductNew;
 window.getProductRemainingDays = getProductRemainingDays;
 window.openOptionsDrawer = openOptionsDrawer;
@@ -209,7 +212,16 @@ async function loadFallbackLocalCarpets() {
         let carpetsData = [];
         const savedCarpets = localStorage.getItem('tatr_carpets');
         if (savedCarpets) {
-            carpetsData = JSON.parse(savedCarpets);
+            try {
+                carpetsData = JSON.parse(savedCarpets);
+                if (!carpetsData.some(c => c.id === 'TATR-004R') || !carpetsData.some(c => c.status === 'out_of_stock')) {
+                    const response = await fetch('../data/carpets.json');
+                    carpetsData = await response.json();
+                }
+            } catch(e) {
+                const response = await fetch('../data/carpets.json');
+                carpetsData = await response.json();
+            }
         } else {
             const response = await fetch('../data/carpets.json');
             carpetsData = await response.json();
@@ -253,18 +265,29 @@ function displayCarpets(carpetsToDisplay) {
         grid.innerHTML = `
             <div class="col-span-full text-center py-12 sm:py-16 px-4 space-y-3.5 my-2">
                 <div class="w-14 h-14 rounded-full bg-stone-200/50 flex items-center justify-center mx-auto text-2xl text-stone-400 border border-stone-300/40">
-                    🔍
+                    ${currentCatalogMode === 'ondemand' ? '🪄' : '🔍'}
                 </div>
                 <div>
-                    <h4 class="font-display font-bold text-stone-800 text-base md:text-lg">لم يتم العثور على قطع مطابقة</h4>
+                    <h4 class="font-display font-bold text-stone-800 text-base md:text-lg">
+                        ${currentCatalogMode === 'ondemand' ? 'لا توجد تصاميم بالطلب مطابقة حالياً' : 'لم يتم العثور على قطع تسليم فوري'}
+                    </h4>
                     <p class="text-xs sm:text-sm text-stone-500 mt-1 max-w-md mx-auto leading-relaxed">
-                        ${currentSearchQuery ? `لا توجد نتائج تطابق بحثك عن "${currentSearchQuery}".` : 'لا توجد قطع متوفرة في هذا القسم حالياً.'}
+                        ${currentSearchQuery ? `لا توجد نتائج تطابق بحثك عن "${currentSearchQuery}".` : (currentCatalogMode === 'ondemand' ? 'تفضل باستعراض قسم التسليم الفوري أو تواصل مع مستشارنا لطلب تصميم خاص.' : 'لا توجد قطع جاهزة في هذا التصنيف حالياً، تفضل بالانتقال لـ (حياكة حسب الطلب).')}
                     </p>
                 </div>
-                <div>
+                <div class="flex items-center justify-center gap-2 flex-wrap">
                     <button onclick="window.resetSearchAndFilters()" class="btn-liquid-metal font-display text-white font-bold text-xs sm:text-sm px-5 py-2.5 rounded-xl shadow-xs transition cursor-pointer inline-flex items-center gap-2">
                         <span>إعادة تعيين البحث والتصنيفات</span>
                     </button>
+                    ${currentCatalogMode === 'instant' ? `
+                        <button onclick="window.switchCatalogMode('ondemand')" class="bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300 font-display font-bold text-xs sm:text-sm px-5 py-2.5 rounded-xl shadow-xs transition cursor-pointer inline-flex items-center gap-1.5">
+                            <span>🪄 استعراض تصاميم الحياكة بالطلب</span>
+                        </button>
+                    ` : `
+                        <button onclick="window.switchCatalogMode('instant')" class="bg-emerald-100 hover:bg-emerald-200 text-emerald-900 border border-emerald-300 font-display font-bold text-xs sm:text-sm px-5 py-2.5 rounded-xl shadow-xs transition cursor-pointer inline-flex items-center gap-1.5">
+                            <span>⚡ استعراض قطع التسليم الفوري</span>
+                        </button>
+                    `}
                 </div>
             </div>
         `;
@@ -281,7 +304,7 @@ function displayCarpets(carpetsToDisplay) {
         // بناء شرائح الوسائط (صور + فيديو تفاعلي)
         let mediaHtml = '';
         // 1. الصورة الأولى (الغلاف الرئيسي)
-        mediaHtml += `<img src="${images[0]}" alt="${carpet.title}" class="w-full h-full object-cover shrink-0 snap-center card-img-zoom ${isOutOfStock ? 'grayscale-[30%]' : ''}">`;
+        mediaHtml += `<img src="${images[0]}" alt="${carpet.title}" class="w-full h-full object-cover shrink-0 snap-center card-img-zoom">`;
 
         // 2. شريحة الفيديو الاستعراضي في المعرض كشريحة ثانية
         if (hasVideo) {
@@ -316,7 +339,7 @@ function displayCarpets(carpetsToDisplay) {
 
         // 3. باقي الصور إن وجدت
         for (let i = 1; i < images.length; i++) {
-            mediaHtml += `<img src="${images[i]}" alt="${carpet.title}" class="w-full h-full object-cover shrink-0 snap-center card-img-zoom ${isOutOfStock ? 'grayscale-[30%]' : ''}">`;
+            mediaHtml += `<img src="${images[i]}" alt="${carpet.title}" class="w-full h-full object-cover shrink-0 snap-center card-img-zoom">`;
         }
 
         const isNew = isProductNew(carpet);
@@ -348,10 +371,10 @@ function displayCarpets(carpetsToDisplay) {
             <!-- الكتلة العلوية: الشريط الملاصق للصورة يمنع ظهور أي فراغ أبيض نهائياً -->
             <div class="w-full shrink-0 flex flex-col bg-stone-100 relative z-10">
                 ${isNew ? `
-                    <div class="exclusive-top-crown-ribbon ${isOutOfStock ? 'ribbon-static' : 'spark-badge-crystal'} rounded-t-xl" title="${isOutOfStock ? 'المنتج جديد وحصري (نفدت الكمية)' : 'المنتج جديد وحصري'}">
+                    <div class="exclusive-top-crown-ribbon ${isOutOfStock ? 'ribbon-static' : 'spark-badge-crystal'} rounded-t-xl" title="${isOutOfStock ? 'تصميم حصري من إرث الدار' : 'المنتج جديد وحصري'}">
                         <div class="flex items-center justify-center gap-1 text-[9px] sm:text-[10px] font-black text-white whitespace-nowrap">
                             <span class="text-[9px] shrink-0">✨</span>
-                            <span class="tracking-tight whitespace-nowrap">${isOutOfStock ? 'جديد وحصري (نفد)' : 'جديد وحصري'}</span>
+                            <span class="tracking-tight whitespace-nowrap">${isOutOfStock ? 'تصميم حصري (حياكة بالطلب)' : 'جديد وحصري'}</span>
                             ${!isOutOfStock ? '<span class="exclusive-pulse-dot shrink-0"></span>' : ''}
                         </div>
                     </div>
@@ -370,15 +393,20 @@ function displayCarpets(carpetsToDisplay) {
                         ${carpet.dimensions}
                     </span>
 
+                    <!-- شارة نمط التوفر في أعلى اليسار (تسليم فوري أو حياكة بالطلب) -->
                     ${isOutOfStock ? `
-                        <div class="absolute inset-0 bg-black/15 backdrop-blur-[0.5px] flex items-center justify-center z-10 pointer-events-none p-1">
-                            <span class="bg-black/40 backdrop-blur-md text-amber-200 border border-white/20 text-[9px] sm:text-[10px] font-bold px-2.5 py-1 rounded-lg shadow-lg text-center inline-flex items-center justify-center leading-none select-none">
-                                نفدت الكمية
-                            </span>
-                        </div>
-                    ` : ''}
+                        <span class="card-badge-availability absolute top-1.5 left-1.5 bg-gradient-to-r from-amber-700/90 to-amber-800/90 backdrop-blur-md text-amber-100 text-[8px] sm:text-[9px] font-bold px-2 py-0.5 rounded-md shadow-xs z-30 pointer-events-none border border-amber-300/35 inline-flex items-center gap-1 leading-none text-center select-none transition">
+                            <span class="text-[8.5px]">🪄</span>
+                            <span>حياكة بالطلب</span>
+                        </span>
+                    ` : `
+                        <span class="card-badge-availability absolute top-1.5 left-1.5 bg-gradient-to-r from-emerald-700/90 to-emerald-800/90 backdrop-blur-md text-emerald-100 text-[8px] sm:text-[9px] font-bold px-2 py-0.5 rounded-md shadow-xs z-30 pointer-events-none border border-emerald-300/35 inline-flex items-center gap-1 leading-none text-center select-none transition">
+                            <span class="text-[8.5px]">⚡</span>
+                            <span>تسليم فوري</span>
+                        </span>
+                    `}
 
-                    <div id="counter-wrapper-${carpet.id}" dir="ltr" class="card-badge-media absolute bottom-1.5 left-1.5 bg-black/30 backdrop-blur-md text-white/90 text-[7.5px] sm:text-[8px] font-bold px-1.5 py-0.5 rounded-md pointer-events-none border border-white/15 z-10 ${hasMultipleMedia && !isOutOfStock ? '' : 'hidden'} inline-flex items-center justify-center leading-none text-center select-none">
+                    <div id="counter-wrapper-${carpet.id}" dir="ltr" class="card-badge-media absolute bottom-1.5 left-1.5 bg-black/30 backdrop-blur-md text-white/90 text-[7.5px] sm:text-[8px] font-bold px-1.5 py-0.5 rounded-md pointer-events-none border border-white/15 z-10 ${hasMultipleMedia ? '' : 'hidden'} inline-flex items-center justify-center leading-none text-center select-none">
                         <span id="counter-${carpet.id}">1</span><span class="mx-0.5 opacity-60">/</span><span id="total-${carpet.id}">${totalMedia}</span>
                     </div>
 
@@ -410,9 +438,9 @@ function displayCarpets(carpetsToDisplay) {
                     </div>
                     
                     ${isOutOfStock ? `
-                        <button onclick="event.stopPropagation(); openModal('${carpet.id}')" class="card-btn-preview btn-liquid-metal text-white text-[8px] sm:text-[9px] font-bold px-2 sm:px-2.5 h-6.5 sm:h-7 rounded-lg transition shadow-2xs flex items-center justify-center gap-1 cursor-pointer whitespace-nowrap shrink-0 leading-none" title="طلب المنتج">
-                            <span class="whitespace-nowrap">طلب</span>
-                            <span class="text-[8px] shrink-0">🔄</span>
+                        <button onclick="event.stopPropagation(); openModal('${carpet.id}')" class="card-btn-preview btn-liquid-metal text-white text-[8px] sm:text-[9px] font-bold px-2 sm:px-2.5 h-6.5 sm:h-7 rounded-lg transition shadow-2xs flex items-center justify-center gap-1 cursor-pointer whitespace-nowrap shrink-0 leading-none" title="طلب تفصيل هذا التصميم">
+                            <span class="whitespace-nowrap">طلب تفصيل</span>
+                            <span class="text-[8px] shrink-0">🪄</span>
                         </button>
                     ` : `
                         <button onclick="event.stopPropagation(); openModal('${carpet.id}')" class="card-btn-preview btn-liquid-metal text-white text-[8px] sm:text-[9px] font-bold px-2 sm:px-2.5 h-6.5 sm:h-7 rounded-lg transition shadow-2xs cursor-pointer whitespace-nowrap shrink-0 inline-flex items-center justify-center leading-none">
@@ -630,6 +658,60 @@ window.toggleCardVideoAudio = (carpetId, btnEl) => {
 };
 
 // ==========================================
+// منطق نمط المعرض (تسليم فوري vs حياكة حسب الطلب)
+// ==========================================
+
+export function switchCatalogMode(mode) {
+    if (mode !== 'instant' && mode !== 'ondemand') return;
+    currentCatalogMode = mode;
+
+    const container = document.getElementById('catalog-segmented-container');
+    const instantBtn = document.getElementById('tab-mode-instant');
+    const ondemandBtn = document.getElementById('tab-mode-ondemand');
+    const captionIcon = document.getElementById('catalog-mode-caption-icon');
+    const captionText = document.getElementById('catalog-mode-caption-text');
+    const captionBox = document.getElementById('catalog-mode-caption');
+
+    if (container) {
+        container.classList.toggle('is-instant', mode === 'instant');
+        container.classList.toggle('is-ondemand', mode === 'ondemand');
+    }
+
+    if (instantBtn && ondemandBtn) {
+        if (mode === 'instant') {
+            instantBtn.classList.add('active');
+            instantBtn.setAttribute('aria-selected', 'true');
+            ondemandBtn.classList.remove('active');
+            ondemandBtn.setAttribute('aria-selected', 'false');
+        } else {
+            ondemandBtn.classList.add('active');
+            ondemandBtn.setAttribute('aria-selected', 'true');
+            instantBtn.classList.remove('active');
+            instantBtn.setAttribute('aria-selected', 'false');
+        }
+    }
+
+    if (captionIcon && captionText) {
+        if (mode === 'instant') {
+            captionIcon.innerText = '📦';
+            captionText.innerText = 'قطع نادرة متوفرة في صالة العرض، جاهزة للشحن والتسليم الفوري لمنزلك خلال 24-48 ساعة.';
+        } else {
+            captionIcon.innerText = '🪄';
+            captionText.innerText = 'تصاميم حصرية من إرث دار التطريز؛ ننسجها لك يدوياً بأبعادك وباليت ألوانك المفضلة.';
+        }
+    }
+
+    if (captionBox) {
+        captionBox.classList.remove('catalog-mode-caption-box');
+        void captionBox.offsetWidth;
+        captionBox.classList.add('catalog-mode-caption-box');
+    }
+
+    updateCategoryCounts();
+    filterAndDisplayCarpets(true);
+}
+
+// ==========================================
 // منطق البحث، التصفية، والفرز الذكي
 // ==========================================
 
@@ -639,12 +721,19 @@ function updateCategoryCounts() {
         if (el) el.innerText = count;
     };
 
-    setBadge('count-all', allCarpets.length);
+    const instantCount = allCarpets.filter(c => c.status !== 'out_of_stock').length;
+    const ondemandCount = allCarpets.filter(c => c.status === 'out_of_stock').length;
+    setBadge('badge-count-instant', instantCount);
+    setBadge('badge-count-ondemand', ondemandCount);
+
+    // حساب العدادات للتصنيفات وفق النمط النشط حالياً
+    const currentModePool = allCarpets.filter(c => currentCatalogMode === 'ondemand' ? c.status === 'out_of_stock' : c.status !== 'out_of_stock');
+    setBadge('count-all', currentModePool.length);
 
     // تحديث عدادات جميع التصنيفات النشطة ديناميكياً
     try {
         getActiveCategories().forEach(cat => {
-            const cCount = allCarpets.filter(c => c.category === cat.id).length;
+            const cCount = currentModePool.filter(c => c.category === cat.id).length;
             setBadge(`count-${cat.id}`, cCount);
         });
     } catch(e) {}
@@ -655,6 +744,13 @@ function filterAndDisplayCarpets(resetPage = true) {
         currentCarpetPage = 1;
     }
     let result = [...allCarpets];
+
+    // 0. تصفية حسب نمط التوفر (تسليم فوري vs حياكة حسب الطلب)
+    if (currentCatalogMode === 'instant') {
+        result = result.filter(c => c.status !== 'out_of_stock');
+    } else if (currentCatalogMode === 'ondemand') {
+        result = result.filter(c => c.status === 'out_of_stock');
+    }
 
     // 1. تصفية حسب التصنيف
     if (currentFilter !== 'all') {

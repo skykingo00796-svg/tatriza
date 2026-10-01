@@ -2786,3 +2786,69 @@ button[type="submit"] *,
     border: none;
 }
 
+/* ==========================================================================
+   كبسولة نمط المعرض الملكية (تسليم فوري vs حياكة بالطلب)
+   ========================================================================== */
+.catalog-segmented-container {
+    background: rgba(245, 245, 244, 0.96) !important;
+    border: 1px solid rgba(220, 218, 215, 0.9) !important;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.035), 0 2px 8px -2px rgba(0, 0, 0, 0.05) !important;
+}
+
+.catalog-mode-glider {
+    background: linear-gradient(135deg, var(--brand-color, #7c1d3c) 0%, #9e2a4a 100%) !important;
+    box-shadow: 0 4px 14px rgba(var(--brand-rgb, 124, 29, 60), 0.38),
+                inset 0 1px 1px rgba(255, 255, 255, 0.35) !important;
+    transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1), background 0.3s ease !important;
+    will-change: transform;
+}
+
+.catalog-segmented-container.is-instant .catalog-mode-glider {
+    transform: translateX(0) !important;
+}
+
+.catalog-segmented-container.is-ondemand .catalog-mode-glider {
+    transform: translateX(-100%) !important;
+}
+
+.catalog-mode-btn {
+    color: #57534e !important;
+    user-select: none !important;
+    transition: color 0.22s ease, transform 0.15s ease !important;
+}
+
+.catalog-mode-btn:hover {
+    color: #1c1917 !important;
+}
+
+.catalog-mode-btn.active {
+    color: #ffffff !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
+}
+
+.catalog-mode-btn .mode-badge-count {
+    background: rgba(0, 0, 0, 0.06) !important;
+    color: #78716c !important;
+    transition: background 0.25s ease, color 0.25s ease !important;
+}
+
+.catalog-mode-btn.active .mode-badge-count {
+    background: rgba(255, 255, 255, 0.28) !important;
+    color: #ffffff !important;
+}
+
+.catalog-mode-caption-box {
+    animation: fadeInModeCaption 0.35s ease-out;
+}
+
+@keyframes fadeInModeCaption {
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+

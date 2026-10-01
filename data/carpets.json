@@ -40,17 +40,36 @@
     "title": "سجادة تراثية أصيلة",
     "category": "traditional",
     "dimensions": "200 × 250 سم",
-    "material": "صوف مغزول يدعياً",
+    "material": "صوف مغزول يدوياً",
     "price": 140,
     "currency": "ر.ع.",
+    "status": "out_of_stock",
     "images": [
       "https://placehold.co/800x600/541229/ffffff?text=Traditional+1",
       "https://placehold.co/800x600/7c1d3c/ffffff?text=Traditional+2",
       "https://placehold.co/800x600/2c0a14/ffffff?text=Traditional+3"
     ],
-    "description": "مستوحاة من التراث الأصيل، صُممت بعناية فائقة لتلائم عشاق القطع الكلاسيكية الدافئة.",
+    "description": "مستوحاة من التراث الأصيل، صُممت بعناية فائقة وتُحاك يدوياً عند الطلب لتلائم عشاق القطع الكلاسيكية الدافئة.",
     "itemNumber": 3,
     "createdDate": "2026-09-14 | 04:15 م",
     "updatedDate": "2026-09-14 | 04:15 م"
+  },
+  {
+    "id": "TATR-004R",
+    "title": "سجادة روضة نيشابور الملكية",
+    "category": "ajami",
+    "dimensions": "250 × 350 سم",
+    "material": "صوف ميرينو وحرير خالص",
+    "price": 320,
+    "currency": "ر.ع.",
+    "status": "out_of_stock",
+    "images": [
+      "https://placehold.co/800x600/4c1228/ffffff?text=Nishapur+1",
+      "https://placehold.co/800x600/631730/ffffff?text=Nishapur+2"
+    ],
+    "description": "من أرشيف التصاميم الخالدة في دار التطريز، تحفة نادرة تزين القصور، تُحاك يدوياً حسب طلب العميل ومقاساته الخاصة.",
+    "itemNumber": 4,
+    "createdDate": "2026-09-17 | 10:00 ص",
+    "updatedDate": "2026-09-17 | 10:00 ص"
   }
 ]

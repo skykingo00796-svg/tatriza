@@ -528,7 +528,7 @@ window.portalModalToggleStock = async () => {
         const carpet = allPortalCarpets.find(c => c.id === currentPreviewCarpetId);
         const stockBtnText = document.getElementById('modal-admin-stock-text');
         if (carpet && stockBtnText) {
-            stockBtnText.innerText = carpet.status === 'out_of_stock' ? 'إعادة توفير القطعة' : 'تعليم كـ غير متوفرة';
+            stockBtnText.innerText = carpet.status === 'out_of_stock' ? 'تحويل للتسليم الفوري' : 'تحويل للحياكة بالطلب';
         }
     }
 };
@@ -810,7 +810,7 @@ window.portalToggleStock = async function(carpetId) {
 
     try {
         await updateCarpetStatusInCloud(carpetId, newStatus);
-        showToast(newStatus === 'out_of_stock' ? `تم تعليم "${carpet.title}" كـ غير متوفرة.` : `تمت إعادة توفير "${carpet.title}" في المعرض.`, 'success', 'تحديث الحالة');
+        showToast(newStatus === 'out_of_stock' ? `تم تحويل "${carpet.title}" إلى قسم (حياكة حسب الطلب).` : `تم تحويل "${carpet.title}" إلى قسم (تسليم فوري).`, 'success', 'تحديث الحالة');
     } catch (e) {
         console.warn("Failed to update status in cloud:", e);
         showToast("فشل تحديث الحالة في السحابة. تأكد من اتصالك.", "error", "خطأ سحابي");

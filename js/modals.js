@@ -280,7 +280,7 @@ export function addCurrentModalToCart() {
         setTimeout(() => {
             if (addBtn) {
                 if (isOutOfStock) {
-                    addBtn.innerHTML = `<span>طلب تفصيل قطعة مماثلة</span><span class="text-xs shrink-0">🔄</span>`;
+                    addBtn.innerHTML = `<span>طلب تفصيل هذا التصميم</span><span class="text-xs shrink-0">🪄</span>`;
                 } else {
                     addBtn.innerHTML = `<span>إضافة للسلة</span><span class="text-xs shrink-0">🛍️</span>`;
                 }
@@ -303,9 +303,12 @@ export function inquireCurrentModalWhatsApp() {
     if (carpet.material) message += `▪️ *الخامات:* ${carpet.material}\n`;
     if (carpet.price) message += `▪️ *السعر الإجمالي:* ${carpet.price} ر.ع.\n`;
     if (isOutOfStock) {
-        message += `▪️ *الحالة:* نفدت الكمية (أرغب في الاستفسار عن إمكانية حياكة أو توفير قطعة مشابهة)\n`;
+        message += `▪️ *الحالة:* حياكة وتفصيل حسب الطلب (أرغب في الاستفسار عن تفصيل قطعة مطابقة)\n`;
+        message += `\n✨ مرحباً بكم، أود الاستفسار عن مدة الحياكة والتفصيل وتأكيد الطلب لهذه التحفة. شكراً لكم!`;
+    } else {
+        message += `▪️ *الحالة:* جاهزة للتسليم الفوري والمباشر\n`;
+        message += `\n✨ هل القطعة متوفرة حالياً للمعاينة أو الشحن الفوري؟ شكراً لكم!`;
     }
-    message += `\n✨ هل القطعة متوفرة حالياً للمعاينة أو الشحن؟ شكراً لكم!`;
 
     const encoded = encodeURIComponent(message);
     window.open(`https://wa.me/${storePhone}?text=${encoded}`, '_blank');
@@ -354,6 +357,26 @@ export function openModal(carpetId, allCarpets) {
     document.getElementById('modal-dim').innerText = carpet.dimensions;
     document.getElementById('modal-mat').innerText = carpet.material;
     document.getElementById('modal-price').innerText = carpet.price;
+
+    const modalAvailabilityText = document.getElementById('modal-availability-text');
+    if (modalAvailabilityText) {
+        if (isOutOfStock) {
+            modalAvailabilityText.innerText = "حياكة وتفصيل حسب الطلب (تصاميم الدار)";
+            modalAvailabilityText.className = "font-display text-xs sm:text-sm font-black text-amber-800 mt-1";
+        } else {
+            modalAvailabilityText.innerText = "تسليم فوري ومباشر (متوفرة في المعرض)";
+            modalAvailabilityText.className = "font-display text-xs sm:text-sm font-black text-emerald-700 mt-1";
+        }
+    }
+
+    const modalAddBtn = document.getElementById('modal-add-btn');
+    if (modalAddBtn) {
+        if (isOutOfStock) {
+            modalAddBtn.innerHTML = `<span>طلب تفصيل هذا التصميم</span><span class="text-xs shrink-0">🪄</span>`;
+        } else {
+            modalAddBtn.innerHTML = `<span>إضافة للسلة</span><span class="text-xs shrink-0">🛍️</span>`;
+        }
+    }
 
     const modalImagesContainer = document.getElementById('modal-images-container');
     const counterWrapper = document.getElementById('modal-counter-wrapper');
