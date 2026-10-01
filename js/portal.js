@@ -45,7 +45,8 @@ import {
     saveFirebaseConfigHandler, 
     closeFirebaseConfigModal,
     checkAdminPermission,
-    updateNewStatusRadio
+    updateNewStatusRadio,
+    updateEditStatusRadio
 } from './admin.js';
 
 import { 
@@ -2613,6 +2614,8 @@ window.closeAddModal = closeAddModal;
 window.openEditModal = (id) => openEditModal(id, allPortalCarpets);
 window.closeEditModal = closeEditModal;
 window.updateDimensionsPreview = updateDimensionsPreview;
+window.updateNewStatusRadio = updateNewStatusRadio;
+window.updateEditStatusRadio = updateEditStatusRadio;
 window.openFirebaseConfigModal = openFirebaseConfigModal;
 window.closeFirebaseConfigModal = closeFirebaseConfigModal;
 window.saveFirebaseConfigHandler = saveFirebaseConfigHandler;

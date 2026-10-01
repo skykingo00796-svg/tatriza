@@ -1015,6 +1015,28 @@ export function updateNewStatusRadio(value) {
 }
 window.updateNewStatusRadio = updateNewStatusRadio;
 
+export function updateEditStatusRadio(value) {
+    const statusHidden = document.getElementById('edit-status');
+    const statusBadge = document.getElementById('edit-status-badge');
+    const radioBtn = document.querySelector(`input[name="edit-status-radio"][value="${value}"]`);
+    if (radioBtn) {
+        radioBtn.checked = true;
+    }
+    if (statusHidden) {
+        statusHidden.value = value;
+    }
+    if (statusBadge) {
+        if (value === 'available') {
+            statusBadge.className = 'text-[10.5px] font-bold text-emerald-900 bg-emerald-100 border border-emerald-300 px-2.5 py-0.5 rounded-full transition';
+            statusBadge.innerHTML = '⚡ متوفرة للتسليم الفوري';
+        } else {
+            statusBadge.className = 'text-[10.5px] font-bold text-amber-900 bg-amber-100 border border-amber-300 px-2.5 py-0.5 rounded-full transition';
+            statusBadge.innerHTML = '🪄 حياكة وتفصيل بالطلب';
+        }
+    }
+}
+window.updateEditStatusRadio = updateEditStatusRadio;
+
 export function closeAddModal() {
     const modal = document.getElementById('add-product-modal');
     if (modal) modal.classList.add('hidden');
@@ -1071,6 +1093,7 @@ export function openEditModal(carpetId, allCarpets) {
     if (matInput) matInput.value = carpet.material || '';
     if (descInput) descInput.value = carpet.description || '';
     if (statusInput) statusInput.value = carpet.status || 'available';
+    updateEditStatusRadio(carpet.status === 'out_of_stock' ? 'out_of_stock' : 'available');
 
     const renewCheckbox = document.getElementById('edit-renew-exclusive');
     if (renewCheckbox) {
@@ -1371,10 +1394,11 @@ export async function handleEditProduct(event, allCarpets, callback) {
             }
         }
 
+        const statusLabel = updatedData.status === 'out_of_stock' ? 'حياكة بالطلب 🪄' : 'تسليم فوري ⚡';
         if (cloudSuccess) {
-            showToast(`تم حفظ وتحديث كافة بيانات "${updatedData.title}" بنجاح! ✨`, 'success', 'تحديث المنتج', 3500);
+            showToast(`تم حفظ وتحديث بيانات "${updatedData.title}" بنجاح! وقسمها الحالي: (${statusLabel})`, 'success', 'تحديث المنتج', 4000);
         } else {
-            showToast(`تم حفظ التعديلات محلياً بنجاح! ⚠️ (تعذر المزامنة السحابية مؤقتاً)`, 'info', 'حفظ محلي', 4000);
+            showToast(`تم حفظ التعديلات محلياً بنجاح! وقسمها الحالي: (${statusLabel}) ⚠️`, 'info', 'حفظ محلي', 4000);
         }
     } catch(err) {
         console.error("Error updating carpet:", err);
