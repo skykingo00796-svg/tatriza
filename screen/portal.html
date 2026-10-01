@@ -383,10 +383,10 @@
             </div>
 
             <!-- شريط الأدوات وإجراءات الإدارة والبحث (بدون خلفية أو بطاقة، شفاف ومباشر على أرضية المعرض) -->
-            <div class="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3 sm:gap-4 my-1 sm:my-2">
+            <div class="flex flex-col xl:flex-row items-stretch xl:items-center justify-between gap-3 sm:gap-3.5 my-1 sm:my-2">
                 
                 <!-- أزرار الإجراءات الإدارية المباشرة (متجاوبة تماماً للجوال والشاشات الكبيرة بدون خروج عن الشاشة) -->
-                <div class="flex items-center gap-1.5 sm:gap-2.5 max-w-full overflow-x-auto no-scrollbar py-0.5 shrink-0">
+                <div class="flex flex-wrap items-center gap-1.5 sm:gap-2.5 max-w-full py-0.5 shrink-0">
                     <button type="button" onclick="openAddModal()" class="btn-liquid-metal text-white font-bold text-[11px] sm:text-sm h-9 sm:h-11 px-2.5 sm:px-4 rounded-xl shadow-xs transition flex items-center justify-center gap-1 sm:gap-1.5 cursor-pointer whitespace-nowrap shrink-0" title="إضافة سجادة جديدة">
                         <span class="text-xs sm:text-sm">＋</span>
                         <span class="whitespace-nowrap">إضافة سجادة<span class="hidden sm:inline"> جديدة</span></span>
@@ -402,20 +402,20 @@
                     <button type="button" onclick="switchPortalScreen('studio')" class="bg-gradient-to-r from-rose-900 via-amber-800 to-amber-900 hover:from-rose-950 hover:to-amber-950 text-white font-bold text-[11px] sm:text-sm h-9 sm:h-11 px-2.5 sm:px-4 rounded-xl shadow-xs transition flex items-center justify-center gap-1 sm:gap-1.5 cursor-pointer whitespace-nowrap shrink-0 border border-amber-300/40" title="تصميم حر جديد كلياً من صور وفيديوهات جهازك">
                         <span class="text-xs sm:text-sm">🎨</span>
                         <span class="whitespace-nowrap">استوديو التصاميم</span>
-                        <span class="text-[9px] px-1.5 py-0.2 bg-amber-400 text-amber-950 rounded-full font-black hidden md:inline">تصميم جديد 📱</span>
+                        <span class="text-[9px] px-1.5 py-0.2 bg-amber-400 text-amber-950 rounded-full font-black hidden xl:inline">تصميم جديد 📱</span>
                     </button>
                 </div>
 
                 <!-- أدوات الفرز والبحث الداخلي المتجاوبة (حقل النص فوق الخيارات في الشاشات المتوسطة والصغيرة) -->
-                <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-2.5 flex-1 lg:max-w-2xl lg:justify-end">
+                <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-2.5 w-full xl:max-w-2xl xl:justify-end">
                     <!-- حقل إدخال نص البحث -->
-                    <div class="relative w-full sm:flex-1 min-w-[160px]">
+                    <div class="relative w-full sm:flex-1 min-w-0">
                         <input type="text" oninput="handlePortalSearch(this.value)" placeholder="ابحث برمز القطعة، الاسم..." class="w-full h-10 sm:h-11 bg-white border border-stone-300/90 rounded-xl pr-3.5 pl-9 text-xs sm:text-sm text-stone-900 outline-none focus:border-brand shadow-2xs transition">
                         <span class="absolute left-3 top-1/2 -translate-y-1/2 text-stone-400 text-xs pointer-events-none">🔍</span>
                     </div>
 
                     <!-- قوائم اختيار التصنيف والحالة متجاورة بأسهم متباعدة وبادينج مريح من اليسار -->
-                    <div class="grid grid-cols-2 sm:flex sm:items-center gap-2 shrink-0">
+                    <div class="grid grid-cols-2 gap-2 sm:flex sm:items-center shrink-0">
                         <!-- قائمة التصنيفات -->
                         <div class="relative w-full sm:w-44">
                             <select id="portal-filter-category" onchange="handlePortalCategoryFilter(this.value)" class="portal-filter-select appearance-none w-full h-10 sm:h-11 bg-white border border-stone-300/90 rounded-xl pr-3 sm:pr-3.5 pl-8 sm:pl-9 text-xs text-stone-800 outline-none focus:border-brand cursor-pointer shadow-2xs transition">
@@ -443,6 +443,7 @@
                         </div>
                     </div>
                 </div>
+            </div>
 
             <!-- مسار تبويبات الكاتلوج الفاخر بإطار كارد موحد (مطابق للشاشة الرئيسية للزوار) -->
             <div id="portal-catalog-filter-track" class="catalog-filter-track flex items-center overflow-x-auto whitespace-nowrap gap-1.5 sm:gap-2 py-1 px-1 sm:px-1.5 no-scrollbar my-2">
