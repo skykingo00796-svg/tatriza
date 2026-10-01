@@ -710,7 +710,7 @@ function renderPortalProductsTable(shouldScroll = false) {
                         </span>
 
                         <!-- شارة حالة التوفر في أعلى اليسار (زجاجي كريستالي شفاف وملون فاخر) -->
-                        <button type="button" onclick="event.stopPropagation(); window.portalToggleStock('${c.id}')" class="card-badge-stock absolute top-1.5 left-1.5 px-2 rounded-lg text-[8px] sm:text-[9px] font-bold shadow-xs transition inline-flex items-center justify-center gap-1 cursor-pointer backdrop-blur-md leading-none text-center z-30 select-none ${isOutOfStock ? 'bg-amber-950/40 hover:bg-amber-950/60 text-amber-200 border border-amber-400/30' : 'bg-emerald-950/40 hover:bg-emerald-950/60 text-emerald-200 border border-emerald-400/30'}" title="انقر للتبديل الفوري لحالة التوفر">
+                        <button type="button" onclick="event.stopPropagation(); window.portalToggleStock('${c.id}')" class="card-badge-stock card-badge-availability absolute top-1.5 left-1.5 px-2 rounded-lg text-[8px] sm:text-[9px] font-bold shadow-xs transition inline-flex items-center justify-center gap-1 cursor-pointer backdrop-blur-md leading-none text-center z-30 select-none ${isOutOfStock ? 'bg-amber-950/40 hover:bg-amber-950/60 text-amber-200 border border-amber-400/30' : 'bg-emerald-950/40 hover:bg-emerald-950/60 text-emerald-200 border border-emerald-400/30'}" title="انقر للتبديل الفوري لحالة التوفر">
                             <span class="stock-dot w-1.5 h-1.5 rounded-full ${isOutOfStock ? 'bg-amber-400' : 'bg-emerald-400'} shrink-0 shadow-2xs"></span>
                             <span class="whitespace-nowrap">${isOutOfStock ? '🪄 حياكة بالطلب' : '⚡ تسليم فوري'}</span>
                         </button>

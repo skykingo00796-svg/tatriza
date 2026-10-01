@@ -389,19 +389,19 @@ function displayCarpets(carpetsToDisplay) {
                     <div class="card-light-glare"></div>
                     
                     <!-- أبعاد السجادة في أعلى اليمين (فوق اللمعة بوضوح تام z-30) -->
-                    <span class="card-badge-dimensions absolute top-1.5 right-1.5 bg-black/30 hover:bg-black/45 backdrop-blur-md text-white text-[8px] sm:text-[9px] font-bold px-2 py-0.5 rounded-md shadow-xs z-30 pointer-events-none border border-white/20 inline-flex items-center justify-center leading-none text-center select-none transition">
+                    <span class="card-badge-dimensions absolute top-1.5 right-1.5 bg-black/35 hover:bg-black/50 backdrop-blur-md text-white text-[8px] sm:text-[9px] font-bold px-2 py-0.5 rounded-lg shadow-xs z-30 pointer-events-none border border-white/20 inline-flex items-center justify-center leading-none text-center select-none transition">
                         ${carpet.dimensions}
                     </span>
 
-                    <!-- شارة نمط التوفر في أعلى اليسار (تسليم فوري أو حياكة بالطلب) -->
+                    <!-- شارة نمط التوفر في أعلى اليسار (تسليم فوري أو حياكة بالطلب) بنفس حجم وتناسق الأبعاد تماماً -->
                     ${isOutOfStock ? `
-                        <span class="card-badge-availability absolute top-1.5 left-1.5 bg-gradient-to-r from-amber-700/90 to-amber-800/90 backdrop-blur-md text-amber-100 text-[8px] sm:text-[9px] font-bold px-2 py-0.5 rounded-md shadow-xs z-30 pointer-events-none border border-amber-300/35 inline-flex items-center gap-1 leading-none text-center select-none transition">
-                            <span class="text-[8.5px]">🪄</span>
+                        <span class="card-badge-stock card-badge-availability absolute top-1.5 left-1.5 bg-gradient-to-r from-amber-900/90 to-amber-950/90 backdrop-blur-md text-amber-200 text-[8px] sm:text-[9px] font-bold px-2 py-0.5 rounded-lg shadow-xs z-30 pointer-events-none border border-amber-400/40 inline-flex items-center justify-center gap-1 leading-none text-center select-none transition">
+                            <span class="text-[9px]">🪄</span>
                             <span>حياكة بالطلب</span>
                         </span>
                     ` : `
-                        <span class="card-badge-availability absolute top-1.5 left-1.5 bg-gradient-to-r from-emerald-700/90 to-emerald-800/90 backdrop-blur-md text-emerald-100 text-[8px] sm:text-[9px] font-bold px-2 py-0.5 rounded-md shadow-xs z-30 pointer-events-none border border-emerald-300/35 inline-flex items-center gap-1 leading-none text-center select-none transition">
-                            <span class="text-[8.5px]">⚡</span>
+                        <span class="card-badge-stock card-badge-availability absolute top-1.5 left-1.5 bg-gradient-to-r from-emerald-900/90 to-emerald-950/90 backdrop-blur-md text-emerald-200 text-[8px] sm:text-[9px] font-bold px-2 py-0.5 rounded-lg shadow-xs z-30 pointer-events-none border border-emerald-400/40 inline-flex items-center justify-center gap-1 leading-none text-center select-none transition">
+                            <span class="text-[9px]">⚡</span>
                             <span>تسليم فوري</span>
                         </span>
                     `}

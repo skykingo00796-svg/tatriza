@@ -2127,6 +2127,7 @@ button[type="submit"]:active {
 .card-badge-dimensions,
 .card-badge-media,
 .card-badge-stock,
+.card-badge-availability,
 .card-badge-video {
     display: inline-flex !important;
     align-items: center !important;
@@ -2141,6 +2142,27 @@ button[type="submit"]:active {
 
 .card-badge-dimensions {
     direction: rtl !important;
+}
+
+/* تطابق وتماثل تام ومثالي في الحجم والارتفاع بين شارة الأبعاد وشارة التوفر والطلب */
+.card-badge-dimensions,
+.card-badge-stock,
+.card-badge-availability {
+    height: 1.5rem !important;
+    padding: 0 0.45rem !important;
+    font-size: 0.6rem !important;
+    border-radius: 0.5rem !important;
+    top: 0.35rem !important;
+    gap: 0.25rem !important;
+}
+
+.card-badge-dimensions {
+    right: 0.35rem !important;
+}
+
+.card-badge-stock,
+.card-badge-availability {
+    left: 0.35rem !important;
 }
 
 .card-badge-media {
@@ -2232,14 +2254,17 @@ button[type="submit"]:active {
         padding-top: 0.25rem !important;
     }
     .card-badge-dimensions,
-    .card-badge-stock {
-        height: 1.3rem !important;
-        padding: 1.5px 0.35rem 0 0.35rem !important;
-        font-size: 0.52rem !important;
+    .card-badge-stock,
+    .card-badge-availability {
+        height: 1.35rem !important;
+        padding: 0 0.38rem !important;
+        font-size: 0.54rem !important;
         border-radius: 0.45rem !important;
         top: 0.3rem !important;
+        gap: 0.2rem !important;
     }
-    .card-badge-stock {
+    .card-badge-stock,
+    .card-badge-availability {
         left: 0.3rem !important;
     }
     .card-badge-dimensions {
@@ -2307,10 +2332,21 @@ button[type="submit"]:active {
         padding-top: 0.35rem !important;
     }
     .card-badge-dimensions,
-    .card-badge-stock {
-        height: 1.5rem !important;
-        padding: 2px 0.45rem 0 0.45rem !important;
-        font-size: 0.6rem !important;
+    .card-badge-stock,
+    .card-badge-availability {
+        height: 1.55rem !important;
+        padding: 0 0.48rem !important;
+        font-size: 0.62rem !important;
+        border-radius: 0.5rem !important;
+        top: 0.35rem !important;
+        gap: 0.25rem !important;
+    }
+    .card-badge-stock,
+    .card-badge-availability {
+        left: 0.35rem !important;
+    }
+    .card-badge-dimensions {
+        right: 0.35rem !important;
     }
     .card-badge-media,
     .card-badge-video {
@@ -2369,10 +2405,21 @@ button[type="submit"]:active {
         padding-top: 0.45rem !important;
     }
     .card-badge-dimensions,
-    .card-badge-stock {
-        height: 1.65rem !important;
-        padding: 2.5px 0.55rem 0 0.55rem !important;
+    .card-badge-stock,
+    .card-badge-availability {
+        height: 1.75rem !important;
+        padding: 0 0.55rem !important;
         font-size: 0.66rem !important;
+        border-radius: 0.55rem !important;
+        top: 0.45rem !important;
+        gap: 0.3rem !important;
+    }
+    .card-badge-stock,
+    .card-badge-availability {
+        left: 0.45rem !important;
+    }
+    .card-badge-dimensions {
+        right: 0.45rem !important;
     }
     .card-badge-media,
     .card-badge-video {
