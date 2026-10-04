@@ -17,6 +17,22 @@
       {
         "source": "/",
         "destination": "/screen/index.html"
+      },
+      {
+        "source": "/about",
+        "destination": "/screen/about.html"
+      },
+      {
+        "source": "/about.html",
+        "destination": "/screen/about.html"
+      },
+      {
+        "source": "/portal",
+        "destination": "/screen/portal.html"
+      },
+      {
+        "source": "/portal.html",
+        "destination": "/screen/portal.html"
       }
     ]
   }
