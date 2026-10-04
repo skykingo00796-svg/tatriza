@@ -293,7 +293,7 @@ export function inquireCurrentModalWhatsApp() {
     if (!currentActiveModalCarpet) return;
     const carpet = currentActiveModalCarpet;
     const isOutOfStock = carpet.status === 'out_of_stock';
-    const storePhone = "96890000000";
+    const storePhone = "96895939388";
 
     let message = `مرحباً دار التطريز 🏛️\n`;
     message += `أود الاستفسار عن هذه التحفة المعروضة في متجركم:\n\n`;
@@ -994,7 +994,7 @@ export function sendCartToWhatsApp() {
     message += `✨ _أرجو تأكيد الطلب وترتيب تفاصيل الدفع والتوصيل. شكراً لخدمتكم الراسخة!_`;
 
     const encodedMessage = encodeURIComponent(message);
-    const storePhone = "96890000000";
+    const storePhone = "96895939388";
     window.open(`https://wa.me/${storePhone}?text=${encodedMessage}`, '_blank');
 }
 
@@ -1029,7 +1029,7 @@ export function submitCustomOrder(event) {
         `✨ _سأقوم بإرسال صورة أو نموذج التصميم المطلوب في هذه المحادثة الآن._`
     );
 
-    const storePhone = "96890000000";
+    const storePhone = "96895939388";
     window.open(`https://wa.me/${storePhone}?text=${message}`, '_blank');
     closeCustomOrderModal();
     

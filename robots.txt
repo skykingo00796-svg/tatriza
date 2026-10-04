@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Allow: /screen/index.html
+Allow: /screen/about.html
+Disallow: /screen/portal.html
+Disallow: /data/
+
+Sitemap: https://tatriza-official.web.app/sitemap.xml

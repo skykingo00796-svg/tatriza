@@ -1019,7 +1019,7 @@ let studioState = {
     price: '',
     currency: 'ر.ع.',
     sticker: 'exclusive',
-    whatsapp: '968XXXXXXXX',
+    whatsapp: '+968 95939388',
     showPrice: true,
     showDimensions: true,
     showMaterial: true,

@@ -16,12 +16,12 @@ import {
 // إعدادات وبيانات مشروع Firebase الخاص بك
 // ==========================================
 export const defaultFirebaseConfig = {
-    apiKey: "AIzaSyCKxYambmNaovoKKmAjsh7Myu7V1ojI25o",
-    authDomain: "tatriza-store.firebaseapp.com",
-    projectId: "tatriza-store",
-    storageBucket: "tatriza-store.firebasestorage.app",
-    messagingSenderId: "713788035615",
-    appId: "1:713788035615:web:b81a2460fe4bfc0cd27b2a"
+    apiKey: "AIzaSyBwPKBQWX9JXCEKgSFFQYex05GqaytPtY4",
+    authDomain: "tatriza-official.firebaseapp.com",
+    projectId: "tatriza-official",
+    storageBucket: "tatriza-official.firebasestorage.app",
+    messagingSenderId: "7772757703",
+    appId: "1:7772757703:web:758d02cd763e0e0260a8e2"
 };
 
 export function getActiveFirebaseConfig() {

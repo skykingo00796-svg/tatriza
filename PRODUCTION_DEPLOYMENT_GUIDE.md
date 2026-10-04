@@ -145,7 +145,7 @@
 2. تسجيل الدخول واختيار المشروع:
    ```bash
    firebase login
-   firebase use tatriza-store
+   firebase use tatriza-official
    ```
 3. رفع الموقع مباشرة:
    ```bash

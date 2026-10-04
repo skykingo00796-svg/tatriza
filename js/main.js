@@ -189,8 +189,16 @@ async function loadCarpets() {
 
                     updateCategoryCounts();
                     filterAndDisplayCarpets();
+                } else if (Array.isArray(cloudCarpets) && cloudCarpets.length === 0) {
+                    // قاعدة البيانات السحابية متصلة وفارغة (وضع الإطلاق الحقيقي يبدأ من الصفر 0)
+                    allCarpets = [];
+                    try {
+                        localStorage.setItem('tatr_carpets', JSON.stringify([]));
+                    } catch (e) {}
+                    updateCategoryCounts();
+                    filterAndDisplayCarpets();
                 } else {
-                    // إذا كانت قاعدة البيانات السحابية فارغة، نحمل البيانات الافتراضية
+                    // إذا تعذر جلب البيانات نحمل النسخة الاحتياطية
                     loadFallbackLocalCarpets();
                 }
             }, (error) => {
