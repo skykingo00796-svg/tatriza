@@ -1,7 +1,11 @@
 User-agent: *
 Allow: /
+Allow: /about
+Allow: /about.html
 Allow: /screen/index.html
 Allow: /screen/about.html
+Disallow: /portal
+Disallow: /portal.html
 Disallow: /screen/portal.html
 Disallow: /data/
 

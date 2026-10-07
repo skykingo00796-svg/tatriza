@@ -1,13 +1,1283 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
+
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="refresh" content="0; url=screen/index.html">
-    <script>
-        window.location.href = "screen/index.html";
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>دار تطريز TATRIZA | سجاد وتحف فنية يدوية فاخرة</title>
+    <meta name="description" content="دار تطريز TATRIZA - وجهتكم الراقية لاقتناء وصناعة السجاد الفاخر والتحف الفنية اليدوية المحبوكة بأعلى معايير الحرفية الملكية في سلطنة عُمان.">
+    <!-- أيقونة الموقع الرسمية (Favicon) -->
+    <link rel="icon" type="image/jpeg" href="images/logo.jpg">
+    <link rel="apple-touch-icon" href="images/logo.jpg">
+    <!-- بطاقة المشاركة على واتساب وشبكات التواصل الاجتماعي (Open Graph / Twitter Cards) -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="دار تطريز TATRIZA | سجاد وتحف فنية يدوية فاخرة">
+    <meta property="og:description" content="اكتشف تشكيلات السجاد اليدوي الملكي والقطع الفنية الاستثنائية المحبوكة يدوياً بدقة متناهية. تسليم فوري وتفصيل حسب الطلب.">
+    <meta property="og:image" content="images/logo.jpg">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="دار تطريز TATRIZA | سجاد وتحف فنية يدوية فاخرة">
+    <meta name="twitter:description" content="اكتشف تشكيلات السجاد اليدوي الملكي والقطع الفنية الاستثنائية المحبوكة يدوياً بدقة متناهية.">
+    <meta name="twitter:image" content="images/logo.jpg">
+    <!-- الكلمات المفتاحية لمحرّكات البحث (SEO Keywords) -->
+    <meta name="keywords" content="تطريز, تطريزة, تطريز سجاد, سجاد يدوي, دار تطريز, سجاد عمان, سجاد تفصيل, حياكة سجاد, متجر سجاد, تحف فنية, سجاد صوف, سجاد حرير, tatriza, tufted rug, hand rug, custom rug, handmade rugs oman, carpet weaving">
+    <meta name="author" content="دار تطريز | TATRIZA">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://tatriza-official.web.app/">
+
+    <!-- Schema.org JSON-LD: بيانات منظمة لترتيب محركات بحث جوجل (Google Rich Snippets) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Store",
+      "name": "دار تطريز TATRIZA",
+      "alternateName": ["تطريزة", "تطريز", "تطريز سجاد", "Tatriza", "Tatriza Rugs", "Hand Rug Tatriza"],
+      "description": "دار تطريز TATRIZA - وجهتكم الراقية لاقتناء وصناعة السجاد الفاخر والتحف الفنية اليدوية المحبوكة بأعلى معايير الحرفية الملكية في سلطنة عُمان.",
+      "telephone": "+96895939388",
+      "email": "amtatriza@gmail.com",
+      "sameAs": [
+        "https://www.instagram.com/tatriza_22/"
+      ],
+      "address": {
+        "@type": "PostalAddress",
+        "addressCountry": "OM"
+      },
+      "priceRange": "OMR"
+    }
     </script>
-    <title>جارٍ التحويل...</title>
+    <!-- خطوط Google الفاخرة: Alexandria للعناوين المعاصرة، Amiri للتراث، و Tajawal لواجهة المتجر -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@300;400;500;600;700;800;900&family=Almarai:wght@400;700;800&family=Amiri:ital,wght@0,400;0,700;1,400&family=Cairo:wght@400;600;700;800;900&family=El+Messiri:wght@400;500;600;700&family=Kufam:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Noto+Serif+Arabic:wght@400;600;700;800;900&family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <!-- مكتبة التنسيقات Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- ملف الأنماط والتصميم العام (مع تعديل المسار للخروج من مجلد screen) -->
+    <link rel="stylesheet" href="css/style.css?v=2.9">
+    <!-- محرك الثيم الفوري لمنع وميض الثيم الافتراضي نهائياً (Zero-Flicker Theme Engine) -->
+    <script>
+        (function() {
+            try {
+                var theme = localStorage.getItem('tatr_theme') || 'burgundy';
+                var logo = localStorage.getItem('tatr_logo') || 'images/logo.jpg';
+                document.documentElement.className = 'theme-' + theme;
+                var palette = {
+                    burgundy: { color: '#7c1d3c', hover: '#631730', border: '#96264a', rgb: '124, 29, 60' },
+                    green:    { color: '#435838', hover: '#33432a', border: '#56714a', rgb: '67, 88, 56' },
+                    blue:     { color: '#2d5f75', hover: '#204557', border: '#3d7a96', rgb: '45, 95, 117' },
+                    gold:     { color: '#c59b27', hover: '#9e771c', border: '#d6af3d', rgb: '197, 155, 39' }
+                };
+                var active = palette[theme] || palette.burgundy;
+                var style = document.createElement('style');
+                style.id = 'early-theme-inject';
+                style.textContent = ':root, html, body { --brand-color: ' + active.color + ' !important; --brand-hover: ' + active.hover + ' !important; --brand-border: ' + active.border + ' !important; --brand-rgb: ' + active.rgb + ' !important; }';
+                document.head.appendChild(style);
+
+                var obs = new MutationObserver(function() {
+                    var imgs = document.querySelectorAll('img[alt="Tatriza Logo"]');
+                    if (imgs.length > 0) {
+                        imgs.forEach(function(img) { img.src = logo; });
+                        obs.disconnect();
+                    }
+                });
+                obs.observe(document.documentElement, { childList: true, subtree: true });
+            } catch(e) {}
+        })();
+    </script>
 </head>
-<body style="background-color: #d1c5b6;">
+
+<body class="text-stone-800 font-interface" style="background-color: #d1c5b6;">   
+
+    <!-- حاوية الإشعارات الفاخرة (Toast Container) -->
+    <div id="toast-container"></div>
+
+    <!-- شريط التنقل العلوي الفاخر بنمط الجزيرة العائمة (Floating Luxury Dock) -->
+    <header class="sticky top-2 sm:top-3.5 z-40 w-full px-3 sm:px-6 md:px-12 pointer-events-none transition-all duration-300">
+        <div class="floating-luxury-dock pointer-events-auto rounded-2xl sm:rounded-3xl w-full px-4 sm:px-6 md:px-8 h-16 sm:h-20 flex justify-between items-center transition-all duration-300">
+            
+            <!-- اللوجو واسم الدار -->
+            <div class="flex items-center gap-3">
+                <img src="images/logo.jpg" alt="Tatriza Logo" class="w-10 h-10 md:w-12 md:h-12 rounded-2xl object-cover shadow-sm border border-stone-200 cursor-pointer logo-header-interactive shrink-0" onclick="openCurrentLogoLightbox(event)" title="شعار الدار - انقر لعرضه بدقة عالية">
+                <div>
+                    <h1 class="font-bold text-lg md:text-xl text-stone-900 tracking-wider">TATRIZA</h1>
+                    <p class="text-[10px] md:text-xs font-semibold" style="color: var(--brand-color);">دار التطريز و السجاد اليدوي</p>
+                </div>
+            </div>
+            
+            <!-- أزرار الشريط العلوي: السلة وخيارات الدار -->
+            <div class="flex items-center gap-2.5 md:gap-3 shrink-0">
+                <!-- زر السلة المباشر في الشريط العلوي لتأكيد إضافة المنتجات فوراً -->
+                <button id="header-cart-btn" onclick="openCartModal()" class="group flex items-center bg-[#fffbf7] hover:bg-white text-stone-800 p-2.5 rounded-2xl border border-stone-300/80 transition-all duration-300 shadow-xs cursor-pointer relative" title="سلة المشتريات">
+                    <div class="w-5 h-5 flex items-center justify-center shrink-0" style="color: var(--brand-color);">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                    </div>
+                    <span class="max-w-0 opacity-0 overflow-hidden whitespace-nowrap group-hover:max-w-xs group-hover:opacity-100 group-hover:mr-2 transition-all duration-300 ease-in-out text-xs md:text-sm font-bold text-stone-800">السلة</span>
+                    <!-- عداد المنتجات في السلة المباشر -->
+                    <span id="cart-count" class="hidden absolute -top-1.5 -right-1.5 text-white font-black text-[10px] min-w-[20px] h-5 px-1.5 rounded-full flex items-center justify-center shadow-md transition-all duration-300" style="background-color: var(--brand-color);">0</span>
+                </button>
+
+                <!-- زر خيارات الدار الفاخر -->
+                <button id="options-toggle-btn" onclick="openOptionsDrawer()" class="group flex items-center bg-[#fffbf7] hover:bg-stone-200/70 text-stone-800 p-2.5 rounded-2xl border border-stone-300/80 transition-all duration-300 shadow-xs cursor-pointer relative overflow-hidden" title="خيارات الدار">
+                    <div class="w-5 h-5 flex flex-col justify-center items-center gap-1 shrink-0">
+                        <span class="w-5 h-0.5 bg-stone-800 rounded-full transition-all duration-300 group-hover:w-3.5"></span>
+                        <span class="w-3.5 h-0.5 rounded-full transition-all duration-300 group-hover:w-5" style="background-color: var(--brand-color);"></span>
+                        <span class="w-5 h-0.5 bg-stone-800 rounded-full transition-all duration-300 group-hover:w-4"></span>
+                    </div>
+                    <span class="max-w-0 opacity-0 overflow-hidden whitespace-nowrap group-hover:max-w-xs group-hover:opacity-100 group-hover:mr-2.5 transition-all duration-300 ease-in-out text-xs md:text-sm font-bold text-stone-800">خيارات الدار</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- المحتوى الرئيسي -->
+    <main class="w-full px-3 sm:px-6 md:px-12 pb-20 pt-8">
+        
+        <!-- البانر الترحيبي ثلاثي الأبعاد مع خيوط وجزيئات الذهب التفاعلية (ThreeUI Ambient) -->
+        <section class="w-full py-4 sm:py-6 relative">
+            <!-- محرك الجزيئات وخيوط الذهب ثلاثية الأبعاد -->
+            <canvas id="ambient-3d-canvas" class="rounded-3xl"></canvas>
+
+            <div id="welcome-hero-banner" class="block rounded-3xl p-7 sm:p-10 md:p-14 lg:p-16 xl:p-20 text-white relative overflow-hidden shadow-2xl bg-stone-950 border border-white/10 hover:border-amber-400/30 transition-colors duration-500 cursor-default">
+                <!-- خلفية الشعار التفاعلية التي تتحرك بنعومة مع حركة المؤشر (Parallax) -->
+                <div id="welcome-parallax-logo" class="absolute -inset-10 bg-cover bg-center opacity-30 filter blur-[0.5px] pointer-events-none theme-bg-logo will-change-transform" style="background-image: url('images/logo.jpg');"></div>
+                <div class="absolute inset-0 opacity-90 transition-opacity duration-700 pointer-events-none" style="background: linear-gradient(135deg, var(--brand-color) 0%, rgba(26,26,26,0.95) 100%);"></div>
+                
+                <div class="relative z-10 w-full">
+                    <span class="font-heritage bg-white/10 text-amber-200 border border-amber-300/30 text-xs sm:text-sm lg:text-base font-semibold px-3.5 sm:px-4 lg:px-5 py-1.5 lg:py-2.5 rounded-full inline-flex items-center gap-1.5 lg:gap-2.5 mb-3.5 lg:mb-5 backdrop-blur-md shadow-xs">
+                        <span>✨</span>
+                        <span>إرث الحرفة اليدوية بلمسة عمانية أصيلة</span>
+                    </span>
+                    <!-- العنوان الملكي: TATRIZA و | مع الكلام التحفيزي بجانبهما على نفس المستوى في كل الأحجام ويتوزع على 1-3 أسطر حسب الشاشة -->
+                    <h2 class="hero-brand-headline flex flex-nowrap items-center gap-2 sm:gap-3.5 md:gap-5 lg:gap-6 mb-3 sm:mb-4 lg:mb-6 w-full">
+                        <div class="flex items-center gap-1 sm:gap-2.5 lg:gap-3 shrink-0">
+                            <span class="hero-brand-title font-display font-black tracking-wider select-none">TATRIZA</span>
+                            <span class="hero-brand-divider select-none" aria-hidden="true">|</span>
+                        </div>
+                        <div class="hero-motivational-text font-display font-bold text-white text-right leading-snug min-w-0 flex-1">
+                            تحف فنية تنبض بالهوية والتطريز الأصيل
+                        </div>
+                    </h2>
+                    
+                    <!-- النص التوضيحي -->
+                    <p class="text-stone-200 lg:text-stone-100 text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl leading-relaxed lg:leading-relaxed max-w-3xl lg:max-w-none w-full mb-3 sm:mb-5 lg:mb-7">
+                        نصنع لك قطعاً فنية نادرة من السجاد اليدوي الفاخر، صُممت لتقتني قطعة أصيلة تدوم وتزيّن مساحتك بأرقى معايير الأناقة.
+                    </p>
+
+                    <!-- سطر مستقل للزر أسفل الكلام ومحاذاة كاملة لجهة اليسار -->
+                    <div class="flex justify-end w-full pt-1 lg:pt-3">
+                        <a href="about.html" id="welcome-story-btn" class="welcome-story-btn group" title="اكتشف حكاية دار التطريز">
+                            <span class="welcome-story-text">اكتشف حكاية دار التطريز</span>
+                            <span class="welcome-story-arrow">
+                                <svg class="w-2.5 h-2.5 sm:w-3 sm:h-3 lg:w-4 lg:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 12H5m0 0l6-6m-6 6l6 6"/>
+                                </svg>
+                            </span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- قسم المعرض والبحث والفلترة الفاخر (بدون كارد مغلقة وبتنسيق متجاوب متكامل) -->
+        <section id="catalog-section" class="w-full my-6 sm:my-8 flex flex-col gap-4 sm:gap-5" dir="rtl">
+            <!-- السطر العلوي: العنوان الملكي والعبارة التوضيحية يميناً + خانات البحث والترتيب تحت بعضها يساراً -->
+            <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 w-full">
+                
+                <!-- العنوان الملكي والعبارة التوضيحية القوية بمسافات علوية وسفلية متساوية ومحسوبة -->
+                <div class="flex items-start gap-2.5 sm:gap-3.5 flex-1 min-w-0">
+                    <div class="w-1.5 sm:w-2 h-10 sm:h-12 rounded-full bg-gradient-to-b from-brand to-amber-500 shadow-xs shrink-0 mt-0.5"></div>
+                    <div class="flex flex-col min-w-0">
+                        <div class="flex items-center gap-2 whitespace-nowrap">
+                            <h3 class="catalog-main-title font-display font-black text-stone-900 tracking-tight whitespace-nowrap">
+                                معرض دار التطريز الفاخر
+                            </h3>
+                            <span class="catalog-tag-badge font-heritage font-bold text-amber-800 bg-amber-100/90 border border-amber-300/70 px-2 sm:px-2.5 py-0.5 rounded-full shadow-2xs whitespace-nowrap">
+                                حياكة أصيلة
+                            </span>
+                        </div>
+                        <p class="catalog-subtitle-text font-medium text-stone-600 mt-1 leading-relaxed">
+                            مجموعة مختارة بعناية من السجاد اليدوي الأصيل، نُسجت خيوطها بشغف لتمنح مساحتك بصمة من الفخامة والجمال.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- خانات البحث والترتيب: عرض كامل في الجوال وثابتة في الشاشات الأكبر على جهة اليسار -->
+                <div class="flex flex-col gap-2 sm:gap-2.5 w-full sm:w-72 shrink-0 self-stretch sm:self-auto lg:self-center">
+                    <!-- حقل البحث بالاسم مع أيقونة ملونة بلون الثيم النشط -->
+                    <div class="relative w-full">
+                        <div class="absolute inset-y-0 right-0 pr-3 sm:pr-3.5 flex items-center pointer-events-none search-icon-orb">
+                            <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                            </svg>
+                        </div>
+                        <input type="text" id="search-input" placeholder="ابحث باسم السجادة، صوف، حرير، أبعاد..." class="catalog-control-input w-full pr-8 sm:pr-9.5 pl-8 sm:pl-9 outline-none">
+                        <button id="search-clear-btn" class="hidden absolute inset-y-0 left-0 pl-2.5 sm:pl-3 flex items-center text-stone-400 hover:text-stone-700 transition" title="مسح البحث">
+                            <span class="bg-stone-200/80 hover:bg-stone-300 text-stone-600 rounded-full w-4 h-4 sm:w-5 sm:h-5 flex items-center justify-center text-[9px] sm:text-[10px] font-bold">✕</span>
+                        </button>
+                    </div>
+
+                    <!-- قائمة الترتيب تحت خانة البحث مباشرة بنفس العرض والارتفاع والتفاصيل -->
+                    <div class="relative w-full">
+                        <select id="sort-select" class="catalog-control-input catalog-control-select w-full pr-3 sm:pr-3.5 pl-8 sm:pl-9 outline-none cursor-pointer">
+                            <option value="default">الترتيب: الافتراضي (المميز)</option>
+                            <option value="price-asc">السعر: من الأقل للأعلى</option>
+                            <option value="price-desc">السعر: من الأعلى للأقل</option>
+                            <option value="title-asc">الاسم: أ - ي</option>
+                        </select>
+                        <div class="absolute inset-y-0 left-0 pl-3 sm:pl-3.5 flex items-center pointer-events-none text-stone-500">
+                            <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- مفتاح نمط المعرض الملكي (التسليم الفوري vs حياكة حسب الطلب) -->
+            <div class="catalog-mode-switch-wrapper w-full flex flex-col items-center justify-center gap-2 pt-1 pb-1">
+                <!-- الكبسولة الثنائية المنزلقة الفاخرة بعرض كامل متطابق مع حدود المعرض والتوب بار -->
+                <div id="catalog-segmented-container" class="catalog-segmented-container is-ondemand relative grid grid-cols-2 p-1 sm:p-1.5 rounded-2xl bg-stone-100/90 border border-stone-200/90 shadow-inner backdrop-blur-md w-full" dir="rtl" role="tablist" aria-label="أنماط طلب السجاد">
+                    
+                    <!-- مؤشر الانزلاق الخلفي الفاخر (Active Slider Pill) -->
+                    <div id="catalog-mode-glider" class="catalog-mode-glider"></div>
+
+                    <!-- التاب 1 (اليمين - البداية): حياكة حسب الطلب (تصاميم الدار) - الوضع الافتراضي -->
+                    <button 
+                        type="button" 
+                        role="tab" 
+                        id="tab-mode-ondemand" 
+                        aria-selected="true" 
+                        onclick="window.switchCatalogMode('ondemand')" 
+                        class="catalog-mode-btn active relative z-10 flex items-center justify-center gap-1 sm:gap-2 py-2 sm:py-2.5 px-2 sm:px-3 rounded-xl text-[11px] sm:text-xs md:text-sm font-bold transition-all duration-300 cursor-pointer select-none text-center">
+                        <span class="text-xs sm:text-base leading-none shrink-0">🪄</span>
+                        <span class="font-display tracking-tight whitespace-nowrap">
+                            <span>حياكة بالطلب</span>
+                            <span class="hidden sm:inline font-normal text-[11px] opacity-85"> (تصاميم الدار)</span>
+                        </span>
+                        <span id="badge-count-ondemand" class="mode-badge-count px-1.5 py-0.2 rounded-full text-[9.5px] sm:text-[11px] font-black transition shrink-0">0</span>
+                    </button>
+
+                    <!-- التاب 2 (اليسار): تسليم فوري (جاهز للاقتناء) -->
+                    <button 
+                        type="button" 
+                        role="tab" 
+                        id="tab-mode-instant" 
+                        aria-selected="false" 
+                        onclick="window.switchCatalogMode('instant')" 
+                        class="catalog-mode-btn relative z-10 flex items-center justify-center gap-1 sm:gap-2 py-2 sm:py-2.5 px-2 sm:px-3 rounded-xl text-[11px] sm:text-xs md:text-sm font-bold transition-all duration-300 cursor-pointer select-none text-center">
+                        <span class="text-xs sm:text-base leading-none shrink-0">⚡</span>
+                        <span class="font-display tracking-tight whitespace-nowrap">
+                            <span>تسليم فوري</span>
+                            <span class="hidden sm:inline font-normal text-[11px] opacity-85"> (جاهز للاقتناء)</span>
+                        </span>
+                        <span id="badge-count-instant" class="mode-badge-count px-1.5 py-0.2 rounded-full text-[9.5px] sm:text-[11px] font-black transition shrink-0">0</span>
+                    </button>
+                </div>
+
+                <!-- شريط الإرشاد التوضيحي الفاخر في حدود النص فقط وليس بكبر حجم الشاشه -->
+                <div id="catalog-mode-caption" class="catalog-mode-caption-box inline-flex items-center justify-center gap-1.5 sm:gap-2 px-3.5 sm:px-5 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-stone-700 text-[10.5px] sm:text-xs font-medium text-center transition-all duration-300 w-fit max-w-[95%] sm:max-w-none mx-auto shadow-2xs">
+                    <span id="catalog-mode-caption-icon" class="text-xs sm:text-sm shrink-0">🪄</span>
+                    <span id="catalog-mode-caption-text" class="leading-relaxed">تصاميم حصرية من إرث دار التطريز؛ ننسجها لك يدوياً بأبعادك وباليت ألوانك المفضلة.</span>
+                </div>
+            </div>
+            
+            <!-- مسار التبويبات بحجم أصغر وملموم في جميع الشاشات وخاصة الجوال -->
+            <div class="catalog-filter-track flex items-center overflow-x-auto whitespace-nowrap gap-1.5 sm:gap-2 py-1 px-1 sm:px-1.5 scrollbar-none" id="filter-buttons">
+                <button data-filter="all" class="filter-btn catalog-tab-btn active group flex items-center gap-1.5 sm:gap-2">
+                    <span class="tab-icon">👑</span>
+                    <span class="font-display">الكل</span>
+                    <span id="count-all" class="cat-badge px-1.5 sm:px-2 py-0.2 rounded-full font-black bg-white/20 text-white transition">0</span>
+                </button>
+                <button data-filter="ajami" class="filter-btn catalog-tab-btn group flex items-center gap-1.5 sm:gap-2">
+                    <span class="tab-icon">✨</span>
+                    <span class="font-display">نقشات عجمية</span>
+                    <span id="count-ajami" class="cat-badge px-1.5 sm:px-2 py-0.2 rounded-full font-black bg-stone-200/80 text-stone-700 transition">0</span>
+                </button>
+                <button data-filter="silk" class="filter-btn catalog-tab-btn group flex items-center gap-1.5 sm:gap-2">
+                    <span class="tab-icon">🧵</span>
+                    <span class="font-display">سجاد حريري</span>
+                    <span id="count-silk" class="cat-badge px-1.5 sm:px-2 py-0.2 rounded-full font-black bg-stone-200/80 text-stone-700 transition">0</span>
+                </button>
+                <button data-filter="traditional" class="filter-btn catalog-tab-btn group flex items-center gap-1.5 sm:gap-2">
+                    <span class="tab-icon">🏛️</span>
+                    <span class="font-display">تراثي أصيل</span>
+                    <span id="count-traditional" class="cat-badge px-1.5 sm:px-2 py-0.2 rounded-full font-black bg-stone-200/80 text-stone-700 transition">0</span>
+                </button>
+                
+
+            </div>
+        </section>
+
+        <!-- شبكة عرض المنتجات -->
+        <div id="carpets-grid" class="grid gap-2 sm:gap-2.5 md:gap-3">
+            <!-- المنتجات تحقن برمجياً -->
+        </div>
+
+        <!-- كبسولة الترقيم المدمجة الفاخرة (18 قطعة بالصفحة) -->
+        <div id="carpets-pagination" class="w-full flex flex-col items-center justify-center mt-6 sm:mt-8"></div>
+
+        <!-- ========================================== -->
+        <!-- 1. شريط المزايا الحصري المتحرك (Infinite Marquee) -->
+        <!-- ========================================== -->
+        <section class="w-full mt-10 sm:mt-14 mb-4" dir="rtl" aria-label="مزايا دار التطريز الحصرية">
+            <div class="marquee-wrapper">
+                <div class="marquee-track" id="dynamic-marquee-track">
+                    <!-- المجموعة 1 -->
+                    <div class="marquee-item">
+                        <span class="text-base text-amber-500">⚜️</span>
+                        <span class="font-bold text-stone-800 text-xs sm:text-sm">حياكة يدوية 100%</span>
+                        <span class="text-[11px] text-stone-600 hidden sm:inline">• صوف طبيعي وحرير خالص</span>
+                    </div>
+                    <div class="marquee-item">
+                        <span class="text-base text-amber-500">🚚</span>
+                        <span class="font-bold text-stone-800 text-xs sm:text-sm">شحن وتوصيل مؤمن</span>
+                        <span class="text-[11px] text-stone-600 hidden sm:inline">• لكافة محافظات سلطنة عُمان والخليج</span>
+                    </div>
+                    <div class="marquee-item">
+                        <span class="text-base text-amber-500">🎨</span>
+                        <span class="font-bold text-stone-800 text-xs sm:text-sm">تفصيل حصري حسب الطلب</span>
+                        <span class="text-[11px] text-stone-600 hidden sm:inline">• ألوان ومقاسات وزخارف خاصة بك</span>
+                    </div>
+                    <div class="marquee-item">
+                        <span class="text-base text-amber-500">💎</span>
+                        <span class="font-bold text-stone-800 text-xs sm:text-sm">شهادة أصالة وضمان</span>
+                        <span class="text-[11px] text-stone-600 hidden sm:inline">• توثيق دقيق واعتماد لكل قطعة</span>
+                    </div>
+                    <div class="marquee-item">
+                        <span class="text-base text-amber-500">🪄</span>
+                        <span class="font-bold text-stone-800 text-xs sm:text-sm">مرايا وسجاد جداري</span>
+                        <span class="text-[11px] text-stone-600 hidden sm:inline">• تحف معلقة تزين أفخم الصالات</span>
+                    </div>
+                    <div class="marquee-item">
+                        <span class="text-base text-amber-500">🎁</span>
+                        <span class="font-bold text-stone-800 text-xs sm:text-sm">تغليف ملكي فاخر</span>
+                        <span class="text-[11px] text-stone-600 hidden sm:inline">• جاهز للإهداء في كبرى المناسبات</span>
+                    </div>
+
+                    <!-- المجموعة 2 المكررة لضمان التدفق اللانهائي -->
+                    <div class="marquee-item">
+                        <span class="text-base text-amber-500">⚜️</span>
+                        <span class="font-bold text-stone-800 text-xs sm:text-sm">حياكة يدوية 100%</span>
+                        <span class="text-[11px] text-stone-600 hidden sm:inline">• صوف طبيعي وحرير خالص</span>
+                    </div>
+                    <div class="marquee-item">
+                        <span class="text-base text-amber-500">🚚</span>
+                        <span class="font-bold text-stone-800 text-xs sm:text-sm">شحن وتوصيل مؤمن</span>
+                        <span class="text-[11px] text-stone-600 hidden sm:inline">• لكافة محافظات سلطنة عُمان والخليج</span>
+                    </div>
+                    <div class="marquee-item">
+                        <span class="text-base text-amber-500">🎨</span>
+                        <span class="font-bold text-stone-800 text-xs sm:text-sm">تفصيل حصري حسب الطلب</span>
+                        <span class="text-[11px] text-stone-600 hidden sm:inline">• ألوان ومقاسات وزخارف خاصة بك</span>
+                    </div>
+                    <div class="marquee-item">
+                        <span class="text-base text-amber-500">💎</span>
+                        <span class="font-bold text-stone-800 text-xs sm:text-sm">شهادة أصالة وضمان</span>
+                        <span class="text-[11px] text-stone-600 hidden sm:inline">• توثيق دقيق واعتماد لكل قطعة</span>
+                    </div>
+                    <div class="marquee-item">
+                        <span class="text-base text-amber-500">🪄</span>
+                        <span class="font-bold text-stone-800 text-xs sm:text-sm">مرايا وسجاد جداري</span>
+                        <span class="text-[11px] text-stone-600 hidden sm:inline">• تحف معلقة تزين أفخم الصالات</span>
+                    </div>
+                    <div class="marquee-item">
+                        <span class="text-base text-amber-500">🎁</span>
+                        <span class="font-bold text-stone-800 text-xs sm:text-sm">تغليف ملكي فاخر</span>
+                        <span class="text-[11px] text-stone-600 hidden sm:inline">• جاهز للإهداء في كبرى المناسبات</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- 2. سينما الحرفة اليدوية والمشغل (Atelier Cinema) -->
+        <!-- ========================================== -->
+        <section class="my-12 sm:my-16" dir="rtl" aria-label="سينما الحرفة اليدوية">
+            <!-- رأس القسم الفاخر لسينما المشغل -->
+            <div class="text-center max-w-2xl mx-auto mb-8 sm:mb-10 px-4">
+                <span class="text-[11px] sm:text-xs font-black text-amber-800 bg-amber-50 border border-amber-200 px-3 py-1 rounded-full uppercase tracking-wider inline-block mb-2 shadow-2xs">
+                    سينما المشغل والحرفة
+                </span>
+                <h2 class="font-royal-carpet text-2xl sm:text-3xl md:text-4xl font-bold text-stone-900 leading-tight">
+                    كواليس الصنعة.. عندما تنبض الخيوط بالحياة
+                </h2>
+                <p class="text-xs sm:text-sm text-stone-600 mt-2 leading-relaxed">
+                    شاهد أدق تفاصيل الحياكة اليدوية وسحر الأنوال التقليدية، حيث تتحول خيوط الصوف والحرير بين أنامل خبرائنا إلى تحف فنية خالدة.
+                </p>
+            </div>
+
+            <div id="cinema-section-container" class="cinema-container p-4 sm:p-6 md:p-8 lg:p-10 text-white relative overflow-hidden">
+                <!-- حاوية البطاقة السينمائية المتحركة بالكامل (Full Card Slide Stage) -->
+                <div id="cinema-scene-card" class="cinema-scene-card will-change-transform transition-all duration-300 ease-out">
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
+                    
+                    <!-- الطرف الأيمن: مشغل الفيديو السينمائي الفاخر -->
+                    <div class="lg:col-span-7 xl:col-span-8 flex flex-col gap-3">
+                        <div id="cinema-screen-box" class="relative cinema-screen-box aspect-video group">
+                            <!-- خلفية بلورية مضيئة تعكس ألوان الفيديو وتملأ الجوانب للفيديوهات العمودية (Ambient Glow Mode) -->
+                            <div id="cinema-ambient-wrap" class="absolute inset-0 overflow-hidden pointer-events-none opacity-40 transition-opacity duration-700">
+                                <img id="cinema-ambient-backdrop" src="images/craft_video_poster.jpg" alt="" class="w-full h-full object-cover blur-2xl scale-125">
+                            </div>
+
+                            <video 
+                                id="atelier-cinema-video"
+                                src="https://upload.wikimedia.org/wikipedia/commons/1/13/Weaving_Carpet_at_Lachen.webm"
+                                playsinline 
+                                muted 
+                                poster="images/craft_video_poster.jpg" 
+                                preload="metadata"
+                                onclick="window.toggleCinemaVideoPlay()"
+                                onended="window.handleCinemaVideoEnded()"
+                                class="w-full h-full object-contain relative z-10 mx-auto transition-all duration-300 cursor-pointer">
+                                متصفحك لا يدعم تشغيل الفيديو.
+                            </video>
+
+                            <!-- زر التشغيل الفاخر في منتصف الفيديو السينمائي متناغم مع لون الثيم -->
+                            <div id="cinema-video-center-btn-wrap" class="absolute inset-0 z-20 flex items-center justify-center transition-all duration-300 opacity-100 pointer-events-auto">
+                                <button 
+                                    id="cinema-video-center-btn" 
+                                    type="button" 
+                                    onclick="window.toggleCinemaVideoPlay()" 
+                                    class="luxury-play-center-btn w-16 h-16 sm:w-20 sm:h-20 rounded-full flex items-center justify-center text-2xl sm:text-3xl text-white cursor-pointer pointer-events-auto group/cinema-center"
+                                    title="بدء تشغيل الفيديو">
+                                    <span id="cinema-video-center-icon" class="mr-[-3px] text-white group-hover/cinema-center:scale-110 transition-transform">▶</span>
+                                </button>
+                            </div>
+
+                            <!-- طبقة التدرج الخافت -->
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/30 pointer-events-none"></div>
+
+                            <!-- شارة البث الحي من المشغل -->
+                            <div class="absolute top-3 right-3 sm:top-4 sm:right-4 z-20 flex items-center gap-2">
+                                <span class="px-3 py-1 bg-black/60 backdrop-blur-md rounded-full text-amber-300 border border-amber-500/30 text-[11px] sm:text-xs font-bold flex items-center gap-1.5 shadow-md">
+                                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                                    <span id="cinema-display-livebadge">حياكة يدوية • مشغل دار التطريز</span>
+                                </span>
+                            </div>
+
+                            <!-- أزرار التحكم بالفيديو في الأسفل -->
+                            <div class="absolute bottom-3 inset-x-3 sm:bottom-4 sm:inset-x-4 z-20 flex items-center justify-between pointer-events-auto">
+                                <!-- زر التشغيل / الإيقاف المؤقت -->
+                                <button 
+                                    id="cinema-play-btn"
+                                    type="button" 
+                                    onclick="window.toggleCinemaVideoPlay()" 
+                                    class="px-3.5 py-1.5 bg-black/70 hover:bg-black/90 text-white rounded-full backdrop-blur-md border border-white/25 text-xs sm:text-sm font-bold flex items-center gap-2 transition cursor-pointer hover:scale-105 shadow-md"
+                                    title="تشغيل / إيقاف الفيديو">
+                                    <span id="cinema-play-icon">▶</span>
+                                    <span id="cinema-play-text">مشاهدة الحرفة</span>
+                                </button>
+
+                                <!-- أزرار الصوت والتكبير -->
+                                <div class="flex items-center gap-2">
+                                    <button 
+                                        id="cinema-audio-btn"
+                                        type="button" 
+                                        onclick="window.toggleCinemaVideoAudio()" 
+                                        class="w-8 h-8 sm:w-9 sm:h-9 bg-black/70 hover:bg-black/90 text-white rounded-full backdrop-blur-md border border-white/25 flex items-center justify-center transition cursor-pointer hover:scale-105 shadow-md text-xs sm:text-sm" 
+                                        title="تشغيل / كتم الصوت">
+                                        <span id="cinema-audio-icon">🔇</span>
+                                    </button>
+                                    <button 
+                                        type="button" 
+                                        onclick="window.toggleCinemaVideoFullscreen()" 
+                                        class="w-8 h-8 sm:w-9 sm:h-9 bg-black/70 hover:bg-black/90 text-white rounded-full backdrop-blur-md border border-white/25 flex items-center justify-center transition cursor-pointer hover:scale-105 shadow-md text-xs sm:text-sm" 
+                                        title="تكبير للشاشة كاملة">
+                                        <span>⛶</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- شريط التنقل والترقيم المريح بين فيديوهات المشغل -->
+                        <div id="cinema-video-nav" class="flex items-center justify-between px-3 py-2 rounded-xl bg-black/40 backdrop-blur-md border border-white/10 text-white text-xs">
+                            <button type="button" onclick="window.prevCinemaVideo()" class="px-3 py-1 rounded-lg bg-white/10 hover:bg-white/25 text-amber-200 text-xs font-bold transition flex items-center gap-1.5 cursor-pointer active:scale-95" title="المشهد السابق">
+                                <span>▶</span>
+                                <span class="hidden sm:inline">السابق</span>
+                            </button>
+                            <div class="flex items-center gap-2">
+                                <span id="cinema-video-page-indicator" class="font-number font-black text-amber-300 text-xs sm:text-sm">فيديو 1 من 1</span>
+                                <div id="cinema-video-indicators" class="flex items-center gap-1.5">
+                                    <!-- أزرار المؤشرات الدائرية التفاعلية -->
+                                </div>
+                            </div>
+                            <button type="button" onclick="window.nextCinemaVideo()" class="px-3 py-1 rounded-lg bg-white/10 hover:bg-white/25 text-amber-200 text-xs font-bold transition flex items-center gap-1.5 cursor-pointer active:scale-95" title="المشهد التالي">
+                                <span class="hidden sm:inline">التالي</span>
+                                <span>◀</span>
+                            </button>
+                        </div>
+
+                        <!-- سطر توضيحي أسفل الفيديو -->
+                        <div class="flex items-center justify-between text-[11px] sm:text-xs text-stone-400 px-1">
+                            <span class="flex items-center gap-1">
+                                <span class="text-amber-400">🧵</span>
+                                <span id="cinema-display-caption">توثيق حي لحركات الأنامل وشد الغرز اليدوية على الأنوال التقليدية</span>
+                            </span>
+                            <span class="text-stone-400 hidden sm:inline">جودة عالية HD</span>
+                        </div>
+                    </div>
+
+                    <!-- الطرف الأيسر: بطاقة القيمة الحرفية والأرقام القياسية -->
+                    <div class="lg:col-span-5 xl:col-span-4 flex flex-col gap-4">
+                        <div>
+                            <span id="cinema-display-subtitle" class="text-[11px] sm:text-xs font-black text-amber-400 tracking-wider uppercase bg-amber-950/60 border border-amber-500/30 px-2.5 py-1 rounded-full inline-block mb-2">
+                                ✨ أصالة المشغل اليدوي
+                            </span>
+                            <h2 id="cinema-display-title" class="font-royal-carpet text-xl sm:text-2xl md:text-3xl font-bold text-amber-100 leading-tight">
+                                حكاية كل خيط تحفة.. <br class="hidden sm:inline">وصبر يصنع الفخامة
+                            </h2>
+                        </div>
+
+                        <!-- بطاقة الاقتباس الفاخرة -->
+                        <div class="cinema-glass-card p-4 sm:p-5 relative">
+                            <p id="cinema-display-quote" class="text-stone-200 text-xs sm:text-sm leading-relaxed font-medium">
+                                «كل سجادة تخرج من دار التطريز ليست مجرد غطاء للأرضية، بل لوحة فنية عريقة استغرقت مئات الساعات من الدقة والشغف لتمنح مساحتك روحاً دافئة ومتميزة لا تتكرر في أي مكان آخر.»
+                            </p>
+                        </div>
+
+                        <!-- أرقام المشغل القياسية -->
+                        <div class="grid grid-cols-3 gap-2 sm:gap-2.5 text-center">
+                            <div class="cinema-glass-card p-2.5 sm:p-3 flex flex-col items-center justify-center">
+                                <span id="cinema-stat-hours" class="text-amber-400 font-number text-base sm:text-lg font-black">+500</span>
+                                <span class="text-stone-300 text-[10px] sm:text-[11px] font-bold">ساعة حياكة</span>
+                            </div>
+                            <div class="cinema-glass-card p-2.5 sm:p-3 flex flex-col items-center justify-center">
+                                <span id="cinema-stat-material" class="text-amber-400 font-number text-base sm:text-lg font-black">100%</span>
+                                <span class="text-stone-300 text-[10px] sm:text-[11px] font-bold">صوف وحرير</span>
+                            </div>
+                            <div class="cinema-glass-card p-2.5 sm:p-3 flex flex-col items-center justify-center">
+                                <span id="cinema-stat-knots" class="text-amber-400 font-number text-base sm:text-lg font-black">120K</span>
+                                <span class="text-stone-300 text-[10px] sm:text-[11px] font-bold">عقدة متراصة</span>
+                            </div>
+                        </div>
+
+                        <!-- زر الدعوة المباشرة للتفصيل -->
+                        <button 
+                            type="button" 
+                            onclick="openCustomOrderModal()" 
+                            class="w-full py-3 px-4 rounded-xl btn-liquid-metal text-white font-bold text-xs sm:text-sm shadow-lg flex items-center justify-center gap-2 hover:scale-[1.02] transition cursor-pointer"
+                            title="طلب سجادة بتصميمك الخاص">
+                            <span>صمم سجادتك الخاصة مع حِرَفِيّينا</span>
+                            <span>🪄</span>
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- 3. مسار «من الخيط إلى التحفة» (4 خطوات للإنتاج) -->
+        <!-- ========================================== -->
+        <section class="my-12 sm:my-16" dir="rtl" aria-label="مراحل إنتاج السجاد اليدوي">
+            <!-- رأس القسم -->
+            <div class="text-center max-w-2xl mx-auto mb-8 sm:mb-10 px-4">
+                <span class="text-[11px] sm:text-xs font-black text-amber-800 bg-amber-50 border border-amber-200 px-3 py-1 rounded-full uppercase tracking-wider inline-block mb-2 shadow-2xs">
+                    مراحل الحرفة الدقيقة
+                </span>
+                <h2 class="font-royal-carpet text-2xl sm:text-3xl md:text-4xl font-bold text-stone-900 leading-tight">
+                    من الخيط إلى التحفة.. كيف نبتكر سجادتك؟
+                </h2>
+                <p class="text-xs sm:text-sm text-stone-600 mt-2 leading-relaxed">
+                    رحلة فنية ملهمة تمر بها كل قطعة بين أيدي خبرائنا منذ اللحظة الأولى للرسم وحتى وصولها معطرة ومغلفة إلى باب منزلك.
+                </p>
+            </div>
+
+            <!-- شبكة الكروت الأربعة -->
+            <div id="dynamic-journey-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 md:gap-6">
+                
+                <!-- الخطوة 1 -->
+                <div class="journey-step-card flex flex-col">
+                    <div class="relative w-full aspect-4/3 overflow-hidden bg-stone-100">
+                        <img src="images/step1_sketch.jpg" alt="المرحلة الأولى: الرسم وتوليد المخطط" class="journey-step-img w-full h-full object-cover" loading="lazy">
+                        <span class="absolute top-2.5 right-2.5 px-2.5 py-1 bg-black/60 backdrop-blur-md text-amber-300 font-number font-black text-xs rounded-lg border border-white/20 shadow-xs inline-flex items-center justify-center leading-none text-center select-none pt-1.5 pb-1">
+                            خطوة 01
+                        </span>
+                    </div>
+                    <div class="p-4 sm:p-5 flex-1 flex flex-col justify-between gap-2">
+                        <div>
+                            <h3 class="font-bold text-stone-900 text-sm sm:text-base mb-1">
+                                الرسم والتخطيط الرقمي
+                            </h3>
+                            <p class="text-stone-600 text-xs leading-relaxed">
+                                تحويل رؤيتك الخاصة أو الزخارف التراثية إلى مخطط خيوط دقيق يحدد درجات الألوان وتوزيع العُقد وسماكة الحياكة.
+                            </p>
+                        </div>
+                        <span class="text-[11px] font-bold text-brand flex items-center gap-1 mt-1">
+                            <span>📐 دقة هندسية ومطابقة تامة</span>
+                        </span>
+                    </div>
+                </div>
+
+                <!-- الخطوة 2 -->
+                <div class="journey-step-card flex flex-col">
+                    <div class="relative w-full aspect-4/3 overflow-hidden bg-stone-100">
+                        <img src="images/step2_materials.jpg" alt="المرحلة الثانية: انتقاء أجود الخامات الطبيعية" class="journey-step-img w-full h-full object-cover" loading="lazy">
+                        <span class="absolute top-2.5 right-2.5 px-2.5 py-1 bg-black/60 backdrop-blur-md text-amber-300 font-number font-black text-xs rounded-lg border border-white/20 shadow-xs inline-flex items-center justify-center leading-none text-center select-none pt-1.5 pb-1">
+                            خطوة 02
+                        </span>
+                    </div>
+                    <div class="p-4 sm:p-5 flex-1 flex flex-col justify-between gap-2">
+                        <div>
+                            <h3 class="font-bold text-stone-900 text-sm sm:text-base mb-1">
+                                انتقاء الخامات الطبيعية
+                            </h3>
+                            <p class="text-stone-600 text-xs leading-relaxed">
+                                غزل يدوي لأجود أنواع الصوف الطبيعي 100% وخيوط الحرير المختارة بعناية بأصباغ نباتية ثابتة لبريق يدوم لأجيال.
+                            </p>
+                        </div>
+                        <span class="text-[11px] font-bold text-amber-700 flex items-center gap-1 mt-1">
+                            <span>🧶 صوف طبيعي وحرير نقي</span>
+                        </span>
+                    </div>
+                </div>
+
+                <!-- الخطوة 3 -->
+                <div class="journey-step-card flex flex-col">
+                    <div class="relative w-full aspect-4/3 overflow-hidden bg-stone-100">
+                        <img src="images/step3_weaving.jpg" alt="المرحلة الثالثة: الحياكة والتطريز اليدوي" class="journey-step-img w-full h-full object-cover" loading="lazy">
+                        <span class="absolute top-2.5 right-2.5 px-2.5 py-1 bg-black/60 backdrop-blur-md text-amber-300 font-number font-black text-xs rounded-lg border border-white/20 shadow-xs inline-flex items-center justify-center leading-none text-center select-none pt-1.5 pb-1">
+                            خطوة 03
+                        </span>
+                    </div>
+                    <div class="p-4 sm:p-5 flex-1 flex flex-col justify-between gap-2">
+                        <div>
+                            <h3 class="font-bold text-stone-900 text-sm sm:text-base mb-1">
+                                الحياكة والعقد اليدوي
+                            </h3>
+                            <p class="text-stone-600 text-xs leading-relaxed">
+                                شد الخيوط آلاف المرات بإبر الغزل اليدوي على أنوال مخصصة، لبناء طبقة صوفية كثيفة وثقيلة تمنح دفئاً وفخامة حقيقية.
+                            </p>
+                        </div>
+                        <span class="text-[11px] font-bold text-brand flex items-center gap-1 mt-1">
+                            <span>🪡 مئات الساعات من الصبر</span>
+                        </span>
+                    </div>
+                </div>
+
+                <!-- الخطوة 4 -->
+                <div class="journey-step-card flex flex-col">
+                    <div class="relative w-full aspect-4/3 overflow-hidden bg-stone-100">
+                        <img src="images/step4_finishing.jpg" alt="المرحلة الرابعة: الصقل والتشطيب الملكي" class="journey-step-img w-full h-full object-cover" loading="lazy">
+                        <span class="absolute top-2.5 right-2.5 px-2.5 py-1 bg-black/60 backdrop-blur-md text-amber-300 font-number font-black text-xs rounded-lg border border-white/20 shadow-xs inline-flex items-center justify-center leading-none text-center select-none pt-1.5 pb-1">
+                            خطوة 04
+                        </span>
+                    </div>
+                    <div class="p-4 sm:p-5 flex-1 flex flex-col justify-between gap-2">
+                        <div>
+                            <h3 class="font-bold text-stone-900 text-sm sm:text-base mb-1">
+                                الصقل والتشطيب الملكي
+                            </h3>
+                            <p class="text-stone-600 text-xs leading-relaxed">
+                                حلاقة دقيقة ونحت الحواف بالمقصات المنحنية لإبراز الأبعاد ثلاثية الأبعاد، وتثبيت المرايا والفحص النهائي لشهادة الأصالة.
+                            </p>
+                        </div>
+                        <span class="text-[11px] font-bold text-emerald-700 flex items-center gap-1 mt-1">
+                            <span>✨ بروز ثلاثي الأبعاد وشهادة جودة</span>
+                        </span>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- 4. ركن الإلهام «تطريز في منازل عملائنا» (Lookbook) -->
+        <!-- ========================================== -->
+        <section class="my-12 sm:my-16" dir="rtl" aria-label="تطريز في منازل عملائنا الفاخرة">
+            <!-- رأس القسم -->
+            <div class="text-center max-w-2xl mx-auto mb-8 sm:mb-10 px-4">
+                <span class="text-[11px] sm:text-xs font-black text-amber-800 bg-amber-50 border border-amber-200 px-3 py-1 rounded-full uppercase tracking-wider inline-block mb-2 shadow-2xs">
+                    إلهام الديكور والمجالس
+                </span>
+                <h2 class="font-royal-carpet text-2xl sm:text-3xl md:text-4xl font-bold text-stone-900 leading-tight">
+                    تطريز في منازل عملائنا ومجالسهم الفاخرة
+                </h2>
+                <p class="text-xs sm:text-sm text-stone-600 mt-2 leading-relaxed">
+                    شاهد كيف أضفت لمساتنا النسيجية وحرفيتنا اليدوية هيبة ورونقاً ملكياً على أرقى الفلل والمجالس في عُمان والخليج.
+                </p>
+            </div>
+
+            <!-- شبكة المعرض المصغر -->
+            <div id="dynamic-lookbook-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
+                
+                <!-- الكرت 1: سجاد المرايا المعاصر -->
+                <div class="lookbook-card flex flex-col group">
+                    <div class="relative w-full aspect-4/3 overflow-hidden bg-stone-100">
+                        <img src="images/client_room1.jpg" alt="مرآة سجاد جدارية متموجة في فيلا عصرية" class="w-full h-full object-cover group-hover:scale-105 transition duration-700" loading="lazy">
+                        <span class="absolute top-3 right-3 px-3 py-1 bg-black/65 backdrop-blur-md text-white font-bold text-xs rounded-full border border-white/20 shadow-md">
+                            فيلا عصرية • مسقط
+                        </span>
+                        <span class="absolute bottom-3 left-3 px-3 py-1 bg-amber-950/70 backdrop-blur-md text-amber-200 font-bold text-xs rounded-full border border-amber-400/30">
+                            سجاد مرايا جداري متموج
+                        </span>
+                    </div>
+                    <div class="p-5 sm:p-6 flex-1 flex flex-col justify-between gap-3 bg-[#fffbf7]">
+                        <div class="flex items-center gap-1 text-amber-400 text-sm">
+                            <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+                            <span class="text-xs font-bold text-stone-700 mr-2">تقييم معتمد 5.0</span>
+                        </div>
+                        <p class="text-stone-700 text-xs sm:text-sm leading-relaxed italic font-medium">
+                            "القطعة تفوق كل التوقعات! ملمس الصوف المخملي مع تموجات الإطار وانعكاس المرآة جعل مدخل المنزل يبدو وكأنه متحف فني معاصر. حرفية متقنة ترفع الرأس."
+                        </p>
+                        <div class="pt-3 border-t border-stone-200/70 flex items-center justify-between">
+                            <span class="font-bold text-stone-900 text-xs sm:text-sm">م. ريم البلوشية</span>
+                            <span class="text-[11px] text-stone-600">طلب تفصيل خاص</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- الكرت 2: السجاد العجمي الملكي في المجلس -->
+                <div class="lookbook-card flex flex-col group">
+                    <div class="relative w-full aspect-4/3 overflow-hidden bg-stone-100">
+                        <img src="images/client_room2.jpg" alt="سجادة عجمية كلاسيكية كبرى في مجلس ضيافة ملكي" class="w-full h-full object-cover group-hover:scale-105 transition duration-700" loading="lazy">
+                        <span class="absolute top-3 right-3 px-3 py-1 bg-black/65 backdrop-blur-md text-white font-bold text-xs rounded-full border border-white/20 shadow-md">
+                            مجلس ضيافة رسمي • صحار
+                        </span>
+                        <span class="absolute bottom-3 left-3 px-3 py-1 bg-amber-950/70 backdrop-blur-md text-amber-200 font-bold text-xs rounded-full border border-amber-400/30">
+                            سجادة عجمية ملكية كبرى
+                        </span>
+                    </div>
+                    <div class="p-5 sm:p-6 flex-1 flex flex-col justify-between gap-3 bg-[#fffbf7]">
+                        <div class="flex items-center gap-1 text-amber-400 text-sm">
+                            <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+                            <span class="text-xs font-bold text-stone-700 mr-2">تقييم معتمد 5.0</span>
+                        </div>
+                        <p class="text-stone-700 text-xs sm:text-sm leading-relaxed italic font-medium">
+                            "طلبنا سجادة بمقاس 4 × 3 متر لتتوسط المجلس الرئيسي، كثافة الصوف وثبات الألوان أضفت هيبة تاريخية ودفئاً استثنائياً للمكان. شكراً لاهتمامكم بأدق التفاصيل."
+                        </p>
+                        <div class="pt-3 border-t border-stone-200/70 flex items-center justify-between">
+                            <span class="font-bold text-stone-900 text-xs sm:text-sm">الشيخ أحمد الحوسني</span>
+                            <span class="text-[11px] text-stone-600">عميل دار التطريز الدائم</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- 5. بنر كبار الشخصيات والطلب المباشر (VIP Concierge) -->
+        <!-- ========================================== -->
+        <section class="vip-concierge-card p-6 sm:p-8 md:p-10 lg:p-12 my-10 sm:my-14 text-white" dir="rtl" aria-label="استشارة التصميم الخاص">
+            <div class="relative z-10 max-w-3xl mx-auto text-center flex flex-col items-center gap-4 sm:gap-5">
+                <span class="px-3.5 py-1 rounded-full bg-white/10 backdrop-blur-md border border-amber-400/30 text-amber-300 text-xs sm:text-sm font-bold shadow-xs">
+                    ⚜️ خدمة العملاء و الاستشارات الخاصة
+                </span>
+
+                <h2 class="font-royal-carpet text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-amber-100 leading-tight">
+                    هل تبحث عن سجادة استثنائية صُممت خصيصاً لتليق بمساحتك؟
+                </h2>
+
+                <p class="text-stone-200 text-xs sm:text-sm md:text-base leading-relaxed max-w-2xl font-medium">
+                    مستشارو التصميم في دار التطريز على أتم الاستعداد لمساعدتك في اختيار المقاسات الدقيقة، مطابقة درجات الألوان مع ديكورك، وابتكار نقشات حصرية تعبّر عن ذوقك الرفيع.
+                </p>
+
+                <!-- أزرار الإجراء السريع -->
+                <div class="flex items-center justify-center gap-2 sm:gap-4 mt-2 w-full sm:w-auto max-w-md sm:max-w-none mx-auto">
+                    <a 
+                        href="https://wa.me/96895939388?text=%D9%85%D8%B1%D8%AD%D8%A8%D8%A7%D9%8B%20%D8%AF%D8%A7%D8%B1%20%D8%A7%D9%84%D8%AA%D8%B7%D8%B1%D9%8A%D8%B2%D8%8C%20%D8%A3%D8%B1%D8%BA%D8%A8%20%D9%81%D9%8A%20%D8%A7%D8%B3%D8%AA%D8%B4%D8%A7%D8%B1%D8%A9%20%D8%AA%D8%B5%D9%85%D9%8A%D9%85%D9%8A%D8%A9%20%D8%AE%D8%A7%D8%B5%D8%A9%20%D9%84%D8%AA%D9%81%D8%B5%D9%8A%D9%84%20%D8%B3%D8%AC%D8%A7%D8%AF%D8%A9%20%D9%8A%D8%AF%D9%88%D9%8A%D8%A9."
+                        target="_blank" 
+                        rel="noopener"
+                        class="min-h-[46px] h-auto sm:h-12 py-2 px-2.5 sm:px-8 bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold text-[10.5px] sm:text-sm rounded-xl transition shadow-lg inline-flex items-center justify-center gap-1.5 sm:gap-2 hover:scale-105 cursor-pointer flex-1 sm:flex-initial text-center leading-snug"
+                        title="تواصل فوري عبر واتساب">
+                        <span class="text-sm sm:text-lg shrink-0">💬</span>
+                        <span class="leading-tight sm:whitespace-nowrap">استشارة فورية عبر واتساب</span>
+                    </a>
+
+                    <button 
+                        type="button" 
+                        onclick="openCustomOrderModal()" 
+                        class="min-h-[46px] h-auto sm:h-12 py-2 px-2.5 sm:px-8 bg-white/15 hover:bg-white/25 text-white border border-white/30 font-bold text-[10.5px] sm:text-sm rounded-xl backdrop-blur-md transition shadow-md inline-flex items-center justify-center gap-1.5 sm:gap-2 hover:scale-105 cursor-pointer flex-1 sm:flex-initial text-center leading-snug"
+                        title="فتح نموذج تفصيل سجادة خاصة">
+                        <span class="text-sm sm:text-base shrink-0">🪄</span>
+                        <span class="leading-tight sm:whitespace-nowrap">طلب تفصيل سجادة خاصة</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- نافذة تفاصيل المنتج الفاخرة (Royal Showcase Modal) -->
+    <div id="product-modal" class="hidden fixed inset-0 z-50 modal-glass-backdrop flex items-center justify-center p-2 sm:p-4 md:p-6">
+        <div class="lux-modal-box w-full max-w-4xl rounded-2xl sm:rounded-3xl overflow-hidden flex flex-col max-h-[94vh] sm:max-h-[90vh] relative">
+            
+            <!-- زر إغلاق النافذة الفاخر (في الأعلى يسار) -->
+            <button onclick="closeModal()" class="absolute top-3 left-3 sm:top-5 sm:left-5 z-30 bg-black/60 hover:bg-black/85 text-white w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center transition cursor-pointer shadow-lg text-sm sm:text-base backdrop-blur-md border border-white/20 hover:scale-105" title="إغلاق النافذة">
+                ✕
+            </button>
+            
+            <!-- أزرار التحكم بالفيديو في الأعلى يمين (كتم الصوت وبجانبه زر التكبير مباشرة مقابل زر الإغلاق) -->
+            <div id="modal-video-top-controls" class="absolute top-3 right-3 sm:top-5 sm:right-5 z-30 flex items-center gap-2 hidden">
+                <!-- زر كتم وفتح الصوت (جنب التكبير على طول) -->
+                <button id="modal-video-audio-btn" type="button" onclick="window.toggleProductVideoAudio(this)" class="bg-black/60 hover:bg-black/85 text-white w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center transition cursor-pointer shadow-lg text-sm sm:text-base backdrop-blur-md border border-white/20 hover:scale-105" title="تشغيل الصوت">
+                    <span class="audio-icon leading-none">🔇</span>
+                </button>
+
+                <!-- زر تكبير الفيديو للشاشة كاملة (مقابل زر الإغلاق بالجهة الثانية) -->
+                <button id="modal-video-fullscreen-btn" type="button" onclick="window.toggleModalVideoFullscreen()" class="bg-black/60 hover:bg-black/85 text-white w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center transition cursor-pointer shadow-lg text-sm sm:text-base backdrop-blur-md border border-white/20 hover:scale-105" title="تكبير الفيديو للشاشة كاملة">
+                    <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/></svg>
+                </button>
+            </div>
+
+            <!-- حاوية المحتوى مقسمة نصفين: معرض الصور والمعلومات -->
+            <div class="flex flex-col md:grid md:grid-cols-2 overflow-y-auto flex-1">
+                
+                <!-- القسم الأيمن: معرض الوسائط المتجاوب بالكامل بخلفية بيضاء نقية وبحجم منضبط ومحكم -->
+                <div class="relative w-full bg-white flex flex-col justify-center items-center overflow-hidden aspect-square sm:aspect-square md:aspect-auto md:h-full max-h-[46vh] sm:max-h-[50vh] md:max-h-none select-none border-b md:border-b-0 md:border-l border-stone-200/70">
+                    <div id="modal-images-container" class="flex overflow-x-auto snap-x snap-mandatory scrollbar-none w-full h-full items-center bg-white" onscroll="handleModalScroll(this)">
+                        <!-- تُحقن الصور والفيديو برمجياً -->
+                    </div>
+
+                    <!-- شارة استعراض حي (في الأسفل يسار مقابل الترقيم من الجهة الثانية) -->
+                    <div id="modal-video-badge" class="absolute bottom-3 left-3 sm:bottom-4 sm:left-4 z-20 pointer-events-none hidden">
+                        <span class="bg-stone-900/80 text-amber-300 text-[11px] font-bold px-3 py-1 rounded-full backdrop-blur-md border border-stone-700/30 shadow-md flex items-center gap-1.5">
+                            <span class="text-xs">🎬</span>
+                            <span id="modal-video-badge-text">استعراض حي</span>
+                        </span>
+                    </div>
+
+                    <!-- عداد وترقيم الشرائح المستقل بدون أي تداخل وبحجم مضبوط (في الأسفل يمين) -->
+                    <div id="modal-counter-wrapper" class="absolute bottom-3 right-3 sm:bottom-4 sm:right-4 z-20 pointer-events-none">
+                        <div class="bg-stone-900/80 backdrop-blur-md text-amber-200 text-xs font-mono font-bold px-3 py-1 rounded-full border border-stone-700/30 shadow-md inline-flex items-center justify-center gap-1 leading-none select-none pt-1.5 pb-1">
+                            <span id="modal-counter">1</span><span class="opacity-60">/</span><span id="modal-total">1</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- القسم الأيسر: التفاصيل، المواصفات، السعر والأزرار -->
+                <div class="p-5 sm:p-6 md:p-8 flex flex-col justify-between space-y-4 bg-gradient-to-b from-[#fffbf7] to-[#f9f4ec]">
+                    <div class="space-y-4">
+                        <!-- شارات المنتج والرمز التسلسلي مع إعطاء مسافة أمان كافية لزر الإغلاق في اليسار -->
+                        <div class="flex items-center gap-2.5 flex-wrap pl-12 sm:pl-16">
+                            <!-- شارة جديد وحصري -->
+                            <div id="modal-new-badge" class="spark-badge-crystal items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black shadow-xs hidden">
+                                <span>✨</span>
+                                <span id="modal-new-badge-text" class="font-black text-amber-950">المنتج جديد وحصري</span>
+                            </div>
+                            <!-- رمز القطعة التسلسلي (أيدي المنتج) بجانب الشارة في اليمين -->
+                            <span id="modal-sku-badge" class="text-xs font-mono font-black text-stone-700 bg-stone-200/80 border border-stone-300 px-3 py-1 rounded-xl shadow-2xs select-all" title="رمز القطعة التسلسلي"></span>
+                        </div>
+
+                        <div>
+                            <span class="font-heritage text-xs font-bold text-amber-800">تحفة يدوية فريدة • إصدار محدود</span>
+                            <h3 id="modal-title" class="font-display text-xl sm:text-2xl md:text-3xl font-black text-stone-900 mt-1"></h3>
+                        </div>
+
+                        <!-- شبكة المواصفات الفاخرة الأربعة -->
+                        <div class="grid grid-cols-2 gap-3 pt-1">
+                            <div class="lux-spec-card flex flex-col">
+                                <span class="text-[11px] font-bold text-stone-500 flex items-center gap-1">
+                                    <span>📐</span>
+                                    <span>الأبعاد الرسمية</span>
+                                </span>
+                                <span id="modal-dim" class="font-display text-xs sm:text-sm font-black text-stone-900 mt-1"></span>
+                            </div>
+
+                            <div class="lux-spec-card flex flex-col">
+                                <span class="text-[11px] font-bold text-stone-500 flex items-center gap-1">
+                                    <span>🧶</span>
+                                    <span>نوع النسيج والخامات</span>
+                                </span>
+                                <span id="modal-mat" class="font-display text-xs sm:text-sm font-black text-stone-900 mt-1"></span>
+                            </div>
+
+                            <div class="lux-spec-card flex flex-col">
+                                <span class="text-[11px] font-bold text-stone-500 flex items-center gap-1">
+                                    <span>💎</span>
+                                    <span>جاهزية الاستلام</span>
+                                </span>
+                                <span id="modal-availability-text" class="font-display text-xs sm:text-sm font-black text-emerald-700 mt-1">تسليم فوري ومباشر</span>
+                            </div>
+
+                            <div class="lux-spec-card flex flex-col">
+                                <span class="text-[11px] font-bold text-stone-500 flex items-center gap-1">
+                                    <span>🏛️</span>
+                                    <span>الأصالة والحياكة</span>
+                                </span>
+                                <span class="font-display text-xs sm:text-sm font-black text-amber-800 mt-1">يدوي أصيل 100%</span>
+                            </div>
+                        </div>
+
+                        <!-- وصف القطعة وقصتها الفنية -->
+                        <div class="bg-white/80 border border-stone-200/80 rounded-2xl p-4 shadow-2xs">
+                            <h5 class="text-xs font-bold text-stone-800 mb-1 flex items-center gap-1">
+                                <span>📜</span>
+                                <span>عن القطعة وحياكتها:</span>
+                            </h5>
+                            <p id="modal-desc" class="text-stone-700 text-xs sm:text-sm leading-relaxed"></p>
+                        </div>
+                    </div>
+
+                    <!-- السعر الفاخر والشريط التفاعلي للأزرار -->
+                    <div class="pt-4 border-t border-stone-200/80 flex flex-col gap-3">
+                        <div class="lux-price-tag flex items-center justify-between">
+                            <div>
+                                <span class="text-[11px] text-stone-500 font-bold block">السعر الإجمالي للقطعة:</span>
+                                <div class="flex items-baseline gap-1.5 mt-0.5">
+                                    <span class="font-display text-2xl sm:text-3xl font-black text-brand" id="modal-price"></span>
+                                    <span class="font-display text-brand text-sm sm:text-base font-bold">ريال عماني</span>
+                                </div>
+                            </div>
+                            <span class="text-[11px] font-black text-amber-800 bg-amber-100/90 border border-amber-300/60 px-3 py-1 rounded-xl">شحن مؤمّن</span>
+                        </div>
+                        
+                        <div class="flex items-center gap-2.5">
+                            <button id="modal-add-btn" type="button" onclick="window.addCurrentModalToCart()" class="btn-liquid-metal font-display text-white font-bold px-6 py-3.5 rounded-2xl transition text-xs sm:text-sm flex items-center justify-center gap-2 cursor-pointer shadow-md flex-1">
+                                <span>إضافة للسلة</span>
+                                <span class="text-xs shrink-0">🛍️</span>
+                            </button>
+
+                            <button id="modal-whatsapp-inquire-btn" type="button" onclick="window.inquireCurrentModalWhatsApp()" class="btn-liquid-emerald font-display text-white font-bold px-4 py-3.5 rounded-2xl transition text-xs sm:text-sm flex items-center justify-center gap-1.5 cursor-pointer shadow-md shrink-0" title="استفسار فوري عبر الواتساب">
+                                <span>استفسار</span>
+                                <svg class="w-4 h-4 fill-current shrink-0" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.198-.198.347-.764.966-.937 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة عرض الصور بكامل الشاشة (Lightbox) -->
+    <div id="lightbox-modal" class="hidden fixed inset-0 z-[100] bg-[#fffbf7]/90 backdrop-blur-md flex flex-col items-center justify-center">
+        <button onclick="closeLightbox()" class="absolute top-6 left-6 z-20 bg-stone-900 hover:bg-stone-800 text-white w-12 h-12 rounded-full flex items-center justify-center text-xl transition shadow-lg">
+            ✕
+        </button>
+        
+        <div id="lightbox-container" class="relative w-full h-full flex overflow-x-auto snap-x snap-mandatory scrollbar-none items-center" dir="ltr" onscroll="handleLightboxScroll(this)">
+            <!-- الصور تحقن برمجياً -->
+        </div>
+
+        <div class="absolute bottom-6 left-1/2 -translate-x-1/2 bg-stone-900 text-white text-sm font-semibold px-4 py-2 rounded-full pointer-events-none z-20 shadow-lg">
+            <span id="lightbox-counter">1</span> / <span id="lightbox-total">1</span>
+        </div>
+    </div>
+
+    <!-- نافذة تكبير واستعراض الفيديو على مستوى شاشة المتصفح (يملا شاشة المتصفح بالكامل مثل عرض الصور تماماً) -->
+    <div id="video-lightbox-modal" class="hidden fixed inset-0 z-[110] bg-[#fffbf7]/95 backdrop-blur-md flex items-center justify-center select-none" onclick="window.closeVideoLightbox()">
+        <!-- زر إغلاق التكبير (في الأعلى يسار) -->
+        <button onclick="window.closeVideoLightbox()" class="absolute top-4 left-4 sm:top-6 sm:left-6 z-30 bg-stone-900/85 hover:bg-stone-950 text-white w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center text-lg sm:text-xl transition shadow-xl cursor-pointer hover:scale-105 backdrop-blur-md border border-white/20" title="إغلاق التكبير">
+            ✕
+        </button>
+
+        <!-- زر كتم وفتح الصوت (في الأعلى يمين مقابل زر الإغلاق تماماً) -->
+        <button type="button" onclick="event.stopPropagation(); window.toggleLightboxVideoAudio(this)" id="lightbox-video-audio-btn" class="absolute top-4 right-4 sm:top-6 sm:right-6 z-30 bg-stone-900/85 hover:bg-stone-950 text-white w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center text-lg sm:text-xl transition shadow-xl cursor-pointer hover:scale-105 backdrop-blur-md border border-white/20" title="تشغيل الصوت">
+            <span class="lightbox-audio-icon leading-none">🔇</span>
+        </button>
+
+        <!-- حاوية الفيديو تملأ شاشة المتصفح بالكامل مثل معرض الصور تماماً -->
+        <div class="w-full h-full flex items-center justify-center p-3 sm:p-6 md:p-10 relative" onclick="event.stopPropagation()">
+            <video 
+                id="lightbox-video-player"
+                playsinline
+                muted
+                preload="auto"
+                class="max-w-full max-h-full w-auto h-auto object-contain rounded-2xl shadow-2xl cursor-pointer"
+                onclick="window.toggleLightboxVideoPlay()"
+                onended="window.handleLightboxVideoEnded()"
+            ></video>
+
+            <!-- زر إيقاف وتشغيل تفاعلي بالوسط متناغم مع لون الثيم -->
+            <div id="lightbox-video-center-btn" onclick="window.toggleLightboxVideoPlay()" class="absolute inset-0 flex items-center justify-center pointer-events-auto transition-all duration-300 opacity-100 z-20">
+                <button type="button" class="luxury-play-center-btn w-16 h-16 sm:w-20 sm:h-20 rounded-full flex items-center justify-center text-2xl sm:text-3xl text-white pointer-events-auto cursor-pointer" id="lightbox-video-center-icon" title="بدء تشغيل الفيديو">
+                    <span class="mr-[-3px] text-white">▶</span>
+                </button>
+            </div>
+
+            <!-- عنوان/شارة السجادة أسفل الفيديو -->
+            <div class="absolute bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 pointer-events-none z-20">
+                <span id="lightbox-video-title" class="bg-stone-900/85 text-amber-200 text-xs sm:text-sm font-bold px-4 py-1.5 rounded-full backdrop-blur-md border border-amber-400/25 shadow-lg flex items-center gap-1.5">
+                    🎬 استعراض السجادة
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة تخصيص الهوية وألوان الدار الفاخرة (Haute Couture Atelier) -->
+    <div id="theme-modal" class="hidden fixed inset-0 z-[120] modal-glass-backdrop flex items-center justify-center p-4">
+        <div class="lux-modal-box w-full max-w-lg rounded-3xl p-6 sm:p-8 border border-stone-300/80 relative text-center">
+            <button onclick="closeThemeModal()" class="absolute top-4 left-4 w-9 h-9 rounded-full bg-stone-100 hover:bg-stone-200 text-stone-500 hover:text-stone-900 transition flex items-center justify-center text-sm font-bold">✕</button>
+            
+            <div class="w-14 h-14 mx-auto mb-3 rounded-2xl bg-amber-50 border border-amber-200/80 flex items-center justify-center text-2xl shadow-xs">
+                🎨
+            </div>
+
+            <h3 class="font-display text-xl sm:text-2xl font-black text-stone-900 mb-1">تخصيص هوية وألوان الدار</h3>
+            <p class="text-xs text-stone-600 mb-6 font-medium">اختر لون وشعار الدار المفضل لديك لتغيير الهوية البصرية والجزيئات التفاعلية بالكامل</p>
+            
+            <div class="grid grid-cols-2 gap-3.5 mb-6">
+                <!-- ثيم 1: العنابي الملكي -->
+                <div onclick="selectThemeOption('burgundy', 'images/logo.jpg')" class="lux-theme-card theme-box cursor-pointer p-4 rounded-2xl" data-theme="burgundy">
+                    <div class="theme-orb-sphere bg-[#7c1d3c]"></div>
+                    <div class="text-center">
+                        <span class="font-display text-xs sm:text-sm font-black text-stone-900 block">العنابي الملكي</span>
+                        <span class="text-[10px] text-stone-500 font-medium">الأصالة والوقار</span>
+                    </div>
+                </div>
+                
+                <!-- ثيم 2: الذهبي الأصيل -->
+                <div onclick="selectThemeOption('gold', 'images/logoY.jpg')" class="lux-theme-card theme-box cursor-pointer p-4 rounded-2xl" data-theme="gold">
+                    <div class="theme-orb-sphere bg-[#c59b27]"></div>
+                    <div class="text-center">
+                        <span class="font-display text-xs sm:text-sm font-black text-stone-900 block">الذهبي الأصيل</span>
+                        <span class="text-[10px] text-stone-500 font-medium">بريق خيوط الزري</span>
+                    </div>
+                </div>
+
+                <!-- ثيم 3: الأخضر التراثي -->
+                <div onclick="selectThemeOption('green', 'images/logoG.jpg')" class="lux-theme-card theme-box cursor-pointer p-4 rounded-2xl" data-theme="green">
+                    <div class="theme-orb-sphere bg-[#1b4d3e]"></div>
+                    <div class="text-center">
+                        <span class="font-display text-xs sm:text-sm font-black text-stone-900 block">الأخضر التراثي</span>
+                        <span class="text-[10px] text-stone-500 font-medium">واحات عُمان العريقة</span>
+                    </div>
+                </div>
+
+                <!-- ثيم 4: الأزرق الملكي -->
+                <div onclick="selectThemeOption('blue', 'images/logoB.jpg')" class="lux-theme-card theme-box cursor-pointer p-4 rounded-2xl" data-theme="blue">
+                    <div class="theme-orb-sphere bg-[#1e3a8a]"></div>
+                    <div class="text-center">
+                        <span class="font-display text-xs sm:text-sm font-black text-stone-900 block">الأزرق الملكي</span>
+                        <span class="text-[10px] text-stone-500 font-medium">سكون بحر عُمان</span>
+                    </div>
+                </div>
+            </div>
+
+            <button onclick="applyTheme()" class="w-full btn-liquid-metal font-display text-white font-bold py-3.5 rounded-2xl transition shadow-md text-sm md:text-base cursor-pointer">
+                تطبيق الهوية الجديدة
+            </button>
+        </div>
+    </div>
+
+    <!-- نافذة طلب تصميم خاص الفاخرة (VIP Atelier Request) -->
+    <div id="custom-order-modal" class="hidden fixed inset-0 z-[140] modal-glass-backdrop flex items-center justify-center p-4">
+        <div class="lux-modal-box w-full max-w-xl rounded-3xl p-6 md:p-8 relative text-right max-h-[90vh] overflow-y-auto" dir="rtl">
+            <button onclick="closeCustomOrderModal()" class="absolute top-4 left-4 w-9 h-9 rounded-full bg-stone-100 hover:bg-stone-200 text-stone-500 hover:text-stone-900 transition flex items-center justify-center text-sm font-bold">✕</button>
+            
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-12 h-12 rounded-2xl bg-amber-100 text-amber-800 flex items-center justify-center text-2xl shadow-xs shrink-0">
+                    ✨
+                </div>
+                <div>
+                    <h3 class="font-display text-xl font-black text-stone-900">طلب سجادة بتصميم خاص وأبعاد مخصصة</h3>
+                    <p class="text-xs text-stone-600 font-medium mt-0.5">صياغة وحياكة فريدة تنفذ خصيصاً لذوقك ومساحتك</p>
+                </div>
+            </div>
+            
+            <form onsubmit="submitCustomOrder(event)" class="space-y-4">
+                <div class="bg-white/80 border border-stone-200/80 rounded-2xl p-4 space-y-3.5 shadow-2xs">
+                    <div>
+                        <label class="block text-xs font-bold text-stone-700 mb-1">الاسم الكريم</label>
+                        <input type="text" id="cust-name" required placeholder="أدخل اسمك الكريم..." class="w-full bg-stone-50 border border-stone-200 rounded-xl px-4 py-2.5 text-xs sm:text-sm focus:outline-none focus:border-brand focus:bg-white transition">
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-bold text-stone-700 mb-1">الطول المطلوب</label>
+                            <input type="text" id="cust-length" placeholder="مثال: 3 متر أو 300 سم" required class="w-full bg-stone-50 border border-stone-200 rounded-xl px-4 py-2.5 text-xs sm:text-sm focus:outline-none focus:border-brand focus:bg-white transition">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-stone-700 mb-1">العرض المطلوب</label>
+                            <input type="text" id="cust-width" placeholder="مثال: 2 متر أو 200 سم" required class="w-full bg-stone-50 border border-stone-200 rounded-xl px-4 py-2.5 text-xs sm:text-sm focus:outline-none focus:border-brand focus:bg-white transition">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-stone-700 mb-1">وصف التصميم والنقشات والألوان المفضلة</label>
+                        <textarea id="cust-notes" rows="3" placeholder="اشرح لنا رغبتك، النقشات، نوع الصوف أو الحرير، أو أي تفاصيل خاصة..." required class="w-full bg-stone-50 border border-stone-200 rounded-xl px-4 py-2.5 text-xs sm:text-sm focus:outline-none focus:border-brand focus:bg-white transition"></textarea>
+                    </div>
+                </div>
+                
+                <button type="submit" class="w-full btn-liquid-emerald font-display text-white font-bold py-3.5 rounded-2xl transition shadow-md text-xs sm:text-sm md:text-base cursor-pointer flex items-center justify-center gap-2">
+                    <span>إرسال الطلب ومتابعة التصميم عبر الواتساب</span>
+                    <svg class="w-4 h-4 fill-current shrink-0" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.198-.198.347-.764.966-.937 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- نافذة السلة المتكاملة الفاخرة (VIP Luxury Order Cart) -->
+    <div id="cart-modal" class="hidden fixed inset-0 z-[140] modal-glass-backdrop flex items-center justify-center p-4">
+        <div class="lux-modal-box w-full max-w-lg rounded-3xl p-6 md:p-8 relative text-right flex flex-col max-h-[88vh]" dir="rtl">
+            <button onclick="closeCartModal()" class="absolute top-4 left-4 w-9 h-9 rounded-full bg-stone-100 hover:bg-stone-200 text-stone-500 hover:text-stone-900 transition flex items-center justify-center text-sm font-bold">✕</button>
+            
+            <div class="flex items-center gap-3 mb-4 pb-3 border-b border-stone-200/80">
+                <div class="w-11 h-11 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900 flex items-center justify-center text-xl shadow-xs shrink-0">
+                    🛍️
+                </div>
+                <div>
+                    <h3 class="font-display text-lg sm:text-xl font-black text-stone-900 flex items-center gap-2">
+                        <span>سلة مشتريات الدار</span>
+                    </h3>
+                    <p class="text-xs text-stone-500 font-medium">مراجعة القطع المختارة وتأكيد الطلب المباشر</p>
+                </div>
+            </div>
+            
+            <div id="cart-items-container" class="flex-1 overflow-y-auto space-y-3 pr-1 divide-y-0 mb-4">
+                <!-- تحقن كروت السلة برمجياً -->
+            </div>
+            
+            <div class="pt-4 border-t border-stone-200 space-y-3 bg-[#fffbf7]/90 rounded-2xl p-4">
+                <div class="flex justify-between items-center text-stone-600 text-xs">
+                    <span>الشحن والتوصيل المعتمد:</span>
+                    <span class="font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-md">توصيل خاص لعنوانك</span>
+                </div>
+                
+                <div class="flex justify-between items-center text-stone-900 pt-2 border-t border-stone-200/60">
+                    <span class="font-display font-black text-sm sm:text-base">الإجمالي الكلي للطلب:</span>
+                    <div class="flex items-center gap-1">
+                        <span id="cart-total-amount" class="font-display text-2xl font-black text-brand">0</span>
+                        <span class="font-display text-brand text-xs sm:text-sm font-bold">ر.ع.</span>
+                    </div>
+                </div>
+                
+                <button onclick="sendCartToWhatsApp()" class="w-full btn-liquid-emerald font-display text-white font-bold py-3.5 rounded-2xl transition shadow-md text-xs sm:text-sm md:text-base flex items-center justify-center gap-2 cursor-pointer mt-2">
+                    <span>إرسال وتأكيد الطلب عبر الواتساب</span>
+                    <svg class="w-4 h-4 fill-current shrink-0" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.198-.198.347-.764.966-.937 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- شريط الخيارات الجانبي الفاخر (VIP Concierge Drawer) -->
+    <div id="options-drawer" class="hidden fixed inset-0 z-[130]">
+        <!-- خلفية معتمة بلورية عند الفتح -->
+        <div id="options-drawer-overlay" onclick="closeOptionsDrawer()" class="opacity-0 invisible fixed inset-0 bg-stone-950/60 backdrop-blur-md pointer-events-none cursor-pointer transition-opacity duration-300"></div>
+
+        <!-- اللوحة الجانبية المنزلقة بنمط الصالون الخاص -->
+        <div id="options-drawer-panel" class="fixed top-0 bottom-0 left-0 w-80 sm:w-96 max-w-[85vw] flex flex-col z-10 overflow-hidden" dir="rtl">
+            
+            <!-- رأس الشريط الجانبي الفاخر -->
+            <div class="drawer-lux-header p-5 sm:p-6 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <img src="images/logo.jpg" alt="Tatriza Logo" class="theme-logo-img w-11 h-11 rounded-2xl object-cover shadow-sm border border-stone-300/80">
+                    <div class="text-right">
+                        <span class="font-display text-sm sm:text-base font-black text-stone-900 tracking-tight block">دار التطريز TATRIZA</span>
+                        <span class="font-heritage text-[11px] text-amber-800 font-bold">خدمات الدار و الاستفسارات</span>
+                    </div>
+                </div>
+                
+                <button onclick="closeOptionsDrawer()" class="w-8 h-8 rounded-full bg-stone-200/60 hover:bg-stone-300/80 text-stone-600 hover:text-stone-900 flex items-center justify-center transition cursor-pointer text-sm font-bold" title="إغلاق">
+                    ✕
+                </button>
+            </div>
+
+            <!-- قائمة كروت الخيارات الفاخرة المستقلة -->
+            <div id="options-drawer-items-list" class="flex-1 overflow-y-auto p-4 sm:p-5 space-y-3">
+                
+                <!-- 1. طلب تصميم -->
+                <button onclick="closeOptionsDrawer(); openCustomOrderModal();" class="drawer-lux-card group w-full" title="طلب تصميم خاص">
+                    <div class="flex items-center gap-2.5 min-w-0 flex-1">
+                        <div class="drawer-icon-orb bg-amber-100 text-amber-800 border-amber-300/60 shrink-0">
+                            <span class="text-xs">✨</span>
+                        </div>
+                        <div class="flex flex-col text-right min-w-0 flex-1 overflow-hidden">
+                            <div class="flex items-center gap-1.5 whitespace-nowrap">
+                                <span class="font-display text-[11px] sm:text-xs font-black text-stone-900 group-hover:text-brand transition">طلب تصميم خاص</span>
+                                <span class="px-1.5 py-0.2 rounded text-[8.5px] sm:text-[9px] font-black bg-amber-100 text-amber-800 border border-amber-300/60 shrink-0">VIP</span>
+                            </div>
+                            <span class="text-[9.5px] sm:text-[10px] text-stone-500 font-medium whitespace-nowrap mt-1.5 block">حياكة وتفصيل بمقاساتك المختارة</span>
+                        </div>
+                    </div>
+                    <div class="drawer-action-arrow">&gt;</div>
+                </button>
+
+
+
+                <!-- 3. قصة الدار -->
+                <a href="about.html" class="drawer-lux-card group w-full" title="من نحن وقصة الدار">
+                    <div class="flex items-center gap-2.5 min-w-0 flex-1">
+                        <div class="drawer-icon-orb bg-stone-100 text-stone-800 border-stone-300/60 shrink-0">
+                            <span class="text-xs">🏛️</span>
+                        </div>
+                        <div class="flex flex-col text-right min-w-0 flex-1 overflow-hidden">
+                            <div class="flex items-center gap-1.5 whitespace-nowrap">
+                                <span class="font-display text-[11px] sm:text-xs font-black text-stone-900 group-hover:text-brand transition">قصة الدار ومن نحن</span>
+                                <span class="px-1.5 py-0.2 rounded text-[8.5px] sm:text-[9px] font-black bg-stone-200/80 text-stone-700 shrink-0">عراقة</span>
+                            </div>
+                            <span class="text-[9.5px] sm:text-[10px] text-stone-500 font-medium whitespace-nowrap mt-1.5 block">شغف الحرفي والتطريز العماني</span>
+                        </div>
+                    </div>
+                    <div class="drawer-action-arrow">&gt;</div>
+                </a>
+
+                <!-- 4. ألوان الهوية -->
+                <button onclick="closeOptionsDrawer(); openThemeModal();" class="drawer-lux-card group w-full" title="ألوان وهوية دار التطريز">
+                    <div class="flex items-center gap-2.5 min-w-0 flex-1">
+                        <div class="drawer-icon-orb bg-stone-100 border-stone-300/80 shrink-0">
+                            <div class="w-4 h-4 grid grid-cols-2 rounded-sm overflow-hidden shadow-2xs">
+                                <div class="bg-[#7c1d3c]"></div>
+                                <div class="bg-[#435838]"></div>
+                                <div class="bg-[#c59b27]"></div>
+                                <div class="bg-[#2d5f75]"></div>
+                            </div>
+                        </div>
+                        <div class="flex flex-col text-right min-w-0 flex-1 overflow-hidden">
+                            <div class="flex items-center gap-1.5 whitespace-nowrap">
+                                <span class="font-display text-[11px] sm:text-xs font-black text-stone-900 group-hover:text-brand transition">ألوان وهوية دار التطريز</span>
+                                <span class="px-1.5 py-0.2 rounded text-[8.5px] sm:text-[9px] font-black bg-stone-100 text-stone-700 border border-stone-300/60 shrink-0">4 ثيمات</span>
+                            </div>
+                            <span class="text-[9.5px] sm:text-[10px] text-stone-500 font-medium whitespace-nowrap mt-1.5 block">تخصيص كامل للألوان والشعار</span>
+                        </div>
+                    </div>
+                    <div class="drawer-action-arrow">&gt;</div>
+                </button>
+
+                <!-- 5. إنستجرام -->
+                <a href="https://www.instagram.com/tatriza_22/" target="_blank" class="drawer-lux-card group w-full" title="معرضنا على الانستغرام">
+                    <div class="flex items-center gap-2.5 min-w-0 flex-1">
+                        <div class="drawer-icon-orb bg-gradient-to-tr from-[#f09433] via-[#dc2743] to-[#bc1888] text-white shrink-0">
+                            <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.79-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+                        </div>
+                        <div class="flex flex-col text-right min-w-0 flex-1 overflow-hidden">
+                            <div class="flex items-center gap-1.5 whitespace-nowrap">
+                                <span class="font-display text-[11px] sm:text-xs font-black text-stone-900 group-hover:text-pink-700 transition">معرضنا على الانستغرام</span>
+                                <span class="px-1.5 py-0.2 rounded text-[8.5px] sm:text-[9px] font-black bg-pink-100 text-pink-800 shrink-0">تغطيات</span>
+                            </div>
+                            <span class="text-[9.5px] sm:text-[10px] text-stone-500 font-medium whitespace-nowrap mt-1.5 block">أحدث المعارض والتصاميم الحصرية</span>
+                        </div>
+                    </div>
+                    <div class="drawer-action-arrow">&gt;</div>
+                </a>
+
+                <!-- 6. وأخيراً الواتساب -->
+                <a href="https://wa.me/96895939388" target="_blank" class="drawer-lux-card group w-full" title="خدمة العملاء واتساب">
+                    <div class="flex items-center gap-2.5 min-w-0 flex-1">
+                        <div class="drawer-icon-orb bg-emerald-600 text-white border-emerald-500 shrink-0">
+                            <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.198-.198.347-.764.966-.937 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
+                        </div>
+                        <div class="flex flex-col text-right min-w-0 flex-1 overflow-hidden">
+                            <div class="flex items-center gap-1.5 whitespace-nowrap">
+                                <span class="font-display text-[11px] sm:text-xs font-black text-stone-900 group-hover:text-emerald-700 transition">خدمة العملاء (واتساب)</span>
+                                <span class="px-1.5 py-0.2 rounded text-[8.5px] sm:text-[9px] font-black bg-emerald-100 text-emerald-800 shrink-0">متاح</span>
+                            </div>
+                            <span class="text-[9.5px] sm:text-[10px] text-stone-500 font-medium whitespace-nowrap mt-1.5 block">تواصل واستفسار وتأكيد فوري</span>
+                        </div>
+                    </div>
+                    <div class="drawer-action-arrow">&gt;</div>
+                </a>
+
+            </div>
+
+            <!-- ذيل الشريط الجانبي الفاخر -->
+            <div class="p-4 border-t border-stone-200/80 bg-stone-100/60 text-center">
+                <p class="font-heritage text-xs text-amber-900 font-bold">TATRIZA © تحف فنية تنبض بالهوية والتطريز</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ربط الملف الرئيسي بنظام الوحدات (ES6 Modules) -->
+            <!-- الشريط السفلي المبسط لدار تطريز (Footer) في منتصف الشريط تماماً -->
+    <footer class="mt-12 sm:mt-16 border-t border-stone-200/70 bg-[#fffbf7]/75 backdrop-blur-xs py-3.5 w-full transition-all duration-300" dir="rtl">
+        <div class="w-full px-3 sm:px-6 md:px-12 flex flex-wrap items-center justify-center gap-2 text-center text-[11px] sm:text-xs text-stone-600 font-medium">
+            <img src="images/logo.jpg" alt="Tatriza Logo" class="theme-logo-img w-5 h-5 rounded-md object-cover border border-stone-200 shadow-2xs">
+            <span class="font-bold text-stone-800">دار التطريز TATRIZA</span>
+            <span class="text-stone-300">•</span>
+            <span>سجاد وتحف يدوية فاخرة © 2026</span>
+        </div>
+    </footer>
+
+    <script type="module" src="js/main.js?v=2.9"></script>
+
 </body>
 </html>
