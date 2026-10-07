@@ -909,4 +909,82 @@ export async function uploadShowcaseImage(file, subfolder = 'showcase', onProgre
     return await fileToBase64(compressed);
 }
 
+// ==========================================
+// إدارة الطلبات والمهام والمبيعات (Orders Management)
+// ==========================================
+
+export function subscribeToOrders(onUpdate, onError) {
+    const { db, isReady } = initFirebaseServices();
+    if (!isReady || !db) {
+        if (onError) onError(new Error("Firebase services not ready"));
+        return () => {};
+    }
+
+    try {
+        const ordersCol = collection(db, "orders");
+        return onSnapshot(ordersCol, (snapshot) => {
+            const orders = [];
+            snapshot.forEach((docSnap) => {
+                const data = docSnap.data();
+                orders.push({
+                    id: docSnap.id,
+                    ...data
+                });
+            });
+            // ترتيب تنازلي حسب تاريخ الإنشاء (الأحدث أولاً)
+            orders.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+            if (onUpdate) onUpdate(orders);
+        }, (err) => {
+            console.error("Orders sync error:", err);
+            if (onError) onError(err);
+        });
+    } catch(err) {
+        console.error("Failed to subscribe to orders:", err);
+        if (onError) onError(err);
+        return () => {};
+    }
+}
+
+export async function confirmOrderPayment(orderId, paymentNote = '') {
+    const { db, isReady } = initFirebaseServices();
+    if (!isReady || !db) throw new Error("Firebase services not ready");
+
+    const orderRef = doc(db, "orders", orderId);
+    const auth = getAuth();
+    const adminEmail = auth.currentUser ? auth.currentUser.email : 'admin';
+
+    await updateDoc(orderRef, {
+        status: 'confirmed',
+        confirmedAt: Date.now(),
+        confirmedBy: adminEmail,
+        paymentNotes: (paymentNote || '').trim()
+    });
+
+    return { success: true, orderId };
+}
+
+export async function cancelAndPermanentlyDeleteOrder(orderId) {
+    const { db, isReady } = initFirebaseServices();
+    if (!isReady || !db) throw new Error("Firebase services not ready");
+
+    const orderRef = doc(db, "orders", orderId);
+    await deleteDoc(orderRef);
+
+    return { success: true, orderId };
+}
+
+export async function revertOrderToPending(orderId) {
+    const { db, isReady } = initFirebaseServices();
+    if (!isReady || !db) throw new Error("Firebase services not ready");
+
+    const orderRef = doc(db, "orders", orderId);
+    await updateDoc(orderRef, {
+        status: 'pending',
+        confirmedAt: null,
+        confirmedBy: null
+    });
+
+    return { success: true, orderId };
+}
+
 

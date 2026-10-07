@@ -1,11 +1,19 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // يسمح للزوار بقراءة المعروضات والتصنيفات
+    // طلبات الشراء والمهام الواردة من المتجر
+    match /orders/{orderId} {
+      // يسمح لأي زائر بإنشاء طلب شراء جديد
+      allow create: if true;
+      // لا يحق القراءة أو التعديل أو الأرشفة أو الحذف إلا للمسؤول المعتمد
+      allow read, update, delete: if request.auth != null;
+    }
+
+    // بقية المستندات (المعروضات، التصنيفات، البنرات، والإعدادات)
     match /{document=**} {
       allow read: if true;
-      // لا يُسمح بالإضافة أو التعديل أو الحذف إلا للمسؤول المسجل رسمياً عبر Firebase Authentication
       allow write: if request.auth != null;
     }
   }
 }
+

@@ -22,12 +22,20 @@
         "destination": "/portal.html"
       },
       {
+        "source": "/orders",
+        "destination": "/orders.html"
+      },
+      {
         "source": "/screen/about",
         "destination": "/screen/about.html"
       },
       {
         "source": "/screen/portal",
         "destination": "/screen/portal.html"
+      },
+      {
+        "source": "/screen/orders",
+        "destination": "/screen/orders.html"
       }
     ]
   }

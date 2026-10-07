@@ -1,4 +1,4 @@
-import { getVideoFromIndexedDB } from './firebase-public.js';
+import { getVideoFromIndexedDB, recordCustomerOrder } from './firebase-public.js';
 // ==========================================
 // ملف إدارة النوافذ، السلة، والمنتجات (modals.js)
 // ==========================================
@@ -294,8 +294,32 @@ export function inquireCurrentModalWhatsApp() {
     const carpet = currentActiveModalCarpet;
     const isOutOfStock = carpet.status === 'out_of_stock';
     const storePhone = "96895939388";
+    const orderId = 'TATR-' + Math.floor(100000 + Math.random() * 900000);
+
+    // تسجيل الطلب سحابياً في فايربيس للمسؤول
+    try {
+        recordCustomerOrder({
+            orderId: orderId,
+            type: 'product_inquiry',
+            customerName: 'استفسار عبر تفاصيل القطعة',
+            customerPhone: '',
+            customerNotes: isOutOfStock ? 'طلب حياكة وتفصيل قطعة نفدت كميتها' : 'طلب تسليم فوري ومباشر',
+            items: [{
+                id: carpet.id || 'TATR-PIECE',
+                title: carpet.title || 'تحفة دار تطريز',
+                dimensions: carpet.dimensions || '',
+                price: Number(carpet.price) || 0,
+                image: carpet.image || '',
+                note: isOutOfStock ? 'حياكة بالطلب' : 'تسليم فوري'
+            }],
+            totalPrice: Number(carpet.price) || 0
+        });
+    } catch(e) {
+        console.warn("Could not record inquiry order:", e);
+    }
 
     let message = `مرحباً دار التطريز 🏛️\n`;
+    message += `🔖 *رقم مرجع الطلب:* \`${orderId}\`\n\n`;
     message += `أود الاستفسار عن هذه التحفة المعروضة في متجركم:\n\n`;
     message += `▪️ *اسم القطعة:* ${carpet.title}\n`;
     if (carpet.id) message += `▪️ *رمز القطعة (SKU):* ${carpet.id}\n`;
@@ -974,11 +998,41 @@ export function sendCartToWhatsApp() {
         return;
     }
 
+    const orderId = 'TATR-' + Math.floor(100000 + Math.random() * 900000);
+    let total = 0;
+    const items = cart.map((item, idx) => {
+        const itemPrice = Number(item.price) || 0;
+        total += itemPrice;
+        return {
+            id: item.id || `ITEM-${idx + 1}`,
+            title: item.title || 'قطعة فنية',
+            dimensions: item.dimensions || '',
+            price: itemPrice,
+            image: item.image || (item.images && item.images[0]) || '',
+            note: item.note || ''
+        };
+    });
+
+    // تسجيل الطلب سحابياً في فايربيس للمسؤول
+    try {
+        recordCustomerOrder({
+            orderId: orderId,
+            type: 'cart',
+            customerName: 'طلب عبر سلة المشتريات',
+            customerPhone: '',
+            customerNotes: 'مقتنيات منتقاة من المعرض',
+            items: items,
+            totalPrice: total
+        });
+    } catch(e) {
+        console.warn("Could not record cart order:", e);
+    }
+
     let message = `🏛️ *طلب شراء جديد - دار التطريز (Tatriza)*\n`;
+    message += `🔖 *رقم مرجع الطلب:* \`${orderId}\`\n`;
     message += `━━━━━━━━━━━━━━━━━━━━\n\n`;
     message += `🛍️ *قائمة القطع المطلوبة:*\n\n`;
 
-    let total = 0;
     cart.forEach((item, idx) => {
         message += `▫️ *[${idx + 1}] ${item.title}* ${item.id ? `(${item.id})` : ''}\n`;
         message += `   📐 الأبعاد: ${item.dimensions}\n`;
@@ -986,7 +1040,6 @@ export function sendCartToWhatsApp() {
             message += `   ✨ نوع الطلب: *${item.note}*\n`;
         }
         message += `   💵 السعر: *${item.price} ر.ع.*\n\n`;
-        total += item.price;
     });
 
     message += `━━━━━━━━━━━━━━━━━━━━\n`;
@@ -1017,9 +1070,32 @@ export function submitCustomOrder(event) {
     const length = document.getElementById('cust-length').value;
     const width = document.getElementById('cust-width').value;
     const notes = document.getElementById('cust-notes').value;
+    const orderId = 'TATR-' + Math.floor(100000 + Math.random() * 900000);
+
+    // تسجيل الطلب سحابياً في فايربيس للمسؤول
+    try {
+        recordCustomerOrder({
+            orderId: orderId,
+            type: 'custom_order',
+            customerName: name || 'طلب تصميم خاص',
+            customerPhone: '',
+            customerNotes: `الأبعاد: ${length} × ${width}\nتفاصيل: ${notes}`,
+            items: [{
+                id: 'CUSTOM-DESIGN',
+                title: 'طلب تفصيل وتصميم خاص',
+                dimensions: `${length} × ${width}`,
+                price: 0,
+                note: notes
+            }],
+            totalPrice: 0
+        });
+    } catch(e) {
+        console.warn("Could not record custom order:", e);
+    }
 
     const message = encodeURIComponent(
         `🎨 *طلب تفصيل تصميم خاص - دار التطريز*\n` +
+        `🔖 *رقم مرجع الطلب:* ${orderId}\n` +
         `━━━━━━━━━━━━━━━━━━━━\n\n` +
         `👤 *اسم العميل:* ${name}\n` +
         `📐 *الأبعاد المطلوبة:* الطول ${length} × العرض ${width}\n\n` +

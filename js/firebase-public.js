@@ -9,6 +9,7 @@ import {
     collection, 
     doc, 
     getDocs, 
+    setDoc,
     onSnapshot 
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
@@ -365,3 +366,50 @@ export function formatReadableDate(timestamp) {
         return '';
     }
 }
+
+// ==========================================
+// تسجيل وحفظ طلب جديد للعميل في سحابة Firestore (orders collection)
+// ==========================================
+export async function recordCustomerOrder(orderPayload) {
+    try {
+        const { db, isReady } = initFirebaseServices();
+        if (!isReady || !db) {
+            console.warn("⚠️ Firebase not ready to record order document.");
+            return { success: false, orderId: orderPayload.orderId || null };
+        }
+
+        // توليد رقم طلب فريد ومرتب (مثال: TATR-841920)
+        const orderId = orderPayload.orderId || ('TATR-' + Math.floor(100000 + Math.random() * 900000));
+        const now = Date.now();
+        const dateFormatted = new Intl.DateTimeFormat('ar-OM', {
+            dateStyle: 'full',
+            timeStyle: 'short'
+        }).format(new Date(now));
+
+        const orderDoc = {
+            orderId: orderId,
+            type: orderPayload.type || 'cart', // 'cart' | 'custom_order' | 'product_inquiry'
+            status: 'pending', // 'pending' (قيد المراجعة في الواتساب) | 'confirmed' (تم الدفع والتأكيد)
+            createdAt: now,
+            createdAtFormatted: dateFormatted,
+            customerName: (orderPayload.customerName || 'عميل دار تطريز').trim(),
+            customerPhone: (orderPayload.customerPhone || '').trim(),
+            customerNotes: (orderPayload.customerNotes || '').trim(),
+            items: Array.isArray(orderPayload.items) ? orderPayload.items : [],
+            totalPrice: Number(orderPayload.totalPrice) || 0,
+            currency: 'ر.ع.',
+            confirmedAt: null,
+            confirmedBy: null,
+            paymentNotes: ''
+        };
+
+        const docRef = doc(db, "orders", orderId);
+        await setDoc(docRef, orderDoc);
+        console.log("✅ تم حفظ الطلب بنجاح في سحابة دار تطريز:", orderId);
+        return { success: true, orderId: orderId, order: orderDoc };
+    } catch (err) {
+        console.error("❌ فشل تسجيل الطلب في سحابة Firestore:", err);
+        return { success: false, orderId: orderPayload.orderId || null, error: err.message };
+    }
+}
+
