@@ -12,26 +12,21 @@
       "**/.*",
       "**/node_modules/**"
     ],
-    "cleanUrls": true,
     "rewrites": [
       {
-        "source": "/",
-        "destination": "/screen/index.html"
-      },
-      {
         "source": "/about",
-        "destination": "/screen/about.html"
-      },
-      {
-        "source": "/about.html",
-        "destination": "/screen/about.html"
+        "destination": "/about.html"
       },
       {
         "source": "/portal",
-        "destination": "/screen/portal.html"
+        "destination": "/portal.html"
       },
       {
-        "source": "/portal.html",
+        "source": "/screen/about",
+        "destination": "/screen/about.html"
+      },
+      {
+        "source": "/screen/portal",
         "destination": "/screen/portal.html"
       }
     ]
