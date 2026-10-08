@@ -240,13 +240,18 @@
                     <span id="stat-confirmed-orders" class="font-display font-black text-2xl sm:text-3xl text-emerald-700 font-mono">0</span>
                 </div>
 
-                <!-- 3. إجمالي المبالغ المحصلة (ذهب ملكي عتيق) -->
+                <!-- 3. إجمالي المبالغ المحصلة (ذهب ملكي عتيق مع وضع الخصوصية والتشفير) -->
                 <div class="portal-stat-card group relative p-4 sm:p-5 rounded-2xl sm:rounded-3xl bg-white/95 border border-stone-200/90 hover:border-[#c59b27]/80 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col items-center justify-center text-center select-none">
+                    <!-- زر العين لإظهار / إخفاء المبلغ لحماية الخصوصية -->
+                    <button type="button" id="toggle-revenue-btn" onclick="window.toggleRevenuePrivacy()" class="absolute top-2.5 sm:top-3 left-2.5 sm:left-3 w-8 h-8 rounded-xl bg-amber-50 hover:bg-amber-100 text-[#977017] border border-[#e8d7a7] flex items-center justify-center transition-all cursor-pointer shadow-2xs hover:scale-105 active:scale-95" title="إظهار / إخفاء المبلغ (وضع الخصوصية)">
+                        <span id="toggle-revenue-icon" class="text-sm select-none">👁️</span>
+                    </button>
+
                     <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#fdf8ee] to-[#f7eed4] border border-[#e8d7a7] text-[#977017] flex items-center justify-center mb-2 shadow-2xs">
                         <span class="text-xl">💰</span>
                     </div>
                     <span class="text-[11px] sm:text-xs text-stone-500 font-bold block mb-1">إجمالي المبالغ المحصلة</span>
-                    <span id="stat-total-revenue" class="font-display font-black text-xl sm:text-2xl text-stone-900 font-mono">0 ر.ع.</span>
+                    <span id="stat-total-revenue" class="font-display font-black text-xl sm:text-2xl text-stone-900 font-mono tracking-wider">••••••</span>
                 </div>
 
                 <!-- 4. إجمالي القطع المباعة (عنابي دار تطريز) -->

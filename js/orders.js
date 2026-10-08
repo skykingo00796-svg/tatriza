@@ -202,15 +202,63 @@ function playNewOrderNotification() {
     } catch(e) {}
 }
 
+let isRevenueHidden = true; // مشفر بنجوم افتراضياً لحماية الخصوصية
+try {
+    const savedPrivacy = localStorage.getItem('tatr_revenue_hidden');
+    if (savedPrivacy !== null) {
+        isRevenueHidden = savedPrivacy === 'true';
+    }
+} catch(e) {}
+
+// ==========================================
+// وضع الخصوصية وتشفير المبلغ المحصل (Privacy Mode)
+// ==========================================
+window.toggleRevenuePrivacy = function() {
+    isRevenueHidden = !isRevenueHidden;
+    try {
+        localStorage.setItem('tatr_revenue_hidden', isRevenueHidden ? 'true' : 'false');
+    } catch(e) {}
+    updateRevenueDisplay();
+};
+
+function updateRevenueDisplay() {
+    const confirmedOrders = allOrders.filter(o => o.status === 'confirmed');
+    const totalRevenue = confirmedOrders.reduce((sum, ord) => sum + (Number(ord.totalPrice) || 0), 0);
+    const elRevenue = document.getElementById('stat-total-revenue');
+    const toggleIcon = document.getElementById('toggle-revenue-icon');
+    const toggleBtn = document.getElementById('toggle-revenue-btn');
+
+    if (elRevenue) {
+        if (isRevenueHidden) {
+            elRevenue.innerHTML = '<span class="tracking-widest font-mono text-amber-950/70 font-bold select-none text-2xl">••••••</span>';
+            if (toggleIcon) toggleIcon.innerText = '👁️';
+            if (toggleBtn) toggleBtn.title = 'انقر لإظهار المبلغ المحصل';
+        } else {
+            elRevenue.innerText = totalRevenue.toLocaleString('ar-OM') + ' ر.ع.';
+            if (toggleIcon) toggleIcon.innerText = '🙈';
+            if (toggleBtn) toggleBtn.title = 'انقر لإخفاء وتشفير المبلغ (وضع الخصوصية)';
+        }
+    }
+
+    // شريط الأرشيف إن كان مفتوحاً
+    const archiveRevEl = document.getElementById('archive-filtered-revenue');
+    if (archiveRevEl) {
+        const list = getFilteredOrders();
+        const archiveTotal = list.reduce((s, o) => s + (Number(o.totalPrice) || 0), 0);
+        if (isRevenueHidden) {
+            archiveRevEl.innerHTML = '<span class="tracking-widest font-mono text-amber-300/60 font-bold select-none">••••••</span>';
+        } else {
+            archiveRevEl.innerText = archiveTotal.toLocaleString('ar-OM') + ' ر.ع.';
+        }
+    }
+}
+
 // ==========================================
 // حساب وتحديث بطاقات المؤشرات (KPI Metrics)
 // ==========================================
 function updateKpiCounters() {
     const pendingOrders = allOrders.filter(o => o.status !== 'confirmed');
     const confirmedOrders = allOrders.filter(o => o.status === 'confirmed');
-
-    // إجمالي المبالغ المحصلة من الطلبات المؤكدة
-    const totalRevenue = confirmedOrders.reduce((sum, ord) => sum + (Number(ord.totalPrice) || 0), 0);
 
     // إجمالي القطع المباعة في الطلبات المؤكدة
     let totalItems = 0;
@@ -227,7 +275,6 @@ function updateKpiCounters() {
     // تحديث الأرقام في الواجهة
     const elPending = document.getElementById('stat-pending-orders');
     const elConfirmed = document.getElementById('stat-confirmed-orders');
-    const elRevenue = document.getElementById('stat-total-revenue');
     const elItems = document.getElementById('stat-items-sold');
 
     const badgePendingTab = document.getElementById('badge-tab-pending');
@@ -235,8 +282,10 @@ function updateKpiCounters() {
 
     if (elPending) elPending.innerText = pendingOrders.length;
     if (elConfirmed) elConfirmed.innerText = confirmedOrders.length;
-    if (elRevenue) elRevenue.innerText = totalRevenue.toLocaleString('ar-OM') + ' ر.ع.';
     if (elItems) elItems.innerText = totalItems;
+
+    // تحديث المبلغ المحصل وفق وضع الخصوصية
+    updateRevenueDisplay();
 
     if (badgePendingTab) {
         badgePendingTab.innerText = pendingOrders.length;
@@ -315,7 +364,13 @@ function renderOrdersList() {
             const archiveTotal = list.reduce((s, o) => s + (Number(o.totalPrice) || 0), 0);
             const archiveRevEl = document.getElementById('archive-filtered-revenue');
             const archiveCountEl = document.getElementById('archive-filtered-count');
-            if (archiveRevEl) archiveRevEl.innerText = archiveTotal.toLocaleString('ar-OM') + ' ر.ع.';
+            if (archiveRevEl) {
+                if (isRevenueHidden) {
+                    archiveRevEl.innerHTML = '<span class="tracking-widest font-mono text-amber-300/60 font-bold select-none">••••••</span>';
+                } else {
+                    archiveRevEl.innerText = archiveTotal.toLocaleString('ar-OM') + ' ر.ع.';
+                }
+            }
             if (archiveCountEl) archiveCountEl.innerText = list.length;
         } else {
             archiveSummaryBar.classList.add('hidden');
