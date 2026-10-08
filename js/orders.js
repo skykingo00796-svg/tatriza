@@ -537,14 +537,18 @@ function createOrderCardHtml(order) {
                     <span>✅ تم استلام المبلغ وأرشفة الطلب</span>
                     ${confirmedDate ? `<span class="text-[11px] text-emerald-600 font-medium font-mono">(${confirmedDate})</span>` : ''}
                 </div>
-                <div class="flex items-center gap-2">
-                    <button type="button" onclick="printOrderReceipt('${orderId}')" class="bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold text-xs h-9 px-3 rounded-xl border border-stone-300 transition flex items-center gap-1 cursor-pointer" title="طباعة فاتورة / ملخص الطلب">
+                <div class="flex items-center gap-2 flex-wrap">
+                    <button type="button" onclick="printOrderReceipt('${orderId}')" class="bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold text-xs h-9 px-3 rounded-xl border border-stone-300 transition flex items-center gap-1 cursor-pointer active:scale-95" title="طباعة فاتورة / ملخص الطلب">
                         <span>🖨️</span>
                         <span>طباعة إيصال</span>
                     </button>
-                    <button type="button" onclick="revertOrderAction('${orderId}')" class="bg-amber-50 hover:bg-amber-100 text-amber-900 font-bold text-xs h-9 px-3 rounded-xl border border-amber-300 transition flex items-center gap-1 cursor-pointer" title="إعادة الطلب إلى قائمة المعلقة">
+                    <button type="button" onclick="revertOrderAction('${orderId}')" class="bg-amber-50 hover:bg-amber-100 text-amber-900 font-bold text-xs h-9 px-3 rounded-xl border border-amber-300 transition flex items-center gap-1 cursor-pointer active:scale-95" title="إعادة الطلب إلى قائمة الطلبات المعلقة وتصحيح الحسابات">
                         <span>↩️</span>
-                        <span>إعادة للمعلق</span>
+                        <span>إعادة للانتظار</span>
+                    </button>
+                    <button type="button" onclick="cancelOrderAction('${orderId}')" class="bg-rose-50 hover:bg-rose-100 text-rose-800 font-bold text-xs h-9 px-3 rounded-xl border border-rose-300 transition flex items-center gap-1 cursor-pointer active:scale-95" title="إلغاء الطلب وحذفه نهائياً وخصم قيمته من المحصلة المالية">
+                        <span>❌</span>
+                        <span>إلغاء وحذف</span>
                     </button>
                 </div>
             </div>
