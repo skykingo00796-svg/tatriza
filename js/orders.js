@@ -615,16 +615,137 @@ function createOrderCardHtml(order) {
 }
 
 // ==========================================
+// محرك النوافذ التفاعلية العصرية (Lux Modal Engine)
+// بديل حديث وأنيق بدون أي نوافذ متصفح علوية أو لاج
+// ==========================================
+let modalResolveCallback = null;
+
+function showOrderConfirmationModal(config) {
+    const modal = document.getElementById('order-action-modal');
+    const box = document.getElementById('order-modal-box');
+    const iconContainer = document.getElementById('order-modal-icon-container');
+    const iconEl = document.getElementById('order-modal-icon');
+    const titleEl = document.getElementById('order-modal-title');
+    const subtitleEl = document.getElementById('order-modal-subtitle');
+    const descEl = document.getElementById('order-modal-desc');
+    const inputContainer = document.getElementById('order-modal-input-container');
+    const noteInput = document.getElementById('order-modal-note-input');
+    const confirmBtn = document.getElementById('order-modal-confirm-btn');
+    const btnIcon = document.getElementById('order-modal-btn-icon');
+    const btnText = document.getElementById('order-modal-btn-text');
+
+    if (!modal || !box) {
+        return Promise.resolve({ confirmed: false });
+    }
+
+    if (iconEl) iconEl.innerText = config.icon || '✨';
+    if (titleEl) titleEl.innerText = config.title || 'تأكيد الإجراء';
+    if (subtitleEl) subtitleEl.innerHTML = config.subtitle || '';
+    if (descEl) descEl.innerText = config.desc || '';
+
+    // إعداد التنسيقات والألوان الملكية حسب نوع الإجراء
+    if (config.type === 'delete') {
+        if (iconContainer) iconContainer.className = 'w-12 h-12 rounded-2xl flex items-center justify-center text-2xl shadow-xs shrink-0 bg-rose-50 text-rose-800 border border-rose-200';
+        if (confirmBtn) confirmBtn.className = 'bg-rose-600 hover:bg-rose-700 text-white font-extrabold text-xs sm:text-sm h-11 px-4 rounded-xl shadow-md transition-all flex items-center justify-center gap-1.5 cursor-pointer active:scale-98';
+        if (btnIcon) btnIcon.innerText = '❌';
+        if (btnText) btnText.innerText = config.btnText || 'نعم، إلغاء وحذف';
+    } else if (config.type === 'revert') {
+        if (iconContainer) iconContainer.className = 'w-12 h-12 rounded-2xl flex items-center justify-center text-2xl shadow-xs shrink-0 bg-amber-50 text-amber-900 border border-amber-200';
+        if (confirmBtn) confirmBtn.className = 'bg-amber-600 hover:bg-amber-700 text-white font-extrabold text-xs sm:text-sm h-11 px-4 rounded-xl shadow-md transition-all flex items-center justify-center gap-1.5 cursor-pointer active:scale-98';
+        if (btnIcon) btnIcon.innerText = '↩️';
+        if (btnText) btnText.innerText = config.btnText || 'نعم، إعادة للانتظار';
+    } else {
+        // default / confirm
+        if (iconContainer) iconContainer.className = 'w-12 h-12 rounded-2xl flex items-center justify-center text-2xl shadow-xs shrink-0 bg-emerald-50 text-emerald-800 border border-emerald-200';
+        if (confirmBtn) confirmBtn.className = 'btn-liquid-emerald text-white font-extrabold text-xs sm:text-sm h-11 px-4 rounded-xl shadow-md transition-all flex items-center justify-center gap-1.5 cursor-pointer active:scale-98';
+        if (btnIcon) btnIcon.innerText = '✅';
+        if (btnText) btnText.innerText = config.btnText || 'نعم، تم التأكيد والدفع';
+    }
+
+    // إظهار حقل الملاحظة إن طُلب
+    if (config.showInput) {
+        if (inputContainer) inputContainer.classList.remove('hidden');
+        if (noteInput) {
+            noteInput.value = config.inputValue || 'تم الدفع والتحويل بنجاح';
+            setTimeout(() => noteInput.focus(), 150);
+        }
+    } else {
+        if (inputContainer) inputContainer.classList.add('hidden');
+    }
+
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+    requestAnimationFrame(() => {
+        box.classList.remove('scale-95', 'opacity-0');
+        box.classList.add('scale-100', 'opacity-100');
+    });
+
+    return new Promise((resolve) => {
+        modalResolveCallback = resolve;
+    });
+}
+
+window.closeOrderActionModal = function(confirmed = false) {
+    const modal = document.getElementById('order-action-modal');
+    const box = document.getElementById('order-modal-box');
+    const noteInput = document.getElementById('order-modal-note-input');
+
+    if (box) {
+        box.classList.remove('scale-100', 'opacity-100');
+        box.classList.add('scale-95', 'opacity-0');
+    }
+
+    setTimeout(() => {
+        if (modal) {
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+    }, 180);
+
+    if (modalResolveCallback) {
+        if (confirmed) {
+            modalResolveCallback({
+                confirmed: true,
+                note: noteInput ? noteInput.value.trim() : ''
+            });
+        } else {
+            modalResolveCallback({ confirmed: false });
+        }
+        modalResolveCallback = null;
+    }
+};
+
+window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        const modal = document.getElementById('order-action-modal');
+        if (modal && !modal.classList.contains('hidden')) {
+            window.closeOrderActionModal(false);
+        }
+    }
+});
+
+// ==========================================
 // الإجراءات التفاعلية للأزرار
 // ==========================================
 
 // 1. إجراء: تم تأكيد الطلب ودفع المبلغ
 window.confirmOrderAction = async function(orderId) {
     if (!orderId) return;
-    const cardEl = document.getElementById(`order-card-${orderId}`);
 
-    const note = prompt('✨ تأكيد استلام المبلغ ونقل الطلب للأرشيف:\nيمكنك كتابة ملاحظة الدفع (اختياري، مثلاً: تحويل بنك مسقط / بطاقة):', 'تم الدفع والتحويل بنجاح');
-    if (note === null) return; // تم الإلغاء من قبل المستخدم
+    const res = await showOrderConfirmationModal({
+        type: 'confirm',
+        icon: '✅',
+        title: 'تأكيد استلام المبلغ والأرشفة',
+        subtitle: `رقم الطلب: #${orderId}`,
+        desc: 'هل أنت متأكد من استلام قيمة هذا الطلب وترغب في تأكيده ونقله إلى أرشيف المبيعات المؤكدة؟',
+        showInput: true,
+        inputValue: 'تم الدفع والتحويل بنجاح',
+        btnText: 'نعم، تم التأكيد والدفع'
+    });
+
+    if (!res || !res.confirmed) return;
+
+    const cardEl = document.getElementById(`order-card-${orderId}`);
 
     try {
         if (cardEl) {
@@ -632,7 +753,7 @@ window.confirmOrderAction = async function(orderId) {
             cardEl.style.pointerEvents = 'none';
         }
 
-        await confirmOrderPayment(orderId, note);
+        await confirmOrderPayment(orderId, res.note);
         showOrderToast(`✅ تم تأكيد الطلب ${orderId} واستلام المبلغ ونقله للأرشيف بنجاح!`, 'success');
         
         // إعادة الرسم ستحدث تلقائياً عبر مراقب onSnapshot
@@ -642,7 +763,7 @@ window.confirmOrderAction = async function(orderId) {
             cardEl.style.opacity = '1';
             cardEl.style.pointerEvents = 'auto';
         }
-        alert('حدث خطأ أثناء تأكيد الطلب: ' + err.message);
+        showOrderToast('حدث خطأ أثناء تأكيد الطلب: ' + err.message, 'error');
     }
 };
 
@@ -650,8 +771,17 @@ window.confirmOrderAction = async function(orderId) {
 window.cancelOrderAction = async function(orderId) {
     if (!orderId) return;
 
-    const confirmed = confirm(`⚠️ هل أنت متأكد تماماً من إلغاء وحذف الطلب (${orderId}) نهائياً من القائمة؟\nلن يمكن التراجع عن الحذف.`);
-    if (!confirmed) return;
+    const res = await showOrderConfirmationModal({
+        type: 'delete',
+        icon: '❌',
+        title: 'إلغاء وحذف الطلب نهائياً',
+        subtitle: `رقم الطلب: #${orderId}`,
+        desc: 'هل أنت متأكد تماماً من رغبتك في إلغاء هذا الطلب وحذفه نهائياً من القائمة وقاعدة البيانات؟ سيتم خصم قيمته تلقائياً من المحصلة المالية ولن يمكن التراجع عن الحذف.',
+        showInput: false,
+        btnText: 'نعم، إلغاء وحذف نهائي'
+    });
+
+    if (!res || !res.confirmed) return;
 
     const cardEl = document.getElementById(`order-card-${orderId}`);
 
@@ -663,7 +793,7 @@ window.cancelOrderAction = async function(orderId) {
         }
 
         await cancelAndPermanentlyDeleteOrder(orderId);
-        showOrderToast(`❌ تم إلغاء الطلب ${orderId} وحذفه نهائياً من القائمة.`, 'info');
+        showOrderToast(`❌ تم إلغاء الطلب ${orderId} وحذفه نهائياً.`, 'info');
         
         // إعادة الرسم ستحدث تلقائياً عبر مراقب onSnapshot
     } catch(err) {
@@ -672,20 +802,31 @@ window.cancelOrderAction = async function(orderId) {
             cardEl.style.opacity = '1';
             cardEl.style.transform = 'none';
         }
-        alert('حدث خطأ أثناء حذف الطلب: ' + err.message);
+        showOrderToast('حدث خطأ أثناء حذف الطلب: ' + err.message, 'error');
     }
 };
 
 // 3. إعادة طلب من الأرشيف للمعلق
 window.revertOrderAction = async function(orderId) {
     if (!orderId) return;
-    if (!confirm(`هل تود إعادة الطلب (${orderId}) من الأرشيف إلى قائمة الطلبات المعلقة؟`)) return;
+
+    const res = await showOrderConfirmationModal({
+        type: 'revert',
+        icon: '↩️',
+        title: 'إعادة الطلب لقيد الانتظار',
+        subtitle: `رقم الطلب: #${orderId}`,
+        desc: 'هل تود إعادة هذا الطلب من الأرشيف إلى قائمة الطلبات المعلقة؟ سيتم خصم مبلغه مؤقتاً من المحصلة المالية لمراجعته.',
+        showInput: false,
+        btnText: 'نعم، إعادة للانتظار'
+    });
+
+    if (!res || !res.confirmed) return;
 
     try {
         await revertOrderToPending(orderId);
         showOrderToast(`↩️ تم إعادة الطلب ${orderId} إلى قائمة الطلبات المعلقة بنجاح.`, 'info');
     } catch(err) {
-        alert('حدث خطأ: ' + err.message);
+        showOrderToast('حدث خطأ أثناء استعادة الطلب: ' + err.message, 'error');
     }
 };
 
