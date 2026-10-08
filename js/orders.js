@@ -830,8 +830,12 @@ window.revertOrderAction = async function(orderId) {
     }
 };
 
-// 4. طباعة إيصال أو ملخص الطلب
-window.printOrderReceipt = function(orderId) {
+// ==========================================
+// 4. طباعة إيصال مبيعات فاخر معتمد (Luxury Sales Receipt & Certificate)
+// ==========================================
+
+// الاحتفاظ بنسخة الإيصال السابقة (Legacy Receipt) بناءً على طلب المسؤول
+window.printOrderReceiptLegacy = function(orderId) {
     const order = allOrders.find(o => (o.orderId || o.id) === orderId);
     if (!order) return;
 
@@ -846,12 +850,17 @@ window.printOrderReceipt = function(orderId) {
     `).join('');
 
     const printWindow = window.open('', '_blank');
+    if (!printWindow) {
+        alert('يرجى السماح بالنوافذ المنبثقة في المتصفح لطباعة الإيصال.');
+        return;
+    }
+
     printWindow.document.write(`
         <!DOCTYPE html>
         <html lang="ar" dir="rtl">
         <head>
             <meta charset="UTF-8">
-            <title>إيصال طلب مؤكد | دار تطريز TATRIZA - ${orderId}</title>
+            <title>إيصال طلب مبسط | دار تطريز TATRIZA - ${orderId}</title>
             <style>
                 body { font-family: 'Tajawal', sans-serif; padding: 25px; color: #1c1917; direction: rtl; }
                 .header { text-align: center; border-bottom: 2px solid #7c1d3c; padding-bottom: 15px; margin-bottom: 20px; }
@@ -859,9 +868,15 @@ window.printOrderReceipt = function(orderId) {
                 table { width: 100%; border-collapse: collapse; margin: 20px 0; }
                 th { background: #f5f5f4; padding: 10px; text-align: right; }
                 .total { text-align: left; font-size: 18px; font-weight: bold; color: #7c1d3c; margin-top: 15px; }
+                .switch-bar { background: #fafafa; padding: 10px; border-bottom: 1px solid #eee; margin-bottom: 15px; display: flex; justify-content: space-between; }
+                @media print { .switch-bar { display: none !important; } }
             </style>
         </head>
         <body>
+            <div class="switch-bar">
+                <span>📄 النسخة المبسطة (السابقة)</span>
+                <button onclick="window.opener && window.opener.printOrderReceipt('${orderId}'); window.close();" style="padding: 5px 12px; cursor: pointer; border-radius: 6px; font-family: inherit;">✨ الانتقال للإيصال الملكي الفاخر</button>
+            </div>
             <div class="header">
                 <h2>دار تطريز TATRIZA | إيصال مبيعات معتمد</h2>
                 <p>سجاد وتحف فنية يدوية فاخرة • سلطنة عُمان</p>
@@ -880,6 +895,687 @@ window.printOrderReceipt = function(orderId) {
             <div class="total">الإجمالي: ${order.totalPrice || 0} ر.ع.</div>
             <p style="text-align: center; margin-top: 40px; color: #888; font-size: 12px;">شكراً لاختياركم دار تطريز 🏛️</p>
             <script>window.onload = function() { window.print(); };</script>
+        </body>
+        </html>
+    `);
+    printWindow.document.close();
+};
+
+// الإيصال الملكي الفاخر المعتمد والمطور (Luxury Certificate & Sales Receipt)
+window.printOrderReceipt = function(orderId, mode = 'luxury') {
+    if (mode === 'legacy') {
+        return window.printOrderReceiptLegacy(orderId);
+    }
+
+    const order = allOrders.find(o => (o.orderId || o.id) === orderId);
+    if (!order) return;
+
+    const origin = window.location.origin;
+    const logoUrl = origin + '/images/logo.jpg';
+    const items = Array.isArray(order.items) ? order.items : [];
+    const customerName = escapeHtml(order.customerName || 'عميل دار تطريز الكريم');
+    const customerPhone = escapeHtml(order.customerPhone || 'مسجل لدى المتجر');
+    const orderDate = order.createdAtFormatted || formatTimestamp(order.createdAt);
+    const confirmedDate = order.confirmedAt ? formatTimestamp(order.confirmedAt) : orderDate;
+    const paymentNote = escapeHtml(order.paymentNotes || 'تحويل بنكي معتمد');
+    const customerNotes = escapeHtml(order.customerNotes || '');
+
+    // توليد صفوف المنتجات الفاخرة
+    const itemsRowsHtml = items.map((it, idx) => `
+        <tr>
+            <td style="text-align: center; font-weight: bold; color: #7c1d3c; width: 40px;">${idx + 1}</td>
+            <td>
+                <div class="item-title">${escapeHtml(it.title || 'سجادة فاخرة صُنع يدوي')}</div>
+                <div class="item-meta">
+                    ${it.id ? `<span class="badge-code">${escapeHtml(it.id)}</span>` : ''}
+                    <span class="badge-craft">حياكة يدوية متقنة • Hand-Tufted</span>
+                    ${it.note ? `<span class="badge-note">${escapeHtml(it.note)}</span>` : ''}
+                </div>
+            </td>
+            <td style="text-align: center; font-weight: 600; color: #44403c; width: 130px;">
+                ${escapeHtml(it.dimensions || 'مخصص')}
+            </td>
+            <td style="text-align: center; font-weight: bold; width: 60px;">1</td>
+            <td style="text-align: left; font-weight: 900; color: #7c1d3c; font-size: 14px; width: 110px;">
+                ${it.price ? `${it.price} ر.ع.` : 'بالاتفاق'}
+            </td>
+        </tr>
+    `).join('');
+
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) {
+        alert('يرجى السماح بالنوافذ المنبثقة في المتصفح لطباعة الإيصال.');
+        return;
+    }
+
+    printWindow.document.write(`
+        <!DOCTYPE html>
+        <html lang="ar" dir="rtl">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>إيصال مبيعات معتمد وشهادة اقتناء | دار تطريز TATRIZA - ${orderId}</title>
+            
+            <!-- خطوط جوجل العربية والإنجليزية الملكية المعتمدة -->
+            <link rel="preconnect" href="https://fonts.googleapis.com">
+            <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+            <link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@400;600;700;800;900&family=Amiri:ital,wght@0,400;0,700;1,400&family=Cairo:wght@400;600;700;800;900&family=Outfit:wght@400;600;700;800;900&family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+            
+            <style>
+                :root {
+                    --burgundy: #7c1d3c;
+                    --dark-burgundy: #520b22;
+                    --gold: #c59b27;
+                    --gold-dark: #9e7813;
+                    --gold-soft: #fcf8ee;
+                    --gold-border: #e2c982;
+                    --stone-900: #1c1917;
+                    --stone-600: #57534e;
+                    --stone-100: #f5f5f4;
+                    --emerald: #065f46;
+                    --emerald-bg: #ecfdf5;
+                }
+
+                * { box-sizing: border-box; margin: 0; padding: 0; }
+                body {
+                    font-family: 'Tajawal', sans-serif;
+                    background: #ded8cf;
+                    color: var(--stone-900);
+                    direction: rtl;
+                    padding: 30px 15px;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    min-height: 100vh;
+                }
+
+                /* شريط التحكم بالطباعة العلوي */
+                .action-toolbar {
+                    width: 100%;
+                    max-width: 820px;
+                    background: #ffffff;
+                    padding: 12px 20px;
+                    border-radius: 16px;
+                    margin-bottom: 20px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    gap: 12px;
+                    box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+                    border: 1px solid #d5cec5;
+                }
+                .btn-primary-print {
+                    background: linear-gradient(135deg, var(--burgundy) 0%, var(--dark-burgundy) 100%);
+                    color: #fff;
+                    font-family: 'Tajawal', sans-serif;
+                    font-weight: 800;
+                    font-size: 13.5px;
+                    padding: 9px 20px;
+                    border-radius: 11px;
+                    border: none;
+                    cursor: pointer;
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 7px;
+                    box-shadow: 0 4px 12px rgba(124, 29, 60, 0.25);
+                    transition: transform 0.15s;
+                }
+                .btn-primary-print:hover { transform: translateY(-1px); }
+                .btn-secondary-switch {
+                    background: #f7f5f0;
+                    color: #44403c;
+                    border: 1px solid #dcd5cb;
+                    font-family: 'Tajawal', sans-serif;
+                    font-weight: 700;
+                    font-size: 12.5px;
+                    padding: 8px 15px;
+                    border-radius: 11px;
+                    cursor: pointer;
+                    transition: background 0.15s;
+                }
+                .btn-secondary-switch:hover { background: #eee9e0; color: #1c1917; }
+
+                /* الحاوية الأساسية لورقة الإيصال A4 */
+                .receipt-document {
+                    width: 100%;
+                    max-width: 820px;
+                    background: #fffdf9;
+                    border: 2px solid var(--gold-border);
+                    border-radius: 24px;
+                    padding: 36px 40px;
+                    box-shadow: 0 10px 40px rgba(0,0,0,0.09);
+                    position: relative;
+                }
+
+                /* الإطار الداخلي المزخرف */
+                .ornate-border {
+                    border: 1.5px solid #ece4d8;
+                    border-radius: 18px;
+                    padding: 26px 30px;
+                    position: relative;
+                    background: #ffffff;
+                }
+
+                /* زوايا الإطار الذهبي */
+                .corner { position: absolute; width: 18px; height: 18px; border: 2px solid var(--gold); }
+                .corner-tl { top: 8px; left: 8px; border-right: none; border-bottom: none; border-top-left-radius: 6px; }
+                .corner-tr { top: 8px; right: 8px; border-left: none; border-bottom: none; border-top-right-radius: 6px; }
+                .corner-bl { bottom: 8px; left: 8px; border-right: none; border-top: none; border-bottom-left-radius: 6px; }
+                .corner-br { bottom: 8px; right: 8px; border-left: none; border-top: none; border-bottom-right-radius: 6px; }
+
+                /* 1. الترويسة الملكية والشعار */
+                .header-row {
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    gap: 16px;
+                    padding-bottom: 20px;
+                    border-bottom: 1.5px solid #ebd9c0;
+                    margin-bottom: 22px;
+                }
+                .brand-identity {
+                    display: flex;
+                    align-items: center;
+                    gap: 16px;
+                }
+                .brand-logo {
+                    width: 72px;
+                    height: 72px;
+                    border-radius: 18px;
+                    object-fit: cover;
+                    border: 2px solid var(--gold-border);
+                    box-shadow: 0 3px 10px rgba(197, 155, 39, 0.2);
+                }
+                .brand-title {
+                    font-family: 'Alexandria', 'Cairo', sans-serif;
+                    font-weight: 900;
+                    font-size: 24px;
+                    color: var(--burgundy);
+                    letter-spacing: -0.5px;
+                    line-height: 1.2;
+                }
+                .brand-sub {
+                    font-family: 'Outfit', sans-serif;
+                    font-weight: 800;
+                    font-size: 13px;
+                    color: var(--gold-dark);
+                    letter-spacing: 2px;
+                    text-transform: uppercase;
+                    margin-top: 2px;
+                }
+                .brand-desc {
+                    font-size: 11.5px;
+                    font-weight: 600;
+                    color: var(--stone-600);
+                    margin-top: 3px;
+                }
+
+                .header-meta {
+                    text-align: left;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: flex-end;
+                    gap: 7px;
+                }
+                .title-ribbon {
+                    background: linear-gradient(135deg, var(--gold-soft) 0%, #ffffff 100%);
+                    border: 1.5px solid var(--gold-border);
+                    color: var(--burgundy);
+                    padding: 5px 14px;
+                    border-radius: 30px;
+                    font-size: 12.5px;
+                    font-weight: 900;
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 6px;
+                }
+                .paid-status-pill {
+                    background: var(--emerald-bg);
+                    border: 1px solid #a7f3d0;
+                    color: var(--emerald);
+                    font-size: 11px;
+                    font-weight: 800;
+                    padding: 3px 12px;
+                    border-radius: 20px;
+                }
+
+                /* 2. شبكة بيانات الطلب والعميل */
+                .info-grid {
+                    display: grid;
+                    grid-template-columns: repeat(4, 1fr);
+                    gap: 12px;
+                    margin-bottom: 22px;
+                }
+                .info-card {
+                    background: #faf7f2;
+                    border: 1px solid #ebd9c0;
+                    border-radius: 13px;
+                    padding: 10px 14px;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 3px;
+                }
+                .info-card-label {
+                    font-size: 11px;
+                    font-weight: 700;
+                    color: #78716c;
+                }
+                .info-card-value {
+                    font-size: 13px;
+                    font-weight: 800;
+                    color: var(--stone-900);
+                }
+                .order-code-highlight {
+                    font-family: 'Outfit', monospace;
+                    font-size: 14.5px;
+                    font-weight: 900;
+                    color: var(--burgundy);
+                    letter-spacing: 0.5px;
+                }
+
+                /* 3. جدول بنود المعروضات الفاخرة */
+                .table-container {
+                    border: 1.5px solid #ebd9c0;
+                    border-radius: 15px;
+                    overflow: hidden;
+                    margin-bottom: 22px;
+                }
+                table.invoice-table {
+                    width: 100%;
+                    border-collapse: collapse;
+                    font-size: 12.5px;
+                }
+                table.invoice-table thead th {
+                    background: #fbf5eb;
+                    color: var(--burgundy);
+                    font-weight: 800;
+                    padding: 12px 14px;
+                    border-bottom: 1.5px solid #ebd9c0;
+                    text-align: right;
+                }
+                table.invoice-table tbody td {
+                    padding: 13px 14px;
+                    border-bottom: 1px solid #f2ece3;
+                    vertical-align: middle;
+                }
+                table.invoice-table tbody tr:last-child td { border-bottom: none; }
+                table.invoice-table tbody tr:nth-child(even) { background: #fdfaf6; }
+                
+                .item-title { font-weight: 800; font-size: 13.5px; color: var(--stone-900); }
+                .item-meta { display: flex; align-items: center; gap: 6px; margin-top: 4px; flex-wrap: wrap; }
+                .badge-code { font-family: 'Outfit', monospace; font-size: 10.5px; background: #e7e0d6; padding: 1px 7px; border-radius: 5px; color: #444; }
+                .badge-craft { font-size: 10.5px; background: var(--gold-soft); color: var(--gold-dark); border: 1px solid var(--gold-border); padding: 1px 7px; border-radius: 5px; font-weight: 700; }
+                .badge-note { font-size: 10.5px; color: var(--burgundy); font-weight: 700; }
+
+                /* 4. قسم المحصلة المالية وشهادة الأصالة */
+                .summary-container {
+                    display: grid;
+                    grid-template-columns: 1.35fr 1fr;
+                    gap: 18px;
+                    background: #faf6f0;
+                    border: 1.5px solid #ebd9c0;
+                    border-radius: 16px;
+                    padding: 18px 22px;
+                    margin-bottom: 20px;
+                }
+                .authenticity-block {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 6px;
+                    justify-content: center;
+                }
+                .auth-badge-header {
+                    display: flex;
+                    align-items: center;
+                    gap: 6px;
+                    color: var(--burgundy);
+                    font-weight: 900;
+                    font-size: 13.5px;
+                }
+                .auth-paragraph {
+                    font-size: 11px;
+                    color: #57534e;
+                    line-height: 1.6;
+                    font-weight: 500;
+                }
+
+                .totals-block {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 7px;
+                    border-right: 1.5px solid #ebd9c0;
+                    padding-right: 18px;
+                    justify-content: center;
+                }
+                .tot-row {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    font-size: 12px;
+                    color: #57534e;
+                    font-weight: 700;
+                }
+                .tot-row.grand-total {
+                    border-top: 1.5px dashed #dcd3c5;
+                    padding-top: 9px;
+                    margin-top: 4px;
+                    color: var(--burgundy);
+                }
+                .grand-total-val {
+                    font-family: 'Outfit', 'Tajawal', sans-serif;
+                    font-size: 23px;
+                    font-weight: 900;
+                    color: var(--burgundy);
+                    letter-spacing: -0.5px;
+                }
+
+                /* 5. إرشادات العناية بالقطعة الفنية */
+                .care-guide-box {
+                    background: #ffffff;
+                    border: 1px solid #ebd9c0;
+                    border-radius: 13px;
+                    padding: 12px 16px;
+                    margin-bottom: 20px;
+                }
+                .care-guide-head {
+                    font-size: 11px;
+                    font-weight: 800;
+                    color: var(--gold-dark);
+                    margin-bottom: 8px;
+                    display: flex;
+                    align-items: center;
+                    gap: 5px;
+                    text-transform: uppercase;
+                }
+                .care-tips-row {
+                    display: grid;
+                    grid-template-columns: repeat(3, 1fr);
+                    gap: 10px;
+                }
+                .care-tip {
+                    font-size: 10.5px;
+                    color: #57534e;
+                    line-height: 1.5;
+                    display: flex;
+                    align-items: flex-start;
+                    gap: 5px;
+                }
+
+                /* 6. التذييل والختم الملكي */
+                .footer-row {
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    gap: 16px;
+                    padding-top: 16px;
+                    border-top: 1.5px solid #ebd9c0;
+                }
+                .footer-greetings {
+                    font-size: 11px;
+                    color: #78716c;
+                    line-height: 1.6;
+                }
+                .footer-greetings strong {
+                    color: var(--burgundy);
+                    display: block;
+                    font-size: 12.5px;
+                    margin-bottom: 2px;
+                }
+
+                /* الختم الدائري المذهب الرسمي */
+                .official-seal-wrap {
+                    display: flex;
+                    align-items: center;
+                    gap: 16px;
+                }
+                .royal-round-seal {
+                    width: 82px;
+                    height: 82px;
+                    border: 2px dashed var(--gold);
+                    border-radius: 50%;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: center;
+                    text-align: center;
+                    background: radial-gradient(circle, #fffdf8 20%, #fbf4e2 100%);
+                    box-shadow: 0 4px 10px rgba(197, 155, 39, 0.15);
+                    padding: 4px;
+                }
+                .seal-star-icon { color: var(--gold); font-size: 12px; }
+                .seal-center-text {
+                    font-size: 9px;
+                    font-weight: 900;
+                    color: var(--burgundy);
+                    line-height: 1.2;
+                    margin: 2px 0;
+                }
+                .seal-eng-text {
+                    font-size: 7.5px;
+                    font-weight: 700;
+                    color: var(--gold-dark);
+                    font-family: 'Outfit', sans-serif;
+                    letter-spacing: 0.5px;
+                }
+
+                .signature-box {
+                    text-align: center;
+                    border-top: 1px solid #d5cec5;
+                    padding-top: 6px;
+                    min-width: 110px;
+                }
+                .signature-title {
+                    font-size: 10px;
+                    font-weight: 700;
+                    color: #78716c;
+                }
+                .signature-name {
+                    font-family: 'Alexandria', sans-serif;
+                    font-size: 11px;
+                    font-weight: 800;
+                    color: var(--burgundy);
+                    margin-top: 2px;
+                }
+
+                /* الطباعة الدقيقة على معيار A4 */
+                @media print {
+                    @page {
+                        size: A4 portrait;
+                        margin: 8mm 10mm;
+                    }
+                    body {
+                        background: #ffffff !important;
+                        padding: 0 !important;
+                        -webkit-print-color-adjust: exact !important;
+                        print-color-adjust: exact !important;
+                    }
+                    .action-toolbar { display: none !important; }
+                    .receipt-document {
+                        max-width: 100% !important;
+                        box-shadow: none !important;
+                        border: 1.5px solid var(--gold-border) !important;
+                        border-radius: 12px !important;
+                        padding: 16px 20px !important;
+                    }
+                    .ornate-border {
+                        padding: 16px 18px !important;
+                        border-radius: 10px !important;
+                    }
+                }
+            </style>
+        </head>
+        <body>
+            <!-- شريط التحكم بالطباعة والخيارات -->
+            <div class="action-toolbar">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <button class="btn-primary-print" onclick="window.print()">
+                        <span>🖨️</span>
+                        <span>طباعة الإيصال الفاخر (A4)</span>
+                    </button>
+                    <span style="font-size: 12px; color: #78716c;">جاهز للطباعة والتسليم للعميل مع الطلبية ✨</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <button class="btn-secondary-switch" onclick="window.opener && window.opener.printOrderReceiptLegacy('${orderId}'); window.close();" title="عرض نموذج الإيصال البسيط السابق">
+                        <span>📄</span>
+                        <span>الإيصال البسيط (السابق)</span>
+                    </button>
+                    <button class="btn-secondary-switch" onclick="window.close()" title="إغلاق النافذة">
+                        <span>✕</span>
+                        <span>إغلاق</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- ورقة الإيصال الرسمية -->
+            <div class="receipt-document">
+                <div class="ornate-border">
+                    <!-- زوايا الإطار الذهبي الملكي -->
+                    <div class="corner corner-tl"></div>
+                    <div class="corner corner-tr"></div>
+                    <div class="corner corner-bl"></div>
+                    <div class="corner corner-br"></div>
+
+                    <!-- 1. الترويسة الفاخرة وشعار دار تطريز -->
+                    <div class="header-row">
+                        <div class="brand-identity">
+                            <img src="${logoUrl}" alt="Tatriza Logo" class="brand-logo" onerror="this.src='images/logo.jpg'">
+                            <div>
+                                <h1 class="brand-title">دار تطريز TATRIZA</h1>
+                                <p class="brand-sub">LUXURY HANDMADE ARTISANAL RUGS</p>
+                                <p class="brand-desc">سجاد وتحف فنية يدوية فاخرة • سلطنة عُمان</p>
+                            </div>
+                        </div>
+                        <div class="header-meta">
+                            <span class="title-ribbon">
+                                <span>🏛️</span>
+                                <span>إيصال استلام مبيعات رسمي</span>
+                            </span>
+                            <span class="paid-status-pill">
+                                <span>✓</span>
+                                <span>طلب مؤكد ومستلم بالكامل</span>
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- 2. شبكة بيانات الطلب والعميل -->
+                    <div class="info-grid">
+                        <div class="info-card">
+                            <span class="info-card-label">رقم الطلب المعتمد:</span>
+                            <span class="order-code-highlight">#${orderId}</span>
+                        </div>
+                        <div class="info-card">
+                            <span class="info-card-label">تاريخ الإصدار والاعتماد:</span>
+                            <span class="info-card-value">${confirmedDate}</span>
+                        </div>
+                        <div class="info-card">
+                            <span class="info-card-label">العميل الكريم:</span>
+                            <span class="info-card-value">${customerName}</span>
+                        </div>
+                        <div class="info-card">
+                            <span class="info-card-label">طريقة واعتماد الدفع:</span>
+                            <span class="info-card-value">${paymentNote}</span>
+                        </div>
+                    </div>
+
+                    ${customerNotes ? `
+                    <div style="background: #faf7f2; border: 1px dashed #ebd9c0; border-radius: 10px; padding: 8px 14px; margin-bottom: 18px; font-size: 11.5px; color: #44403c;">
+                        <strong style="color: var(--burgundy);">ملاحظات العميل والتسليم:</strong> ${customerNotes}
+                    </div>
+                    ` : ''}
+
+                    <!-- 3. جدول القطع الفنية والمواصفات -->
+                    <div class="table-container">
+                        <table class="invoice-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 40px; text-align: center;">#</th>
+                                    <th>القطعة الفنية والمواصفات</th>
+                                    <th style="width: 130px; text-align: center;">الأبعاد والمقاس</th>
+                                    <th style="width: 60px; text-align: center;">الكمية</th>
+                                    <th style="width: 110px; text-align: left;">السعر</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${itemsRowsHtml || `
+                                <tr>
+                                    <td colspan="5" style="text-align: center; color: #888; padding: 20px;">
+                                        طلب مخصص لدار تطريز رقم #${orderId}
+                                    </td>
+                                </tr>
+                                `}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- 4. المحصلة المالية وشهادة الأصالة -->
+                    <div class="summary-container">
+                        <div class="authenticity-block">
+                            <div class="auth-badge-header">
+                                <span>⚜️</span>
+                                <span>شهادة صُنع يدوي وأصالة معتمدة</span>
+                            </div>
+                            <p class="auth-paragraph">
+                                تشهد دار تطريز بأن هذه القطعة قد صُنعت يدوياً بأيدي حرفيين مهرة باستخدام أجود خيوط الغزل، وهي قطعة فنية حصرية صُممت لتضفي رونقاً وفخامة تدوم طويلاً.
+                            </p>
+                        </div>
+                        <div class="totals-block">
+                            <div class="tot-row">
+                                <span>المجموع الفرعي:</span>
+                                <span>${order.totalPrice || 0} ر.ع.</span>
+                            </div>
+                            <div class="tot-row">
+                                <span>خدمة التجهيز والتسليم:</span>
+                                <span style="color: var(--emerald); font-weight: 800;">شامل / مجاناً</span>
+                            </div>
+                            <div class="tot-row grand-total">
+                                <span>الإجمالي المدفوع:</span>
+                                <span class="grand-total-val">${order.totalPrice || 0} ر.ع.</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 5. إرشادات العناية بسجاد دار تطريز الفاخر -->
+                    <div class="care-guide-box">
+                        <div class="care-guide-head">
+                            <span>✨</span>
+                            <span>إرشادات العناية بسجاد دار تطريز الفاخر للحفاظ على رونقه:</span>
+                        </div>
+                        <div class="care-tips-row">
+                            <div class="care-tip">
+                                <span>🧹</span>
+                                <span><strong>التنظيف الدوري:</strong> الكنس اللطيف بالمكنسة الكهربائية باتجاه وبر السجاد بانتظام.</span>
+                            </div>
+                            <div class="care-tip">
+                                <span>💧</span>
+                                <span><strong>التعامل مع السوائل:</strong> التجفيف الفوري بقطعة قماش قطنية بالضغط الخفيف دون فرك قوي.</span>
+                            </div>
+                            <div class="care-tip">
+                                <span>🌿</span>
+                                <span><strong>حماية الألوان:</strong> تجنب المنظفات الكيميائية والمبيضات القاسية للمحافظة على الألوان الطبيعية.</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 6. التذييل الملكي وختم دار تطريز الرسمي -->
+                    <div class="footer-row">
+                        <div class="footer-greetings">
+                            <strong>شكراً لاقتنائكم من دار تطريز TATRIZA 🏛️✨</strong>
+                            <span>نسعد بخدمتكم دائماً • مسقط، سلطنة عُمان • تواصل: 96879899119+</span>
+                        </div>
+                        <div class="official-seal-wrap">
+                            <div class="royal-round-seal">
+                                <span class="seal-star-icon">★ ★ ★</span>
+                                <span class="seal-text">دار تطريز<br>معتمد</span>
+                                <span class="seal-eng-text">TATRIZA</span>
+                            </div>
+                            <div class="signature-box">
+                                <div class="signature-title">اعتماد الإدارة</div>
+                                <div class="signature-name">دار تطريز</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </body>
         </html>
     `);
