@@ -341,16 +341,16 @@
     <!-- نافذة التأكيد العصرية والفاخرة (Action Modal) -->
     <!-- بديل حديث وأنيق بدون أي نوافذ متصفح علوية أو لاج -->
     <!-- ========================================== -->
-    <div id="order-action-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-3 sm:p-5 bg-stone-900/60 backdrop-blur-xs transition-opacity duration-200" onclick="if(event.target === this) window.closeOrderActionModal(false)">
-        <div id="order-modal-box" class="lux-modal-box w-full max-w-xl lg:max-w-2xl max-h-[92vh] overflow-y-auto rounded-3xl p-5 sm:p-7 space-y-4 sm:space-y-5 shadow-2xl bg-white border border-stone-200/90 transform scale-95 opacity-0 transition-all duration-200">
+    <div id="order-action-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-3 sm:p-4 bg-stone-900/60 backdrop-blur-xs transition-opacity duration-200" onclick="if(event.target === this) window.closeOrderActionModal(false)">
+        <div id="order-modal-box" class="lux-modal-box w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-3xl p-5 sm:p-6 space-y-4 shadow-2xl bg-white border border-stone-200/90 transform scale-95 opacity-0 transition-all duration-200">
             <!-- الهيدر والأيقونة -->
             <div class="flex items-start justify-between gap-3 pb-2 border-b border-stone-100">
                 <div class="flex items-center gap-3">
-                    <div id="order-modal-icon-container" class="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl shadow-xs shrink-0 bg-emerald-50 text-emerald-800 border border-emerald-200">
+                    <div id="order-modal-icon-container" class="w-11 h-11 rounded-2xl flex items-center justify-center text-xl shadow-xs shrink-0 bg-emerald-50 text-emerald-800 border border-emerald-200">
                         <span id="order-modal-icon">✅</span>
                     </div>
                     <div>
-                        <h3 id="order-modal-title" class="font-display font-black text-stone-900 text-base sm:text-lg">تأكيد الإجراء</h3>
+                        <h3 id="order-modal-title" class="font-display font-black text-stone-900 text-base">تأكيد الإجراء</h3>
                         <p id="order-modal-subtitle" class="text-xs text-stone-500 font-mono font-bold mt-0.5">TATR-000000</p>
                     </div>
                 </div>
@@ -365,44 +365,34 @@
             </p>
 
             <!-- قسم تعديل أسعار القطع المطلوبة (يظهر مع تأكيد استلام المبلغ) -->
-            <div id="order-modal-items-section" class="hidden space-y-3 bg-amber-50/40 border border-amber-200/80 rounded-2xl p-3.5 sm:p-4.5">
-                <div class="flex items-center justify-between gap-2 border-b border-amber-200/60 pb-2.5">
-                    <div class="flex items-center gap-2">
-                        <span class="text-lg">🏷️</span>
-                        <div>
-                            <h4 class="font-bold text-xs sm:text-sm text-amber-950">تفاصيل القطع واعتماد السعر المتفق عليه</h4>
-                            <span class="text-[10.5px] text-stone-500 font-medium block">تثبيت السعر المخفّض في الفاتورة والأرشيف للعميل</span>
-                        </div>
+            <div id="order-modal-items-section" class="hidden space-y-2.5 bg-amber-50/50 border border-amber-200/70 rounded-2xl p-3 sm:p-3.5">
+                <div class="flex items-center justify-between gap-2 border-b border-amber-200/60 pb-2">
+                    <div class="flex items-center gap-1.5">
+                        <span class="text-base">🏷️</span>
+                        <h4 class="font-bold text-xs sm:text-sm text-amber-950">القطع المطلوبة وتعديل السعر المتفق عليه</h4>
                     </div>
-                    <span class="text-[10px] font-bold bg-amber-100/80 text-amber-900 border border-amber-200 px-2 py-0.5 rounded-lg shrink-0">خاص بالطلب</span>
+                    <span class="text-[10px] font-bold bg-amber-100 text-amber-900 border border-amber-200 px-2 py-0.5 rounded-lg shrink-0">خاص بالطلب</span>
                 </div>
                 <p class="text-[11px] text-stone-600 leading-normal">
-                    💡 يمكنك تعديل سعر أي قطعة أدناه بالاتفاق مع العميل (مثلاً خصم للصديق أو المعارف)، وسيعتمد هذا السعر في الفاتورة والأرشيف دون المساس بأسعار المعرض الرئيسية.
+                    💡 يمكنك تعديل سعر أي قطعة أدناه بالاتفاق مع العميل، وسيعتمد هذا السعر في الفاتورة والأرشيف دون المساس بأسعار المعرض.
                 </p>
 
                 <!-- قائمة القطع القابلة لتعديل السعر -->
-                <div id="order-modal-items-list" class="space-y-3 max-h-80 sm:max-h-96 overflow-y-auto pr-0.5">
-                    <!-- يتم بناؤها ديناميكياً بواسطة جافاسكريبت بترتيب سطرين منظمين -->
+                <div id="order-modal-items-list" class="space-y-2 max-h-56 overflow-y-auto pr-0.5">
+                    <!-- يتم بناؤها ديناميكياً بواسطة جافاسكريبت -->
                 </div>
 
-                <!-- شريط الحساب المالي الحي والمجموع المعتمد بتصميم ثنائي الأبعاد واسع ومريح -->
-                <div class="pt-2 border-t border-amber-200/70">
-                    <div class="bg-gradient-to-r from-stone-50 to-emerald-50/60 border border-stone-200/80 rounded-2xl p-3 sm:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs">
-                        <div class="space-y-1">
-                            <div class="flex items-center gap-2 text-xs text-stone-600">
-                                <span>المجموع الأصلي بالمعرض:</span>
-                                <span class="font-mono font-black text-stone-800 text-sm"><span id="modal-orig-total-display">0</span> ر.ع.</span>
-                            </div>
-                            <div id="modal-diff-badge" class="inline-flex items-center gap-1 text-[11px] font-black px-2.5 py-0.5 rounded-lg bg-stone-100 text-stone-500 border border-stone-200">
-                                سعر مطابق دون تعديل
-                            </div>
-                        </div>
-                        <div class="text-left border-t sm:border-t-0 pt-2 sm:pt-0 border-stone-200/60">
-                            <span class="text-[10.5px] text-stone-500 block font-extrabold text-left">المجموع النهائي المعتمد:</span>
-                            <div class="flex items-baseline gap-1 justify-end">
-                                <span id="modal-calc-total-display" class="font-mono font-black text-xl sm:text-2xl text-emerald-900">0</span>
-                                <span class="text-xs font-bold text-emerald-700">ر.ع.</span>
-                            </div>
+                <!-- شريط الحساب المالي الحي والمجموع المعتمد -->
+                <div class="pt-2 border-t border-amber-200/60 flex items-center justify-between gap-2 text-xs bg-white/90 p-2.5 rounded-xl border border-stone-200/70">
+                    <div class="space-y-0.5">
+                        <span class="text-[11px] text-stone-500 block">سعر المعرض: <strong id="modal-orig-total-display" class="font-mono text-stone-700">0</strong> ر.ع.</span>
+                        <span id="modal-diff-badge" class="inline-block text-[10.5px] font-black text-stone-500">سعر متطابق</span>
+                    </div>
+                    <div class="text-left">
+                        <span class="text-[10px] text-stone-500 block font-bold">المجموع المعتمد:</span>
+                        <div class="flex items-baseline gap-1 justify-end">
+                            <span id="modal-calc-total-display" class="font-mono font-black text-lg text-emerald-800">0</span>
+                            <span class="text-xs font-bold text-emerald-700">ر.ع.</span>
                         </div>
                     </div>
                 </div>
