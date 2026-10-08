@@ -318,7 +318,7 @@ export function initAdminShortcut() {
     // 3. نقر خفي على عنوان الهيدر أو الوصف (5 نقرات سريعة) بدون أي كود في HTML
     let logoTaps = 0;
     let logoTapTimer = null;
-    // استهداف الحاوية التي تحتوي على TATRIZA وعنوان "دار تطريز وسجاد يدوية" معاً
+    // استهداف الحاوية التي تحتوي على TATRIZA وعنوان "دار التطريز وسجاد يدوية" معاً
     const headerTitleContainer = document.querySelector('header h1')?.parentElement || document.querySelector('header h1');
     if (headerTitleContainer) {
         headerTitleContainer.addEventListener('click', () => {
@@ -410,7 +410,7 @@ export function openAdminAuthModal() {
                     🔐
                 </div>
 
-                <h3 class="text-xl font-extrabold text-stone-900 mb-1">تسجيل دخول مسؤول دار تطريز</h3>
+                <h3 class="text-xl font-extrabold text-stone-900 mb-1">تسجيل دخول مسؤول دار التطريز</h3>
                 <p class="text-xs text-stone-600 mb-5">تسجيل الدخول المشفر عبر Google Firebase Authentication</p>
 
                 <form onsubmit="window.executeAdminLogin(event)" class="space-y-3.5 text-right">

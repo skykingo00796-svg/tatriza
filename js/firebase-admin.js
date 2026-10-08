@@ -1,6 +1,6 @@
 // ==========================================
 // ملف تكامل سحابة Google Firebase (firebase.js)
-// دار تطريز TATRIZA
+// دار التطريز TATRIZA
 // ==========================================
 
 import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
@@ -671,7 +671,7 @@ export function exportCarpetsBackup(carpetsList) {
 
 // ==========================================
 // دوال إدارة ومزامنة التصنيفات في سحابة Cloud Firestore
-// دار تطريز TATRIZA
+// دار التطريز TATRIZA
 // ==========================================
 
 export function subscribeToCategories(onSuccess, onError) {
@@ -784,7 +784,7 @@ export function getDefaultShowcaseSettings() {
                 id: "vid-1",
                 title: "حكاية كل خيط تحفة.. وصبر يصنع الفخامة",
                 subtitle: "✨ أصالة المشغل اليدوي",
-                quote: "«كل سجادة تخرج من دار تطريز ليست مجرد غطاء للأرضية، بل لوحة فنية عريقة استغرقت مئات الساعات من الدقة والشغف لتمنح مساحتك روحاً دافئة ومتميزة لا تتكرر في أي مكان آخر.»",
+                quote: "«كل سجادة تخرج من دار التطريز ليست مجرد غطاء للأرضية، بل لوحة فنية عريقة استغرقت مئات الساعات من الدقة والشغف لتمنح مساحتك روحاً دافئة ومتميزة لا تتكرر في أي مكان آخر.»",
                 videoUrl: "https://upload.wikimedia.org/wikipedia/commons/1/13/Weaving_Carpet_at_Lachen.webm",
                 posterUrl: "../images/craft_video_poster.jpg",
                 caption: "توثيق حي لحركات الأنامل وشد الغرز اليدوية على الأنوال التقليدية",
@@ -842,7 +842,7 @@ export function getDefaultShowcaseSettings() {
                 clientName: "الشيخ أحمد الحوسني",
                 location: "مجلس ضيافة رسمي • صحار",
                 carpetTitle: "سجادة عجمية ملكية كبرى",
-                orderType: "عميل دار تطريز الدائم",
+                orderType: "عميل دار التطريز الدائم",
                 rating: 5,
                 reviewText: "طلبنا سجادة بمقاس 4 × 3 متر لتتوسط المجلس الرئيسي، كثافة الصوف وثبات الألوان أضفت هيبة تاريخية ودفئاً استثنائياً للمكان. شكراً لاهتمامكم بأدق التفاصيل.",
                 imgUrl: "../images/client_room2.jpg"

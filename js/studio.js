@@ -1,6 +1,6 @@
 // ==========================================================================
 // استوديو تصاميم ونشر السوشيال ميديا وحالات الواتساب (Tatriza Creative Studio)
-// دار تطريز TATRIZA — تصميم وتصدير بوستات وستوريات احترافية بدقة فائقة
+// دار التطريز TATRIZA — تصميم وتصدير بوستات وستوريات احترافية بدقة فائقة
 // تحكم كامل بحجم وحركة الصورة (تكبير، تصغير، يمين، يسار، أعلى، أسفل)
 // ==========================================================================
 
@@ -98,7 +98,7 @@ export const STUDIO_VIGNETTES = {
     // ألوان وأنماط الموقع المعتمدة
     'site-burgundy': {
         id: 'site-burgundy',
-        name: 'عنابي دار تطريز الكلاسيكي',
+        name: 'عنابي دار التطريز الكلاسيكي',
         badge: '🏛️ هوية الموقع',
         category: 'site',
         topColorRgb: '124, 29, 60',
@@ -1062,7 +1062,7 @@ export function resetStudioToBlankCustomMode() {
     studioState.customImageSrc = ''; // خالية من صور المتجر تماماً!
     studioState.videoSrc = '';
     studioState.title = '';
-    studioState.subtitle = 'تصميم حصري ومميز من دار تطريز';
+    studioState.subtitle = 'تصميم حصري ومميز من دار التطريز';
     studioState.dimensions = '';
     studioState.material = '';
     studioState.price = '';
@@ -2694,7 +2694,7 @@ export function updateStudioPreview() {
                 ${getCardLogoElementHtml()}
                 <div class="text-right leading-none">
                     <span class="font-display font-black text-xs sm:text-sm tracking-wider text-white block">TATRIZA</span>
-                    <span class="text-[8.5px] sm:text-[9.5px] font-medium" style="color: ${theme.accentColor};">دار تطريز للسجاد الملكي</span>
+                    <span class="text-[8.5px] sm:text-[9.5px] font-medium" style="color: ${theme.accentColor};">دار التطريز للسجاد الملكي</span>
                 </div>
             </div>
         `;
@@ -3143,7 +3143,7 @@ async function exportRoyalCardHD(canvas, ctx) {
 
         ctx.font = '21px Tajawal, sans-serif';
         ctx.fillStyle = theme.accentColor;
-        ctx.fillText('دار تطريز للسجاد الملكي', canvas.width - 170, 132);
+        ctx.fillText('دار التطريز للسجاد الملكي', canvas.width - 170, 132);
     }
 
     if (studioState.showSticker && studioState.sticker !== 'none') {
@@ -4105,19 +4105,19 @@ export function copyStudioCaption() {
 
     if (studioState.layoutMode === 'minimal_showcase') {
         const handle = studioState.minimalHandle || '@TATRIZA_22';
-        caption = `✨ دار تطريز | TATRIZA
+        caption = `✨ دار التطريز | TATRIZA
 ${studioState.title ? `🏷️ ${studioState.title}\n` : ''}
 حياكة متقنة وإبداع يدوي يجسد أدق التفاصيل بأعلى معايير الجودة 🧵✨
 نسعد دائماً بمشاركتكم أعمالنا الفنية الحصرية والمصممة خصيصاً لكم.
 
 📍 حسابنا الرسمي على الإنستغرام: ${handle}
 💬 للطلب والاستفسار المباشر عبر الواتساب:
-https://wa.me/${cleanWa}?text=${encodeURIComponent(`مرحباً دار تطريز، أود الاستفسار والطلب:`)}
+https://wa.me/${cleanWa}?text=${encodeURIComponent(`مرحباً دار التطريز، أود الاستفسار والطلب:`)}
 
 #تطريز #سجاد_يدوي #حرف_يدوية #تصميم_خاص #سلطنة_عمان #مسقط #TATRIZA #Tufting #Handmade`;
     } else if (studioState.layoutMode === 'story_vignette') {
         const phrase = studioState.storyPhrase || '- 🌟 عمل مُتقن -';
-        caption = `✨ دار تطريز للسجاد الملكي | TATRIZA
+        caption = `✨ دار التطريز للسجاد الملكي | TATRIZA
 ${phrase}
 
 حياكة يدوية متقنة تفيض بالفخامة والأصالة العُمانية 👑
@@ -4125,7 +4125,7 @@ ${phrase}
 
 📍 حسابنا على الإنستغرام: ${studioState.storyHandle || '@TATRIZA_22'}
 💬 للطلب والاستفسار المباشر عبر الواتساب:
-https://wa.me/${cleanWa}?text=${encodeURIComponent(`مرحباً دار تطريز، أرغب بالاستفسار عن القطعة الفنية: ${phrase}`)}
+https://wa.me/${cleanWa}?text=${encodeURIComponent(`مرحباً دار التطريز، أرغب بالاستفسار عن القطعة الفنية: ${phrase}`)}
 
 #تطريز #سجاد_ملكي #سجاد_يدوي #ديكور_فاخر #مجالس_عمان #سلطنة_عمان #مسقط #TATRIZA #LuxuryCarpet #HandmadeRug`;
     } else {
@@ -4134,7 +4134,7 @@ https://wa.me/${cleanWa}?text=${encodeURIComponent(`مرحباً دار تطري
         const mat = studioState.material ? `🧵 الخامة: ${studioState.material}` : '';
         const price = studioState.price ? `💰 السعر: ${studioState.price} ${studioState.currency}` : '';
 
-        caption = `✨ دار تطريز TATRIZA | تحف فنية تنبض بالهوية والتطريز ✨
+        caption = `✨ دار التطريز TATRIZA | تحف فنية تنبض بالهوية والتطريز ✨
 
 🏷️ ${title}
 ${studioState.subtitle ? `«${studioState.subtitle}»` : ''}
@@ -4146,7 +4146,7 @@ ${price}
 💎 قطعة يدوية أصلية تحاكي أرقى فنون الحياكة التراثية لتضفي لمسة فخامة استثنائية على منزلك ومجلسك.
 
 📲 للطلب الفوري والاستفسار عبر الواتساب:
-https://wa.me/${cleanWa}?text=${encodeURIComponent(`مرحباً دار تطريز، أرغب بالاستفسار عن القطعة: ${title}`)}
+https://wa.me/${cleanWa}?text=${encodeURIComponent(`مرحباً دار التطريز، أرغب بالاستفسار عن القطعة: ${title}`)}
 
 #تطريز #سجاد_يدوي #سجاد_ملكي #تحف_منزلية #ديكور_فاخر #مجالس_عربية #سلطنة_عمان #مسقط #Tatriza #HandmadeRug #LuxuryLiving`;
     }
@@ -4165,9 +4165,9 @@ export function shareStudioToWhatsApp() {
     const wa = studioState.whatsapp ? studioState.whatsapp.replace(/[^0-9]/g, '') : '';
     let msg = '';
     if (studioState.layoutMode === 'story_vignette') {
-        msg = `شاهد هذا العمل المتقن من دار تطريز: ${studioState.storyPhrase || 'تحفة يدوية ملكية'}\nحساب الإنستغرام: ${studioState.storyHandle || '@TATRIZA_22'}`;
+        msg = `شاهد هذا العمل المتقن من دار التطريز: ${studioState.storyPhrase || 'تحفة يدوية ملكية'}\nحساب الإنستغرام: ${studioState.storyHandle || '@TATRIZA_22'}`;
     } else {
-        msg = `شاهد هذه التحفة الفنية الفاخرة من دار تطريز: ${studioState.title || 'سجادة ملكية'}\nالسعر: ${studioState.price} ${studioState.currency}`;
+        msg = `شاهد هذه التحفة الفنية الفاخرة من دار التطريز: ${studioState.title || 'سجادة ملكية'}\nالسعر: ${studioState.price} ${studioState.currency}`;
     }
     const text = encodeURIComponent(msg);
     const url = wa ? `https://wa.me/${wa}?text=${text}` : `https://api.whatsapp.com/send?text=${text}`;

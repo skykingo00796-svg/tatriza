@@ -1498,10 +1498,10 @@ function applyActiveCinemaContent(autoPlay = false) {
     const pageIndicator = document.getElementById('cinema-video-page-indicator');
     const indicatorsContainer = document.getElementById('cinema-video-indicators');
 
-    if (liveBadge) liveBadge.innerText = vid.subtitle || 'حياكة يدوية • مشغل دار تطريز';
+    if (liveBadge) liveBadge.innerText = vid.subtitle || 'حياكة يدوية • مشغل دار التطريز';
     if (subtitleEl) subtitleEl.innerText = vid.subtitle || '✨ أصالة المشغل اليدوي';
     if (titleEl) titleEl.innerText = vid.title || 'حكاية كل خيط تحفة.. وصبر يصنع الفخامة';
-    if (quoteEl) quoteEl.innerText = vid.quote || '«كل سجادة تخرج من دار تطريز ليست مجرد غطاء للأرضية، بل لوحة فنية عريقة استغرقت مئات الساعات من الدقة والشغف لتمنح مساحتك روحاً دافئة ومتميزة لا تتكرر في أي مكان آخر.»';
+    if (quoteEl) quoteEl.innerText = vid.quote || '«كل سجادة تخرج من دار التطريز ليست مجرد غطاء للأرضية، بل لوحة فنية عريقة استغرقت مئات الساعات من الدقة والشغف لتمنح مساحتك روحاً دافئة ومتميزة لا تتكرر في أي مكان آخر.»';
     if (captionEl) captionEl.innerText = vid.caption || 'توثيق حي لحركات الأنامل وشد الغرز اليدوية على الأنوال التقليدية';
 
     if (hoursEl && vid.stats) hoursEl.innerText = vid.stats.hours || '+500';

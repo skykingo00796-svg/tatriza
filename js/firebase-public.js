@@ -1,6 +1,6 @@
 // ==========================================
 // محرك سحابة Google Firebase العام للزوار (firebase-public.js)
-// دار تطريز TATRIZA - وضع العرض العام الآمن (Read-Only)
+// دار التطريز TATRIZA - وضع العرض العام الآمن (Read-Only)
 // ==========================================
 
 import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
@@ -267,7 +267,7 @@ export function getDefaultShowcaseSettings() {
                 id: "vid-1",
                 title: "حكاية كل خيط تحفة.. وصبر يصنع الفخامة",
                 subtitle: "✨ أصالة المشغل اليدوي",
-                quote: "«كل سجادة تخرج من دار تطريز ليست مجرد غطاء للأرضية، بل لوحة فنية عريقة استغرقت مئات الساعات من الدقة والشغف لتمنح مساحتك روحاً دافئة ومتميزة لا تتكرر في أي مكان آخر.»",
+                quote: "«كل سجادة تخرج من دار التطريز ليست مجرد غطاء للأرضية، بل لوحة فنية عريقة استغرقت مئات الساعات من الدقة والشغف لتمنح مساحتك روحاً دافئة ومتميزة لا تتكرر في أي مكان آخر.»",
                 videoUrl: "https://upload.wikimedia.org/wikipedia/commons/1/13/Weaving_Carpet_at_Lachen.webm",
                 posterUrl: "../images/craft_video_poster.jpg",
                 caption: "توثيق حي لحركات الأنامل وشد الغرز اليدوية على الأنوال التقليدية",
@@ -325,7 +325,7 @@ export function getDefaultShowcaseSettings() {
                 clientName: "الشيخ أحمد الحوسني",
                 location: "مجلس ضيافة رسمي • صحار",
                 carpetTitle: "سجادة عجمية ملكية كبرى",
-                orderType: "عميل دار تطريز الدائم",
+                orderType: "عميل دار التطريز الدائم",
                 rating: 5,
                 reviewText: "طلبنا سجادة بمقاس 4 × 3 متر لتتوسط المجلس الرئيسي، كثافة الصوف وثبات الألوان أضفت هيبة تاريخية ودفئاً استثنائياً للمكان. شكراً لاهتمامكم بأدق التفاصيل.",
                 imgUrl: "../images/client_room2.jpg"
@@ -392,7 +392,7 @@ export async function recordCustomerOrder(orderPayload) {
             status: 'pending', // 'pending' (قيد المراجعة في الواتساب) | 'confirmed' (تم الدفع والتأكيد)
             createdAt: now,
             createdAtFormatted: dateFormatted,
-            customerName: (orderPayload.customerName || 'عميل دار تطريز').trim(),
+            customerName: (orderPayload.customerName || 'عميل دار التطريز').trim(),
             customerPhone: (orderPayload.customerPhone || '').trim(),
             customerNotes: (orderPayload.customerNotes || '').trim(),
             items: Array.isArray(orderPayload.items) ? orderPayload.items : [],
@@ -405,7 +405,7 @@ export async function recordCustomerOrder(orderPayload) {
 
         const docRef = doc(db, "orders", orderId);
         await setDoc(docRef, orderDoc);
-        console.log("✅ تم حفظ الطلب بنجاح في سحابة دار تطريز:", orderId);
+        console.log("✅ تم حفظ الطلب بنجاح في سحابة دار التطريز:", orderId);
         return { success: true, orderId: orderId, order: orderDoc };
     } catch (err) {
         console.error("❌ فشل تسجيل الطلب في سحابة Firestore:", err);

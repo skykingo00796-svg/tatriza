@@ -306,7 +306,7 @@ export function inquireCurrentModalWhatsApp() {
             customerNotes: isOutOfStock ? 'طلب حياكة وتفصيل قطعة نفدت كميتها' : 'طلب تسليم فوري ومباشر',
             items: [{
                 id: carpet.id || 'TATR-PIECE',
-                title: carpet.title || 'تحفة دار تطريز',
+                title: carpet.title || 'تحفة دار التطريز',
                 dimensions: carpet.dimensions || '',
                 price: Number(carpet.price) || 0,
                 image: carpet.image || '',
