@@ -468,6 +468,19 @@ export async function executePortalLogout() {
         localStorage.removeItem('tatr_admin_last_activity');
         localStorage.removeItem('tatr_admin_email');
         sessionStorage.removeItem('tatr_admin_session_start');
+
+        const keysToRemove = [];
+        for (let i = 0; i < localStorage.length; i++) {
+            const k = localStorage.key(i);
+            if (k && (k.startsWith('tatr_admin') || k.startsWith('firebase:authUser'))) {
+                keysToRemove.push(k);
+            }
+        }
+        keysToRemove.forEach(k => {
+            try { localStorage.removeItem(k); } catch(e) {}
+        });
+        sessionStorage.clear();
+
         await adminLogoutFromCloud();
     } catch (e) {
         console.warn("Portal logout error:", e);

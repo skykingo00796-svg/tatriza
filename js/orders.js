@@ -24,30 +24,21 @@ let currentSearch = '';
 let currentDateFilter = 'all'; // 'all' | 'today' | 'week' | 'month'
 let unsubscribeOrders = null;
 let previousPendingCount = null;
+let isLoggingOut = false;
 
 // ==========================================
 // التوثيق والحماية الفورية (Zero-Flicker Admin Auth)
 // ==========================================
 function checkLocalSession() {
     try {
+        if (isLoggingOut) return false;
+
         const maxIdle = 60 * 60 * 1000;
         const now = Date.now();
         const lastAct = localStorage.getItem('tatr_admin_last_activity');
         const isExpired = lastAct ? (now - parseInt(lastAct, 10) > maxIdle) : false;
 
-        let isLoggedIn = localStorage.getItem('tatr_admin_logged_in') === 'true' ||
-                         sessionStorage.getItem('tatr_admin_session_start') !== null ||
-                         Boolean(localStorage.getItem('tatr_admin_email'));
-
-        if (!isLoggedIn) {
-            for (let i = 0; i < localStorage.length; i++) {
-                const k = localStorage.key(i);
-                if (k && (k.indexOf('firebase:authUser') === 0 || k.indexOf('tatr_admin') === 0)) {
-                    isLoggedIn = true;
-                    break;
-                }
-            }
-        }
+        const isLoggedIn = localStorage.getItem('tatr_admin_logged_in') === 'true';
 
         if (isLoggedIn && !isExpired) {
             document.documentElement.classList.add('admin-session-active');
@@ -55,6 +46,10 @@ function checkLocalSession() {
             localStorage.setItem('tatr_admin_last_activity', now.toString());
             return true;
         } else {
+            localStorage.removeItem('tatr_admin_logged_in');
+            localStorage.removeItem('tatr_admin_last_activity');
+            localStorage.removeItem('tatr_admin_email');
+            sessionStorage.removeItem('tatr_admin_session_start');
             document.documentElement.classList.add('admin-session-anonymous');
             document.documentElement.classList.remove('admin-session-active');
             return false;
@@ -71,6 +66,8 @@ function initAuthListener() {
     const auth = getAuth(app);
 
     onAuthStateChanged(auth, (user) => {
+        if (isLoggingOut) return;
+
         if (user) {
             document.documentElement.classList.add('admin-session-active');
             document.documentElement.classList.remove('admin-session-anonymous');
@@ -81,6 +78,11 @@ function initAuthListener() {
             const userEmailEl = document.getElementById('admin-user-email');
             if (userEmailEl) userEmailEl.innerText = user.email || 'المسؤول المعتمد';
 
+            const gate = document.getElementById('orders-login-gate');
+            const dash = document.getElementById('orders-dashboard');
+            if (gate) gate.style.setProperty('display', 'none', 'important');
+            if (dash) dash.style.setProperty('display', 'flex', 'important');
+
             startOrdersRealtimeListener();
         } else {
             // إذا لم يكن هناك مستخدم مسجل
@@ -88,6 +90,10 @@ function initAuthListener() {
             if (!hasLocal) {
                 document.documentElement.classList.add('admin-session-anonymous');
                 document.documentElement.classList.remove('admin-session-active');
+                const gate = document.getElementById('orders-login-gate');
+                const dash = document.getElementById('orders-dashboard');
+                if (dash) dash.style.setProperty('display', 'none', 'important');
+                if (gate) gate.style.setProperty('display', 'flex', 'important');
                 if (unsubscribeOrders) {
                     unsubscribeOrders();
                     unsubscribeOrders = null;
@@ -117,11 +123,17 @@ window.handleOrdersLogin = async function(e) {
 
     try {
         await adminLoginWithCloud(email, password);
+        isLoggingOut = false;
         document.documentElement.classList.add('admin-session-active');
         document.documentElement.classList.remove('admin-session-anonymous');
         localStorage.setItem('tatr_admin_logged_in', 'true');
         localStorage.setItem('tatr_admin_email', email);
         localStorage.setItem('tatr_admin_last_activity', Date.now().toString());
+
+        const gate = document.getElementById('orders-login-gate');
+        const dash = document.getElementById('orders-dashboard');
+        if (gate) gate.style.setProperty('display', 'none', 'important');
+        if (dash) dash.style.setProperty('display', 'flex', 'important');
 
         const userEmailEl = document.getElementById('admin-user-email');
         if (userEmailEl) userEmailEl.innerText = email;
@@ -137,20 +149,65 @@ window.handleOrdersLogin = async function(e) {
 };
 
 window.handleOrdersLogout = async function() {
-    if (!confirm('هل ترغب في تسجيل الخروج من لوحة إدارة الطلبات؟')) return;
-    try {
-        await adminLogoutFromCloud();
-    } catch(e) {}
-    localStorage.removeItem('tatr_admin_logged_in');
-    localStorage.removeItem('tatr_admin_last_activity');
-    localStorage.removeItem('tatr_admin_email');
-    sessionStorage.removeItem('tatr_admin_session_start');
-    document.documentElement.classList.add('admin-session-anonymous');
-    document.documentElement.classList.remove('admin-session-active');
+    isLoggingOut = true;
+
+    // 1. إيقاف الاستماع الحي للطلبات وتفريغ الذاكرة فوراً
     if (unsubscribeOrders) {
-        unsubscribeOrders();
+        try { unsubscribeOrders(); } catch(e) {}
         unsubscribeOrders = null;
     }
+    allOrders = [];
+
+    // 2. إزالة وحذف كافة مفاتيح جلسة المسؤول والمصادقة من المتصفح
+    try {
+        localStorage.removeItem('tatr_admin_logged_in');
+        localStorage.removeItem('tatr_admin_last_activity');
+        localStorage.removeItem('tatr_admin_email');
+        sessionStorage.removeItem('tatr_admin_session_start');
+
+        const keysToRemove = [];
+        for (let i = 0; i < localStorage.length; i++) {
+            const k = localStorage.key(i);
+            if (k && (k.startsWith('tatr_admin') || k.startsWith('firebase:authUser'))) {
+                keysToRemove.push(k);
+            }
+        }
+        keysToRemove.forEach(k => {
+            try { localStorage.removeItem(k); } catch(e) {}
+        });
+        sessionStorage.clear();
+    } catch(e) {}
+
+    // 3. تبديل عناصر الواجهة فوراً وبشكل قاطع
+    document.documentElement.classList.remove('admin-session-active');
+    document.documentElement.classList.add('admin-session-anonymous');
+
+    const gate = document.getElementById('orders-login-gate');
+    const dash = document.getElementById('orders-dashboard');
+    if (dash) dash.style.setProperty('display', 'none', 'important');
+    if (gate) gate.style.setProperty('display', 'flex', 'important');
+
+    const pwdInput = document.getElementById('orders-password-input');
+    if (pwdInput) pwdInput.value = '';
+    const errEl = document.getElementById('orders-login-error');
+    if (errEl) {
+        errEl.innerText = '';
+        errEl.classList.add('hidden');
+    }
+
+    // 4. تسجيل الخروج السحابي من Firebase في الخلفية دون تعطيل الواجهة
+    try {
+        await adminLogoutFromCloud();
+    } catch(e) {
+        console.warn("Cloud logout warning:", e);
+    } finally {
+        setTimeout(() => {
+            isLoggingOut = false;
+        }, 500);
+    }
+
+    // 5. إشعار تأكيد خروج أنيق وسريع
+    showOrderToast('تم تسجيل الخروج من لوحة إدارة الطلبات بنجاح 🚪', 'info');
 };
 
 // ==========================================

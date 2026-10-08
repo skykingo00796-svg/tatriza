@@ -47,34 +47,17 @@
                 var isExpired = lastAct ? (now - parseInt(lastAct, 10) > maxIdle) : false;
 
                 // التحقق الشامل من كل العلامات الممكنة لجلسة الأدمن
-                var isLoggedIn = localStorage.getItem('tatr_admin_logged_in') === 'true' ||
-                                 sessionStorage.getItem('tatr_admin_session_start') !== null ||
-                                 Boolean(localStorage.getItem('tatr_admin_email'));
-
-                // فحص أي بقايا مصادقة لـ Firebase في التخزين المحلي
-                if (!isLoggedIn) {
-                    for (var i = 0; i < localStorage.length; i++) {
-                        var k = localStorage.key(i);
-                        if (k && (k.indexOf('firebase:authUser') === 0 || k.indexOf('tatr_admin') === 0)) {
-                            isLoggedIn = true;
-                            break;
-                        }
-                    }
-                }
+                var isLoggedIn = localStorage.getItem('tatr_admin_logged_in') === 'true';
 
                 if (isLoggedIn && !isExpired) {
                     document.documentElement.classList.add('admin-session-active');
                     document.documentElement.classList.remove('admin-session-anonymous');
                     localStorage.setItem('tatr_admin_last_activity', now.toString());
-                    localStorage.setItem('tatr_admin_logged_in', 'true');
-                } else if (isExpired && isLoggedIn) {
+                } else {
                     localStorage.removeItem('tatr_admin_logged_in');
                     localStorage.removeItem('tatr_admin_last_activity');
                     localStorage.removeItem('tatr_admin_email');
                     sessionStorage.removeItem('tatr_admin_session_start');
-                    document.documentElement.classList.add('admin-session-anonymous');
-                    document.documentElement.classList.remove('admin-session-active');
-                } else {
                     document.documentElement.classList.add('admin-session-anonymous');
                     document.documentElement.classList.remove('admin-session-active');
                 }

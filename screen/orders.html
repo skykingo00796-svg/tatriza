@@ -43,34 +43,17 @@
                 var now = Date.now();
                 var lastAct = localStorage.getItem('tatr_admin_last_activity');
                 var isExpired = lastAct ? (now - parseInt(lastAct, 10) > maxIdle) : false;
-
-                var isLoggedIn = localStorage.getItem('tatr_admin_logged_in') === 'true' ||
-                                 sessionStorage.getItem('tatr_admin_session_start') !== null ||
-                                 Boolean(localStorage.getItem('tatr_admin_email'));
-
-                if (!isLoggedIn) {
-                    for (var i = 0; i < localStorage.length; i++) {
-                        var k = localStorage.key(i);
-                        if (k && (k.indexOf('firebase:authUser') === 0 || k.indexOf('tatr_admin') === 0)) {
-                            isLoggedIn = true;
-                            break;
-                        }
-                    }
-                }
+                var isLoggedIn = localStorage.getItem('tatr_admin_logged_in') === 'true';
 
                 if (isLoggedIn && !isExpired) {
                     document.documentElement.classList.add('admin-session-active');
                     document.documentElement.classList.remove('admin-session-anonymous');
                     localStorage.setItem('tatr_admin_last_activity', now.toString());
-                    localStorage.setItem('tatr_admin_logged_in', 'true');
-                } else if (isExpired && isLoggedIn) {
+                } else {
                     localStorage.removeItem('tatr_admin_logged_in');
                     localStorage.removeItem('tatr_admin_last_activity');
                     localStorage.removeItem('tatr_admin_email');
                     sessionStorage.removeItem('tatr_admin_session_start');
-                    document.documentElement.classList.add('admin-session-anonymous');
-                    document.documentElement.classList.remove('admin-session-active');
-                } else {
                     document.documentElement.classList.add('admin-session-anonymous');
                     document.documentElement.classList.remove('admin-session-active');
                 }
@@ -208,7 +191,7 @@
                     </a>
 
                     <!-- زر تسجيل الخروج -->
-                    <button type="button" onclick="window.handleOrdersLogout()" class="bg-rose-50 hover:bg-rose-100 text-rose-800 border border-rose-200 font-bold text-xs h-9 sm:h-10 px-3 rounded-xl transition flex items-center gap-1.5 cursor-pointer" title="تسجيل الخروج">
+                    <button type="button" onclick="window.handleOrdersLogout()" class="bg-rose-50 hover:bg-rose-100 active:scale-95 text-rose-800 border border-rose-200 font-bold text-xs h-9 sm:h-10 px-3 rounded-xl transition-all flex items-center gap-1.5 cursor-pointer shadow-2xs" title="تسجيل الخروج">
                         <span>🚪</span>
                         <span class="hidden sm:inline">خروج</span>
                     </button>
