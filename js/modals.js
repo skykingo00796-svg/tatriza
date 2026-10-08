@@ -409,26 +409,26 @@ export function openModal(carpetId, allCarpets) {
         const images = carpet.images && carpet.images.length > 0 ? carpet.images : [carpet.image || 'https://placehold.co/800x600/7c1d3c/ffffff?text=Tatriza'];
         modalImagesContainer.innerHTML = '';
         
-        // 1. الشريحة الأولى: صورة الغلاف الرئيسية بخلفية بيضاء نقية وبحجم منضبط ومحكم
+        // 1. الشريحة الأولى: صورة الغلاف الرئيسية بخلفية استوديو فاخرة وبأبعاد كريمة تبرز تفاصيل الحياكة
         modalImagesContainer.innerHTML += `
-            <div class="min-w-full w-full h-full shrink-0 snap-center flex items-center justify-center overflow-hidden bg-white p-2 sm:p-3 select-none">
-                <img src="${images[0]}" class="max-w-full max-h-full w-auto h-auto object-contain mx-auto block cursor-pointer bg-white" onclick="window.openLightboxFromModalExternal('${carpet.id}', 0)" alt="${carpet.title}">
+            <div class="min-w-full w-full h-full shrink-0 snap-center flex items-center justify-center overflow-hidden bg-gradient-to-b from-stone-50/40 via-white to-stone-50/40 p-1.5 sm:p-2.5 select-none touch-pan-y relative">
+                <img src="${images[0]}" class="max-w-full max-h-full w-full h-full object-contain mx-auto block cursor-pointer transition-transform duration-300 hover:scale-[1.02] active:scale-98 drop-shadow-sm sm:drop-shadow-md rounded-lg" onclick="window.openLightboxFromModalExternal('${carpet.id}', 0)" alt="${carpet.title}" loading="eager">
             </div>
         `;
 
-        // 2. الشريحة الثانية: الفيديو الاستعراضي الحي بخلفية بيضاء وبحجم يظهر كاملاً تماماً عمودياً وأفقياً مثل البطاقة الرئيسية
+        // 2. الشريحة الثانية: الفيديو الاستعراضي الحي بخلفية استوديو وبحجم متناسق بالكامل
         let hasVideo = Boolean(carpet.video);
         const initialVideoSrc = (carpet.video && !carpet.video.startsWith('idb://')) ? carpet.video : '';
         if (hasVideo) {
             modalImagesContainer.innerHTML += `
-                <div class="relative min-w-full w-full h-full shrink-0 snap-center bg-white flex items-center justify-center overflow-hidden select-none group/videoplayer p-2 sm:p-3" id="modal-video-slide">
+                <div class="relative min-w-full w-full h-full shrink-0 snap-center bg-gradient-to-b from-stone-50/40 via-white to-stone-50/40 flex items-center justify-center overflow-hidden select-none group/videoplayer p-1.5 sm:p-2.5 touch-pan-y" id="modal-video-slide">
                     <video 
                         id="modal-product-video" 
                         src="${initialVideoSrc}" 
                         playsinline 
                         muted 
                         preload="metadata"
-                        class="max-w-full max-h-full w-auto h-auto object-contain mx-auto block cursor-pointer bg-white"
+                        class="max-w-full max-h-full w-full h-full object-contain mx-auto block cursor-pointer rounded-lg shadow-sm"
                         onclick="window.toggleProductVideoPlay(this)"
                         onended="window.handleModalVideoEnded()"
                     ></video>
@@ -446,11 +446,11 @@ export function openModal(carpetId, allCarpets) {
             `;
         }
 
-        // 3. باقي الصور إن وجدت بخلفية بيضاء نقية
+        // 3. باقي الصور إن وجدت بخلفية استوديو فاخرة
         for (let i = 1; i < images.length; i++) {
             modalImagesContainer.innerHTML += `
-                <div class="min-w-full w-full h-full shrink-0 snap-center flex items-center justify-center overflow-hidden bg-white p-2 sm:p-3 select-none">
-                    <img src="${images[i]}" class="max-w-full max-h-full w-auto h-auto object-contain mx-auto block cursor-pointer bg-white" onclick="window.openLightboxFromModalExternal('${carpet.id}', ${i})" alt="${carpet.title}">
+                <div class="min-w-full w-full h-full shrink-0 snap-center flex items-center justify-center overflow-hidden bg-gradient-to-b from-stone-50/40 via-white to-stone-50/40 p-1.5 sm:p-2.5 select-none touch-pan-y relative">
+                    <img src="${images[i]}" class="max-w-full max-h-full w-full h-full object-contain mx-auto block cursor-pointer transition-transform duration-300 hover:scale-[1.02] active:scale-98 drop-shadow-sm sm:drop-shadow-md rounded-lg" onclick="window.openLightboxFromModalExternal('${carpet.id}', ${i})" alt="${carpet.title}" loading="lazy">
                 </div>
             `;
         }
@@ -486,6 +486,25 @@ export function openModal(carpetId, allCarpets) {
         if (counterWrapper) {
             counterWrapper.style.display = totalMediaItems > 1 ? 'block' : 'none';
         }
+
+        // إظهار أو إخفاء أزرار الأسهم بناءً على عدد الوسائط
+        const prevSlideBtn = document.getElementById('modal-prev-slide-btn');
+        const nextSlideBtn = document.getElementById('modal-next-slide-btn');
+        if (prevSlideBtn) prevSlideBtn.classList.toggle('hidden', totalMediaItems <= 1);
+        if (nextSlideBtn) nextSlideBtn.classList.toggle('hidden', totalMediaItems <= 1);
+
+        // تلميح التكبير الفاخر (يظهر مع الصور ويختفي إذا بدأ العرض بفيديو فقط بدون صور)
+        const tapHint = document.getElementById('modal-tap-zoom-hint');
+        if (tapHint) {
+            if (hasVideo && (!carpet.images || carpet.images.length === 0)) {
+                tapHint.classList.add('opacity-0', 'pointer-events-none');
+            } else {
+                tapHint.classList.remove('opacity-0', 'pointer-events-none');
+            }
+        }
+
+        // تصفير موضع التمرير في المعرض للبدء دائماً من الشريحة الأولى
+        modalImagesContainer.scrollLeft = 0;
 
         // إعداد شارة الفيديو وأزرار التحكم العلوية (كتم الصوت والتكبير)
         const videoTopControls = document.getElementById('modal-video-top-controls');
@@ -541,6 +560,10 @@ export function openModal(carpetId, allCarpets) {
 export function closeModal() {
     const modal = document.getElementById('product-modal');
     if (modal) modal.classList.add('hidden');
+    const modalImagesContainer = document.getElementById('modal-images-container');
+    if (modalImagesContainer) modalImagesContainer.scrollLeft = 0;
+    const tapHint = document.getElementById('modal-tap-zoom-hint');
+    if (tapHint) tapHint.classList.remove('opacity-0', 'pointer-events-none');
     const videoEl = document.getElementById('modal-product-video');
     if (videoEl) {
         videoEl.pause();
@@ -590,6 +613,7 @@ export function handleModalScroll(container) {
     const videoEl = document.getElementById('modal-product-video');
     const videoTopControls = document.getElementById('modal-video-top-controls');
     const videoBadge = document.getElementById('modal-video-badge');
+    const tapHint = document.getElementById('modal-tap-zoom-hint');
 
     if (videoSlide && videoEl) {
         const slideRect = videoSlide.getBoundingClientRect();
@@ -598,6 +622,7 @@ export function handleModalScroll(container) {
         const isVideoActive = Math.abs(slideRect.left - containerRect.left) < (width * 0.45);
 
         if (isVideoActive) {
+            if (tapHint) tapHint.classList.add('opacity-0', 'pointer-events-none');
             // لا تشغيل تلقائي - يبقى الفيديو متوقفاً والزر ظاهراً بانتظار نقرة الزائر
             const centerBtn = document.getElementById('modal-video-center-btn');
             if (centerBtn && videoEl.paused) {
@@ -614,6 +639,7 @@ export function handleModalScroll(container) {
                 videoBadge.classList.remove('hidden');
             }
         } else {
+            if (tapHint) tapHint.classList.remove('opacity-0', 'pointer-events-none');
             if (!videoEl.paused) {
                 videoEl.pause();
             }
@@ -642,6 +668,7 @@ export function handleModalScroll(container) {
             }
         }
     } else {
+        if (tapHint) tapHint.classList.remove('opacity-0', 'pointer-events-none');
         if (videoTopControls) {
             videoTopControls.classList.add('hidden');
             videoTopControls.classList.remove('flex');
@@ -651,6 +678,19 @@ export function handleModalScroll(container) {
         }
     }
 }
+
+// دالة التنقل السلس بين شرائح المعرض عبر الأسهم
+export function scrollModalSlide(direction) {
+    const container = document.getElementById('modal-images-container');
+    if (!container) return;
+    const width = container.clientWidth || 300;
+    // direction: 1 = الشريحة التالية (Next), -1 = الشريحة السابقة (Prev)
+    // في واجهات RTL، الشريحة التالية تكون بالتحرك نحو اليسار (إشارة سالبة)
+    const isRTL = document.documentElement.dir === 'rtl' || getComputedStyle(container).direction === 'rtl';
+    const delta = isRTL ? (-width * direction) : (width * direction);
+    container.scrollBy({ left: delta, behavior: 'smooth' });
+}
+window.scrollModalSlide = scrollModalSlide;
 
 // ==========================================
 // التحكم التفاعلي بالفيديو وتكبيره داخل حدود المتصفح (In-Browser Video Lightbox)

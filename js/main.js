@@ -5,7 +5,7 @@
 // المتجر العام - مهيأ للعرض العام فائق السرعة والأمان
 import { initTheme, openThemeModal, closeThemeModal, selectThemeOption, applyTheme } from './theme.js';
 import { 
-    openModal, closeModal, handleModalScroll, 
+    openModal, closeModal, handleModalScroll, scrollModalSlide,
     addToCart, openCartModal, closeCartModal, removeFromCart, sendCartToWhatsApp, 
     addCurrentModalToCart, inquireCurrentModalWhatsApp,
     openCustomOrderModal, closeCustomOrderModal, submitCustomOrder, 
@@ -70,6 +70,7 @@ window.closeOptionsDrawer = closeOptionsDrawer;
 window.openModal = (id) => openModal(id, allCarpets);
 window.closeModal = closeModal;
 window.handleModalScroll = handleModalScroll;
+window.scrollModalSlide = scrollModalSlide;
 window.openCartModal = openCartModal;
 window.closeCartModal = closeCartModal;
 window.addToCart = addToCart;

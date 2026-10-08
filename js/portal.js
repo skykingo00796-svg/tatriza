@@ -55,6 +55,7 @@ import {
     openModal, 
     closeModal, 
     handleModalScroll, 
+    scrollModalSlide,
     openLightboxFromModal, 
     openCurrentLogoLightbox, 
     closeLightbox, 
@@ -2740,6 +2741,7 @@ window.closeOptionsDrawer = closeOptionsDrawer;
 window.openModal = (id) => openModal(id, allPortalCarpets);
 window.closeModal = closeModal;
 window.handleModalScroll = handleModalScroll;
+window.scrollModalSlide = scrollModalSlide;
 window.openLightboxFromModalExternal = (id, idx) => openLightboxFromModal(id, idx, allPortalCarpets);
 window.openCurrentLogoLightbox = openCurrentLogoLightbox;
 window.closeLightbox = closeLightbox;

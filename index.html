@@ -822,13 +822,29 @@
             </div>
 
             <!-- حاوية المحتوى مقسمة نصفين: معرض الصور والمعلومات -->
-            <div class="flex flex-col md:grid md:grid-cols-2 overflow-y-auto flex-1">
+            <div class="flex flex-col md:grid md:grid-cols-2 overflow-y-auto flex-1 overscroll-contain">
                 
-                <!-- القسم الأيمن: معرض الوسائط المتجاوب بالكامل بخلفية بيضاء نقية وبحجم منضبط ومحكم -->
-                <div class="relative w-full bg-white flex flex-col justify-center items-center overflow-hidden aspect-square sm:aspect-square md:aspect-auto md:h-full max-h-[46vh] sm:max-h-[50vh] md:max-h-none select-none border-b md:border-b-0 md:border-l border-stone-200/70">
-                    <div id="modal-images-container" class="flex overflow-x-auto snap-x snap-mandatory scrollbar-none w-full h-full items-center bg-white" onscroll="handleModalScroll(this)">
+                <!-- القسم الأيمن: معرض الوسائط المتجاوب بالكامل بخلفية استوديو نقية وأبعاد واسعة تبرز تفاصيل الحياكة والقطع -->
+                <div class="relative w-full bg-gradient-to-b from-[#fbf9f5] via-white to-[#fbf9f5] flex flex-col justify-center items-center overflow-hidden h-[48vh] sm:h-[52vh] md:h-full min-h-[330px] sm:min-h-[400px] md:min-h-[520px] lg:min-h-[580px] shrink-0 select-none border-b md:border-b-0 md:border-l border-stone-200/70">
+                    <div id="modal-images-container" class="flex overflow-x-auto snap-x snap-mandatory scrollbar-none w-full h-full items-center touch-pan-y" onscroll="handleModalScroll(this)">
                         <!-- تُحقن الصور والفيديو برمجياً -->
                     </div>
+
+                    <!-- تلميح التكبير الفاخر (يظهر مع الصور لبيان إمكانية التكبير) -->
+                    <div id="modal-tap-zoom-hint" class="absolute top-3 left-1/2 -translate-x-1/2 z-20 pointer-events-none transition-all duration-300">
+                        <span class="bg-black/55 text-white text-[10.5px] sm:text-xs font-bold px-3 py-1 rounded-full backdrop-blur-md border border-white/20 shadow-xs flex items-center gap-1.5 select-none">
+                            <span class="text-xs">🔍</span>
+                            <span>انقر للتكبير فائق الدقة</span>
+                        </span>
+                    </div>
+
+                    <!-- أزرار التنقل السريع بين الوسائط (تظهر فقط عند وجود أكثر من وسيط) -->
+                    <button id="modal-prev-slide-btn" type="button" onclick="window.scrollModalSlide(-1)" class="absolute right-2.5 top-1/2 -translate-y-1/2 z-20 w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-black/45 hover:bg-black/75 text-white backdrop-blur-md flex items-center justify-center transition shadow-md cursor-pointer border border-white/25 hover:scale-110 active:scale-95 hidden" title="الصورة السابقة">
+                        <svg class="w-4 h-4 sm:w-4.5 sm:h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+                    </button>
+                    <button id="modal-next-slide-btn" type="button" onclick="window.scrollModalSlide(1)" class="absolute left-2.5 top-1/2 -translate-y-1/2 z-20 w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-black/45 hover:bg-black/75 text-white backdrop-blur-md flex items-center justify-center transition shadow-md cursor-pointer border border-white/25 hover:scale-110 active:scale-95 hidden" title="الصورة التالية">
+                        <svg class="w-4 h-4 sm:w-4.5 sm:h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
+                    </button>
 
                     <!-- شارة استعراض حي (في الأسفل يسار مقابل الترقيم من الجهة الثانية) -->
                     <div id="modal-video-badge" class="absolute bottom-3 left-3 sm:bottom-4 sm:left-4 z-20 pointer-events-none hidden">
@@ -847,7 +863,7 @@
                 </div>
 
                 <!-- القسم الأيسر: التفاصيل، المواصفات، السعر والأزرار -->
-                <div class="p-5 sm:p-6 md:p-8 flex flex-col justify-between space-y-4 bg-gradient-to-b from-[#fffbf7] to-[#f9f4ec]">
+                <div class="p-4 sm:p-6 md:p-8 flex flex-col justify-between space-y-4 bg-gradient-to-b from-[#fffbf7] to-[#f9f4ec]">
                     <div class="space-y-4">
                         <!-- شارات المنتج والرمز التسلسلي مع إعطاء مسافة أمان كافية لزر الإغلاق في اليسار -->
                         <div class="flex items-center gap-2.5 flex-wrap pl-12 sm:pl-16">
