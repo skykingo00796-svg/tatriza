@@ -483,13 +483,32 @@ function createOrderCardHtml(order) {
                 `<img src="${item.image}" alt="${escapeHtml(item.title)}" class="w-14 h-14 rounded-xl object-cover border border-stone-200 shadow-2xs shrink-0">` : 
                 `<div class="w-14 h-14 rounded-xl bg-amber-50 text-amber-800 border border-amber-200/80 flex items-center justify-center text-xl shrink-0">🏛️</div>`;
 
+            const itemPrice = Number(item.price) || 0;
+            const origPrice = item.originalPrice !== undefined ? Number(item.originalPrice) : itemPrice;
+            const hasItemDiscount = item.discountApplied || (origPrice > itemPrice && itemPrice > 0);
+
+            let priceDisplayHtml = '';
+            if (hasItemDiscount) {
+                priceDisplayHtml = `
+                    <div class="flex flex-col items-end shrink-0 text-left">
+                        <span class="font-mono font-black text-xs text-emerald-800">${itemPrice} ر.ع.</span>
+                        <div class="flex items-center gap-1">
+                            <span class="font-mono text-[10px] text-stone-400 line-through">${origPrice} ر.ع.</span>
+                            <span class="text-[9px] font-extrabold text-emerald-700 bg-emerald-100/80 px-1 py-0.2 rounded">سعر خاص</span>
+                        </div>
+                    </div>
+                `;
+            } else {
+                priceDisplayHtml = `<span class="font-mono font-black text-xs text-amber-950 shrink-0">${item.price ? `${item.price} ر.ع.` : 'بالاتفاق'}</span>`;
+            }
+
             return `
                 <div class="flex items-center gap-3 p-2.5 rounded-xl bg-stone-50/90 border border-stone-200/80 hover:bg-stone-100/80 transition">
                     ${imgEl}
                     <div class="flex-1 min-w-0">
                         <div class="flex items-center justify-between gap-2">
                             <h4 class="font-bold text-xs sm:text-sm text-stone-900 truncate">${escapeHtml(item.title || 'قطعة فنية')}</h4>
-                            <span class="font-mono font-black text-xs text-amber-950 shrink-0">${item.price ? `${item.price} ر.ع.` : 'بالاتفاق'}</span>
+                            ${priceDisplayHtml}
                         </div>
                         <div class="flex items-center gap-2 text-[11px] text-stone-500 font-medium mt-0.5">
                             ${item.id ? `<span class="font-mono text-[10px] bg-stone-200/70 px-1.5 py-0.2 rounded">${escapeHtml(item.id)}</span>` : ''}
@@ -516,7 +535,7 @@ function createOrderCardHtml(order) {
         actionsHtml = `
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-3 border-t border-stone-200">
                 <!-- الزر الأول: تأكيد الطلب ودفع المبلغ -->
-                <button type="button" onclick="confirmOrderAction('${orderId}')" class="btn-liquid-emerald text-white font-extrabold text-xs sm:text-sm h-11 px-3 rounded-xl shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-98" title="تأكيد الطلب واستلام المبلغ ونقله إلى الأرشيف">
+                <button type="button" onclick="confirmOrderAction('${orderId}')" class="btn-liquid-emerald text-white font-extrabold text-xs sm:text-sm h-11 px-3 rounded-xl shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-98" title="تأكيد الطلب وتحديد السعر المعتمد واستلام المبلغ ونقله إلى الأرشيف">
                     <span>✅</span>
                     <span>تم تأكيد الطلب ودفع المبلغ</span>
                 </button>
@@ -602,10 +621,20 @@ function createOrderCardHtml(order) {
 
             <!-- الإجمالي الكلي للمبلغ -->
             <div class="flex items-center justify-between p-3 rounded-xl bg-gradient-to-r from-amber-50 to-stone-100 border border-amber-200/70">
-                <span class="text-xs sm:text-sm font-bold text-stone-700">المبلغ الإجمالي للطلب:</span>
-                <span class="font-display font-black text-base sm:text-xl text-amber-950 font-mono">
-                    ${totalPrice > 0 ? `${totalPrice.toLocaleString('ar-OM')} ر.ع.` : 'حسب التسعيرة الخاصة'}
-                </span>
+                <div>
+                    <span class="text-xs sm:text-sm font-bold text-stone-700 block">المبلغ الإجمالي المعتمد:</span>
+                    ${(order.originalTotalPrice && Number(order.originalTotalPrice) > totalPrice) ? `
+                        <span class="text-[10.5px] font-extrabold text-emerald-800 block mt-0.5">🏷️ تم اعتماد تخفيض خاص (وفّر ${Number(order.originalTotalPrice) - totalPrice} ر.ع.)</span>
+                    ` : ''}
+                </div>
+                <div class="flex items-baseline gap-1.5">
+                    ${(order.originalTotalPrice && Number(order.originalTotalPrice) > totalPrice) ? `
+                        <span class="font-mono text-xs text-stone-400 line-through">(${order.originalTotalPrice} ر.ع.)</span>
+                    ` : ''}
+                    <span class="font-display font-black text-base sm:text-xl text-amber-950 font-mono">
+                        ${totalPrice > 0 ? `${totalPrice.toLocaleString('ar-OM')} ر.ع.` : 'حسب التسعيرة الخاصة'}
+                    </span>
+                </div>
             </div>
 
             <!-- أزرار الإجراءات التفاعلية -->
@@ -619,6 +648,7 @@ function createOrderCardHtml(order) {
 // بديل حديث وأنيق بدون أي نوافذ متصفح علوية أو لاج
 // ==========================================
 let modalResolveCallback = null;
+let currentModalOrder = null;
 
 function showOrderConfirmationModal(config) {
     const modal = document.getElementById('order-action-modal');
@@ -633,10 +663,14 @@ function showOrderConfirmationModal(config) {
     const confirmBtn = document.getElementById('order-modal-confirm-btn');
     const btnIcon = document.getElementById('order-modal-btn-icon');
     const btnText = document.getElementById('order-modal-btn-text');
+    const itemsSection = document.getElementById('order-modal-items-section');
+    const itemsList = document.getElementById('order-modal-items-list');
 
     if (!modal || !box) {
         return Promise.resolve({ confirmed: false });
     }
+
+    currentModalOrder = config.order || null;
 
     if (iconEl) iconEl.innerText = config.icon || '✨';
     if (titleEl) titleEl.innerText = config.title || 'تأكيد الإجراء';
@@ -649,17 +683,117 @@ function showOrderConfirmationModal(config) {
         if (confirmBtn) confirmBtn.className = 'bg-rose-600 hover:bg-rose-700 text-white font-extrabold text-xs sm:text-sm h-11 px-4 rounded-xl shadow-md transition-all flex items-center justify-center gap-1.5 cursor-pointer active:scale-98';
         if (btnIcon) btnIcon.innerText = '❌';
         if (btnText) btnText.innerText = config.btnText || 'نعم، إلغاء وحذف';
+        if (itemsSection) itemsSection.classList.add('hidden');
     } else if (config.type === 'revert') {
         if (iconContainer) iconContainer.className = 'w-12 h-12 rounded-2xl flex items-center justify-center text-2xl shadow-xs shrink-0 bg-amber-50 text-amber-900 border border-amber-200';
         if (confirmBtn) confirmBtn.className = 'bg-amber-600 hover:bg-amber-700 text-white font-extrabold text-xs sm:text-sm h-11 px-4 rounded-xl shadow-md transition-all flex items-center justify-center gap-1.5 cursor-pointer active:scale-98';
         if (btnIcon) btnIcon.innerText = '↩️';
         if (btnText) btnText.innerText = config.btnText || 'نعم، إعادة للانتظار';
+        if (itemsSection) itemsSection.classList.add('hidden');
     } else {
         // default / confirm
         if (iconContainer) iconContainer.className = 'w-12 h-12 rounded-2xl flex items-center justify-center text-2xl shadow-xs shrink-0 bg-emerald-50 text-emerald-800 border border-emerald-200';
         if (confirmBtn) confirmBtn.className = 'btn-liquid-emerald text-white font-extrabold text-xs sm:text-sm h-11 px-4 rounded-xl shadow-md transition-all flex items-center justify-center gap-1.5 cursor-pointer active:scale-98';
         if (btnIcon) btnIcon.innerText = '✅';
-        if (btnText) btnText.innerText = config.btnText || 'نعم، تم التأكيد والدفع';
+        if (btnText) btnText.innerText = config.btnText || 'نعم، اعتماد السعر وتأكيد الدفع';
+
+        // عرض قائمة وتعديل أسعار القطع
+        if (config.order && itemsSection && itemsList) {
+            itemsSection.classList.remove('hidden');
+            const rawItems = Array.isArray(config.order.items) && config.order.items.length > 0
+                ? config.order.items
+                : [{
+                    title: 'طلب مخصص / استفسار خاص',
+                    price: Number(config.order.totalPrice) || 0,
+                    dimensions: 'مواصفات خاصة'
+                }];
+
+            itemsList.innerHTML = rawItems.map((item, idx) => {
+                const itemTitle = escapeHtml(item.title || 'قطعة فنية');
+                const itemPrice = Number(item.price) || 0;
+                const origPrice = item.originalPrice !== undefined ? Number(item.originalPrice) : itemPrice;
+                const itemImg = item.image ? 
+                    `<img src="${item.image}" alt="${itemTitle}" class="w-11 h-11 rounded-xl object-cover border border-stone-200 shrink-0">` : 
+                    `<div class="w-11 h-11 rounded-xl bg-amber-100 text-amber-900 flex items-center justify-center text-lg shrink-0">🏛️</div>`;
+
+                return `
+                    <div class="p-2.5 rounded-xl bg-white border border-stone-200 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+                        <div class="flex items-center gap-2.5 min-w-0">
+                            ${itemImg}
+                            <div class="min-w-0">
+                                <h5 class="font-bold text-xs text-stone-900 truncate">${itemTitle}</h5>
+                                <div class="flex items-center gap-1.5 text-[10.5px] text-stone-500 mt-0.5">
+                                    ${item.dimensions ? `<span>📐 ${escapeHtml(item.dimensions)}</span>` : ''}
+                                    <span class="text-stone-400">السعر الأصلي: <strong class="text-stone-700">${origPrice} ر.ع.</strong></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2 shrink-0 self-end sm:self-center">
+                            <label class="text-[11px] font-bold text-stone-600">السعر المعتمد:</label>
+                            <div class="flex items-center bg-stone-50 border border-stone-300 rounded-xl px-2.5 py-1 focus-within:bg-white focus-within:border-emerald-600 focus-within:ring-2 focus-within:ring-emerald-100 transition shadow-2xs">
+                                <input type="number" step="0.5" min="0" class="item-modal-price-input w-16 sm:w-20 text-center font-black text-xs sm:text-sm text-emerald-950 bg-transparent outline-none" data-idx="${idx}" data-orig="${origPrice}" value="${itemPrice}">
+                                <span class="text-[11px] font-bold text-stone-500 mr-1">ر.ع.</span>
+                            </div>
+                            <span class="item-diff-tag text-[10px] font-black px-1.5 py-0.5 rounded-md hidden" data-idx="${idx}"></span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            const updateModalLiveTotals = () => {
+                const inputs = itemsList.querySelectorAll('.item-modal-price-input');
+                let currentSum = 0;
+                let origSum = 0;
+                inputs.forEach(inp => {
+                    const orig = parseFloat(inp.getAttribute('data-orig')) || 0;
+                    const val = parseFloat(inp.value) || 0;
+                    currentSum += val;
+                    origSum += orig;
+
+                    const diffTag = itemsList.querySelector(`.item-diff-tag[data-idx="${inp.getAttribute('data-idx')}"]`);
+                    if (diffTag) {
+                        const diff = Math.round((orig - val) * 100) / 100;
+                        if (diff > 0) {
+                            diffTag.innerText = `خصم ${diff} ر.ع.`;
+                            diffTag.className = 'item-diff-tag text-[10px] font-black px-1.5 py-0.5 rounded-md bg-emerald-100 text-emerald-800 border border-emerald-200';
+                        } else if (diff < 0) {
+                            diffTag.innerText = `+${Math.abs(diff)} ر.ع.`;
+                            diffTag.className = 'item-diff-tag text-[10px] font-black px-1.5 py-0.5 rounded-md bg-amber-100 text-amber-900 border border-amber-200';
+                        } else {
+                            diffTag.className = 'item-diff-tag text-[10px] font-black px-1.5 py-0.5 rounded-md hidden';
+                        }
+                    }
+                });
+
+                const origEl = document.getElementById('modal-orig-total-display');
+                const calcEl = document.getElementById('modal-calc-total-display');
+                const diffBadge = document.getElementById('modal-diff-badge');
+
+                if (origEl) origEl.innerText = (Math.round(origSum * 100) / 100).toString();
+                if (calcEl) calcEl.innerText = (Math.round(currentSum * 100) / 100).toString();
+                if (diffBadge) {
+                    const totalDiff = Math.round((origSum - currentSum) * 100) / 100;
+                    if (totalDiff > 0) {
+                        diffBadge.innerText = `✨ تم منح تخفيض بقيمة ${totalDiff} ر.ع. للعميل`;
+                        diffBadge.className = 'inline-block text-[10.5px] font-black text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200';
+                    } else if (totalDiff < 0) {
+                        diffBadge.innerText = `زيادة بمقدار ${Math.abs(totalDiff)} ر.ع.`;
+                        diffBadge.className = 'inline-block text-[10.5px] font-black text-amber-700 bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200';
+                    } else {
+                        diffBadge.innerText = 'سعر متطابق مع السعر الأصلي';
+                        diffBadge.className = 'inline-block text-[10.5px] font-black text-stone-500';
+                    }
+                }
+            };
+
+            itemsList.querySelectorAll('.item-modal-price-input').forEach(inp => {
+                inp.addEventListener('input', updateModalLiveTotals);
+            });
+
+            updateModalLiveTotals();
+        } else {
+            if (itemsSection) itemsSection.classList.add('hidden');
+        }
     }
 
     // إظهار حقل الملاحظة إن طُلب
@@ -704,14 +838,52 @@ window.closeOrderActionModal = function(confirmed = false) {
 
     if (modalResolveCallback) {
         if (confirmed) {
+            let updatedItems = null;
+            let updatedTotalPrice = null;
+            let hasCustomDiscount = false;
+            let originalTotalPrice = null;
+
+            if (currentModalOrder) {
+                const inputs = document.querySelectorAll('.item-modal-price-input');
+                if (inputs.length > 0) {
+                    const hasRealItems = Array.isArray(currentModalOrder.items) && currentModalOrder.items.length > 0;
+                    const baseItems = hasRealItems ? currentModalOrder.items : [{
+                        title: 'طلب مخصص لدار التطريز',
+                        price: Number(currentModalOrder.totalPrice) || 0
+                    }];
+
+                    updatedItems = baseItems.map((it, idx) => {
+                        const inp = document.querySelector(`.item-modal-price-input[data-idx="${idx}"]`);
+                        const val = inp ? parseFloat(inp.value) : (parseFloat(it.price) || 0);
+                        const newPrice = isNaN(val) ? (parseFloat(it.price) || 0) : val;
+                        const origPrice = it.originalPrice !== undefined ? Number(it.originalPrice) : (parseFloat(it.price) || 0);
+                        return {
+                            ...it,
+                            price: newPrice,
+                            originalPrice: origPrice,
+                            discountApplied: newPrice < origPrice
+                        };
+                    });
+
+                    updatedTotalPrice = Math.round(updatedItems.reduce((acc, it) => acc + (Number(it.price) || 0), 0) * 100) / 100;
+                    originalTotalPrice = currentModalOrder.originalTotalPrice !== undefined ? Number(currentModalOrder.originalTotalPrice) : (Number(currentModalOrder.totalPrice) || 0);
+                    hasCustomDiscount = updatedTotalPrice !== originalTotalPrice;
+                }
+            }
+
             modalResolveCallback({
                 confirmed: true,
-                note: noteInput ? noteInput.value.trim() : ''
+                note: noteInput ? noteInput.value.trim() : '',
+                updatedItems,
+                updatedTotalPrice,
+                hasCustomDiscount,
+                originalTotalPrice
             });
         } else {
             modalResolveCallback({ confirmed: false });
         }
         modalResolveCallback = null;
+        currentModalOrder = null;
     }
 };
 
@@ -732,15 +904,19 @@ window.addEventListener('keydown', (e) => {
 window.confirmOrderAction = async function(orderId) {
     if (!orderId) return;
 
+    const order = allOrders.find(o => (o.orderId || o.id) === orderId);
+    if (!order) return;
+
     const res = await showOrderConfirmationModal({
         type: 'confirm',
         icon: '✅',
-        title: 'تأكيد استلام المبلغ والأرشفة',
-        subtitle: `رقم الطلب: #${orderId}`,
-        desc: 'هل أنت متأكد من استلام قيمة هذا الطلب وترغب في تأكيده ونقله إلى أرشيف المبيعات المؤكدة؟',
+        title: 'تأكيد استلام المبلغ واعتماد الطلب',
+        subtitle: `رقم الطلب: #${orderId} • ${order.customerName || 'عميل المتجر'}`,
+        desc: 'يرجى مراجعة وتعديل أسعار القطع إذا تم الاتفاق مع العميل على تخفيض خاص، ثم تأكيد استلام المبلغ ونقله إلى الأرشيف.',
         showInput: true,
-        inputValue: 'تم الدفع والتحويل بنجاح',
-        btnText: 'نعم، تم التأكيد والدفع'
+        inputValue: 'تم الاتفاق والدفع بنجاح',
+        btnText: 'نعم، اعتماد السعر والدفع',
+        order: order
     });
 
     if (!res || !res.confirmed) return;
@@ -753,8 +929,16 @@ window.confirmOrderAction = async function(orderId) {
             cardEl.style.pointerEvents = 'none';
         }
 
-        await confirmOrderPayment(orderId, res.note);
-        showOrderToast(`✅ تم تأكيد الطلب ${orderId} واستلام المبلغ ونقله للأرشيف بنجاح!`, 'success');
+        const additionalData = {};
+        if (res.updatedItems) {
+            additionalData.items = res.updatedItems;
+            additionalData.totalPrice = res.updatedTotalPrice;
+            additionalData.hasCustomDiscount = res.hasCustomDiscount;
+            additionalData.originalTotalPrice = res.originalTotalPrice;
+        }
+
+        await confirmOrderPayment(orderId, res.note, additionalData);
+        showOrderToast(`✅ تم اعتماد السعر (${res.updatedTotalPrice ?? order.totalPrice} ر.ع.) وتأكيد الطلب #${orderId} ونقله للأرشيف بنجاح!`, 'success');
         
         // إعادة الرسم ستحدث تلقائياً عبر مراقب onSnapshot
     } catch(err) {
@@ -921,7 +1105,12 @@ window.printOrderReceipt = function(orderId, mode = 'luxury') {
     const customerNotes = escapeHtml(order.customerNotes || '');
 
     // توليد صفوف المنتجات الفاخرة
-    const itemsRowsHtml = items.map((it, idx) => `
+    const itemsRowsHtml = items.map((it, idx) => {
+        const itemPrice = Number(it.price) || 0;
+        const origPrice = it.originalPrice !== undefined ? Number(it.originalPrice) : itemPrice;
+        const hasDiscount = it.discountApplied || (origPrice > itemPrice && itemPrice > 0);
+
+        return `
         <tr>
             <td style="text-align: center; font-weight: bold; color: #7c1d3c; width: 30px;">${idx + 1}</td>
             <td>
@@ -929,6 +1118,7 @@ window.printOrderReceipt = function(orderId, mode = 'luxury') {
                 <div class="item-meta">
                     ${it.id ? `<span class="badge-code">${escapeHtml(it.id)}</span>` : ''}
                     <span class="badge-craft">حياكة يدوية متقنة • Hand-Tufted</span>
+                    ${hasDiscount ? `<span class="badge-craft" style="color: #065f46; background: #ecfdf5; border-color: #a7f3d0;">✨ تخفيض خاص</span>` : ''}
                     ${it.note ? `<span class="badge-note">${escapeHtml(it.note)}</span>` : ''}
                 </div>
             </td>
@@ -937,10 +1127,14 @@ window.printOrderReceipt = function(orderId, mode = 'luxury') {
             </td>
             <td style="text-align: center; font-weight: bold; width: 45px;">1</td>
             <td style="text-align: left; font-weight: 900; color: #7c1d3c; font-size: 12px; width: 85px;">
-                ${it.price ? `${it.price} ر.ع.` : 'بالاتفاق'}
+                <div>${it.price ? `${it.price} ر.ع.` : 'بالاتفاق'}</div>
+                ${hasDiscount ? `
+                    <div style="font-size: 8.5px; color: #78716c; text-decoration: line-through; font-weight: normal;">${origPrice} ر.ع.</div>
+                ` : ''}
             </td>
         </tr>
-    `).join('');
+        `;
+    }).join('');
 
     const printWindow = window.open('', '_blank');
     if (!printWindow) {
@@ -1526,10 +1720,21 @@ window.printOrderReceipt = function(orderId, mode = 'luxury') {
                             </p>
                         </div>
                         <div class="totals-block">
+                            ${(order.originalTotalPrice && Number(order.originalTotalPrice) > Number(order.totalPrice)) ? `
+                            <div class="tot-row">
+                                <span>السعر الأصلي:</span>
+                                <span style="text-decoration: line-through; color: #78716c;">${order.originalTotalPrice} ر.ع.</span>
+                            </div>
+                            <div class="tot-row" style="color: var(--emerald); font-weight: 800;">
+                                <span>خصم خاص للعميل:</span>
+                                <span>-${Number(order.originalTotalPrice) - Number(order.totalPrice)} ر.ع.</span>
+                            </div>
+                            ` : `
                             <div class="tot-row">
                                 <span>المجموع الفرعي:</span>
                                 <span>${order.totalPrice || 0} ر.ع.</span>
                             </div>
+                            `}
                             <div class="tot-row">
                                 <span>خدمة التجهيز والتسليم:</span>
                                 <span style="color: var(--emerald); font-weight: 800;">شامل / مجاناً</span>

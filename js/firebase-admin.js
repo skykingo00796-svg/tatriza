@@ -948,7 +948,7 @@ export function subscribeToOrders(onUpdate, onError) {
     }
 }
 
-export async function confirmOrderPayment(orderId, paymentNote = '') {
+export async function confirmOrderPayment(orderId, paymentNote = '', customData = {}) {
     const { db, isReady } = initFirebaseServices();
     if (!isReady || !db) throw new Error("Firebase services not ready");
 
@@ -956,12 +956,15 @@ export async function confirmOrderPayment(orderId, paymentNote = '') {
     const auth = getAuth();
     const adminEmail = auth.currentUser ? auth.currentUser.email : 'admin';
 
-    await updateDoc(orderRef, {
+    const updatePayload = {
         status: 'confirmed',
         confirmedAt: Date.now(),
         confirmedBy: adminEmail,
-        paymentNotes: (paymentNote || '').trim()
-    });
+        paymentNotes: (paymentNote || '').trim(),
+        ...customData
+    };
+
+    await updateDoc(orderRef, updatePayload);
 
     return { success: true, orderId };
 }
