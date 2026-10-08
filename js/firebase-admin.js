@@ -131,6 +131,9 @@ export async function adminLogoutFromCloud() {
     await signOut(auth);
 }
 
+export const signInWithEmail = adminLoginWithCloud;
+export const handleSignOut = adminLogoutFromCloud;
+
 export function subscribeToAdminAuth(callback) {
     const { auth, isReady } = initFirebaseServices();
     if (!isReady || !auth) {

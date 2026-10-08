@@ -8,8 +8,8 @@ import {
     confirmOrderPayment, 
     cancelAndPermanentlyDeleteOrder, 
     revertOrderToPending,
-    signInWithEmail,
-    handleSignOut,
+    adminLoginWithCloud,
+    adminLogoutFromCloud,
     initFirebaseServices
 } from './firebase-admin.js';
 
@@ -116,7 +116,7 @@ window.handleOrdersLogin = async function(e) {
     if (btnText) btnText.innerText = 'جاري التحقق والمصادقة...';
 
     try {
-        await signInWithEmail(email, password);
+        await adminLoginWithCloud(email, password);
         document.documentElement.classList.add('admin-session-active');
         document.documentElement.classList.remove('admin-session-anonymous');
         localStorage.setItem('tatr_admin_logged_in', 'true');
@@ -139,7 +139,7 @@ window.handleOrdersLogin = async function(e) {
 window.handleOrdersLogout = async function() {
     if (!confirm('هل ترغب في تسجيل الخروج من لوحة إدارة الطلبات؟')) return;
     try {
-        await handleSignOut();
+        await adminLogoutFromCloud();
     } catch(e) {}
     localStorage.removeItem('tatr_admin_logged_in');
     localStorage.removeItem('tatr_admin_last_activity');
