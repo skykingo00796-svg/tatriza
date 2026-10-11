@@ -3,12 +3,12 @@
 // دار التطريز TATRIZA - نظام التخزين المؤقت والتشغيل السريع
 // ==========================================
 
-const CACHE_NAME = 'tatriza-pwa-v3.5';
+const CACHE_NAME = 'tatriza-pwa-v3.6';
 
 const STATIC_ASSETS = [
     './',
     './index.html',
-    './css/style.css?v=3.5',
+    './css/style.css?v=3.6',
     './js/main.js?v=3.5',
     './js/modals.js?v=3.5',
     './js/currency.js?v=3.5',
