@@ -3016,10 +3016,24 @@ input[type=number].item-modal-price-input {
 .aed-official-symbol {
     display: inline-block;
     vertical-align: middle;
-    height: 1em;
     width: auto;
-    max-width: 2em;
+    overflow: visible;
     transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+/* تعزيز خط وسماكة شعاري الريال السعودي والدرهم الإماراتي ليكونا عريضين (Bold) وفخمين */
+.sar-official-symbol path {
+    stroke: currentColor;
+    stroke-width: 65px;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+}
+
+.aed-official-symbol path {
+    stroke: currentColor;
+    stroke-width: 44px;
+    stroke-linejoin: round;
+    stroke-linecap: round;
 }
 
 /* زر العملة في الشريط العلوي (التوب بار) - تناسق هندسي أنيق ومريح للعين */
@@ -3027,7 +3041,7 @@ input[type=number].item-modal-price-input {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 0.3rem;
+    gap: 0.35rem;
     height: 36px;
     padding: 0 0.55rem;
     transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
@@ -3049,17 +3063,29 @@ input[type=number].item-modal-price-input {
     align-items: center;
     justify-content: center;
     line-height: 1;
-    height: 14px;
+    height: 16px;
 }
 
-#header-currency-btn .currency-btn-svg svg,
-#header-currency-btn .currency-official-symbol,
-#header-currency-btn .omr-official-symbol,
-#header-currency-btn .sar-official-symbol,
-#header-currency-btn .aed-official-symbol {
-    height: 13px !important; /* تصغير الشعار قليلاً ليكون متناسقاً وأنيقاً في التوب بار */
+#header-currency-btn .omr-official-symbol {
+    height: 13px !important;
     width: auto !important;
     max-width: 26px !important;
+    display: inline-block !important;
+    vertical-align: middle !important;
+}
+
+#header-currency-btn .sar-official-symbol {
+    height: 16.5px !important; /* تكبير متناسق ليتساوى مع حجم وكتلة الريال العماني */
+    width: auto !important;
+    max-width: 20px !important;
+    display: inline-block !important;
+    vertical-align: middle !important;
+}
+
+#header-currency-btn .aed-official-symbol {
+    height: 15px !important; /* تكبير متناسق ليتساوى مع حجم وكتلة الريال العماني */
+    width: auto !important;
+    max-width: 22px !important;
     display: inline-block !important;
     vertical-align: middle !important;
 }
@@ -3068,8 +3094,8 @@ input[type=number].item-modal-price-input {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    font-size: 0.75rem; /* ~12px */
-    font-weight: 800;
+    font-size: 0.78rem;
+    font-weight: 900;
     line-height: 1;
     height: 14px;
     color: #1c1917;
@@ -3088,13 +3114,24 @@ input[type=number].item-modal-price-input {
     line-height: 1;
 }
 
-.card-price-curr .omr-official-symbol,
-.card-price-curr .sar-official-symbol,
-.card-price-curr .aed-official-symbol,
-.card-price-curr .currency-official-symbol {
+.card-price-curr .omr-official-symbol {
     height: 12px !important;
     width: auto !important;
     max-width: 24px !important;
+    vertical-align: middle !important;
+}
+
+.card-price-curr .sar-official-symbol {
+    height: 15.5px !important; /* تناسق الكتلة مع الريال العماني */
+    width: auto !important;
+    max-width: 18px !important;
+    vertical-align: middle !important;
+}
+
+.card-price-curr .aed-official-symbol {
+    height: 14.5px !important; /* تناسق الكتلة مع الريال العماني */
+    width: auto !important;
+    max-width: 20px !important;
     vertical-align: middle !important;
 }
 
@@ -3105,36 +3142,87 @@ input[type=number].item-modal-price-input {
     line-height: 1;
 }
 
-#modal-currency-label .omr-official-symbol,
-#modal-currency-label .sar-official-symbol,
-#modal-currency-label .aed-official-symbol,
-#modal-currency-label .currency-official-label,
-#modal-currency-label .currency-official-symbol {
+#modal-currency-label .omr-official-symbol {
     height: 19px !important;
     width: auto !important;
     max-width: 38px !important;
     vertical-align: middle !important;
 }
 
+#modal-currency-label .sar-official-symbol {
+    height: 24px !important; /* تناسق الكتلة في نافذة التفاصيل */
+    width: auto !important;
+    max-width: 28px !important;
+    vertical-align: middle !important;
+}
+
+#modal-currency-label .aed-official-symbol {
+    height: 22px !important; /* تناسق الكتلة في نافذة التفاصيل */
+    width: auto !important;
+    max-width: 32px !important;
+    vertical-align: middle !important;
+}
+
 /* تنسيقات الشعار في سلة المشتريات */
-.lux-cart-item .omr-official-symbol,
-.lux-cart-item .sar-official-symbol,
-.lux-cart-item .aed-official-symbol,
-.lux-cart-item .currency-official-symbol {
+.lux-cart-item .omr-official-symbol {
     height: 12px !important;
     width: auto !important;
     max-width: 24px !important;
     vertical-align: middle !important;
 }
 
-#cart-total-currency .omr-official-symbol,
-#cart-total-currency .sar-official-symbol,
-#cart-total-currency .aed-official-symbol,
-#cart-total-currency .currency-official-symbol {
+.lux-cart-item .sar-official-symbol {
+    height: 15px !important;
+    width: auto !important;
+    max-width: 18px !important;
+    vertical-align: middle !important;
+}
+
+.lux-cart-item .aed-official-symbol {
+    height: 14px !important;
+    width: auto !important;
+    max-width: 20px !important;
+    vertical-align: middle !important;
+}
+
+#cart-total-currency .omr-official-symbol {
     height: 15px !important;
     width: auto !important;
     max-width: 30px !important;
     vertical-align: middle !important;
+}
+
+#cart-total-currency .sar-official-symbol {
+    height: 19px !important;
+    width: auto !important;
+    max-width: 24px !important;
+    vertical-align: middle !important;
+}
+
+#cart-total-currency .aed-official-symbol {
+    height: 17.5px !important;
+    width: auto !important;
+    max-width: 26px !important;
+    vertical-align: middle !important;
+}
+
+/* تنسيقات بطاقات اختيار العملة في النافذة المنبثقة */
+.currency-option-card .omr-official-symbol {
+    height: 16px !important;
+    width: auto !important;
+    max-width: 32px !important;
+}
+
+.currency-option-card .sar-official-symbol {
+    height: 21px !important;
+    width: auto !important;
+    max-width: 24px !important;
+}
+
+.currency-option-card .aed-official-symbol {
+    height: 19px !important;
+    width: auto !important;
+    max-width: 28px !important;
 }
 
 .currency-option-card:hover .omr-official-symbol,
@@ -3176,13 +3264,17 @@ input[type=number].item-modal-price-input {
     .currency-btn-code {
         font-size: 10px !important;
     }
-    #header-currency-btn .currency-btn-svg svg,
-    #header-currency-btn .currency-official-symbol,
-    #header-currency-btn .omr-official-symbol,
-    #header-currency-btn .sar-official-symbol,
-    #header-currency-btn .aed-official-symbol {
+    #header-currency-btn .omr-official-symbol {
         height: 11.5px !important;
         max-width: 22px !important;
+    }
+    #header-currency-btn .sar-official-symbol {
+        height: 14.5px !important;
+        max-width: 18px !important;
+    }
+    #header-currency-btn .aed-official-symbol {
+        height: 13.5px !important;
+        max-width: 19px !important;
     }
     /* بطاقات المعرض على الشاشات فائقة الصغر */
     #carpets-grid {
