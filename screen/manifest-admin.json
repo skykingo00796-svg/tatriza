@@ -1,0 +1,48 @@
+{
+  "name": "إدارة دار التطريز TATRIZA | بوابة التحكم والطلبات",
+  "short_name": "إدارة التطريز",
+  "description": "لوحة التحكم السحابية المعتمدة لدار التطريز TATRIZA - إدارة الكتالوج والمبيعات وتتبع الطلبات",
+  "start_url": "./portal.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#2d0b16",
+  "theme_color": "#7c1d3c",
+  "orientation": "any",
+  "dir": "rtl",
+  "lang": "ar",
+  "icons": [
+    {
+      "src": "../images/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "../images/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "../images/logo.jpg",
+      "sizes": "1440x1440",
+      "type": "image/jpeg"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "إدارة الطلبات",
+      "short_name": "الطلبات",
+      "description": "متابعة وإدارة طلبات العملاء والمبيعات",
+      "url": "./orders.html",
+      "icons": [{ "src": "../images/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "كتالوج المنتجات",
+      "short_name": "المنتجات",
+      "description": "إضافة وتعديل السجاد والقطع الفنية",
+      "url": "./portal.html",
+      "icons": [{ "src": "../images/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}

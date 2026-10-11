@@ -6,7 +6,15 @@
     <title>إدارة الطلبات والمهام والمبيعات | دار التطريز TATRIZA</title>
     <!-- أيقونة الموقع الرسمية (Favicon) -->
     <link rel="icon" type="image/jpeg" href="../images/logo.jpg">
-    <link rel="apple-touch-icon" href="../images/logo.jpg">
+    <link rel="apple-touch-icon" href="../images/icon-apple.png">
+    
+    <!-- إعدادات تطبيق الويب التقدمي للإدارة (PWA Admin) -->
+    <link rel="manifest" href="manifest-admin.json">
+    <meta name="theme-color" content="#7c1d3c">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="إدارة التطريز">
     
     <!-- خطوط جوجل العربية الفاخرة -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -427,7 +435,8 @@
         </div>
     </div>
 
-    <!-- ربط محرك تشغيل وإدارة الطلبات السحابية -->
+    <!-- ربط محرك تشغيل وإدارة الطلبات السحابية ومحرك PWA -->
+    <script type="module" src="../js/pwa.js"></script>
     <script type="module" src="../js/orders.js"></script>
 </body>
 </html>

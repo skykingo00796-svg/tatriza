@@ -16,6 +16,7 @@ const STATIC_ASSETS = [
     './js/authenticity.js',
     './js/qrcode.js',
     './manifest.json',
+    './manifest-admin.json',
     './images/logo.jpg',
     './images/icon-192.png',
     './images/icon-512.png',

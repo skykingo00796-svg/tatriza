@@ -6,7 +6,15 @@
     <title>بوابة الإدارة المعتمدة | دار التطريز TATRIZA</title>
     <!-- أيقونة الموقع الرسمية (Favicon) -->
     <link rel="icon" type="image/jpeg" href="../images/logo.jpg">
-    <link rel="apple-touch-icon" href="../images/logo.jpg">
+    <link rel="apple-touch-icon" href="../images/icon-apple.png">
+    
+    <!-- إعدادات تطبيق الويب التقدمي للإدارة (PWA Admin) -->
+    <link rel="manifest" href="manifest-admin.json">
+    <meta name="theme-color" content="#7c1d3c">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="إدارة التطريز">
     
     <!-- خطوط جوجل العربية والإنجليزية الفاخرة المعتمدة للمنصة والاستوديو -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -4009,6 +4017,21 @@
                     <div class="drawer-action-arrow text-emerald-700">&gt;</div>
                 </a>
 
+                <!-- 0.5 تثبيت تطبيق الإدارة على هاتفك (PWA) -->
+                <button type="button" onclick="closeOptionsDrawer(); window.triggerPWAInstall && window.triggerPWAInstall();" id="drawer-pwa-install-btn" class="drawer-lux-card group w-full text-right cursor-pointer bg-amber-50/70 border border-amber-300/80 hover:border-amber-500 shadow-2xs">
+                    <div class="flex items-center gap-2.5 sm:gap-3 min-w-0 flex-1">
+                        <div class="drawer-icon-orb bg-amber-100 text-amber-900 border-amber-300/60 shrink-0">📲</div>
+                        <div class="flex flex-col text-right min-w-0 flex-1 overflow-hidden">
+                            <div class="flex items-center gap-1.5">
+                                <span class="font-display text-[11.5px] sm:text-xs md:text-sm font-black text-stone-900 group-hover:text-brand transition whitespace-nowrap truncate block">تثبيت تطبيق الإدارة على هاتفك</span>
+                                <span class="text-[8.5px] px-1.5 py-0.2 bg-amber-600 text-white rounded font-black">تطبيق مستقل</span>
+                            </div>
+                            <span class="text-[9px] sm:text-[9.5px] md:text-[10px] text-stone-500 font-medium whitespace-nowrap truncate block mt-1">شاشة كاملة لآيفون وأندرويد بدون متصفح</span>
+                        </div>
+                    </div>
+                    <div class="drawer-action-arrow text-amber-800">&gt;</div>
+                </button>
+
                 <!-- 1. إضافة سجادة جديدة -->
                 <button type="button" onclick="closeOptionsDrawer(); openAddModal();" class="drawer-lux-card group w-full text-right cursor-pointer">
                     <div class="flex items-center gap-2.5 sm:gap-3 min-w-0 flex-1">
@@ -4129,7 +4152,8 @@
     </div>
 
 
-    <!-- استدعاء محرك البوابة المستقل حصرياً في نهاية الصفحة -->
+    <!-- استدعاء محرك البوابة ومحرك التطبيق PWA -->
+    <script type="module" src="../js/pwa.js"></script>
     <script type="module" src="../js/portal.js?v=3.0"></script>
 </body>
 </html>
