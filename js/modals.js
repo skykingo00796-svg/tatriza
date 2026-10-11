@@ -1,5 +1,5 @@
 import { getVideoFromIndexedDB, recordCustomerOrder } from './firebase-public.js';
-import { getCurrentCurrency, convertFromOMR, OMR_OFFICIAL_SVG, getOfficialCurrencySvg } from './currency.js';
+import { getCurrentCurrency, convertFromOMR, getCurrencySymbolHTML, getOfficialCurrencySvg } from './currency.js';
 // ==========================================
 // ملف إدارة النوافذ، السلة، والمنتجات (modals.js)
 // ==========================================
@@ -414,8 +414,7 @@ export function openModal(carpetId, allCarpets) {
     document.getElementById('modal-price').innerText = displayPrice;
     const modalCurrencyLabel = document.getElementById('modal-currency-label');
     if (modalCurrencyLabel) {
-        const svg = getOfficialCurrencySvg(cur.code);
-        modalCurrencyLabel.innerHTML = svg ? svg : cur.symbolText;
+        modalCurrencyLabel.innerHTML = getCurrencySymbolHTML(cur);
     }
 
     const modalAvailabilityText = document.getElementById('modal-availability-text');
@@ -1026,7 +1025,7 @@ export function updateCartDisplay() {
         const baseItemPrice = Number(item.price) || 0;
         totalOMR += baseItemPrice;
         const convertedItemPrice = convertFromOMR(baseItemPrice, cur);
-        const itemCurrHTML = cur.code === 'OMR' ? `ر.ع ${OMR_OFFICIAL_SVG}` : cur.symbolText;
+        const itemCurrHTML = getCurrencySymbolHTML(cur);
         const itemImg = item.image || '../images/logo.jpg';
         container.innerHTML += `
             <div class="lux-cart-item flex items-center justify-between gap-3">
@@ -1059,8 +1058,7 @@ export function updateCartDisplay() {
     }
     const cartTotalCurrEl = document.getElementById('cart-total-currency');
     if (cartTotalCurrEl) {
-        const svg = getOfficialCurrencySvg(cur.code);
-        cartTotalCurrEl.innerHTML = svg ? svg : cur.symbolText;
+        cartTotalCurrEl.innerHTML = getCurrencySymbolHTML(cur);
     }
 }
 

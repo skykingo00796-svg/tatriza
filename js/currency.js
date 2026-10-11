@@ -160,29 +160,32 @@ export function convertFromOMR(amountInOMR, targetCurrency = null) {
     return Math.round(converted);
 }
 
-// توليد رمز العملة (الشعار الرسمي فقط إن وُجد، أو الرمز النصي المعتمد إذا لم يوجد شعار رسمي)
-export function getCurrencyBadgeHTML(targetCurrency = null, options = { showFlag: false, compact: false }) {
+/**
+ * الحصول على رمز العملة الدقيق للعرض (مصدر الحقيقة الموحد للنظام):
+ * - إذا كان للعملة شعار رسمي معتمد (OMR, SAR, AED): يعيد الشعار الفكتوري الرسمي فقط (SVG) بدون أي نص نهائياً!
+ * - إذا لم يكن لها شعار رسمي (BHD, KWD, QAR, USD): يعيد الرمز النصي المعتمد فقط (مثل د.ب، د.ك، ر.ق، $).
+ */
+export function getCurrencySymbolHTML(targetCurrency = null) {
     const cur = targetCurrency || getCurrentCurrency();
     const svg = getOfficialCurrencySvg(cur.code);
-    
-    // إذا كان الشعار الرسمي متوفراً: يظهر الشعار الرسمي فقط بدون الرمز النصي
     if (cur.hasOfficialSvg && svg) {
-        if (options.compact) {
-            return `<span class="inline-flex items-center">${svg}</span>`;
-        }
-        return `
-            <span class="inline-flex items-center gap-1 font-bold">
-                ${options.showFlag ? `<span class="text-xs">${cur.flag}</span>` : ''}
-                ${svg}
-            </span>
-        `;
+        return svg;
     }
+    return cur.symbolText;
+}
 
-    // إذا لم يتوفر شعار رسمي (مثل د.ب، د.ك، ر.ق، $): يظهر الرمز النصي
+// توليد وسم العملة الكامل للعرض
+export function getCurrencyBadgeHTML(targetCurrency = null, options = { showFlag: false, compact: false }) {
+    const cur = targetCurrency || getCurrentCurrency();
+    const symbolHtml = getCurrencySymbolHTML(cur);
+    
+    if (options.compact) {
+        return `<span class="inline-flex items-center">${symbolHtml}</span>`;
+    }
     return `
         <span class="inline-flex items-center gap-1 font-bold">
             ${options.showFlag ? `<span class="text-xs">${cur.flag}</span>` : ''}
-            <span>${cur.symbolText}</span>
+            ${symbolHtml}
         </span>
     `;
 }
@@ -200,8 +203,9 @@ export function getCurrencyText(targetCurrency = null) {
 export function updateAllPricesOnPage() {
     const cur = getCurrentCurrency();
     const curSvg = getOfficialCurrencySvg(cur.code);
+    const symbolHtml = getCurrencySymbolHTML(cur);
     
-    // 1. تحديث زر العملة في الهيدر (إظهار الشعار الرسمي فقط وإخفاء النص، أو إظهار الرمز النصي إذا لم يتوفر شعار)
+    // 1. تحديث زر العملة في الهيدر (إما الشعار الرسمي فقط أو الرمز النصي فقط، ولا يظهران معاً إطلاقاً)
     const headerBtn = document.getElementById('header-currency-btn');
     if (headerBtn) {
         const flagSpan = headerBtn.querySelector('.currency-btn-flag');
@@ -209,20 +213,30 @@ export function updateAllPricesOnPage() {
         const svgSpan = headerBtn.querySelector('.currency-btn-svg');
         
         if (flagSpan) flagSpan.innerText = cur.flag;
-        if (curSvg) {
-            if (codeSpan) codeSpan.style.display = 'none';
+        
+        if (cur.hasOfficialSvg && curSvg) {
+            // عملة بشعار رسمي معتمد: تفريغ النص بالكامل وإخفاؤه، وعرض الشعار فقط
+            if (codeSpan) {
+                codeSpan.innerText = '';
+                codeSpan.style.display = 'none';
+                codeSpan.classList.add('hidden');
+            }
             if (svgSpan) {
                 svgSpan.innerHTML = curSvg;
-                svgSpan.style.display = 'inline-block';
+                svgSpan.style.display = 'inline-flex';
+                svgSpan.classList.remove('hidden');
             }
         } else {
+            // عملة برمز نصي: تفريغ الشعار بالكامل وإخفاؤه، وعرض الرمز النصي فقط
             if (codeSpan) {
                 codeSpan.innerText = cur.symbolText;
                 codeSpan.style.display = 'inline-block';
+                codeSpan.classList.remove('hidden');
             }
             if (svgSpan) {
                 svgSpan.innerHTML = '';
                 svgSpan.style.display = 'none';
+                svgSpan.classList.add('hidden');
             }
         }
     }
@@ -233,7 +247,7 @@ export function updateAllPricesOnPage() {
         drawerCurrentText.innerHTML = `${cur.flag} ${cur.name} (${cur.symbolText})`;
     }
 
-    // 3. تحديث بطاقات المعرض الرئيسية (Grid Cards): الشعار فقط إن وجد، أو الرمز النصي إن لم يوجد
+    // 3. تحديث بطاقات المعرض الرئيسية (Grid Cards)
     document.querySelectorAll('.carpet-card').forEach(card => {
         const basePrice = card.getAttribute('data-base-price');
         if (basePrice !== null) {
@@ -243,7 +257,7 @@ export function updateAllPricesOnPage() {
                 priceValEl.innerText = convertFromOMR(basePrice, cur);
             }
             if (priceCurrEl) {
-                priceCurrEl.innerHTML = curSvg ? curSvg : cur.symbolText;
+                priceCurrEl.innerHTML = symbolHtml;
             }
         }
     });
@@ -259,7 +273,7 @@ export function updateAllPricesOnPage() {
                 modalPriceEl.innerText = convertFromOMR(window._currentModalBasePrice, cur);
             }
             if (modalCurrEl) {
-                modalCurrEl.innerHTML = curSvg ? curSvg : cur.symbolText;
+                modalCurrEl.innerHTML = symbolHtml;
             }
         }
     }
@@ -377,7 +391,7 @@ function createCurrencyModalDOM() {
             </div>
 
             <div class="bg-amber-50/60 border border-amber-200/60 rounded-xl p-2.5 text-center text-[10px] text-amber-900 font-medium leading-relaxed">
-                💡 جميع المعاملات وتأكيدات الحياكة المباشرة تصدر بالريال العماني <strong>(ر.ع ${OMR_OFFICIAL_SVG})</strong> كمرجع أساسي موثق للدار.
+                💡 جميع المعاملات وتأكيدات الحياكة المباشرة تصدر بالريال العماني <strong>(${OMR_OFFICIAL_SVG})</strong> كمرجع أساسي موثق للدار.
             </div>
         </div>
     </div>
@@ -390,6 +404,7 @@ window.getCurrentCurrency = getCurrentCurrency;
 window.setCurrentCurrency = setCurrentCurrency;
 window.convertFromOMR = convertFromOMR;
 window.getCurrencyBadgeHTML = getCurrencyBadgeHTML;
+window.getCurrencySymbolHTML = getCurrencySymbolHTML;
 window.getOfficialCurrencySvg = getOfficialCurrencySvg;
 window.OMR_OFFICIAL_SVG = OMR_OFFICIAL_SVG;
 window.SAR_OFFICIAL_SVG = SAR_OFFICIAL_SVG;
@@ -398,4 +413,13 @@ window.getCurrencyText = getCurrencyText;
 window.openCurrencyModal = openCurrencyModal;
 window.closeCurrencyModal = closeCurrencyModal;
 window.updateAllPricesOnPage = updateAllPricesOnPage;
+
+// تشغيل التحديث فور تحميل السكريبت وتجهيز المستند
+if (typeof document !== 'undefined') {
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => updateAllPricesOnPage());
+    } else {
+        updateAllPricesOnPage();
+    }
+}
 

@@ -7,7 +7,7 @@ import { initTheme, openThemeModal, closeThemeModal, selectThemeOption, applyThe
 import { 
     getCurrentCurrency, setCurrentCurrency, convertFromOMR, 
     openCurrencyModal, closeCurrencyModal, updateAllPricesOnPage, 
-    OMR_OFFICIAL_SVG 
+    getCurrencySymbolHTML, OMR_OFFICIAL_SVG 
 } from './currency.js';
 import { 
     openModal, closeModal, handleModalScroll, scrollModalSlide,
@@ -390,7 +390,7 @@ function displayCarpets(carpetsToDisplay) {
 
         const cur = getCurrentCurrency();
         const displayPrice = convertFromOMR(carpet.price, cur);
-        const currSymbolHTML = cur.code === 'OMR' ? `ر.ع ${OMR_OFFICIAL_SVG}` : cur.symbolText;
+        const currSymbolHTML = getCurrencySymbolHTML(cur);
 
         card.innerHTML = `
             <!-- الكتلة العلوية: الشريط الملاصق للصورة يمنع ظهور أي فراغ أبيض نهائياً -->
