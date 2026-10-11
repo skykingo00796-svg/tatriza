@@ -264,6 +264,12 @@
                         <span>🗄️ الأرشيف والمبيعات المؤكدة</span>
                         <span id="badge-tab-archive" class="px-2 py-0.5 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800">0</span>
                     </button>
+
+                    <!-- تبويب الإحصائيات والتقارير الذكية -->
+                    <button type="button" id="tab-btn-analytics" onclick="window.switchOrdersTab('analytics')" class="flex-1 sm:flex-initial py-2.5 px-4 sm:px-6 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 bg-white hover:bg-stone-100 text-stone-700 border border-stone-200 transition cursor-pointer">
+                        <span>📊 إحصائيات وتقارير ذكية</span>
+                        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-900 border border-amber-300/60">تحليلات</span>
+                    </button>
                 </div>
 
                 <!-- أدوات الفرز والبحث الداخلي -->
@@ -318,6 +324,11 @@
                         <span id="archive-filtered-revenue" class="font-bold text-amber-300 mr-1.5">0 ر.ع.</span>
                     </div>
                 </div>
+            </div>
+
+            <!-- 2.5 قسم الإحصائيات والتحليلات الذكية الشامل (يظهر عند اختيار تبويب analytics) -->
+            <div id="analytics-dashboard-container" class="hidden space-y-6">
+                <!-- يتم حقن المحتوى الإحصائي المتقدم عبر orders.js -->
             </div>
 
             <!-- 3. شبكة بطاقات الطلبات (Orders Grid) -->

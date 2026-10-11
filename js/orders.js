@@ -371,6 +371,10 @@ function updateKpiCounters() {
     if (badgeArchiveTab) {
         badgeArchiveTab.innerText = confirmedOrders.length;
     }
+
+    if (currentTab === 'analytics') {
+        renderAnalyticsDashboard();
+    }
 }
 
 // ==========================================
@@ -427,6 +431,21 @@ function renderOrdersList() {
     const container = document.getElementById('orders-grid-container');
     const emptyState = document.getElementById('orders-empty-state');
     const archiveSummaryBar = document.getElementById('archive-summary-bar');
+    const analyticsContainer = document.getElementById('analytics-dashboard-container');
+
+    if (currentTab === 'analytics') {
+        if (container) container.classList.add('hidden');
+        if (emptyState) emptyState.classList.add('hidden');
+        if (archiveSummaryBar) archiveSummaryBar.classList.add('hidden');
+        if (analyticsContainer) {
+            analyticsContainer.classList.remove('hidden');
+            renderAnalyticsDashboard();
+        }
+        return;
+    } else {
+        if (analyticsContainer) analyticsContainer.classList.add('hidden');
+        if (container) container.classList.remove('hidden');
+    }
 
     if (!container) return;
 
@@ -2085,26 +2104,31 @@ window.exportOrdersCsv = function() {
 };
 
 // ==========================================
-// التبديل بين التبويبات (Pending vs Archive)
+// التبديل بين التبويبات (Pending vs Archive vs Analytics)
 // ==========================================
 window.switchOrdersTab = function(tabName) {
     currentTab = tabName;
     const btnPending = document.getElementById('tab-btn-pending');
     const btnArchive = document.getElementById('tab-btn-archive');
+    const btnAnalytics = document.getElementById('tab-btn-analytics');
+
+    const inactiveClass = 'orders-tab-inactive flex-1 sm:flex-initial py-2.5 px-4 sm:px-6 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 bg-white hover:bg-stone-100 text-stone-700 border border-stone-200 transition cursor-pointer';
+
+    if (btnPending) btnPending.className = inactiveClass;
+    if (btnArchive) btnArchive.className = inactiveClass;
+    if (btnAnalytics) btnAnalytics.className = inactiveClass;
 
     if (tabName === 'pending') {
         if (btnPending) {
-            btnPending.className = 'orders-tab-active flex-1 sm:flex-initial py-2.5 px-4 sm:px-6 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 bg-stone-900 text-white shadow-sm transition';
+            btnPending.className = 'orders-tab-active flex-1 sm:flex-initial py-2.5 px-4 sm:px-6 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 bg-stone-900 text-white shadow-sm transition cursor-pointer';
         }
+    } else if (tabName === 'archive') {
         if (btnArchive) {
-            btnArchive.className = 'orders-tab-inactive flex-1 sm:flex-initial py-2.5 px-4 sm:px-6 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 bg-white hover:bg-stone-100 text-stone-700 border border-stone-200 transition';
+            btnArchive.className = 'orders-tab-active flex-1 sm:flex-initial py-2.5 px-4 sm:px-6 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 bg-emerald-700 text-white shadow-sm transition cursor-pointer';
         }
-    } else {
-        if (btnPending) {
-            btnPending.className = 'orders-tab-inactive flex-1 sm:flex-initial py-2.5 px-4 sm:px-6 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 bg-white hover:bg-stone-100 text-stone-700 border border-stone-200 transition';
-        }
-        if (btnArchive) {
-            btnArchive.className = 'orders-tab-active flex-1 sm:flex-initial py-2.5 px-4 sm:px-6 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 bg-emerald-700 text-white shadow-sm transition';
+    } else if (tabName === 'analytics') {
+        if (btnAnalytics) {
+            btnAnalytics.className = 'orders-tab-active flex-1 sm:flex-initial py-2.5 px-4 sm:px-6 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 bg-brand text-white shadow-sm transition cursor-pointer';
         }
     }
 
@@ -2174,6 +2198,439 @@ function escapeHtml(str) {
         .replace(/"/g, '&quot;')
         .replace(/'/g, '&#039;');
 }
+
+// ==========================================
+// لوحة الإحصائيات والتحليلات الذكية الشاملة (Smart Analytics Dashboard)
+// ==========================================
+function renderAnalyticsDashboard() {
+    const container = document.getElementById('analytics-dashboard-container');
+    if (!container) return;
+
+    const totalOrders = allOrders.length;
+    const confirmedOrders = allOrders.filter(o => o.status === 'confirmed' || o.isPaid || o.status === 'completed');
+    const pendingOrders = allOrders.filter(o => o.status !== 'confirmed' && !o.isPaid && o.status !== 'completed');
+
+    const totalRevenue = confirmedOrders.reduce((sum, o) => sum + (Number(o.totalPrice) || 0), 0);
+    const totalSoldItems = confirmedOrders.reduce((sum, o) => sum + (Array.isArray(o.items) ? o.items.length : 1), 0);
+    const aov = confirmedOrders.length > 0 ? Math.round(totalRevenue / confirmedOrders.length) : 0;
+    const conversionRate = totalOrders > 0 ? Math.round((confirmedOrders.length / totalOrders) * 100) : 0;
+    const avgItemsPerOrder = confirmedOrders.length > 0 ? (totalSoldItems / confirmedOrders.length).toFixed(1) : '1.0';
+
+    // 1. تجميع وتوزيع المبيعات بحسب الأشهر (Monthly Revenue Breakdown)
+    const monthMap = {};
+    const arabicMonths = ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'];
+    
+    confirmedOrders.forEach(o => {
+        let dateObj = new Date();
+        if (o.confirmedAt) dateObj = new Date(o.confirmedAt);
+        else if (o.createdAt) dateObj = new Date(o.createdAt);
+        else if (o.date) {
+            const parsed = new Date(o.date);
+            if (!isNaN(parsed.getTime())) dateObj = parsed;
+        }
+        
+        const key = `${dateObj.getFullYear()}-${String(dateObj.getMonth() + 1).padStart(2, '0')}`;
+        const label = `${arabicMonths[dateObj.getMonth()]} ${dateObj.getFullYear()}`;
+        if (!monthMap[key]) {
+            monthMap[key] = { key, label, revenue: 0, count: 0 };
+        }
+        monthMap[key].revenue += (Number(o.totalPrice) || 0);
+        monthMap[key].count += 1;
+    });
+
+    const monthList = Object.values(monthMap).sort((a, b) => a.key.localeCompare(b.key));
+    if (monthList.length === 0) {
+        const now = new Date();
+        monthList.push({
+            key: `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`,
+            label: `${arabicMonths[now.getMonth()]} ${now.getFullYear()}`,
+            revenue: totalRevenue,
+            count: confirmedOrders.length
+        });
+    }
+
+    const maxMonthRev = Math.max(...monthList.map(m => m.revenue), 1);
+
+    // 2. تحليل مراحل مسار الطلبيات
+    const stageCounts = {
+        order_received: 0,
+        in_weaving: 0,
+        quality_finishing: 0,
+        shipped: 0,
+        delivered: 0
+    };
+    allOrders.forEach(o => {
+        const st = (typeof getOrderStage === 'function') ? getOrderStage(o).id : (o.stage || 'order_received');
+        if (stageCounts[st] !== undefined) stageCounts[st]++;
+        else stageCounts.order_received++;
+    });
+
+    // 3. تحليل القطع الأكثر طلباً وشعبية (Top In-Demand Pieces)
+    const productMap = {};
+    allOrders.forEach(o => {
+        const items = Array.isArray(o.items) && o.items.length > 0 ? o.items : [{
+            title: o.carpetTitle || o.title || 'سجادة ملكية تفصيل خاص',
+            price: o.totalPrice || 0,
+            image: o.carpetImage || 'images/logo.jpg',
+            size: o.carpetSize || ''
+        }];
+
+        items.forEach(it => {
+            const name = it.title || 'سجادة ملكية';
+            if (!productMap[name]) {
+                productMap[name] = {
+                    title: name,
+                    image: it.image || 'images/logo.jpg',
+                    count: 0,
+                    revenue: 0,
+                    size: it.size || ''
+                };
+            }
+            productMap[name].count += 1;
+            productMap[name].revenue += (Number(it.price) || 0);
+        });
+    });
+
+    const topProducts = Object.values(productMap).sort((a, b) => b.count - a.count).slice(0, 6);
+    const maxProductCount = Math.max(...topProducts.map(p => p.count), 1);
+
+    // تجهيز قيم العرض للخصوصية
+    const displayRev = isRevenueHidden ? '••••••' : `${totalRevenue.toLocaleString('ar-OM')} ر.ع.`;
+    const displayAOV = isRevenueHidden ? '••••' : `${aov.toLocaleString('ar-OM')} ر.ع.`;
+
+    // رسم أعمدة الرسم البياني المتجاوب
+    const chartBarsHtml = monthList.map(m => {
+        const heightPct = Math.max(12, Math.round((m.revenue / maxMonthRev) * 100));
+        const revFormatted = isRevenueHidden ? '••••' : `${m.revenue.toLocaleString('ar-OM')} ر.ع.`;
+        return `
+            <div class="flex-1 flex flex-col items-center justify-end h-44 sm:h-52 group relative">
+                <div class="absolute -top-10 opacity-0 group-hover:opacity-100 transition-all pointer-events-none bg-stone-900 text-white text-[10px] font-mono py-1 px-2.5 rounded-lg whitespace-nowrap z-20 shadow-lg">
+                    ${m.label}: ${revFormatted} (${m.count} طلب)
+                </div>
+                
+                <span class="text-[10px] font-mono font-bold text-stone-700 mb-1.5 opacity-80 group-hover:opacity-100 truncate max-w-full">
+                    ${revFormatted}
+                </span>
+
+                <div class="w-full max-w-[44px] bg-stone-100 rounded-t-xl overflow-hidden flex items-end h-28 sm:h-36 border border-stone-200 group-hover:border-amber-400 transition">
+                    <div style="height: ${heightPct}%" class="w-full bg-gradient-to-t from-[#7c1d3c] via-[#a02c52] to-[#c59b27] rounded-t-lg transition-all duration-500 shadow-sm"></div>
+                </div>
+
+                <span class="text-[9.5px] sm:text-xs font-bold text-stone-600 mt-2 truncate max-w-full text-center">
+                    ${m.label}
+                </span>
+            </div>
+        `;
+    }).join('');
+
+    // رسم بطاقات مراحل التصنيع
+    const stagesHtml = ORDER_STAGES_ARRAY.map(st => {
+        const cnt = stageCounts[st.id] || 0;
+        return `
+            <div class="p-3 bg-white rounded-2xl border border-stone-200/90 shadow-2xs flex items-center justify-between">
+                <div class="flex items-center gap-2.5">
+                    <span class="text-xl shrink-0">${st.icon}</span>
+                    <div>
+                        <div class="font-display font-bold text-xs text-stone-900">${st.title}</div>
+                        <div class="text-[10px] text-stone-500">${st.desc}</div>
+                    </div>
+                </div>
+                <div class="text-right">
+                    <span class="font-mono font-black text-sm text-stone-900 px-2.5 py-1 rounded-lg bg-stone-100 border border-stone-200">${cnt}</span>
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    // رسم بطاقات المنتجات الأكثر طلباً
+    const topProductsHtml = topProducts.map(p => {
+        const pct = Math.round((p.count / maxProductCount) * 100);
+        const pRev = isRevenueHidden ? '••••' : `${p.revenue.toLocaleString('ar-OM')} ر.ع.`;
+        return `
+            <div class="p-3.5 bg-white rounded-2xl border border-stone-200/90 shadow-2xs space-y-2">
+                <div class="flex items-center justify-between gap-3">
+                    <div class="flex items-center gap-3 min-w-0">
+                        <img src="${escapeHtml(p.image)}" alt="${escapeHtml(p.title)}" class="w-11 h-11 rounded-xl object-cover border border-stone-200 shrink-0" onerror="this.src='images/logo.jpg'">
+                        <div class="min-w-0">
+                            <h4 class="font-display font-bold text-xs text-stone-900 truncate">${escapeHtml(p.title)}</h4>
+                            <p class="text-[10px] text-stone-500 font-medium">${p.count} طلبات • ${pRev}</p>
+                        </div>
+                    </div>
+                    <span class="font-mono text-xs font-black text-brand bg-rose-50 px-2 py-0.5 rounded-lg border border-rose-200 shrink-0">${p.count} طلب</span>
+                </div>
+                <div class="w-full bg-stone-100 h-1.5 rounded-full overflow-hidden">
+                    <div style="width: ${pct}%" class="bg-gradient-to-r from-amber-500 to-[#7c1d3c] h-full rounded-full"></div>
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    // تجميع لوحة التحليلات
+    container.innerHTML = `
+        <div class="space-y-6">
+            
+            <!-- ترويسة لوحة التحليلات والإجراءات المباشرة -->
+            <div class="bg-gradient-to-r from-[#2a0814] via-[#451021] to-[#7c1d3c] text-white p-5 sm:p-6 rounded-3xl shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                <div class="space-y-1">
+                    <div class="flex items-center gap-2">
+                        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-400 text-stone-950 font-mono">REPORTS v2.0</span>
+                        <span class="text-xs text-amber-200/90 font-medium">نظام التتبع والذكاء المالي</span>
+                    </div>
+                    <h2 class="font-display font-black text-lg sm:text-2xl text-white">المركز التحليلي المالي والتشغيلي</h2>
+                    <p class="text-xs sm:text-sm text-stone-200/80 max-w-xl">
+                        تقارير متزامنة لحظياً لمراقبة التدفقات النقدية، متوسط السلة، ومراحل تصنيع السجاد الملكي.
+                    </p>
+                </div>
+
+                <div class="flex flex-wrap items-center gap-2.5 w-full md:w-auto">
+                    <button type="button" onclick="window.printExecutiveReport()" class="flex-1 md:flex-initial bg-amber-400 hover:bg-amber-300 text-stone-950 font-bold text-xs h-10 px-4 rounded-xl shadow-md transition flex items-center justify-center gap-2 cursor-pointer active:scale-95">
+                        <span>🖨️</span>
+                        <span>طباعة تقرير الإدارة</span>
+                    </button>
+                    <button type="button" onclick="window.exportOrdersCsv()" class="flex-1 md:flex-initial bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold text-xs h-10 px-4 rounded-xl transition flex items-center justify-center gap-2 cursor-pointer active:scale-95">
+                        <span>📥</span>
+                        <span>تصدير Excel/CSV</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- شبكة مؤشرات الأداء المتقدمة (KPI Cards) -->
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+                
+                <!-- AOV متوسط قيمة الطلب -->
+                <div class="p-4 sm:p-5 rounded-2xl sm:rounded-3xl bg-white border border-stone-200/90 shadow-2xs text-right space-y-1">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="w-8 h-8 rounded-xl bg-amber-50 text-amber-900 flex items-center justify-center text-sm font-bold">💎</span>
+                        <span class="text-[9.5px] font-mono text-stone-400">AOV</span>
+                    </div>
+                    <div class="text-[11px] text-stone-500 font-bold">متوسط قيمة الطلب</div>
+                    <div class="font-display font-black text-xl sm:text-2xl text-stone-900 font-mono">${displayAOV}</div>
+                    <div class="text-[10px] text-stone-400 font-medium">معدل الدخل لكل طلبية معتمدة</div>
+                </div>
+
+                <!-- Conversion Rate معدل الاعتماد والتأكيد -->
+                <div class="p-4 sm:p-5 rounded-2xl sm:rounded-3xl bg-white border border-stone-200/90 shadow-2xs text-right space-y-1">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-900 flex items-center justify-center text-sm font-bold">🎯</span>
+                        <span class="text-[9.5px] font-mono text-stone-400">RATE</span>
+                    </div>
+                    <div class="text-[11px] text-stone-500 font-bold">معدل اعتماد المبيعات</div>
+                    <div class="font-display font-black text-xl sm:text-2xl text-emerald-700 font-mono">${conversionRate}%</div>
+                    <div class="text-[10px] text-stone-400 font-medium">${confirmedOrders.length} من أصل ${totalOrders} طلب مؤكد</div>
+                </div>
+
+                <!-- Basket Size كثافة السلة -->
+                <div class="p-4 sm:p-5 rounded-2xl sm:rounded-3xl bg-white border border-stone-200/90 shadow-2xs text-right space-y-1">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="w-8 h-8 rounded-xl bg-purple-50 text-purple-900 flex items-center justify-center text-sm font-bold">🛍️</span>
+                        <span class="text-[9.5px] font-mono text-stone-400">ITEMS</span>
+                    </div>
+                    <div class="text-[11px] text-stone-500 font-bold">متوسط القطع بالطلبية</div>
+                    <div class="font-display font-black text-xl sm:text-2xl text-stone-900 font-mono">${avgItemsPerOrder}</div>
+                    <div class="text-[10px] text-stone-400 font-medium">إجمالي ${totalSoldItems} قطعة مباعة</div>
+                </div>
+
+                <!-- Active Pipeline التحف قيد التصنيع والتسليم -->
+                <div class="p-4 sm:p-5 rounded-2xl sm:rounded-3xl bg-white border border-stone-200/90 shadow-2xs text-right space-y-1">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="w-8 h-8 rounded-xl bg-blue-50 text-blue-900 flex items-center justify-center text-sm font-bold">🧵</span>
+                        <span class="text-[9.5px] font-mono text-stone-400">ACTIVE</span>
+                    </div>
+                    <div class="text-[11px] text-stone-500 font-bold">الطلبات قيد المعالجة</div>
+                    <div class="font-display font-black text-xl sm:text-2xl text-brand font-mono">${pendingOrders.length}</div>
+                    <div class="text-[10px] text-stone-400 font-medium">في مراحل الحياكة أو الشحن</div>
+                </div>
+
+            </div>
+
+            <!-- المخطط البياني الشهري ومسار التتبع -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                
+                <!-- المخطط البياني للمبيعات (عمودين من 3) -->
+                <div class="lg:col-span-2 bg-white p-5 sm:p-6 rounded-3xl border border-stone-200/90 shadow-sm space-y-4">
+                    <div class="flex items-center justify-between pb-3 border-b border-stone-100">
+                        <div class="flex items-center gap-2.5">
+                            <span class="w-8 h-8 rounded-xl bg-amber-50 text-amber-900 flex items-center justify-center text-sm">📈</span>
+                            <div>
+                                <h3 class="font-display font-bold text-sm sm:text-base text-stone-900">مسار الإيرادات الشهرية</h3>
+                                <p class="text-[11px] text-stone-500">حجم التحصيل المالي لكل فترة زمنية</p>
+                            </div>
+                        </div>
+                        <span class="text-xs font-mono font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-xl">
+                            ${displayRev}
+                        </span>
+                    </div>
+
+                    <!-- حاوية الأعمدة البيانية -->
+                    <div class="flex items-end justify-around gap-2 pt-4 px-2">
+                        ${chartBarsHtml}
+                    </div>
+                </div>
+
+                <!-- مسار التتبع ومراحل الحياكة والتسليم (عمود 1 من 3) -->
+                <div class="bg-white p-5 sm:p-6 rounded-3xl border border-stone-200/90 shadow-sm space-y-4">
+                    <div class="flex items-center gap-2.5 pb-3 border-b border-stone-100">
+                        <span class="w-8 h-8 rounded-xl bg-blue-50 text-blue-900 flex items-center justify-center text-sm">🚚</span>
+                        <div>
+                            <h3 class="font-display font-bold text-sm sm:text-base text-stone-900">حالة خط الحياكة والتسليم</h3>
+                            <p class="text-[11px] text-stone-500">توزيع جميع الطلبيات حسب المرحلة</p>
+                        </div>
+                    </div>
+
+                    <div class="space-y-2.5">
+                        ${stagesHtml}
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- قائمة القطع الأكثر طلباً -->
+            <div class="bg-white p-5 sm:p-6 rounded-3xl border border-stone-200/90 shadow-sm space-y-4">
+                <div class="flex items-center justify-between pb-3 border-b border-stone-100">
+                    <div class="flex items-center gap-2.5">
+                        <span class="w-8 h-8 rounded-xl bg-rose-50 text-rose-900 flex items-center justify-center text-sm">🏆</span>
+                        <div>
+                            <h3 class="font-display font-bold text-sm sm:text-base text-stone-900">القطع الفنية الأكثر طلباً وإقبالاً</h3>
+                            <p class="text-[11px] text-stone-500">ترتيب التحف الأكثر مبيعاً في دار التطريز</p>
+                        </div>
+                    </div>
+                    <span class="text-xs text-stone-500 font-bold">أعلى القطع طلباً</span>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                    ${topProductsHtml || '<p class="text-xs text-stone-400 p-4">لا توجد بيانات كافية بعد.</p>'}
+                </div>
+            </div>
+
+        </div>
+    `;
+}
+
+// ==========================================
+// طباعة التقرير المالي والتنفيذي الرسمي
+// ==========================================
+window.printExecutiveReport = function() {
+    const totalOrders = allOrders.length;
+    const confirmedOrders = allOrders.filter(o => o.status === 'confirmed' || o.isPaid || o.status === 'completed');
+    const totalRevenue = confirmedOrders.reduce((sum, o) => sum + (Number(o.totalPrice) || 0), 0);
+    const aov = confirmedOrders.length > 0 ? Math.round(totalRevenue / confirmedOrders.length) : 0;
+    const conversionRate = totalOrders > 0 ? Math.round((confirmedOrders.length / totalOrders) * 100) : 0;
+    const printDate = new Date().toLocaleDateString('ar-OM', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+
+    const printWin = window.open('', '_blank');
+    if (!printWin) {
+        showOrderToast('يرجى السماح بالنوافذ المنبثقة لطباعة التقرير.', 'error');
+        return;
+    }
+
+    const html = `
+        <!DOCTYPE html>
+        <html lang="ar" dir="rtl">
+        <head>
+            <meta charset="UTF-8">
+            <title>التقرير المالي والتنفيذي الرسمي | دار التطريز TATRIZA</title>
+            <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;600;700;900&display=swap" rel="stylesheet">
+            <style>
+                body { font-family: 'Tajawal', sans-serif; background: #fff; color: #1c1917; margin: 0; padding: 30px; font-size: 13px; }
+                .report-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #7c1d3c; padding-bottom: 20px; margin-bottom: 25px; }
+                .report-brand { font-size: 24px; font-weight: 900; color: #7c1d3c; margin: 0; }
+                .report-sub { font-size: 12px; color: #666; margin-top: 4px; }
+                .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 30px; }
+                .kpi-card { border: 1px solid #e7e5e4; border-radius: 12px; padding: 15px; text-align: center; background: #fafaf9; }
+                .kpi-title { font-size: 11px; color: #78716c; font-weight: bold; margin-bottom: 5px; }
+                .kpi-val { font-size: 20px; font-weight: 900; color: #1c1917; font-family: monospace; }
+                table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+                th { background: #7c1d3c; color: white; padding: 10px; text-align: right; font-size: 11px; }
+                td { border-bottom: 1px solid #e7e5e4; padding: 10px; font-size: 11px; }
+                .seal-box { margin-top: 40px; display: flex; justify-content: space-between; align-items: center; border-top: 1px dashed #d6d3d1; padding-top: 20px; }
+                @media print {
+                    @page { size: A4; margin: 15mm; }
+                    body { padding: 0; }
+                }
+            </style>
+        </head>
+        <body>
+            <div class="report-header">
+                <div>
+                    <h1 class="report-brand">دار التطريز TATRIZA</h1>
+                    <div class="report-sub">التقرير المالي والتنفيذي الدوري للمبيعات والتحف الملكية</div>
+                </div>
+                <div style="text-align: left; font-size: 11px; color: #78716c;">
+                    <div>تاريخ الإصدار: ${printDate}</div>
+                    <div>سلطنة عُمان - مسقط</div>
+                </div>
+            </div>
+
+            <div class="kpi-grid">
+                <div class="kpi-card">
+                    <div class="kpi-title">إجمالي المبيعات المحصلة</div>
+                    <div class="kpi-val" style="color: #7c1d3c;">${totalRevenue.toLocaleString('ar-OM')} ر.ع.</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-title">الطلبات المؤكدة والمدفوعة</div>
+                    <div class="kpi-val" style="color: #047857;">${confirmedOrders.length}</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-title">متوسط قيمة الطلب (AOV)</div>
+                    <div class="kpi-val">${aov.toLocaleString('ar-OM')} ر.ع.</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-title">معدل تحويل الطلبات</div>
+                    <div class="kpi-val">${conversionRate}%</div>
+                </div>
+            </div>
+
+            <h3 style="font-size: 14px; margin-bottom: 5px; color: #1c1917;">سجل آخر الطلبات المؤكدة والمعتمدة</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>رقم الطلب</th>
+                        <th>العميل</th>
+                        <th>الهاتف</th>
+                        <th>المرحلة</th>
+                        <th>التاريخ</th>
+                        <th>المبلغ</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${confirmedOrders.slice(0, 25).map(o => `
+                        <tr>
+                            <td style="font-family: monospace; font-weight: bold;">#${o.orderId || o.id}</td>
+                            <td>${escapeHtml(o.customerName || 'عميل المتجر')}</td>
+                            <td dir="ltr" style="font-family: monospace;">${escapeHtml(o.customerPhone || '-')}</td>
+                            <td>${(typeof getOrderStage === 'function') ? getOrderStage(o).title : (o.stage || 'مكتمل')}</td>
+                            <td style="color: #78716c;">${escapeHtml(o.date || '-')}</td>
+                            <td style="font-weight: bold; color: #7c1d3c; font-family: monospace;">${o.totalPrice || 0} ر.ع.</td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+
+            <div class="seal-box">
+                <div>
+                    <div style="font-weight: bold; color: #7c1d3c;">دار التطريز TATRIZA • الإدارة العامة</div>
+                    <div style="font-size: 10px; color: #78716c; margin-top: 3px;">سجل تجاري معتمد - سلطنة عمان</div>
+                </div>
+                <div style="text-align: center; border: 2px solid #c59b27; color: #977017; padding: 8px 16px; border-radius: 8px; font-weight: 900; font-size: 11px;">
+                    ⚜️ معتمد رسمياً من الإدارة المالية ⚜️
+                </div>
+            </div>
+
+            <script>
+                window.onload = function() {
+                    window.print();
+                };
+            </script>
+        </body>
+        </html>
+    `;
+
+    printWin.document.open();
+    printWin.document.write(html);
+    printWin.document.close();
+};
+
+window.renderAnalyticsDashboard = renderAnalyticsDashboard;
 
 // تهيئة عند تحميل الصفحة
 document.addEventListener('DOMContentLoaded', () => {
