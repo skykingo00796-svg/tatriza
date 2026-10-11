@@ -6,9 +6,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>دار التطريز TATRIZA | سجاد وتحف فنية يدوية فاخرة</title>
     <meta name="description" content="دار التطريز TATRIZA - وجهتكم الراقية لاقتناء وصناعة السجاد الفاخر والتحف الفنية اليدوية المحبوكة بأعلى معايير الحرفية الملكية في سلطنة عُمان.">
-    <!-- أيقونة الموقع الرسمية (Favicon) -->
+    <!-- أيقونة الموقع الرسمية (Favicon) وتطبيق الويب التقدمي (PWA) -->
     <link rel="icon" type="image/jpeg" href="../images/logo.jpg">
-    <link rel="apple-touch-icon" href="../images/logo.jpg">
+    <link rel="apple-touch-icon" href="../images/icon-apple.png">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#7c1d3c">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="دار التطريز">
     <!-- بطاقة المشاركة على واتساب وشبكات التواصل الاجتماعي (Open Graph / Twitter Cards) -->
     <meta property="og:type" content="website">
     <meta property="og:title" content="دار التطريز TATRIZA | سجاد وتحف فنية يدوية فاخرة">
@@ -1276,6 +1282,23 @@
                     <div class="drawer-action-arrow">&gt;</div>
                 </a>
 
+                <!-- 3.95 تثبيت التطبيق على الهاتف -->
+                <button onclick="closeOptionsDrawer(); triggerPWAInstall();" id="drawer-pwa-install-btn" class="drawer-lux-card group w-full" title="تثبيت التطبيق على الهاتف">
+                    <div class="flex items-center gap-2.5 min-w-0 flex-1">
+                        <div class="drawer-icon-orb bg-amber-100 text-amber-900 border-amber-300/60 shrink-0">
+                            <span class="text-xs">📲</span>
+                        </div>
+                        <div class="flex flex-col text-right min-w-0 flex-1 overflow-hidden">
+                            <div class="flex items-center gap-1.5 whitespace-nowrap">
+                                <span class="font-display text-[11px] sm:text-xs font-black text-stone-900 group-hover:text-brand transition">تثبيت التطبيق على هاتفك</span>
+                                <span class="px-1.5 py-0.2 rounded text-[8.5px] sm:text-[9px] font-black bg-amber-100 text-amber-900 border border-amber-300/60 shrink-0">تطبيق</span>
+                            </div>
+                            <span class="text-[9.5px] sm:text-[10px] text-stone-500 font-medium whitespace-nowrap mt-1.5 block">تشغيل فوري شاشة كاملة لآيفون وأندرويد</span>
+                        </div>
+                    </div>
+                    <div class="drawer-action-arrow">&gt;</div>
+                </button>
+
                 <!-- 4. ألوان الهوية -->
                 <button onclick="closeOptionsDrawer(); openThemeModal();" class="drawer-lux-card group w-full" title="ألوان وهوية دار التطريز">
                     <div class="flex items-center gap-2.5 min-w-0 flex-1">
@@ -1353,6 +1376,7 @@
     </footer>
 
     <script type="module" src="../js/main.js?v=2.9"></script>
+    <script type="module" src="../js/pwa.js"></script>
 
 </body>
 </html>
