@@ -27,12 +27,10 @@ export const AED_OFFICIAL_SVG = `
 `;
 
 /**
- * الحصول على الشعار الرسمي للعملة إن وُجد
+ * الحصول على الشعار الرسمي للعملة (فقط وحصرياً للريال العُماني كشعار معتمد)
  */
 export function getOfficialCurrencySvg(currencyCode) {
     if (currencyCode === 'OMR') return OMR_OFFICIAL_SVG;
-    if (currencyCode === 'SAR') return SAR_OFFICIAL_SVG;
-    if (currencyCode === 'AED') return AED_OFFICIAL_SVG;
     return '';
 }
 
@@ -57,8 +55,7 @@ export const SUPPORTED_CURRENCIES = {
         rate: 9.75,
         flag: '🇸🇦',
         decimals: 0,
-        hasOfficialSvg: true,
-        authority: 'SAMA',
+        hasOfficialSvg: false,
         desc: 'المملكة العربية السعودية'
     },
     AED: {
@@ -69,8 +66,7 @@ export const SUPPORTED_CURRENCIES = {
         rate: 9.55,
         flag: '🇦🇪',
         decimals: 0,
-        hasOfficialSvg: true,
-        authority: 'CBUAE',
+        hasOfficialSvg: false,
         desc: 'دولة الإمارات العربية المتحدة'
     },
     QAR: {
@@ -324,14 +320,10 @@ function renderCurrencyOptions() {
             }
         };
 
-        // وسام التوثيق الرسمي لكل عملة
+        // وسام التوثيق الرسمي للريال العماني فقط
         let badgeTag = '';
         if (cur.code === 'OMR') {
             badgeTag = `<span class="px-1.5 py-0.2 rounded text-[9px] font-black bg-amber-100 text-amber-900 border border-amber-300">العملة الأساسية (CBO)</span>`;
-        } else if (cur.code === 'SAR') {
-            badgeTag = `<span class="px-1.5 py-0.2 rounded text-[9px] font-black bg-emerald-50 text-emerald-800 border border-emerald-300">شعار معتمد (SAMA)</span>`;
-        } else if (cur.code === 'AED') {
-            badgeTag = `<span class="px-1.5 py-0.2 rounded text-[9px] font-black bg-sky-50 text-sky-800 border border-sky-300">شعار معتمد (CBUAE)</span>`;
         }
 
         card.innerHTML = `

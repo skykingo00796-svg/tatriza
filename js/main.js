@@ -12,6 +12,7 @@ import {
 import { 
     openModal, closeModal, handleModalScroll, scrollModalSlide,
     addToCart, openCartModal, closeCartModal, removeFromCart, sendCartToWhatsApp, 
+    updateCartDisplay,
     addCurrentModalToCart, inquireCurrentModalWhatsApp,
     openCustomOrderModal, closeCustomOrderModal, submitCustomOrder, 
     openLightboxFromModal, openCurrentLogoLightbox, closeLightbox, handleLightboxScroll,
@@ -83,6 +84,7 @@ window.getCurrentCurrency = getCurrentCurrency;
 window.updateAllPricesOnPage = updateAllPricesOnPage;
 window.openCartModal = openCartModal;
 window.closeCartModal = closeCartModal;
+window.updateCartDisplay = updateCartDisplay;
 window.addToCart = addToCart;
 window.addCurrentModalToCart = addCurrentModalToCart;
 window.inquireCurrentModalWhatsApp = inquireCurrentModalWhatsApp;
@@ -459,7 +461,7 @@ function displayCarpets(carpetsToDisplay) {
                 <div class="card-price-row flex items-center justify-between gap-1 mt-auto">
                     <div class="flex items-baseline gap-0.5 shrink-0">
                         <span class="card-price-val font-display text-xs sm:text-[13px] font-black text-brand leading-none">${displayPrice}</span>
-                        <span class="card-price-curr font-display text-brand text-[7.5px] sm:text-[8px] font-bold leading-none inline-flex items-center gap-0.5">${currSymbolHTML}</span>
+                        <span class="card-price-curr font-display text-brand text-[9px] sm:text-[10px] font-bold leading-none inline-flex items-center gap-0.5">${currSymbolHTML}</span>
                     </div>
                     
                     ${isOutOfStock ? `

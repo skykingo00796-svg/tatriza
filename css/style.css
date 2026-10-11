@@ -3008,50 +3008,124 @@ input[type=number].item-modal-price-input {
 }
 
 /* ==========================================================================
-   تنسيقات محول العملات والشعارات الرسمية المعتمدة (عُمان CBO، السعودية SAMA، الإمارات CBUAE)
+   تنسيقات محول العملات والشعار الرسمي المعتمد للريال العُماني (CBO)
    ========================================================================== */
 .currency-official-symbol,
-.omr-official-symbol,
-.sar-official-symbol,
-.aed-official-symbol {
+.omr-official-symbol {
     display: inline-block;
-    vertical-align: -0.12em;
-    height: 0.9em;
+    vertical-align: middle;
+    height: 1em;
     width: auto;
+    max-width: 2em;
     transition: transform 0.2s ease, filter 0.2s ease;
 }
 
-.omr-official-symbol {
-    max-width: 1.85em;
-}
-
-.sar-official-symbol {
-    vertical-align: -0.16em;
-    height: 0.96em;
-    max-width: 1.2em;
-}
-
-.aed-official-symbol {
-    vertical-align: -0.1em;
-    height: 0.88em;
-    max-width: 1.25em;
-}
-
-.currency-option-card:hover .currency-official-symbol,
-.currency-option-card:hover .omr-official-symbol,
-.currency-option-card:hover .sar-official-symbol,
-.currency-option-card:hover .aed-official-symbol {
-    transform: scale(1.1);
-}
-
+/* زر العملة في الشريط العلوي (التوب بار) - تناسق هندسي 1:1 بين حجم العلم والشعار */
 #header-currency-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    height: 38px;
+    padding: 0 0.65rem;
     transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+#header-currency-btn .currency-btn-flag {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.05rem; /* ~17px */
+    line-height: 1;
+    height: 18px;
+    width: auto;
+    flex-shrink: 0;
+}
+
+#header-currency-btn .currency-btn-svg {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    height: 18px;
+}
+
+#header-currency-btn .currency-btn-svg svg,
+#header-currency-btn .omr-official-symbol {
+    height: 17px !important; /* متطابق تماماً مع ارتفاع العلم 1:1 */
+    width: auto !important;
+    max-width: 34px !important;
+    display: inline-block !important;
+    vertical-align: middle !important;
+}
+
+#header-currency-btn .currency-btn-code {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.82rem; /* ~13px */
+    font-weight: 900;
+    line-height: 1;
+    height: 18px;
+    color: #1c1917;
 }
 
 #header-currency-btn:hover {
     border-color: var(--brand-color, #7c1d3c);
     transform: translateY(-1px);
     box-shadow: 0 4px 12px -2px rgba(124, 29, 60, 0.12);
+}
+
+/* تنسيقات الشعار في بطاقات المعرض الرئيسية */
+.card-price-curr {
+    display: inline-flex;
+    align-items: center;
+    line-height: 1;
+}
+
+.card-price-curr .omr-official-symbol,
+.card-price-curr .currency-official-symbol {
+    height: 12px !important;
+    width: auto !important;
+    max-width: 24px !important;
+    vertical-align: middle !important;
+}
+
+/* تنسيقات الشعار في نافذة تفاصيل التحفة */
+#modal-currency-label {
+    display: inline-flex;
+    align-items: center;
+    line-height: 1;
+}
+
+#modal-currency-label .omr-official-symbol,
+#modal-currency-label .currency-official-symbol {
+    height: 19px !important;
+    width: auto !important;
+    max-width: 38px !important;
+    vertical-align: middle !important;
+}
+
+/* تنسيقات الشعار في سلة المشتريات */
+.lux-cart-item .omr-official-symbol,
+.lux-cart-item .currency-official-symbol {
+    height: 12px !important;
+    width: auto !important;
+    max-width: 24px !important;
+    vertical-align: middle !important;
+}
+
+#cart-total-currency .omr-official-symbol,
+#cart-total-currency .currency-official-symbol {
+    height: 15px !important;
+    width: auto !important;
+    max-width: 30px !important;
+    vertical-align: middle !important;
+}
+
+.currency-option-card:hover .omr-official-symbol,
+.currency-option-card:hover .currency-official-symbol {
+    transform: scale(1.1);
 }
 
 /* ==========================================================================
