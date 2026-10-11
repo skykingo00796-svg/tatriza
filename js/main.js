@@ -5,6 +5,11 @@
 // المتجر العام - مهيأ للعرض العام فائق السرعة والأمان
 import { initTheme, openThemeModal, closeThemeModal, selectThemeOption, applyTheme } from './theme.js';
 import { 
+    getCurrentCurrency, setCurrentCurrency, convertFromOMR, 
+    openCurrencyModal, closeCurrencyModal, updateAllPricesOnPage, 
+    OMR_OFFICIAL_SVG 
+} from './currency.js';
+import { 
     openModal, closeModal, handleModalScroll, scrollModalSlide,
     addToCart, openCartModal, closeCartModal, removeFromCart, sendCartToWhatsApp, 
     addCurrentModalToCart, inquireCurrentModalWhatsApp,
@@ -71,6 +76,11 @@ window.openModal = (id) => openModal(id, allCarpets);
 window.closeModal = closeModal;
 window.handleModalScroll = handleModalScroll;
 window.scrollModalSlide = scrollModalSlide;
+window.openCurrencyModal = openCurrencyModal;
+window.closeCurrencyModal = closeCurrencyModal;
+window.setCurrentCurrency = setCurrentCurrency;
+window.getCurrentCurrency = getCurrentCurrency;
+window.updateAllPricesOnPage = updateAllPricesOnPage;
 window.openCartModal = openCartModal;
 window.closeCartModal = closeCartModal;
 window.addToCart = addToCart;
@@ -356,6 +366,8 @@ function displayCarpets(carpetsToDisplay) {
 
         const card = document.createElement('div');
         card.className = `carpet-card carpet-card-reveal bg-[#fffbf7] rounded-xl sm:rounded-2xl overflow-hidden border ${isNew ? 'card-exclusive-border' : 'border-stone-200/80'} shadow-2xs flex flex-col h-full cursor-pointer group relative`;
+        card.setAttribute('data-carpet-id', carpet.id);
+        card.setAttribute('data-base-price', carpet.price || 0);
         card.style.animationDelay = `${Math.min(index * 0.04, 0.3)}s`;
         card.onclick = () => openModal(carpet.id, allCarpets);
 
@@ -375,6 +387,10 @@ function displayCarpets(carpetsToDisplay) {
             card.style.removeProperty('--glare-x');
             card.style.removeProperty('--glare-y');
         });
+
+        const cur = getCurrentCurrency();
+        const displayPrice = convertFromOMR(carpet.price, cur);
+        const currSymbolHTML = cur.code === 'OMR' ? `ر.ع ${OMR_OFFICIAL_SVG}` : cur.symbolText;
 
         card.innerHTML = `
             <!-- الكتلة العلوية: الشريط الملاصق للصورة يمنع ظهور أي فراغ أبيض نهائياً -->
@@ -442,8 +458,8 @@ function displayCarpets(carpetsToDisplay) {
 
                 <div class="card-price-row flex items-center justify-between gap-1 mt-auto">
                     <div class="flex items-baseline gap-0.5 shrink-0">
-                        <span class="card-price-val font-display text-xs sm:text-[13px] font-black text-brand leading-none">${carpet.price}</span>
-                        <span class="card-price-curr font-display text-brand text-[7.5px] sm:text-[8px] font-bold leading-none">ر.ع.</span>
+                        <span class="card-price-val font-display text-xs sm:text-[13px] font-black text-brand leading-none">${displayPrice}</span>
+                        <span class="card-price-curr font-display text-brand text-[7.5px] sm:text-[8px] font-bold leading-none inline-flex items-center gap-0.5">${currSymbolHTML}</span>
                     </div>
                     
                     ${isOutOfStock ? `
@@ -476,6 +492,8 @@ function displayCarpets(carpetsToDisplay) {
             });
         }
     });
+
+    updateAllPricesOnPage();
 }
 
 function handleImageScrollForGrid(container, carpetId) {
@@ -1251,12 +1269,14 @@ window.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
             closeOptionsDrawer();
+            closeCurrencyModal();
         }
     });
 
     loadCarpets();
     switchCatalogMode('ondemand');
     initDynamicShowcase();
+    updateAllPricesOnPage();
 });
 
 // ==========================================

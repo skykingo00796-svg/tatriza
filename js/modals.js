@@ -1,4 +1,5 @@
 import { getVideoFromIndexedDB, recordCustomerOrder } from './firebase-public.js';
+import { getCurrentCurrency, convertFromOMR, OMR_OFFICIAL_SVG } from './currency.js';
 // ==========================================
 // ملف إدارة النوافذ، السلة، والمنتجات (modals.js)
 // ==========================================
@@ -318,21 +319,47 @@ export function inquireCurrentModalWhatsApp() {
         console.warn("Could not record inquiry order:", e);
     }
 
-    let message = `مرحباً دار التطريز 🏛️\n`;
-    message += `🔖 *رقم مرجع الطلب:* \`${orderId}\`\n\n`;
-    message += `أود الاستفسار عن هذه التحفة المعروضة في متجركم:\n\n`;
-    message += `▪️ *اسم القطعة:* ${carpet.title}\n`;
-    if (carpet.id) message += `▪️ *رمز القطعة (SKU):* ${carpet.id}\n`;
-    if (carpet.dimensions) message += `▪️ *الأبعاد:* ${carpet.dimensions}\n`;
-    if (carpet.material) message += `▪️ *الخامات:* ${carpet.material}\n`;
-    if (carpet.price) message += `▪️ *السعر الإجمالي:* ${carpet.price} ر.ع.\n`;
-    if (isOutOfStock) {
-        message += `▪️ *الحالة:* حياكة وتفصيل حسب الطلب (أرغب في الاستفسار عن تفصيل قطعة مطابقة)\n`;
-        message += `\n✨ مرحباً بكم، أود الاستفسار عن مدة الحياكة والتفصيل وتأكيد الطلب لهذه التحفة. شكراً لكم!`;
-    } else {
-        message += `▪️ *الحالة:* جاهزة للتسليم الفوري والمباشر\n`;
-        message += `\n✨ هل القطعة متوفرة حالياً للمعاينة أو الشحن الفوري؟ شكراً لكم!`;
+    const cur = getCurrentCurrency();
+    const isOMR = cur.code === 'OMR';
+    const itemPriceOMR = Number(carpet.price) || 0;
+    const itemConv = convertFromOMR(itemPriceOMR, cur);
+
+    // صياغة ملكية فاخرة ومحسنة للاستفسار
+    let message = `السلام عليكم ورحمة الله وبركاته 🏛️✨\n`;
+    message += `*مرحباً دار التطريز (TATRIZA)*\n`;
+    message += `━━━━━━━━━━━━━━━━━━━━\n`;
+    message += `🔖 *كود المرجع السريع:* \`${orderId}\`\n\n`;
+    message += `أود الاستفسار والتنسيق بخصوص هذه التحفة الفنية اليدوية من معرضكم:\n\n`;
+    message += `▫️ *القطعة:* *${carpet.title || 'تحفة دار التطريز'}*\n`;
+    if (carpet.id) message += `▫️ *الرمز التعريفي (SKU):* \`${carpet.id}\`\n`;
+    if (carpet.dimensions) message += `▫️ *الأبعاد والمقاس:* ${carpet.dimensions}\n`;
+    if (carpet.material) message += `▫️ *الخامات:* ${carpet.material}\n`;
+    
+    if (itemPriceOMR > 0) {
+        if (isOMR) {
+            message += `▫️ *السعر المعروض:* *${itemPriceOMR} ر.ع.*\n`;
+        } else {
+            message += `▫️ *السعر المعروض:* *${itemConv} ${cur.symbolText}* ${cur.flag} (${cur.shortName}) [ما يعادل ${itemPriceOMR} ر.ع.]\n`;
+        }
     }
+
+    if (isOutOfStock) {
+        message += `▫️ *حالة القطعة:* ✨ *حياكة وتفصيل بالطلب* (نفدت من المخزون الجاهز)\n`;
+        message += `━━━━━━━━━━━━━━━━━━━━\n`;
+        message += `💬 *استفساري:* أود معرفة مدة الحياكة اليدوية المطلوبة لهذه القطعة وإمكانية تثبيت الطلب وتأكيد موعد التسليم والشحن المؤمّن.`;
+    } else {
+        message += `▫️ *حالة القطعة:* 🟢 *جاهزة للتسليم الفوري والمباشر*\n`;
+        message += `━━━━━━━━━━━━━━━━━━━━\n`;
+        message += `💬 *استفساري:* أود تأكيد توافر القطعة للشحن الفوري وترتيب تفاصيل الدفع والتسليم.`;
+    }
+
+    // رابط مباشر لمعاينة التحفة على المتجر
+    const origin = window.location.origin;
+    if (carpet.id) {
+        message += `\n\n🔗 *رابط معاينة القطعة:* ${origin}/#carpet-${carpet.id}`;
+    }
+
+    message += `\n\nشاكر ومقدّر لكم حسن تعاونكم وفخامة إبداعكم 🌿`;
 
     const encoded = encodeURIComponent(message);
     window.open(`https://wa.me/${storePhone}?text=${encoded}`, '_blank');
@@ -380,7 +407,15 @@ export function openModal(carpetId, allCarpets) {
     document.getElementById('modal-desc').innerText = carpet.description || '';
     document.getElementById('modal-dim').innerText = carpet.dimensions;
     document.getElementById('modal-mat').innerText = carpet.material;
-    document.getElementById('modal-price').innerText = carpet.price;
+    window._currentModalCarpetId = carpet.id;
+    window._currentModalBasePrice = carpet.price || 0;
+    const cur = getCurrentCurrency();
+    const displayPrice = convertFromOMR(carpet.price, cur);
+    document.getElementById('modal-price').innerText = displayPrice;
+    const modalCurrencyLabel = document.getElementById('modal-currency-label');
+    if (modalCurrencyLabel) {
+        modalCurrencyLabel.innerHTML = cur.code === 'OMR' ? `ريال عماني ${OMR_OFFICIAL_SVG}` : cur.name;
+    }
 
     const modalAvailabilityText = document.getElementById('modal-availability-text');
     if (modalAvailabilityText) {
@@ -984,9 +1019,13 @@ export function updateCartDisplay() {
         return;
     }
 
-    let total = 0;
+    let totalOMR = 0;
+    const cur = getCurrentCurrency();
     cart.forEach((item, index) => {
-        total += item.price;
+        const baseItemPrice = Number(item.price) || 0;
+        totalOMR += baseItemPrice;
+        const convertedItemPrice = convertFromOMR(baseItemPrice, cur);
+        const itemCurrHTML = cur.code === 'OMR' ? `ر.ع ${OMR_OFFICIAL_SVG}` : cur.symbolText;
         const itemImg = item.image || '../images/logo.jpg';
         container.innerHTML += `
             <div class="lux-cart-item flex items-center justify-between gap-3">
@@ -1001,8 +1040,8 @@ export function updateCartDisplay() {
                             ${item.note ? `<span class="text-[9px] font-black text-amber-800 bg-amber-100/90 px-1.5 py-0.5 rounded-md border border-amber-300/60">${item.note}</span>` : ''}
                         </div>
                         <div class="flex items-center gap-1 mt-1">
-                            <span class="font-display font-black text-brand text-xs sm:text-sm">${item.price}</span>
-                            <span class="text-brand text-[10px] font-bold">ر.ع.</span>
+                            <span class="font-display font-black text-brand text-xs sm:text-sm">${convertedItemPrice}</span>
+                            <span class="text-brand text-[10px] font-bold inline-flex items-center gap-0.5">${itemCurrHTML}</span>
                         </div>
                     </div>
                 </div>
@@ -1015,7 +1054,11 @@ export function updateCartDisplay() {
     });
 
     if (totalAmountEl) {
-        totalAmountEl.innerText = total;
+        totalAmountEl.innerText = convertFromOMR(totalOMR, cur);
+    }
+    const cartTotalCurrEl = document.getElementById('cart-total-currency');
+    if (cartTotalCurrEl) {
+        cartTotalCurrEl.innerHTML = cur.code === 'OMR' ? `ر.ع ${OMR_OFFICIAL_SVG}` : cur.symbolText;
     }
 }
 
@@ -1068,23 +1111,47 @@ export function sendCartToWhatsApp() {
         console.warn("Could not record cart order:", e);
     }
 
-    let message = `🏛️ *طلب شراء جديد - دار التطريز (Tatriza)*\n`;
-    message += `🔖 *رقم مرجع الطلب:* \`${orderId}\`\n`;
+    const cur = getCurrentCurrency();
+    const isOMR = cur.code === 'OMR';
+
+    let message = `السلام عليكم ورحمة الله وبركاته 🏛️✨\n`;
+    message += `*دار التطريز (TATRIZA) | طلب شراء وتأكيد سلة المقتنيات*\n`;
+    message += `━━━━━━━━━━━━━━━━━━━━\n`;
+    message += `🔖 *كود المرجع السحابي:* \`${orderId}\`\n`;
+    message += `📦 *عدد القطع المختارة:* ${cart.length} ${cart.length === 1 ? 'تحفة فنية' : 'تحف فنية'}\n`;
     message += `━━━━━━━━━━━━━━━━━━━━\n\n`;
-    message += `🛍️ *قائمة القطع المطلوبة:*\n\n`;
+    message += `🛍️ *قائمة المقتنيات المطلوبة:*\n\n`;
 
     cart.forEach((item, idx) => {
-        message += `▫️ *[${idx + 1}] ${item.title}* ${item.id ? `(${item.id})` : ''}\n`;
-        message += `   📐 الأبعاد: ${item.dimensions}\n`;
-        if (item.note) {
-            message += `   ✨ نوع الطلب: *${item.note}*\n`;
+        const itemPriceOMR = Number(item.price) || 0;
+        const itemConv = convertFromOMR(itemPriceOMR, cur);
+        message += `▫️ *[${idx + 1}] ${item.title}*\n`;
+        if (item.id) message += `   • الكود (SKU): \`${item.id}\`\n`;
+        if (item.dimensions) message += `   • الأبعاد: ${item.dimensions}\n`;
+        if (item.note) message += `   • الحالة: *${item.note}*\n`;
+        
+        if (itemPriceOMR > 0) {
+            if (isOMR) {
+                message += `   • السعر: *${itemPriceOMR} ر.ع.*\n\n`;
+            } else {
+                message += `   • السعر: *${itemConv} ${cur.symbolText}* ${cur.flag} (${itemPriceOMR} ر.ع.)\n\n`;
+            }
+        } else {
+            message += `   • السعر: *بالتنسيق والاتفاق*\n\n`;
         }
-        message += `   💵 السعر: *${item.price} ر.ع.*\n\n`;
     });
 
     message += `━━━━━━━━━━━━━━━━━━━━\n`;
-    message += `💰 *الإجمالي الكلي:* *${total} ر.ع.*\n\n`;
-    message += `✨ _أرجو تأكيد الطلب وترتيب تفاصيل الدفع والتوصيل. شكراً لخدمتكم الراسخة!_`;
+    const convertedTotal = convertFromOMR(total, cur);
+    if (isOMR) {
+        message += `💰 *الإجمالي الكلي:* *${total} ر.ع.*\n`;
+    } else {
+        message += `💰 *الإجمالي الكلي:* *${convertedTotal} ${cur.symbolText}* ${cur.flag} (${cur.shortName}) [ما يعادل *${total} ر.ع.*]\n`;
+    }
+    message += `🚚 *الشحن والتسليم:* شحن مؤمّن ومجاني لكافة محافظات سلطنة عُمان ودول الخليج العربي\n`;
+    message += `⚜️ *شهادة الأصالة:* كل قطعة مرفقة بختم أصالة صُنع يدوي معتمد\n`;
+    message += `━━━━━━━━━━━━━━━━━━━━\n`;
+    message += `✨ أرجو تأكيد توفر القطع وترتيب تفاصيل الدفع وموعد التسليم. شكراً لاهتمامكم وفخامة ذوقكم!`;
 
     const encodedMessage = encodeURIComponent(message);
     const storePhone = "96895939388";
@@ -1133,20 +1200,20 @@ export function submitCustomOrder(event) {
         console.warn("Could not record custom order:", e);
     }
 
-    const message = encodeURIComponent(
-        `🎨 *طلب تفصيل تصميم خاص - دار التطريز*\n` +
-        `🔖 *رقم مرجع الطلب:* ${orderId}\n` +
-        `━━━━━━━━━━━━━━━━━━━━\n\n` +
-        `👤 *اسم العميل:* ${name}\n` +
-        `📐 *الأبعاد المطلوبة:* الطول ${length} × العرض ${width}\n\n` +
-        `📝 *تفاصيل وملاحظات التصميم:*\n` +
-        `> ${notes}\n\n` +
-        `━━━━━━━━━━━━━━━━━━━━\n` +
-        `✨ _سأقوم بإرسال صورة أو نموذج التصميم المطلوب في هذه المحادثة الآن._`
-    );
+    let message = `السلام عليكم ورحمة الله وبركاته 🎨✨\n`;
+    message += `*دار التطريز (TATRIZA) | طلب تفصيل وتصميم يدوي خاص*\n`;
+    message += `━━━━━━━━━━━━━━━━━━━━\n`;
+    message += `🔖 *كود المرجع السريع:* \`${orderId}\`\n\n`;
+    message += `👤 *اسم العميل الكريم:* ${name || 'غير محدد'}\n`;
+    message += `📐 *الأبعاد المطلوبة:* الطول ${length} سم × العرض ${width} سم\n\n`;
+    message += `📝 *ملاحظات ومواصفات التصميم:*\n`;
+    message += `> ${notes || 'تفصيل مخصص حسب الصورة المرفقة'}\n\n`;
+    message += `━━━━━━━━━━━━━━━━━━━━\n`;
+    message += `📷 سأقوم بإرفاق صورة التصميم المقترح أو لوحة الألوان المرغوبة في هذه المحادثة مباشرة.\n`;
+    message += `✨ أرجو تزويدي بالتقدير المالي ومدة الحياكة اليدوية المتوقعة. شكراً جزيلاً لكم!`;
 
     const storePhone = "96895939388";
-    window.open(`https://wa.me/${storePhone}?text=${message}`, '_blank');
+    window.open(`https://wa.me/${storePhone}?text=${encodeURIComponent(message)}`, '_blank');
     closeCustomOrderModal();
     
     document.querySelector('#custom-order-modal form').reset();

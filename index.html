@@ -104,8 +104,15 @@
                 </div>
             </div>
             
-            <!-- أزرار الشريط العلوي: السلة وخيارات الدار -->
-            <div class="flex items-center gap-2.5 md:gap-3 shrink-0">
+            <!-- أزرار الشريط العلوي: العملة، السلة وخيارات الدار -->
+            <div class="flex items-center gap-2 md:gap-3 shrink-0">
+                <!-- زر محول العملات الذكي المعتمد -->
+                <button id="header-currency-btn" onclick="openCurrencyModal()" class="group flex items-center bg-[#fffbf7] hover:bg-white text-stone-800 px-2.5 py-2 sm:px-3 sm:py-2.5 rounded-2xl border border-stone-300/80 transition-all duration-300 shadow-xs cursor-pointer relative" title="تغيير عملة العرض">
+                    <span class="currency-btn-flag text-xs sm:text-sm shrink-0">🇴🇲</span>
+                    <span class="currency-btn-code font-display text-[11px] sm:text-xs font-black mr-1 text-stone-800">ر.ع</span>
+                    <span class="currency-btn-svg text-brand shrink-0 inline-flex items-center"></span>
+                </button>
+
                 <!-- زر السلة المباشر في الشريط العلوي لتأكيد إضافة المنتجات فوراً -->
                 <button id="header-cart-btn" onclick="openCartModal()" class="group flex items-center bg-[#fffbf7] hover:bg-white text-stone-800 p-2.5 rounded-2xl border border-stone-300/80 transition-all duration-300 shadow-xs cursor-pointer relative" title="سلة المشتريات">
                     <div class="w-5 h-5 flex items-center justify-center shrink-0" style="color: var(--brand-color);">
@@ -933,7 +940,7 @@
                                 <span class="text-[11px] text-stone-500 font-bold block">السعر الإجمالي للقطعة:</span>
                                 <div class="flex items-baseline gap-1.5 mt-0.5">
                                     <span class="font-display text-2xl sm:text-3xl font-black text-brand" id="modal-price"></span>
-                                    <span class="font-display text-brand text-sm sm:text-base font-bold">ريال عماني</span>
+                                    <span class="font-display text-brand text-sm sm:text-base font-bold inline-flex items-center gap-1" id="modal-currency-label">ريال عماني</span>
                                 </div>
                             </div>
                             <span class="text-[11px] font-black text-amber-800 bg-amber-100/90 border border-amber-300/60 px-3 py-1 rounded-xl">شحن مؤمّن</span>
@@ -1145,7 +1152,7 @@
                     <span class="font-display font-black text-sm sm:text-base">الإجمالي الكلي للطلب:</span>
                     <div class="flex items-center gap-1">
                         <span id="cart-total-amount" class="font-display text-2xl font-black text-brand">0</span>
-                        <span class="font-display text-brand text-xs sm:text-sm font-bold">ر.ع.</span>
+                        <span id="cart-total-currency" class="font-display text-brand text-xs sm:text-sm font-bold inline-flex items-center gap-1">ر.ع.</span>
                     </div>
                 </div>
                 
@@ -1218,6 +1225,23 @@
                     </div>
                     <div class="drawer-action-arrow">&gt;</div>
                 </a>
+
+                <!-- 3.5 عملة العرض -->
+                <button onclick="closeOptionsDrawer(); openCurrencyModal();" class="drawer-lux-card group w-full" title="تغيير عملة العرض">
+                    <div class="flex items-center gap-2.5 min-w-0 flex-1">
+                        <div class="drawer-icon-orb bg-amber-50 text-amber-900 border-amber-300/60 shrink-0">
+                            <span class="text-xs">💱</span>
+                        </div>
+                        <div class="flex flex-col text-right min-w-0 flex-1 overflow-hidden">
+                            <div class="flex items-center gap-1.5 whitespace-nowrap">
+                                <span class="font-display text-[11px] sm:text-xs font-black text-stone-900 group-hover:text-brand transition">عملة العرض</span>
+                                <span class="px-1.5 py-0.2 rounded text-[8.5px] sm:text-[9px] font-black bg-stone-200/80 text-stone-700 shrink-0">خليجي وعالمي</span>
+                            </div>
+                            <span id="drawer-current-currency-text" class="text-[9.5px] sm:text-[10px] text-stone-500 font-medium whitespace-nowrap mt-1.5 block">🇴🇲 الريال العماني (ر.ع)</span>
+                        </div>
+                    </div>
+                    <div class="drawer-action-arrow">&gt;</div>
+                </button>
 
                 <!-- 4. ألوان الهوية -->
                 <button onclick="closeOptionsDrawer(); openThemeModal();" class="drawer-lux-card group w-full" title="ألوان وهوية دار التطريز">

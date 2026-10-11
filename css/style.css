@@ -3007,4 +3007,31 @@ input[type=number].item-modal-price-input {
     -moz-appearance: textfield;
 }
 
+/* ==========================================================================
+   تنسيقات محول العملات وشعار الريال العماني المعتمد (CBO Official Currency Symbol)
+   ========================================================================== */
+.omr-official-symbol {
+    display: inline-block;
+    vertical-align: -0.12em;
+    height: 0.9em;
+    width: auto;
+    max-width: 1.85em;
+    transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+.currency-option-card:hover .omr-official-symbol {
+    transform: scale(1.08);
+}
+
+#header-currency-btn {
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+#header-currency-btn:hover {
+    border-color: var(--brand-color, #7c1d3c);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px -2px rgba(124, 29, 60, 0.12);
+}
+
+
 
