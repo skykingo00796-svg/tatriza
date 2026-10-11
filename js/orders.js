@@ -8,6 +8,7 @@ import {
     confirmOrderPayment, 
     cancelAndPermanentlyDeleteOrder, 
     revertOrderToPending,
+    updateOrderStage,
     adminLoginWithCloud,
     adminLogoutFromCloud,
     initFirebaseServices
@@ -21,6 +22,14 @@ import {
     getOrderVerificationUrl, 
     buildWhatsAppCertificateClientMessage 
 } from './authenticity.js';
+
+import { 
+    ORDER_STAGES, 
+    ORDER_STAGES_ARRAY, 
+    getOrderStage, 
+    buildWhatsAppStatusUpdateMessage, 
+    getOrderTrackingUrl 
+} from './tracking.js';
 
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
@@ -557,15 +566,31 @@ function createOrderCardHtml(order) {
             </div>
         `;
     } else {
-        // الطلب في الأرشيف (مؤكد): إظهار تفاصيل الدفع وزر استعادة وزر طباعة
+        // الطلب في الأرشيف (مؤكد): إظهار تفاصيل الدفع وزر استعادة وزر طباعة والتتبع
         const confirmedDate = order.confirmedAt ? formatTimestamp(order.confirmedAt) : '';
+        const currentStage = getOrderStage(order);
         actionsHtml = `
-            <div class="flex flex-wrap items-center justify-between gap-2 pt-3 border-t border-stone-200">
-                <div class="flex items-center gap-2 text-xs text-emerald-800 font-bold bg-emerald-50 px-3 py-1.5 rounded-xl border border-emerald-200">
-                    <span>✅ تم استلام المبلغ وأرشفة الطلب</span>
-                    ${confirmedDate ? `<span class="text-[11px] text-emerald-600 font-medium font-mono">(${confirmedDate})</span>` : ''}
+            <div class="flex flex-col gap-2.5 pt-3 border-t border-stone-200">
+                <div class="flex flex-wrap items-center justify-between gap-2">
+                    <div class="flex items-center gap-2 text-xs text-emerald-800 font-bold bg-emerald-50 px-3 py-1.5 rounded-xl border border-emerald-200">
+                        <span>✅ تم استلام المبلغ وأرشفة الطلب</span>
+                        ${confirmedDate ? `<span class="text-[11px] text-emerald-600 font-medium font-mono">(${confirmedDate})</span>` : ''}
+                    </div>
+                    <div class="flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-xl border bg-amber-50 border-amber-300/80 text-amber-950">
+                        <span>${currentStage.icon}</span>
+                        <span>المرحلة: ${currentStage.shortTitle}</span>
+                    </div>
                 </div>
+
                 <div class="flex items-center gap-1.5 flex-wrap">
+                    <button type="button" onclick="openOrderStageModal('${orderId}')" class="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-bold text-xs h-9 px-2.5 sm:px-3 rounded-xl shadow-xs transition flex items-center gap-1 cursor-pointer active:scale-95" title="تحديث مرحلة الحياكة أو الشحن وإشعار العميل">
+                        <span>🚚</span>
+                        <span>مرحلة التتبع</span>
+                    </button>
+                    <button type="button" onclick="sendStageWhatsApp('${orderId}')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs h-9 px-2.5 sm:px-3 rounded-xl shadow-xs transition flex items-center gap-1 cursor-pointer active:scale-95" title="إرسال تحديث المرحلة الحالية للعميل عبر الواتساب بنقرة واحدة">
+                        <span>💬</span>
+                        <span>واتساب التتبع</span>
+                    </button>
                     <button type="button" onclick="printOrderReceipt('${orderId}')" class="bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold text-xs h-9 px-2.5 sm:px-3 rounded-xl border border-stone-300 transition flex items-center gap-1 cursor-pointer active:scale-95" title="طباعة فاتورة / ملخص الطلب">
                         <span>🖨️</span>
                         <span>إيصال</span>
@@ -591,6 +616,8 @@ function createOrderCardHtml(order) {
         `;
     }
 
+    const cardCurrentStage = getOrderStage(order);
+
     return `
         <div id="order-card-${orderId}" class="order-card bg-white/95 rounded-2xl sm:rounded-3xl p-4 sm:p-5 border ${isConfirmed ? 'border-emerald-300 shadow-sm' : 'border-stone-200/90 shadow-md hover:shadow-lg'} transition-all duration-300 space-y-4">
             
@@ -601,9 +628,13 @@ function createOrderCardHtml(order) {
                         ${isConfirmed ? '✓' : '📦'}
                     </div>
                     <div>
-                        <div class="flex items-center gap-2">
+                        <div class="flex items-center gap-2 flex-wrap">
                             <span class="font-mono font-black text-sm sm:text-base text-stone-900 tracking-wider">${orderId}</span>
                             ${typeBadge}
+                            <span class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-stone-100 text-stone-700 border border-stone-200 flex items-center gap-1 cursor-pointer hover:bg-stone-200 transition" onclick="openOrderStageModal('${orderId}')" title="انقر لتعديل مرحلة الحياكة أو مسار التتبع">
+                                <span>${cardCurrentStage.icon}</span>
+                                <span>${cardCurrentStage.shortTitle}</span>
+                            </span>
                         </div>
                         <span class="text-[11px] text-stone-500 font-medium block mt-0.5 font-mono">${orderDate}</span>
                     </div>
@@ -1036,6 +1067,172 @@ window.revertOrderAction = async function(orderId) {
     } catch(err) {
         showOrderToast('حدث خطأ أثناء استعادة الطلب: ' + err.message, 'error');
     }
+};
+
+// ==========================================
+// 3.5 إدارة مراحل الطلب والتتبع وإرسال إشعارات الواتساب المباشرة
+// ==========================================
+
+window.openOrderStageModal = async function(orderId) {
+    const order = allOrders.find(o => (o.orderId || o.id) === orderId);
+    if (!order) return;
+
+    const currentStage = getOrderStage(order);
+    const clientName = escapeHtml(order.customerName || 'عميل المتجر');
+    const existingTrackingNum = escapeHtml(order.trackingNumber || '');
+    const existingCarrier = escapeHtml(order.carrierName || '');
+    const existingNotes = escapeHtml(order.stageNotes || '');
+
+    // إزالة أي نافذة سابقة
+    const oldModal = document.getElementById('order-stage-modal-container');
+    if (oldModal) oldModal.remove();
+
+    const stagesOptionsHtml = ORDER_STAGES_ARRAY.map(st => {
+        const isCurrent = st.id === currentStage.id;
+        return `
+            <label class="stage-option-card flex items-center justify-between p-3 rounded-2xl border transition-all cursor-pointer ${isCurrent ? 'bg-amber-50 border-brand shadow-2xs font-bold' : 'bg-white border-stone-200 hover:bg-stone-50'}">
+                <div class="flex items-center gap-3">
+                    <input type="radio" name="order-stage-radio" value="${st.id}" ${isCurrent ? 'checked' : ''} class="w-4 h-4 text-brand focus:ring-brand accent-[#7c1d3c]">
+                    <span class="text-xl shrink-0">${st.icon}</span>
+                    <div class="text-right">
+                        <div class="font-display font-black text-xs sm:text-sm text-stone-900">${st.title}</div>
+                        <div class="text-[10px] text-stone-500 font-medium">${st.desc}</div>
+                    </div>
+                </div>
+                <span class="text-[9.5px] font-mono font-bold px-2 py-0.5 rounded ${isCurrent ? 'bg-brand text-white' : 'bg-stone-100 text-stone-500'}">
+                    مرحلة ${st.stepIndex}
+                </span>
+            </label>
+        `;
+    }).join('');
+
+    const modalHtml = `
+        <div id="order-stage-modal-container" class="fixed inset-0 z-[160] modal-glass-backdrop flex items-center justify-center p-3 sm:p-4" dir="rtl">
+            <div class="lux-modal-box w-full max-w-lg rounded-3xl p-5 sm:p-6 space-y-4 shadow-2xl bg-white border border-stone-300 relative max-h-[92vh] overflow-y-auto">
+                
+                <div class="flex items-center justify-between pb-3 border-b border-stone-200">
+                    <div class="flex items-center gap-2.5">
+                        <span class="w-9 h-9 rounded-xl bg-amber-100 text-amber-900 flex items-center justify-center text-lg font-bold">🚚</span>
+                        <div>
+                            <h3 class="font-display font-black text-sm sm:text-base text-stone-900">تحديث مرحلة الطلب والتتبع</h3>
+                            <p class="text-[11px] text-stone-500 font-medium">الطلب: #${orderId} • ${clientName}</p>
+                        </div>
+                    </div>
+                    <button type="button" onclick="document.getElementById('order-stage-modal-container').remove()" class="w-8 h-8 rounded-full bg-stone-100 hover:bg-stone-200 text-stone-600 flex items-center justify-center text-sm font-bold transition cursor-pointer">✕</button>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="block text-xs font-bold text-stone-700">اختر المرحلة الحالية للطلبية:</label>
+                    <div class="space-y-2" id="order-stage-options-group">
+                        ${stagesOptionsHtml}
+                    </div>
+                </div>
+
+                <!-- تفاصيل الشحن الإضافية (بوليصة الشحن واسم شركة النقل) -->
+                <div class="p-3.5 bg-stone-50 rounded-2xl border border-stone-200 space-y-3">
+                    <div class="text-xs font-bold text-stone-800 flex items-center gap-1.5">
+                        <span>📦</span>
+                        <span>بيانات الشحن والملاحظات (اختياري):</span>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        <div>
+                            <label class="block text-[10.5px] text-stone-600 font-medium mb-1">رقم بوليصة الشحن:</label>
+                            <input id="stage-tracking-num" type="text" value="${existingTrackingNum}" placeholder="مثال: DL-889102" class="w-full bg-white border border-stone-300 rounded-xl px-2.5 py-1.5 text-xs font-mono">
+                        </div>
+                        <div>
+                            <label class="block text-[10.5px] text-stone-600 font-medium mb-1">شركة الشحن أو المندوب:</label>
+                            <input id="stage-carrier-name" type="text" value="${existingCarrier}" placeholder="مثال: دليلي / مندوب خاص" class="w-full bg-white border border-stone-300 rounded-xl px-2.5 py-1.5 text-xs">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-[10.5px] text-stone-600 font-medium mb-1">ملاحظة موجهة للعميل:</label>
+                        <input id="stage-custom-notes" type="text" value="${existingNotes}" placeholder="أي ملاحظة أو توجيه خاص بالقطعة" class="w-full bg-white border border-stone-300 rounded-xl px-2.5 py-1.5 text-xs">
+                    </div>
+                </div>
+
+                <!-- أزرار الإجراءات -->
+                <div class="pt-3 border-t border-stone-200 flex flex-col sm:flex-row items-center gap-2">
+                    <button id="stage-save-whatsapp-btn" type="button" class="w-full sm:flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs h-10 px-3 rounded-xl shadow-xs transition flex items-center justify-center gap-1.5 cursor-pointer active:scale-95">
+                        <span>📲</span>
+                        <span>حفظ وإرسال بالواتساب للعميل</span>
+                    </button>
+                    <button id="stage-save-only-btn" type="button" class="w-full sm:w-auto bg-stone-100 hover:bg-stone-200 text-stone-800 font-bold text-xs h-10 px-4 rounded-xl border border-stone-300 transition flex items-center justify-center gap-1 cursor-pointer active:scale-95">
+                        <span>💾</span>
+                        <span>حفظ بالسحابة فقط</span>
+                    </button>
+                    <button type="button" onclick="document.getElementById('order-stage-modal-container').remove()" class="w-full sm:w-auto text-stone-500 hover:text-stone-700 font-bold text-xs h-10 px-3 rounded-xl transition cursor-pointer">
+                        إلغاء
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    `;
+
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+
+    // ربط نقرات الحفظ
+    const executeSave = async (sendWhatsApp) => {
+        const selectedRadio = document.querySelector('input[name="order-stage-radio"]:checked');
+        const selectedStage = selectedRadio ? selectedRadio.value : currentStage.id;
+        const trackingNum = document.getElementById('stage-tracking-num').value.trim();
+        const carrierName = document.getElementById('stage-carrier-name').value.trim();
+        const notes = document.getElementById('stage-custom-notes').value.trim();
+
+        try {
+            await updateOrderStage(orderId, selectedStage, {
+                trackingNumber: trackingNum,
+                carrierName: carrierName,
+                notes: notes
+            });
+
+            // تحديث الكائن محلياً
+            order.stage = selectedStage;
+            order.trackingNumber = trackingNum;
+            order.carrierName = carrierName;
+            order.stageNotes = notes;
+            order.stageUpdatedAt = Date.now();
+
+            showOrderToast(`✅ تم تحديث مرحلة الطلب #${orderId} بنجاح!`, 'success');
+
+            if (sendWhatsApp) {
+                const msg = buildWhatsAppStatusUpdateMessage(order, selectedStage, {
+                    trackingNumber: trackingNum,
+                    carrierName: carrierName,
+                    notes: notes
+                });
+                const clientPhone = order.customerPhone ? order.customerPhone.replace(/\D/g, '') : "96895939388";
+                window.open(`https://wa.me/${clientPhone}?text=${encodeURIComponent(msg)}`, '_blank');
+            }
+
+            const m = document.getElementById('order-stage-modal-container');
+            if (m) m.remove();
+        } catch(err) {
+            console.error("Failed to update order stage:", err);
+            showOrderToast('حدث خطأ أثناء تحديث المرحلة: ' + err.message, 'error');
+        }
+    };
+
+    document.getElementById('stage-save-whatsapp-btn').onclick = () => executeSave(true);
+    document.getElementById('stage-save-only-btn').onclick = () => executeSave(false);
+};
+
+window.sendStageWhatsApp = function(orderId) {
+    const order = allOrders.find(o => (o.orderId || o.id) === orderId);
+    if (!order) return;
+    const currentStage = getOrderStage(order);
+    const msg = buildWhatsAppStatusUpdateMessage(order, currentStage.id, {
+        trackingNumber: order.trackingNumber || '',
+        carrierName: order.carrierName || '',
+        notes: order.stageNotes || ''
+    });
+    const clientPhone = order.customerPhone ? order.customerPhone.replace(/\D/g, '') : "96895939388";
+    window.open(`https://wa.me/${clientPhone}?text=${encodeURIComponent(msg)}`, '_blank');
+};
+
+window.openOrderTracking = function(orderId) {
+    const url = getOrderTrackingUrl(orderId);
+    window.open(url, '_blank');
 };
 
 // ==========================================

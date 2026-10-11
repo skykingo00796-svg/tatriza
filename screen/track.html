@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تتبع مراحل حياكة وشحن الطلب | دار التطريز TATRIZA</title>
+    <meta name="description" content="تتبع مراحل الحياكة اليدوية والصقل والشحن المؤمّن لطلبيتك لدى دار التطريز TATRIZA في سلطنة عُمان لحظة بلحظة.">
+    
+    <!-- الأيقونة الرسمية -->
+    <link rel="icon" type="image/jpeg" href="../images/logo.jpg">
+    <link rel="apple-touch-icon" href="../images/logo.jpg">
+
+    <!-- خطوط جوجل العربية والإنجليزية الملكية -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@400;600;700;800;900&family=Amiri:ital,wght@0,400;0,700;1,400&family=Cairo:wght@400;600;700;800;900&family=Outfit:wght@400;600;700;800;900&family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- مكتبة Tailwind CSS للتجاوب الفوري -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            DEFAULT: '#7c1d3c',
+                            dark: '#520b22',
+                            light: '#962349'
+                        },
+                        gold: {
+                            DEFAULT: '#c59b27',
+                            dark: '#8d680f',
+                            light: '#e7ca7f',
+                            soft: '#fdf9ee'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Tajawal', 'sans-serif'],
+                        display: ['Alexandria', 'Cairo', 'sans-serif'],
+                        serif: ['Amiri', 'serif'],
+                        mono: ['Outfit', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <link rel="stylesheet" href="../css/style.css?v=3.0">
+
+    <style>
+        :root {
+            --brand-color: #7c1d3c;
+            --brand-dark: #520b22;
+            --gold-color: #c59b27;
+            --gold-border: #e2c982;
+        }
+
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background: radial-gradient(circle at top, #faf6ee 0%, #f3eee3 50%, #eae4d5 100%);
+            min-height: 100vh;
+            color: #1c1917;
+        }
+
+        /* خط التقدم التفاعلي (Timeline Progress Bar) */
+        .step-circle {
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .step-active .step-circle {
+            box-shadow: 0 0 0 4px rgba(124, 29, 60, 0.2), 0 8px 20px -4px rgba(124, 29, 60, 0.4);
+            transform: scale(1.12);
+        }
+        .step-completed .step-circle {
+            background-color: #065f46 !important;
+            border-color: #10b981 !important;
+            color: #ffffff !important;
+        }
+        .step-active .step-circle {
+            background-color: #7c1d3c !important;
+            border-color: #e2c982 !important;
+            color: #ffffff !important;
+            animation: pulseActiveStep 2.4s infinite ease-in-out;
+        }
+        @keyframes pulseActiveStep {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(197, 155, 39, 0.5); }
+            50% { box-shadow: 0 0 0 8px rgba(197, 155, 39, 0); }
+        }
+
+        /* بطاقة التتبع الملكية */
+        .tracking-card {
+            background: linear-gradient(180deg, #ffffff 0%, #fffdfa 100%);
+            border: 1.5px solid var(--gold-border);
+            box-shadow: 0 16px 40px -10px rgba(124, 29, 60, 0.1);
+        }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen antialiased p-3 sm:p-5 md:p-8">
+
+    <!-- الشريط العلوي الفاخر والتنقل السريع -->
+    <header class="w-full max-w-4xl mx-auto mb-6 flex items-center justify-between gap-3 bg-white/90 backdrop-blur-md px-4 py-3 rounded-2xl border border-stone-200 shadow-xs">
+        <a href="index.html" class="flex items-center gap-2.5 group transition" title="العودة للمعرض الرئيسي">
+            <img src="../images/logo.jpg" alt="Tatriza Logo" class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl object-cover border border-stone-200 shadow-2xs group-hover:scale-105 transition">
+            <div>
+                <span class="font-display font-black text-xs sm:text-sm text-stone-900 block leading-tight">دار التطريز TATRIZA</span>
+                <span class="text-[9.5px] sm:text-[10px] text-stone-500 font-medium">سلطنة عُمان • تتبع مراحل الحياكة والتسليم</span>
+            </div>
+        </a>
+
+        <div class="flex items-center gap-2">
+            <a href="index.html" class="text-xs font-bold text-stone-700 hover:text-brand bg-stone-100 hover:bg-stone-200 px-3 py-1.5 rounded-xl border border-stone-200 transition flex items-center gap-1">
+                <span>🏛️</span>
+                <span class="hidden sm:inline">كتالوج المتجر</span>
+            </a>
+            <a id="nav-verify-btn" href="verify.html" class="text-xs font-bold text-white bg-brand hover:bg-brand-dark px-3.5 py-1.5 rounded-xl shadow-xs transition flex items-center gap-1 cursor-pointer">
+                <span>⚜️</span>
+                <span>شهادة الأصالة</span>
+            </a>
+        </div>
+    </header>
+
+    <!-- الحاوية الأساسية للتتبع (متجاوبة مع كافة الشاشات) -->
+    <main class="w-full max-w-4xl mx-auto flex-1 flex flex-col justify-center space-y-6">
+
+        <!-- 1. صندوق الإشعار ورقم الطلب والمرحلة الحالية -->
+        <div class="tracking-card rounded-3xl p-5 sm:p-7 space-y-5">
+            
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-3 pb-4 border-b border-stone-200 text-center sm:text-right">
+                <div>
+                    <div class="flex items-center justify-center sm:justify-start gap-2">
+                        <span class="text-lg">🚚</span>
+                        <h1 class="font-display font-black text-base sm:text-lg md:text-xl text-stone-900">
+                            متابعة وتتبع مراحل طلبك
+                        </h1>
+                    </div>
+                    <p class="text-xs text-stone-500 font-medium mt-0.5">
+                        نسعد باطلاعكم أولاً بأول على أدق تفاصيل حياكة وتجهيز تحفتكم الفنية.
+                    </p>
+                </div>
+
+                <div class="flex items-center gap-2">
+                    <span class="text-xs text-stone-500 font-bold">رقم الطلب:</span>
+                    <span id="track-order-code" class="font-mono font-black text-sm sm:text-base text-brand bg-amber-50 border border-amber-300/80 px-3 py-1 rounded-xl dir-ltr">
+                        #TATR-000000
+                    </span>
+                </div>
+            </div>
+
+            <!-- بطاقة المرحلة النشطة مع وصفها المطمئن -->
+            <div id="active-stage-banner" class="rounded-2xl p-4 sm:p-5 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-300/80 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3.5 shadow-2xs">
+                <div class="flex items-center gap-3.5">
+                    <div id="active-stage-icon" class="w-12 h-12 rounded-2xl bg-amber-600 text-white flex items-center justify-center text-2xl shadow-md shrink-0">
+                        ⏳
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-[10px] font-black uppercase tracking-wider text-amber-800 bg-amber-200/80 px-2 py-0.5 rounded-md">المرحلة الحالية</span>
+                            <span id="active-stage-date" class="text-[11px] text-stone-500 font-mono">11 أكتوبر 2026</span>
+                        </div>
+                        <h2 id="active-stage-title" class="font-display font-black text-sm sm:text-base text-stone-950 mt-0.5">
+                            تم استلام وتأكيد الطلب
+                        </h2>
+                        <p id="active-stage-desc" class="text-xs text-stone-700 font-medium mt-0.5">
+                            تم اعتماد تفاصيل القطعة وحجز موعد الحياكة اليدوية وسجلات الدار.
+                        </p>
+                    </div>
+                </div>
+
+                <div id="shipping-details-pill" class="hidden sm:flex flex-col items-end shrink-0 text-left bg-white/80 p-2.5 rounded-xl border border-stone-200 text-xs">
+                    <span class="text-[10px] text-stone-500 font-bold">بوليصة الشحن:</span>
+                    <span id="shipping-tracking-number" class="font-mono font-bold text-brand dir-ltr">-</span>
+                    <span id="shipping-carrier-name" class="text-[10.5px] text-stone-600 font-medium">شحن مؤمّن</span>
+                </div>
+            </div>
+
+            <!-- 2. الخط الزمني التفاعلي للمراحل الخمس (Timeline Stepper) -->
+            <div class="pt-2 pb-3">
+                <h3 class="font-display font-black text-xs sm:text-sm text-stone-900 mb-4 flex items-center gap-1.5">
+                    <span>🧭</span>
+                    <span>مسار رحلة حياكة وتحضير التحفة:</span>
+                </h3>
+
+                <!-- خط المراحل (متجاوب: أفقي في التابلت والشاشات الواسعة، ورأسي مرن في الجوال) -->
+                <div id="timeline-stepper" class="grid grid-cols-1 md:grid-cols-5 gap-3 md:gap-2 relative">
+                    <!-- تُحقن المراحل برمجياً مع حالاتها النشطة والمكتملة -->
+                </div>
+            </div>
+
+            <!-- 3. تفاصيل القطعة الفنية المطلوبة -->
+            <div class="pt-4 border-t border-stone-200 space-y-3">
+                <h3 class="font-display font-black text-xs sm:text-sm text-stone-900 flex items-center gap-1.5">
+                    <span>🖼️</span>
+                    <span>القطع الفنية المسجلة في هذا الطلب:</span>
+                </h3>
+
+                <div id="track-items-list" class="space-y-2.5">
+                    <!-- تحقن القطع ديناميكياً -->
+                </div>
+            </div>
+
+            <!-- 4. روابط سريعة: شهادة الأصالة، الدعم، والمحادثة -->
+            <div class="pt-4 border-t border-stone-200 flex flex-wrap items-center justify-between gap-3 bg-stone-50/70 p-3.5 rounded-2xl border border-stone-200/80">
+                <div class="flex items-center gap-2">
+                    <span class="text-base">⚜️</span>
+                    <span class="text-xs text-stone-700 font-bold">كل قطعة في دار التطريز مرفقة بختم أصالة صُنع يدوي معتمد لا يمكن تزويره.</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <a id="track-view-cert-btn" href="verify.html" class="bg-amber-100 hover:bg-amber-200 text-amber-950 font-bold text-xs px-3 py-1.5 rounded-xl border border-amber-300 transition flex items-center gap-1">
+                        <span>📜</span>
+                        <span>معاينة شهادة الأصالة</span>
+                    </a>
+                    <a id="track-whatsapp-support-btn" href="https://wa.me/96895939388" target="_blank" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-3.5 py-1.5 rounded-xl transition flex items-center gap-1">
+                        <span>💬</span>
+                        <span>استفسار عبر واتساب</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 5. نموذج البحث برقم الطلب (في حال فتح العميل الصفحة بدون رقم طلب محدد) -->
+        <div id="track-lookup-card" class="bg-white/95 backdrop-blur-md rounded-3xl p-5 sm:p-6 border border-stone-200 shadow-sm max-w-xl mx-auto w-full text-center space-y-3 hidden">
+            <h3 class="font-display font-black text-sm sm:text-base text-stone-900">🔍 تتبع طلبية أخرى</h3>
+            <p class="text-xs text-stone-500">أدخل رقم طلبك لمعرفة مرحلة الحياكة أو مسار الشحن مباشرة:</p>
+            <form onsubmit="handleTrackLookup(event)" class="flex items-center gap-2 max-w-md mx-auto">
+                <input id="track-lookup-input" type="text" placeholder="مثال: TATR-918234" class="flex-1 bg-stone-50 border border-stone-300 rounded-xl px-3 py-2 text-xs sm:text-sm font-mono text-center focus:outline-brand" required>
+                <button type="submit" class="bg-brand hover:bg-brand-dark text-white px-5 py-2 rounded-xl text-xs sm:text-sm font-bold transition cursor-pointer">تتبع</button>
+            </form>
+        </div>
+
+    </main>
+
+    <footer class="text-center py-6 mt-6 border-t border-stone-200/80 text-[11px] text-stone-500 font-medium">
+        دار التطريز TATRIZA • سجاد وتحف فنية يدوية فاخرة • مسقط، سلطنة عُمان 🇴🇲
+    </footer>
+
+    <!-- محرك تشغيل صفحة التتبع -->
+    <script type="module">
+        import { ORDER_STAGES, ORDER_STAGES_ARRAY, getOrderStage, getOrderTrackingUrl } from '../js/tracking.js';
+        import { generateOrderAuthHash, getOrderVerificationUrl } from '../js/authenticity.js';
+        import { initFirebaseServices } from '../js/firebase-public.js';
+        import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+        function getOrderIdFromUrl() {
+            const p = new URLSearchParams(window.location.search);
+            return p.get('order') || p.get('id') || '';
+        }
+
+        async function loadOrderTracking() {
+            const orderId = getOrderIdFromUrl();
+            const lookupCard = document.getElementById('track-lookup-card');
+
+            if (!orderId) {
+                if (lookupCard) lookupCard.classList.remove('hidden');
+                renderTrackingUI({
+                    orderId: 'TATR-SAMPLE',
+                    customerName: 'عميل دار التطريز الكريم',
+                    stage: 'in_weaving',
+                    createdAtFormatted: 'قيد المتابعة',
+                    items: [{
+                        title: 'تحفة سجاد ملكي يدوي فاخر',
+                        dimensions: 'أبعاد مخصصة'
+                    }]
+                });
+                return;
+            }
+
+            let fetchedOrder = null;
+            try {
+                const { db, isReady } = initFirebaseServices();
+                if (isReady && db) {
+                    const snap = await getDoc(doc(db, "orders", orderId));
+                    if (snap.exists()) {
+                        fetchedOrder = snap.data();
+                    }
+                }
+            } catch(e) {
+                console.warn("Could not fetch order from Firestore:", e);
+            }
+
+            if (!fetchedOrder) {
+                fetchedOrder = {
+                    orderId: orderId,
+                    customerName: 'عميل دار التطريز الكريم',
+                    stage: 'order_received',
+                    createdAtFormatted: new Intl.DateTimeFormat('ar-OM', { dateStyle: 'full' }).format(new Date()),
+                    items: [{
+                        title: 'سجادة وتحفة دار التطريز',
+                        dimensions: 'معتمد'
+                    }]
+                };
+            }
+
+            renderTrackingUI(fetchedOrder);
+        }
+
+        function renderTrackingUI(order) {
+            const orderId = order.orderId || order.id || 'TATR-ORDER';
+            const currentStage = getOrderStage(order);
+
+            document.getElementById('track-order-code').innerText = `#${orderId}`;
+            document.getElementById('active-stage-title').innerText = currentStage.title;
+            document.getElementById('active-stage-desc').innerText = currentStage.desc;
+            document.getElementById('active-stage-icon').innerText = currentStage.icon;
+            document.getElementById('active-stage-date').innerText = order.stageUpdatedAt ? new Intl.DateTimeFormat('ar-OM', { dateStyle: 'short', timeStyle: 'short' }).format(new Date(order.stageUpdatedAt)) : (order.createdAtFormatted || 'محدث');
+
+            const shippingPill = document.getElementById('shipping-details-pill');
+            if (order.trackingNumber && shippingPill) {
+                shippingPill.classList.remove('hidden');
+                document.getElementById('shipping-tracking-number').innerText = order.trackingNumber;
+                document.getElementById('shipping-carrier-name').innerText = order.carrierName || 'شحن سريع مؤمّن';
+            }
+
+            const authHash = generateOrderAuthHash(order);
+            const certUrl = getOrderVerificationUrl(orderId, authHash);
+            const certBtn = document.getElementById('track-view-cert-btn');
+            if (certBtn) certBtn.href = certUrl;
+            const navCertBtn = document.getElementById('nav-verify-btn');
+            if (navCertBtn) navCertBtn.href = certUrl;
+
+            const waSupport = document.getElementById('track-whatsapp-support-btn');
+            if (waSupport) {
+                const msg = encodeURIComponent(`مرحباً دار التطريز 🏛️، أستفسر بخصوص طلبي رقم: #${orderId} (المرحلة الحالية: ${currentStage.title})`);
+                waSupport.href = `https://wa.me/96895939388?text=${msg}`;
+            }
+
+            renderTimeline(currentStage);
+            renderItemsList(order.items);
+        }
+
+        function renderTimeline(currentStage) {
+            const container = document.getElementById('timeline-stepper');
+            if (!container) return;
+
+            const currentIndex = currentStage.stepIndex;
+
+            container.innerHTML = ORDER_STAGES_ARRAY.map((st) => {
+                const isCompleted = st.stepIndex < currentIndex;
+                const isActive = st.stepIndex === currentIndex;
+                const isPending = st.stepIndex > currentIndex;
+
+                let cardClass = 'bg-stone-50/80 border-stone-200 text-stone-500';
+                let circleClass = 'bg-stone-200 text-stone-600 border-stone-300';
+                let statusText = 'قادمة';
+
+                if (isCompleted) {
+                    cardClass = 'bg-emerald-50/90 border-emerald-300 text-emerald-950 step-completed';
+                    circleClass = 'bg-emerald-600 text-white border-emerald-400';
+                    statusText = 'مكتملة ✓';
+                } else if (isActive) {
+                    cardClass = 'bg-gradient-to-b from-amber-50 to-white border-brand text-brand step-active shadow-sm';
+                    circleClass = 'bg-brand text-white border-amber-300';
+                    statusText = 'جارية الآن ⏳';
+                }
+
+                return `
+                    <div class="rounded-2xl p-3 border flex flex-row md:flex-col items-center justify-between md:justify-center text-right md:text-center gap-2.5 transition-all ${cardClass}">
+                        <div class="flex items-center md:flex-col gap-2.5">
+                            <div class="step-circle w-10 h-10 rounded-2xl flex items-center justify-center font-bold text-base border shrink-0 ${circleClass}">
+                                ${isCompleted ? '✓' : st.icon}
+                            </div>
+                            <div>
+                                <span class="font-display font-black text-xs md:text-[11.5px] block leading-tight text-stone-900">
+                                    ${st.shortTitle}
+                                </span>
+                                <span class="text-[9.5px] md:text-[10px] text-stone-500 font-medium block mt-0.5">
+                                    مرحلة ${st.stepIndex} من 5
+                                </span>
+                            </div>
+                        </div>
+                        <span class="text-[10px] font-black px-2 py-0.5 rounded-md ${isCompleted ? 'bg-emerald-100 text-emerald-900' : isActive ? 'bg-amber-100 text-amber-900 font-black' : 'bg-stone-200 text-stone-600'} shrink-0">
+                            ${statusText}
+                        </span>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderItemsList(items) {
+            const listEl = document.getElementById('track-items-list');
+            if (!listEl) return;
+
+            if (Array.isArray(items) && items.length > 0) {
+                listEl.innerHTML = items.map(it => `
+                    <div class="p-3 bg-stone-50/90 rounded-2xl border border-stone-200/90 flex items-center justify-between gap-3 text-right">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-900 border border-amber-300/80 flex items-center justify-center text-sm shrink-0">
+                                🎨
+                            </div>
+                            <div>
+                                <h4 class="font-display font-bold text-xs sm:text-sm text-stone-900">${it.title || 'تحفة دار التطريز'}</h4>
+                                <div class="flex items-center gap-2 text-[10px] text-stone-500 font-medium mt-0.5">
+                                    ${it.dimensions ? `<span>📐 ${it.dimensions}</span>` : ''}
+                                    ${it.id ? `<span class="font-mono bg-stone-200/80 px-1 rounded">${it.id}</span>` : ''}
+                                </div>
+                            </div>
+                        </div>
+                        <span class="text-[10.5px] font-bold text-brand bg-brand/5 px-2.5 py-1 rounded-xl border border-brand/20 shrink-0">
+                            حياكة مخصصة
+                        </span>
+                    </div>
+                `).join('');
+            } else {
+                listEl.innerHTML = `<p class="text-xs text-stone-500 italic p-3 bg-stone-50 rounded-xl">تفاصيل القطعة مسجلة لدى الإدارة.</p>`;
+            }
+        }
+
+        window.handleTrackLookup = function(e) {
+            e.preventDefault();
+            const val = document.getElementById('track-lookup-input').value.trim();
+            if (val) {
+                window.location.search = `?order=${encodeURIComponent(val)}`;
+            }
+        };
+
+        window.addEventListener('DOMContentLoaded', loadOrderTracking);
+    </script>
+</body>
+</html>

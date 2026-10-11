@@ -44,6 +44,14 @@
       {
         "source": "/screen/verify",
         "destination": "/screen/verify.html"
+      },
+      {
+        "source": "/track",
+        "destination": "/track.html"
+      },
+      {
+        "source": "/screen/track",
+        "destination": "/screen/track.html"
       }
     ]
   }

@@ -993,4 +993,27 @@ export async function revertOrderToPending(orderId) {
     return { success: true, orderId };
 }
 
+export async function updateOrderStage(orderId, stageId, trackingDetails = {}) {
+    const { db, isReady } = initFirebaseServices();
+    if (!isReady || !db) throw new Error("Firebase services not ready");
+
+    const orderRef = doc(db, "orders", orderId);
+    const now = Date.now();
+    const auth = getAuth();
+    const adminEmail = auth.currentUser ? auth.currentUser.email : 'admin';
+
+    const updatePayload = {
+        stage: stageId,
+        stageUpdatedAt: now,
+        stageUpdatedBy: adminEmail,
+        trackingNumber: (trackingDetails.trackingNumber || '').trim(),
+        carrierName: (trackingDetails.carrierName || '').trim(),
+        stageNotes: (trackingDetails.notes || '').trim()
+    };
+
+    await updateDoc(orderRef, updatePayload);
+    return { success: true, orderId, stage: stageId };
+}
+
+
 

@@ -3,10 +3,10 @@ service cloud.firestore {
   match /databases/{database}/documents {
     // طلبات الشراء والمهام الواردة من المتجر
     match /orders/{orderId} {
-      // يسمح لأي زائر بإنشاء طلب شراء جديد
-      allow create: if true;
-      // لا يحق القراءة أو التعديل أو الأرشفة أو الحذف إلا للمسؤول المعتمد
-      allow read, update, delete: if request.auth != null;
+      // يسمح بإنشاء طلب شراء جديد، وقراءة تفاصيل طلب فردي بموجب رقم الطلب للتتبع والشهادة
+      allow create, get: if true;
+      // لا يحق سرد واستعلام قائمة الطلبات أو التعديل أو الحذف إلا للمسؤول المعتمد
+      allow list, update, delete: if request.auth != null;
     }
 
     // بقية المستندات (المعروضات، التصنيفات، البنرات، والإعدادات)
