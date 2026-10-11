@@ -28,6 +28,8 @@ import {
     ORDER_STAGES_ARRAY, 
     getOrderStage, 
     buildWhatsAppStatusUpdateMessage, 
+    buildWhatsAppOrderWelcomeMessage, 
+    buildWhatsAppPaymentReceiptMessage, 
     getOrderTrackingUrl 
 } from './tracking.js';
 
@@ -582,6 +584,12 @@ function createOrderCardHtml(order) {
                     <span>❌</span>
                     <span>تم إلغاء الطلب</span>
                 </button>
+
+                <!-- الزر الثالث: رسالة ترحيب وتأكيد التفاصيل مع رابط التتبع -->
+                <button type="button" onclick="sendWelcomeWhatsApp('${orderId}')" class="sm:col-span-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300 font-bold text-xs sm:text-sm h-10 px-3 rounded-xl shadow-2xs transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-98" title="إرسال رسالة ترحيب وتأكيد تفاصيل الطلب مع رابط التتبع للعميل">
+                    <span>💬</span>
+                    <span>تأكيد التفاصيل مع العميل عبر الواتساب</span>
+                </button>
             </div>
         `;
     } else {
@@ -621,6 +629,10 @@ function createOrderCardHtml(order) {
                     <button type="button" onclick="sendCertificateWhatsApp('${orderId}')" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-bold text-xs h-9 px-2.5 sm:px-3 rounded-xl border border-emerald-300 transition flex items-center gap-1 cursor-pointer active:scale-95" title="إرسال رابط الشهادة الموثقة للعميل عبر الواتساب">
                         <span>📲</span>
                         <span>إرسال الشهادة</span>
+                    </button>
+                    <button type="button" onclick="sendPaymentReceiptWhatsApp('${orderId}')" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-bold text-xs h-9 px-2.5 sm:px-3 rounded-xl border border-emerald-300 transition flex items-center gap-1 cursor-pointer active:scale-95" title="إرسال تأكيد استلام الدفعة للعميل عبر الواتساب">
+                        <span>💰</span>
+                        <span>إيصال الدفع</span>
                     </button>
                     <button type="button" onclick="revertOrderAction('${orderId}')" class="bg-stone-50 hover:bg-stone-100 text-stone-700 font-bold text-xs h-9 px-2.5 sm:px-3 rounded-xl border border-stone-200 transition flex items-center gap-1 cursor-pointer active:scale-95" title="إعادة الطلب إلى قائمة الطلبات المعلقة">
                         <span>↩️</span>
@@ -1245,6 +1257,22 @@ window.sendStageWhatsApp = function(orderId) {
         carrierName: order.carrierName || '',
         notes: order.stageNotes || ''
     });
+    const clientPhone = order.customerPhone ? order.customerPhone.replace(/\D/g, '') : "96895939388";
+    window.open(`https://wa.me/${clientPhone}?text=${encodeURIComponent(msg)}`, '_blank');
+};
+
+window.sendWelcomeWhatsApp = function(orderId) {
+    const order = allOrders.find(o => (o.orderId || o.id) === orderId);
+    if (!order) return;
+    const msg = buildWhatsAppOrderWelcomeMessage(order);
+    const clientPhone = order.customerPhone ? order.customerPhone.replace(/\D/g, '') : "96895939388";
+    window.open(`https://wa.me/${clientPhone}?text=${encodeURIComponent(msg)}`, '_blank');
+};
+
+window.sendPaymentReceiptWhatsApp = function(orderId) {
+    const order = allOrders.find(o => (o.orderId || o.id) === orderId);
+    if (!order) return;
+    const msg = buildWhatsAppPaymentReceiptMessage(order);
     const clientPhone = order.customerPhone ? order.customerPhone.replace(/\D/g, '') : "96895939388";
     window.open(`https://wa.me/${clientPhone}?text=${encodeURIComponent(msg)}`, '_blank');
 };

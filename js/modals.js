@@ -290,6 +290,14 @@ export function addCurrentModalToCart() {
     }
 }
 
+export function getStoreBaseUrl() {
+    if (typeof window === 'undefined') return 'https://tatriza-official.web.app';
+    const isLocal = window.location.hostname.includes('localhost') || window.location.hostname.includes('127.0.0.1') || window.location.protocol === 'file:';
+    const baseUrl = isLocal ? 'https://tatriza-official.web.app' : window.location.origin;
+    const isScreen = window.location.pathname.includes('/screen');
+    return baseUrl + (isScreen ? '/screen' : '');
+}
+
 export function inquireCurrentModalWhatsApp() {
     if (!currentActiveModalCarpet) return;
     const carpet = currentActiveModalCarpet;
@@ -353,11 +361,12 @@ export function inquireCurrentModalWhatsApp() {
         message += `💬 *استفساري:* أود تأكيد توافر القطعة للشحن الفوري وترتيب تفاصيل الدفع والتسليم.`;
     }
 
-    // رابط مباشر لمعاينة التحفة على المتجر
-    const origin = window.location.origin;
+    // رابط مباشر ذكي لمعاينة التحفة على المتجر + رابط التتبع المباشر
+    const storeBase = getStoreBaseUrl();
     if (carpet.id) {
-        message += `\n\n🔗 *رابط معاينة القطعة:* ${origin}/#carpet-${carpet.id}`;
+        message += `\n\n🔗 *رابط معاينة القطعة مباشرة:* ${storeBase}/?carpet=${encodeURIComponent(carpet.id)}#carpet-${encodeURIComponent(carpet.id)}`;
     }
+    message += `\n📲 *رابط متابعة وتتبع الطلب سحابياً:* ${storeBase}/track.html?order=${orderId}`;
 
     message += `\n\nشاكر ومقدّر لكم حسن تعاونكم وفخامة إبداعكم 🌿`;
 
@@ -1150,6 +1159,8 @@ export function sendCartToWhatsApp() {
     }
     message += `🚚 *الشحن والتسليم:* شحن مؤمّن ومجاني لكافة محافظات سلطنة عُمان ودول الخليج العربي\n`;
     message += `⚜️ *شهادة الأصالة:* كل قطعة مرفقة بختم أصالة صُنع يدوي معتمد\n`;
+    const storeBase = getStoreBaseUrl();
+    message += `📲 *رابط مراجعة وتتبع الطلب سحابياً:* ${storeBase}/track.html?order=${orderId}\n`;
     message += `━━━━━━━━━━━━━━━━━━━━\n`;
     message += `✨ أرجو تأكيد توفر القطع وترتيب تفاصيل الدفع وموعد التسليم. شكراً لاهتمامكم وفخامة ذوقكم!`;
 
@@ -1200,6 +1211,7 @@ export function submitCustomOrder(event) {
         console.warn("Could not record custom order:", e);
     }
 
+    const storeBase = getStoreBaseUrl();
     let message = `السلام عليكم ورحمة الله وبركاته 🎨✨\n`;
     message += `*دار التطريز (TATRIZA) | طلب تفصيل وتصميم يدوي خاص*\n`;
     message += `━━━━━━━━━━━━━━━━━━━━\n`;
@@ -1210,6 +1222,7 @@ export function submitCustomOrder(event) {
     message += `> ${notes || 'تفصيل مخصص حسب الصورة المرفقة'}\n\n`;
     message += `━━━━━━━━━━━━━━━━━━━━\n`;
     message += `📷 سأقوم بإرفاق صورة التصميم المقترح أو لوحة الألوان المرغوبة في هذه المحادثة مباشرة.\n`;
+    message += `📲 *رابط متابعة طلب التفصيل سحابياً:* ${storeBase}/track.html?order=${orderId}\n`;
     message += `✨ أرجو تزويدي بالتقدير المالي ومدة الحياكة اليدوية المتوقعة. شكراً جزيلاً لكم!`;
 
     const storePhone = "96895939388";

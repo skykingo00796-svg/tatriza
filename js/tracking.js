@@ -134,10 +134,79 @@ export function buildWhatsAppStatusUpdateMessage(order, newStageId, trackingDeta
     return msg;
 }
 
+/**
+ * صياغة رسالة واتساب ترحيبية وتأكيد تفاصيل الطلب مع رابط التتبع المباشر
+ */
+export function buildWhatsAppOrderWelcomeMessage(order, customOrigin = null) {
+    const orderId = order.orderId || order.id || 'TATR-ORDER';
+    const clientName = (order.customerName || 'عميلنا العزيز').trim();
+    const trackingUrl = getOrderTrackingUrl(orderId, customOrigin);
+    const totalPrice = Number(order.totalPrice) || 0;
+
+    let itemsList = '';
+    if (Array.isArray(order.items) && order.items.length > 0) {
+        itemsList = order.items.map((it, idx) => {
+            let row = `▫️ *[${idx + 1}] ${it.title || 'تحفة فنية'}*`;
+            if (it.dimensions) row += ` (المقاس: ${it.dimensions})`;
+            if (it.price) row += ` - ${it.price} ر.ع.`;
+            return row;
+        }).join('\n');
+    }
+
+    let msg = `السلام عليكم ورحمة الله وبركاته 🏛️✨\n`;
+    msg += `*عزيزنا الكريم: ${clientName}*\n`;
+    msg += `تحية طيبة وفخرٌ باختياركم *دار التطريز TATRIZA* 🇴🇲\n`;
+    msg += `━━━━━━━━━━━━━━━━━━━━\n\n`;
+    msg += `يسعدنا التواصل معكم لتأكيد تفاصيل طلبكم رقم \`#${orderId}\`:\n\n`;
+    if (itemsList) {
+        msg += `📦 *المقتنيات المحددة:*\n${itemsList}\n\n`;
+    }
+    if (totalPrice > 0) {
+        msg += `💰 *المبلغ الإجمالي:* *${totalPrice} ر.ع.*\n`;
+    }
+    msg += `🚚 *الشحن:* توصيل مؤمّن ومجاني حتى باب منزلكم.\n`;
+    msg += `⚜️ *التوثيق:* كل قطعة مرفقة بختم ملكي وشهادة أصالة صُنع يدوي معتمدة.\n\n`;
+    msg += `📲 *رابط تتبع مراحل الطلب والحياكة لحظة بلحظة:*\n`;
+    msg += `${trackingUrl}\n\n`;
+    msg += `━━━━━━━━━━━━━━━━━━━━\n`;
+    msg += `✨ نحن رهن إشارتكم لأي استفسار أو تفاصيل إضافية حول التنسيق والتسليم. شكراً لذوقكم الرفيع! 🌿`;
+
+    return msg;
+}
+
+/**
+ * صياغة رسالة واتساب ملكية لتأكيد استلام الدفعة/المبلغ وإصدار الإيصال
+ */
+export function buildWhatsAppPaymentReceiptMessage(order, customOrigin = null) {
+    const orderId = order.orderId || order.id || 'TATR-ORDER';
+    const clientName = (order.customerName || 'عميلنا العزيز').trim();
+    const trackingUrl = getOrderTrackingUrl(orderId, customOrigin);
+    const totalPrice = Number(order.totalPrice) || 0;
+
+    let msg = `السلام عليكم ورحمة الله وبركاته 🏛️✨\n`;
+    msg += `*عزيزنا الكريم: ${clientName}*\n`;
+    msg += `تحية طيبة من إدارة *دار التطريز TATRIZA* 🇴🇲\n`;
+    msg += `━━━━━━━━━━━━━━━━━━━━\n\n`;
+    msg += `نفيدكم علماً بأنه قد تم *استلام واعتماد دفعة طلبكم* بنجاح:\n\n`;
+    msg += `🔖 *رقم الطلب:* \`#${orderId}\`\n`;
+    if (totalPrice > 0) {
+        msg += `💰 *المبلغ المستلم:* *${totalPrice} ر.ع.*\n`;
+    }
+    msg += `📅 *الحالة المالية:* تم تأكيد وتثبيت الحجز في جدول الحياكة الرسمية للدار.\n\n`;
+    msg += `📲 *رابط متابعة مراحل التنفيذ والتتبع المباشر:*\n`;
+    msg += `${trackingUrl}\n\n`;
+    msg += `━━━━━━━━━━━━━━━━━━━━\n`;
+    msg += `✨ جاري العمل على حياكة وتجهيز تحفتكم الفنية بأعلى مقاييس الإتقان والفخامة. شكراً لثقتكم الغالية! 🌿`;
+
+    return msg;
+}
+
 if (typeof window !== 'undefined') {
     window.ORDER_STAGES = ORDER_STAGES;
     window.ORDER_STAGES_ARRAY = ORDER_STAGES_ARRAY;
     window.getOrderStage = getOrderStage;
     window.getOrderTrackingUrl = getOrderTrackingUrl;
     window.buildWhatsAppStatusUpdateMessage = buildWhatsAppStatusUpdateMessage;
+    window.buildWhatsAppOrderWelcomeMessage = buildWhatsAppOrderWelcomeMessage;
+    window.buildWhatsAppPaymentReceiptMessage = buildWhatsAppPaymentReceiptMessage;
 }
