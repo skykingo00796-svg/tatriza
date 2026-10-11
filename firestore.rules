@@ -9,11 +9,19 @@ service cloud.firestore {
       allow list, update, delete: if request.auth != null;
     }
 
+    // عدادات الإحصائيات اليومية المجهولة (زيارات، مشاهدات القطع، إضافات السلة، نقرات الواتساب)
+    // الزائر يستطيع الزيادة فقط ضمن الحقول المعتمدة، والقراءة والحذف للمسؤول فقط
+    match /analytics_daily/{day} {
+      allow read, delete: if request.auth != null;
+      allow create, update: if day.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}$')
+        && request.resource.data.keys().hasOnly(['visits', 'views', 'cartAdds', 'waClicks', 'devices', 'sources', 'carpets', 'updatedAt']);
+    }
+
     // بقية المستندات (المعروضات، التصنيفات، البنرات، والإعدادات)
-    match /{document=**} {
-      allow read: if true;
+    // ملاحظة: الطلبات والإحصائيات مستثناة من القراءة العامة حتى لا تُسرد بيانات العملاء
+    match /{col}/{document=**} {
+      allow read: if !(col in ['orders', 'analytics_daily']);
       allow write: if request.auth != null;
     }
   }
 }
-
