@@ -3,16 +3,16 @@
 // دار التطريز TATRIZA - نظام التخزين المؤقت والتشغيل السريع
 // ==========================================
 
-const CACHE_NAME = 'tatriza-pwa-v1.2';
+const CACHE_NAME = 'tatriza-pwa-v3.5';
 
 const STATIC_ASSETS = [
     './',
     './index.html',
-    './css/style.css?v=3.0',
-    './js/main.js',
-    './js/modals.js',
-    './js/currency.js',
-    './js/pwa.js',
+    './css/style.css?v=3.5',
+    './js/main.js?v=3.5',
+    './js/modals.js?v=3.5',
+    './js/currency.js?v=3.5',
+    './js/pwa.js?v=3.5',
     './js/tracking.js',
     './js/authenticity.js',
     './js/qrcode.js',
@@ -36,7 +36,7 @@ self.addEventListener('install', (event) => {
     );
 });
 
-// 2. تنشيط الـ Service Worker وتنظيف النسخ القديمة
+// 2. تنشيط الـ Service Worker وتنظيف النسخ القديمة فوراً
 self.addEventListener('activate', (event) => {
     event.waitUntil(
         caches.keys().then((keys) => {
@@ -65,7 +65,31 @@ self.addEventListener('fetch', (event) => {
         return; // تمرير مباشر للشبكة
     }
 
-    // استراتيجية Stale-While-Revalidate: استجابة فورية من الكاش ثم التحديث في الخلفية
+    // استراتيجية Network-First للأكواد والصفحات لضمان وصول التحديثات لحظياً للمستخدمين
+    const isCodeOrDocument = url.pathname.endsWith('.js') || 
+                             url.pathname.endsWith('.css') || 
+                             url.pathname.endsWith('.html') || 
+                             url.pathname === '/' || 
+                             url.pathname.endsWith('/');
+
+    if (isCodeOrDocument) {
+        event.respondWith(
+            fetch(event.request).then((networkResponse) => {
+                if (networkResponse && networkResponse.status === 200) {
+                    const responseClone = networkResponse.clone();
+                    caches.open(CACHE_NAME).then((cache) => {
+                        cache.put(event.request, responseClone);
+                    });
+                }
+                return networkResponse;
+            }).catch(() => {
+                return caches.match(event.request);
+            })
+        );
+        return;
+    }
+
+    // للأصول الثابتة الأخرى (الصور والأيقونات) نستخدم Stale-While-Revalidate
     event.respondWith(
         caches.match(event.request).then((cachedResponse) => {
             const fetchPromise = fetch(event.request).then((networkResponse) => {
@@ -76,10 +100,7 @@ self.addEventListener('fetch', (event) => {
                     });
                 }
                 return networkResponse;
-            }).catch(() => {
-                // في حالة انقطاع الإنترنت الكامل، نعيد النسخة المحفوظة أو الصفحة الرئيسية
-                return cachedResponse;
-            });
+            }).catch(() => cachedResponse);
 
             return cachedResponse || fetchPromise;
         })
