@@ -3008,10 +3008,12 @@ input[type=number].item-modal-price-input {
 }
 
 /* ==========================================================================
-   تنسيقات محول العملات والشعار الرسمي المعتمد للريال العُماني (CBO)
+   تنسيقات محول العملات والشعارات الرسمية المعتمدة (عُمان CBO، السعودية SAMA، الإمارات CBUAE)
    ========================================================================== */
 .currency-official-symbol,
-.omr-official-symbol {
+.omr-official-symbol,
+.sar-official-symbol,
+.aed-official-symbol {
     display: inline-block;
     vertical-align: middle;
     height: 1em;
@@ -3020,7 +3022,7 @@ input[type=number].item-modal-price-input {
     transition: transform 0.2s ease, filter 0.2s ease;
 }
 
-/* زر العملة في الشريط العلوي (التوب بار) - تناسق هندسي 1:1 بين حجم العلم والشعار */
+/* زر العملة في الشريط العلوي (التوب بار) - تناسق هندسي 1:1 بين حجم العلم والشعار لجميع العملات */
 #header-currency-btn {
     display: inline-flex;
     align-items: center;
@@ -3051,7 +3053,10 @@ input[type=number].item-modal-price-input {
 }
 
 #header-currency-btn .currency-btn-svg svg,
-#header-currency-btn .omr-official-symbol {
+#header-currency-btn .currency-official-symbol,
+#header-currency-btn .omr-official-symbol,
+#header-currency-btn .sar-official-symbol,
+#header-currency-btn .aed-official-symbol {
     height: 17px !important; /* متطابق تماماً مع ارتفاع العلم 1:1 */
     width: auto !important;
     max-width: 34px !important;
@@ -3084,6 +3089,8 @@ input[type=number].item-modal-price-input {
 }
 
 .card-price-curr .omr-official-symbol,
+.card-price-curr .sar-official-symbol,
+.card-price-curr .aed-official-symbol,
 .card-price-curr .currency-official-symbol {
     height: 12px !important;
     width: auto !important;
@@ -3099,6 +3106,9 @@ input[type=number].item-modal-price-input {
 }
 
 #modal-currency-label .omr-official-symbol,
+#modal-currency-label .sar-official-symbol,
+#modal-currency-label .aed-official-symbol,
+#modal-currency-label .currency-official-label,
 #modal-currency-label .currency-official-symbol {
     height: 19px !important;
     width: auto !important;
@@ -3108,6 +3118,8 @@ input[type=number].item-modal-price-input {
 
 /* تنسيقات الشعار في سلة المشتريات */
 .lux-cart-item .omr-official-symbol,
+.lux-cart-item .sar-official-symbol,
+.lux-cart-item .aed-official-symbol,
 .lux-cart-item .currency-official-symbol {
     height: 12px !important;
     width: auto !important;
@@ -3116,6 +3128,8 @@ input[type=number].item-modal-price-input {
 }
 
 #cart-total-currency .omr-official-symbol,
+#cart-total-currency .sar-official-symbol,
+#cart-total-currency .aed-official-symbol,
 #cart-total-currency .currency-official-symbol {
     height: 15px !important;
     width: auto !important;
@@ -3124,6 +3138,8 @@ input[type=number].item-modal-price-input {
 }
 
 .currency-option-card:hover .omr-official-symbol,
+.currency-option-card:hover .sar-official-symbol,
+.currency-option-card:hover .aed-official-symbol,
 .currency-option-card:hover .currency-official-symbol {
     transform: scale(1.1);
 }
