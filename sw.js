@@ -3,7 +3,7 @@
 // دار التطريز TATRIZA - نظام التخزين المؤقت والتشغيل السريع
 // ==========================================
 
-const CACHE_NAME = 'tatriza-pwa-v3.6';
+const CACHE_NAME = 'tatriza-pwa-v3.7';
 
 const STATIC_ASSETS = [
     './',

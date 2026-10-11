@@ -1105,12 +1105,15 @@ export function sendCartToWhatsApp() {
         };
     });
 
+    const cartCustInput = document.getElementById('cart-cust-name');
+    const custName = cartCustInput ? cartCustInput.value.trim() : '';
+
     // تسجيل الطلب سحابياً في فايربيس للمسؤول
     try {
         recordCustomerOrder({
             orderId: orderId,
             type: 'cart',
-            customerName: 'طلب عبر سلة المشتريات',
+            customerName: custName || 'طلب عبر سلة المشتريات',
             customerPhone: '',
             customerNotes: 'مقتنيات منتقاة من المعرض',
             items: items,
@@ -1127,6 +1130,9 @@ export function sendCartToWhatsApp() {
     message += `*دار التطريز (TATRIZA) | طلب شراء وتأكيد سلة المقتنيات*\n`;
     message += `━━━━━━━━━━━━━━━━━━━━\n`;
     message += `🔖 *كود المرجع السحابي:* \`${orderId}\`\n`;
+    if (custName) {
+        message += `👤 *اسم العميل الكريم:* ${custName}\n`;
+    }
     message += `📦 *عدد القطع المختارة:* ${cart.length} ${cart.length === 1 ? 'تحفة فنية' : 'تحف فنية'}\n`;
     message += `━━━━━━━━━━━━━━━━━━━━\n\n`;
     message += `🛍️ *قائمة المقتنيات المطلوبة:*\n\n`;

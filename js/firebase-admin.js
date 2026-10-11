@@ -1015,5 +1015,19 @@ export async function updateOrderStage(orderId, stageId, trackingDetails = {}) {
     return { success: true, orderId, stage: stageId };
 }
 
+export async function updateOrderCustomerInfo(orderId, customerName, customerPhone) {
+    const { db, isReady } = initFirebaseServices();
+    if (!isReady || !db) throw new Error("Firebase services not ready");
 
+    const orderRef = doc(db, "orders", orderId);
+    const updatePayload = {};
+    if (customerName !== undefined) {
+        updatePayload.customerName = (customerName || '').trim();
+    }
+    if (customerPhone !== undefined) {
+        updatePayload.customerPhone = (customerPhone || '').trim();
+    }
 
+    await updateDoc(orderRef, updatePayload);
+    return { success: true, orderId };
+}

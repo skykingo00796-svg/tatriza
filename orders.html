@@ -417,10 +417,22 @@
                 </div>
             </div>
 
-            <!-- حقل الملاحظات الاختياري (يظهر مع تأكيد الدفع) -->
-            <div id="order-modal-input-container" class="space-y-1.5 hidden">
-                <label class="block text-xs font-bold text-stone-700">ملاحظة الدفع والتحويل (اختياري)</label>
-                <input type="text" id="order-modal-note-input" placeholder="مثلاً: تحويل بنك مسقط / تخفيض خاص للعميل" class="w-full bg-stone-50 border border-stone-300 rounded-xl px-3.5 py-2.5 text-xs text-stone-800 focus:bg-white focus:border-emerald-600 outline-none transition" onkeydown="if(event.key==='Enter') window.closeOrderActionModal(true)">
+            <!-- حقول بيانات العميل وملاحظات الدفع (تظهر مع تأكيد الدفع أو تعديل بيانات العميل) -->
+            <div id="order-modal-input-container" class="space-y-3 hidden bg-stone-50/80 border border-stone-200/90 rounded-2xl p-3.5">
+                <div id="order-modal-customer-name-wrapper" class="space-y-1">
+                    <label class="block text-[11px] font-bold text-stone-700">👤 اسم العميل المعتمد (يُطبع على الشهادة والإيصال):</label>
+                    <input type="text" id="order-modal-customer-name-input" placeholder="مثال: الشيخ أحمد الكندي / د. سارة المعولي" class="w-full bg-white border border-stone-300 rounded-xl px-3.5 py-2 text-xs text-stone-900 focus:border-emerald-600 outline-none transition">
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    <div id="order-modal-customer-phone-wrapper" class="space-y-1">
+                        <label class="block text-[11px] font-bold text-stone-700">📞 رقم الهاتف (للتواصل وإرسال الشهادة):</label>
+                        <input type="tel" id="order-modal-customer-phone-input" placeholder="مثال: 96895939388" dir="ltr" class="w-full bg-white border border-stone-300 rounded-xl px-3.5 py-2 text-xs text-stone-900 focus:border-emerald-600 outline-none transition text-left">
+                    </div>
+                    <div id="order-modal-note-wrapper" class="space-y-1">
+                        <label class="block text-[11px] font-bold text-stone-700">💳 ملاحظة الدفع والتحويل:</label>
+                        <input type="text" id="order-modal-note-input" placeholder="مثلاً: تحويل بنك مسقط" class="w-full bg-white border border-stone-300 rounded-xl px-3.5 py-2 text-xs text-stone-900 focus:border-emerald-600 outline-none transition" onkeydown="if(event.key==='Enter') window.closeOrderActionModal(true)">
+                    </div>
+                </div>
             </div>
 
             <!-- أزرار الإجراء (نعم / تراجع) -->

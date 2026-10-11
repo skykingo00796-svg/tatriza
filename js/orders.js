@@ -9,6 +9,7 @@ import {
     cancelAndPermanentlyDeleteOrder, 
     revertOrderToPending,
     updateOrderStage,
+    updateOrderCustomerInfo,
     adminLoginWithCloud,
     adminLogoutFromCloud,
     initFirebaseServices
@@ -680,9 +681,15 @@ function createOrderCardHtml(order) {
 
             <!-- معلومات العميل والملاحظات -->
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs bg-stone-50/80 p-2.5 rounded-xl border border-stone-200/70">
-                <div>
-                    <span class="text-stone-400 font-bold block text-[10px]">العميل / مقدم الطلب:</span>
-                    <span class="font-bold text-stone-800">${escapeHtml(order.customerName || 'عميل المتجر')}</span>
+                <div class="flex items-start justify-between gap-1.5">
+                    <div class="min-w-0">
+                        <span class="text-stone-400 font-bold block text-[10px]">العميل / مقدم الطلب:</span>
+                        <span class="font-bold text-stone-900 block truncate">${escapeHtml(order.customerName || 'عميل المتجر')}</span>
+                        ${order.customerPhone ? `<span class="text-[10.5px] text-stone-500 font-mono block mt-0.5" dir="ltr">📞 ${escapeHtml(order.customerPhone)}</span>` : ''}
+                    </div>
+                    <button type="button" onclick="editCustomerInfoPrompt('${orderId}')" class="text-stone-500 hover:text-stone-900 bg-white hover:bg-stone-100 border border-stone-200 rounded-lg p-1.5 transition text-xs shrink-0 cursor-pointer shadow-2xs" title="تعديل اسم أو هاتف العميل">
+                        ✏️
+                    </button>
                 </div>
                 <div>
                     <span class="text-stone-400 font-bold block text-[10px]">الملاحظات والتفاصيل:</span>
@@ -770,6 +777,12 @@ function showOrderConfirmationModal(config) {
         if (confirmBtn) confirmBtn.className = 'bg-amber-600 hover:bg-amber-700 text-white font-extrabold text-xs sm:text-sm h-11 px-4 rounded-xl shadow-md transition-all flex items-center justify-center gap-1.5 cursor-pointer active:scale-98';
         if (btnIcon) btnIcon.innerText = '↩️';
         if (btnText) btnText.innerText = config.btnText || 'نعم، إعادة للانتظار';
+        if (itemsSection) itemsSection.classList.add('hidden');
+    } else if (config.type === 'edit_customer') {
+        if (iconContainer) iconContainer.className = 'w-12 h-12 rounded-2xl flex items-center justify-center text-2xl shadow-xs shrink-0 bg-amber-50 text-amber-900 border border-amber-200';
+        if (confirmBtn) confirmBtn.className = 'bg-brand hover:bg-brand-dark text-white font-extrabold text-xs sm:text-sm h-11 px-4 rounded-xl shadow-md transition-all flex items-center justify-center gap-1.5 cursor-pointer active:scale-98';
+        if (btnIcon) btnIcon.innerText = '💾';
+        if (btnText) btnText.innerText = config.btnText || 'حفظ وتحديث بيانات العميل';
         if (itemsSection) itemsSection.classList.add('hidden');
     } else {
         // default / confirm
@@ -882,13 +895,44 @@ function showOrderConfirmationModal(config) {
         }
     }
 
-    // إظهار حقل الملاحظة إن طُلب
+    // إظهار حقول بيانات العميل والملاحظات إن طُلبت
+    const custNameInput = document.getElementById('order-modal-customer-name-input');
+    const custPhoneInput = document.getElementById('order-modal-customer-phone-input');
+    const noteWrapper = document.getElementById('order-modal-note-wrapper');
+
     if (config.showInput) {
         if (inputContainer) inputContainer.classList.remove('hidden');
+
+        if (noteWrapper) {
+            if (config.type === 'edit_customer') {
+                noteWrapper.classList.add('hidden');
+            } else {
+                noteWrapper.classList.remove('hidden');
+            }
+        }
+
+        if (custNameInput && config.order) {
+            const rawName = (config.order.customerName || '').trim();
+            const isPlaceholder = rawName.includes('طلب عبر سلة') || rawName.includes('استفسار عبر تفاصيل');
+            custNameInput.value = isPlaceholder ? '' : rawName;
+            custNameInput.placeholder = isPlaceholder ? `${rawName} (اكتب اسم العميل الحقيقي هنا)` : 'مثال: الشيخ أحمد الكندي / د. سارة المعولي';
+        }
+
+        if (custPhoneInput && config.order) {
+            custPhoneInput.value = (config.order.customerPhone || '').trim();
+        }
+
         if (noteInput) {
             noteInput.value = config.inputValue || 'تم الدفع والتحويل بنجاح';
-            setTimeout(() => noteInput.focus(), 150);
         }
+
+        setTimeout(() => {
+            if (custNameInput && (!custNameInput.value || config.type === 'edit_customer')) {
+                custNameInput.focus();
+            } else if (noteInput) {
+                noteInput.focus();
+            }
+        }, 150);
     } else {
         if (inputContainer) inputContainer.classList.add('hidden');
     }
@@ -909,6 +953,8 @@ window.closeOrderActionModal = function(confirmed = false) {
     const modal = document.getElementById('order-action-modal');
     const box = document.getElementById('order-modal-box');
     const noteInput = document.getElementById('order-modal-note-input');
+    const custNameInput = document.getElementById('order-modal-customer-name-input');
+    const custPhoneInput = document.getElementById('order-modal-customer-phone-input');
 
     if (box) {
         box.classList.remove('scale-100', 'opacity-100');
@@ -960,6 +1006,8 @@ window.closeOrderActionModal = function(confirmed = false) {
             modalResolveCallback({
                 confirmed: true,
                 note: noteInput ? noteInput.value.trim() : '',
+                updatedCustomerName: custNameInput ? custNameInput.value.trim() : '',
+                updatedCustomerPhone: custPhoneInput ? custPhoneInput.value.trim() : '',
                 updatedItems,
                 updatedTotalPrice,
                 hasCustomDiscount,
@@ -998,7 +1046,7 @@ window.confirmOrderAction = async function(orderId) {
         icon: '✅',
         title: 'تأكيد استلام المبلغ واعتماد الطلب',
         subtitle: `رقم الطلب: #${orderId} • ${order.customerName || 'عميل المتجر'}`,
-        desc: 'يرجى مراجعة وتعديل أسعار القطع إذا تم الاتفاق مع العميل على تخفيض خاص، ثم تأكيد استلام المبلغ ونقله إلى الأرشيف.',
+        desc: 'يرجى مراجعة وتعديل أسعار القطع وبيانات العميل المعتمدة للشهادة، ثم تأكيد استلام المبلغ ونقله إلى الأرشيف.',
         showInput: true,
         inputValue: 'تم الاتفاق والدفع بنجاح',
         btnText: 'نعم، اعتماد السعر والدفع',
@@ -1022,6 +1070,12 @@ window.confirmOrderAction = async function(orderId) {
             additionalData.hasCustomDiscount = res.hasCustomDiscount;
             additionalData.originalTotalPrice = res.originalTotalPrice;
         }
+        if (res.updatedCustomerName) {
+            additionalData.customerName = res.updatedCustomerName;
+        }
+        if (res.updatedCustomerPhone) {
+            additionalData.customerPhone = res.updatedCustomerPhone;
+        }
 
         await confirmOrderPayment(orderId, res.note, additionalData);
         showOrderToast(`✅ تم اعتماد السعر (${res.updatedTotalPrice ?? order.totalPrice} ر.ع.) وتأكيد الطلب #${orderId} ونقله للأرشيف بنجاح!`, 'success');
@@ -1034,6 +1088,45 @@ window.confirmOrderAction = async function(orderId) {
             cardEl.style.pointerEvents = 'auto';
         }
         showOrderToast('حدث خطأ أثناء تأكيد الطلب: ' + err.message, 'error');
+    }
+};
+
+// 1.5. إجراء: تعديل وتوثيق بيانات العميل السريعة (الاسم ورقم الهاتف)
+window.editCustomerInfoPrompt = async function(orderId) {
+    if (!orderId) return;
+
+    const order = allOrders.find(o => (o.orderId || o.id) === orderId);
+    if (!order) return;
+
+    const res = await showOrderConfirmationModal({
+        type: 'edit_customer',
+        icon: '👤',
+        title: 'تعديل وتوثيق بيانات العميل',
+        subtitle: `رقم الطلب: #${orderId}`,
+        desc: 'أدخل اسم العميل المعتمد ورقم هاتفه. سيتم تحديثهما فوراً في السحابة وتضمينهما في شهادة الأصالة الملكية والإيصال ورسائل الواتساب وصفحة التتبع.',
+        showInput: true,
+        btnText: 'حفظ وتحديث بيانات العميل',
+        order: order
+    });
+
+    if (!res || !res.confirmed) return;
+
+    const cardEl = document.getElementById(`order-card-${orderId}`);
+    try {
+        if (cardEl) {
+            cardEl.style.opacity = '0.5';
+            cardEl.style.pointerEvents = 'none';
+        }
+
+        await updateOrderCustomerInfo(orderId, res.updatedCustomerName, res.updatedCustomerPhone);
+        showOrderToast(`✅ تم تحديث بيانات العميل للطلب #${orderId} بنجاح!`, 'success');
+    } catch(err) {
+        console.error("Failed to update customer info:", err);
+        if (cardEl) {
+            cardEl.style.opacity = '1';
+            cardEl.style.pointerEvents = 'auto';
+        }
+        showOrderToast('حدث خطأ أثناء تحديث بيانات العميل: ' + err.message, 'error');
     }
 };
 
