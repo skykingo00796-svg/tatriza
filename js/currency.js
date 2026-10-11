@@ -160,24 +160,25 @@ export function convertFromOMR(amountInOMR, targetCurrency = null) {
     return Math.round(converted);
 }
 
-// توليد رمز العملة (شعار العملة الرسمي إن وُجد + الرمز النصي المعتمد)
+// توليد رمز العملة (الشعار الرسمي فقط إن وُجد، أو الرمز النصي المعتمد إذا لم يوجد شعار رسمي)
 export function getCurrencyBadgeHTML(targetCurrency = null, options = { showFlag: false, compact: false }) {
     const cur = targetCurrency || getCurrentCurrency();
     const svg = getOfficialCurrencySvg(cur.code);
     
+    // إذا كان الشعار الرسمي متوفراً: يظهر الشعار الرسمي فقط بدون الرمز النصي
     if (cur.hasOfficialSvg && svg) {
         if (options.compact) {
-            return `<span class="inline-flex items-center gap-0.5">${cur.symbolText} ${svg}</span>`;
+            return `<span class="inline-flex items-center">${svg}</span>`;
         }
         return `
             <span class="inline-flex items-center gap-1 font-bold">
                 ${options.showFlag ? `<span class="text-xs">${cur.flag}</span>` : ''}
-                <span>${cur.symbolText}</span>
                 ${svg}
             </span>
         `;
     }
 
+    // إذا لم يتوفر شعار رسمي (مثل د.ب، د.ك، ر.ق، $): يظهر الرمز النصي
     return `
         <span class="inline-flex items-center gap-1 font-bold">
             ${options.showFlag ? `<span class="text-xs">${cur.flag}</span>` : ''}
@@ -200,7 +201,7 @@ export function updateAllPricesOnPage() {
     const cur = getCurrentCurrency();
     const curSvg = getOfficialCurrencySvg(cur.code);
     
-    // 1. تحديث زر العملة في الهيدر
+    // 1. تحديث زر العملة في الهيدر (إظهار الشعار الرسمي فقط وإخفاء النص، أو إظهار الرمز النصي إذا لم يتوفر شعار)
     const headerBtn = document.getElementById('header-currency-btn');
     if (headerBtn) {
         const flagSpan = headerBtn.querySelector('.currency-btn-flag');
@@ -208,10 +209,21 @@ export function updateAllPricesOnPage() {
         const svgSpan = headerBtn.querySelector('.currency-btn-svg');
         
         if (flagSpan) flagSpan.innerText = cur.flag;
-        if (codeSpan) codeSpan.innerText = cur.symbolText;
-        if (svgSpan) {
-            svgSpan.innerHTML = curSvg;
-            svgSpan.style.display = curSvg ? 'inline-block' : 'none';
+        if (curSvg) {
+            if (codeSpan) codeSpan.style.display = 'none';
+            if (svgSpan) {
+                svgSpan.innerHTML = curSvg;
+                svgSpan.style.display = 'inline-block';
+            }
+        } else {
+            if (codeSpan) {
+                codeSpan.innerText = cur.symbolText;
+                codeSpan.style.display = 'inline-block';
+            }
+            if (svgSpan) {
+                svgSpan.innerHTML = '';
+                svgSpan.style.display = 'none';
+            }
         }
     }
 
@@ -221,7 +233,7 @@ export function updateAllPricesOnPage() {
         drawerCurrentText.innerHTML = `${cur.flag} ${cur.name} (${cur.symbolText})`;
     }
 
-    // 3. تحديث بطاقات المعرض الرئيسية (Grid Cards)
+    // 3. تحديث بطاقات المعرض الرئيسية (Grid Cards): الشعار فقط إن وجد، أو الرمز النصي إن لم يوجد
     document.querySelectorAll('.carpet-card').forEach(card => {
         const basePrice = card.getAttribute('data-base-price');
         if (basePrice !== null) {
@@ -231,7 +243,7 @@ export function updateAllPricesOnPage() {
                 priceValEl.innerText = convertFromOMR(basePrice, cur);
             }
             if (priceCurrEl) {
-                priceCurrEl.innerHTML = curSvg ? `${cur.symbolText} ${curSvg}` : cur.symbolText;
+                priceCurrEl.innerHTML = curSvg ? curSvg : cur.symbolText;
             }
         }
     });
@@ -247,7 +259,7 @@ export function updateAllPricesOnPage() {
                 modalPriceEl.innerText = convertFromOMR(window._currentModalBasePrice, cur);
             }
             if (modalCurrEl) {
-                modalCurrEl.innerHTML = curSvg ? `${cur.name} ${curSvg}` : cur.name;
+                modalCurrEl.innerHTML = curSvg ? curSvg : cur.symbolText;
             }
         }
     }
@@ -323,9 +335,8 @@ function renderCurrencyOptions() {
             </div>
             
             <div class="flex items-center gap-2">
-                <div class="text-left font-mono font-bold text-xs sm:text-sm text-stone-700 flex items-center gap-1.5">
-                    <span>${cur.symbolText}</span>
-                    ${curSvg || ''}
+                <div class="text-left font-mono font-bold text-xs sm:text-sm text-stone-700 flex items-center justify-center min-w-[2.2rem]">
+                    ${curSvg ? curSvg : `<span>${cur.symbolText}</span>`}
                 </div>
                 ${isSelected ? `
                     <div class="w-6 h-6 rounded-full bg-emerald-600 text-white flex items-center justify-center text-xs font-bold shadow-2xs">

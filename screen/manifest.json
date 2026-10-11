@@ -1,11 +1,13 @@
 {
+  "id": "/screen/?source=pwa",
   "name": "دار التطريز TATRIZA | سجاد وتحف فنية يدوية فاخرة",
   "short_name": "دار التطريز",
-  "description": "المتجر الرسمي لدار التطريز TATRIZA في سلطنة عُمان - سجاد يدوي وتحف فنية وتطريز فاخر",
+  "description": "المتجر الرسمي لدار التطريز TATRIZA في سلطنة عُمان - سجاد يدوي وتحف فنية وتطريز فاخر ملكي",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#d1c5b6",
+  "display_override": ["standalone", "window-controls-overlay", "minimal-ui"],
+  "background_color": "#faf8f5",
   "theme_color": "#7c1d3c",
   "orientation": "portrait-primary",
   "dir": "rtl",
@@ -24,14 +26,21 @@
       "purpose": "any maskable"
     },
     {
+      "src": "../images/icon-apple.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
       "src": "../images/logo.jpg",
       "sizes": "1440x1440",
-      "type": "image/jpeg"
+      "type": "image/jpeg",
+      "purpose": "any"
     }
   ],
   "shortcuts": [
     {
-      "name": "كتالوج السجاد",
+      "name": "كتالوج السجاد والتحف",
       "short_name": "المعروضات",
       "description": "استعراض القطع الفنية والسجاد الحصري",
       "url": "./index.html",
@@ -40,17 +49,18 @@
     {
       "name": "تتبع حالة الطلب",
       "short_name": "تتبع الطلب",
-      "description": "متابعة مراحل حياكة وشحن طلبيتك",
+      "description": "متابعة مراحل حياكة وشحن طلبيتك الملكية",
       "url": "./track.html",
       "icons": [{ "src": "../images/icon-192.png", "sizes": "192x192" }]
     },
     {
-      "name": "شهادة الأصالة",
+      "name": "شهادة الأصالة الملكية",
       "short_name": "شهادة الأصالة",
-      "description": "فحص شهادة التوثيق الملكية للقطع",
+      "description": "فحص شهادة التوثيق الملكية والختم الرقمي",
       "url": "./verify.html",
       "icons": [{ "src": "../images/icon-192.png", "sizes": "192x192" }]
     }
   ],
-  "categories": ["shopping", "lifestyle", "business"]
+  "categories": ["shopping", "lifestyle", "luxury", "business"],
+  "prefer_related_applications": false
 }

@@ -1283,22 +1283,45 @@
                     <div class="drawer-action-arrow">&gt;</div>
                 </a>
 
-                <!-- 3.95 تثبيت التطبيق على الهاتف -->
-                <button onclick="closeOptionsDrawer(); triggerPWAInstall();" id="drawer-pwa-install-btn" class="drawer-lux-card group w-full" title="تثبيت التطبيق على الهاتف">
-                    <div class="flex items-center gap-2.5 min-w-0 flex-1">
-                        <div class="drawer-icon-orb bg-amber-100 text-amber-900 border-amber-300/60 shrink-0">
-                            <span class="text-xs">📲</span>
-                        </div>
-                        <div class="flex flex-col text-right min-w-0 flex-1 overflow-hidden">
-                            <div class="flex items-center gap-1.5 whitespace-nowrap">
-                                <span class="font-display text-[11px] sm:text-xs font-black text-stone-900 group-hover:text-brand transition">تثبيت التطبيق على هاتفك</span>
-                                <span class="px-1.5 py-0.2 rounded text-[8.5px] sm:text-[9px] font-black bg-amber-100 text-amber-900 border border-amber-300/60 shrink-0">تطبيق</span>
+                <!-- 3.95 بطاقة هوية التطبيق لنظام التشغيل الفاخرة (Royal OS App Identity Card) -->
+                <div id="drawer-app-identity-card" onclick="closeOptionsDrawer(); openAppIdentityModal();" class="relative overflow-hidden rounded-2xl p-3.5 sm:p-4 cursor-pointer transition-all duration-300 border border-amber-400/60 bg-gradient-to-br from-stone-900 via-stone-850 to-stone-950 text-white shadow-md hover:border-amber-300 hover:shadow-xl hover:shadow-amber-950/30 group" title="بطاقة هوية التطبيق لنظام التشغيل">
+                    <!-- تأثير هالة الضوء الذهبي الفاخر -->
+                    <div class="absolute -top-10 -left-10 w-24 h-24 bg-amber-400/20 rounded-full blur-xl group-hover:bg-amber-400/35 transition duration-500 pointer-events-none"></div>
+                    <div class="absolute -bottom-8 -right-8 w-20 h-20 bg-rose-900/30 rounded-full blur-lg pointer-events-none"></div>
+
+                    <div class="relative z-1 flex items-start gap-3">
+                        <!-- أيقونة الهوية الملكية بدقة عالية مع خاتم ذهبي -->
+                        <div class="relative shrink-0">
+                            <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-br from-amber-300 via-amber-500 to-amber-700 p-[1.5px] shadow-md shadow-black/50">
+                                <img src="images/icon-192.png" alt="Tatriza App Icon" class="w-full h-full object-cover rounded-[14px]">
                             </div>
-                            <span class="text-[9.5px] sm:text-[10px] text-stone-500 font-medium whitespace-nowrap mt-1.5 block">تشغيل فوري شاشة كاملة لآيفون وأندرويد</span>
+                            <span class="absolute -bottom-1 -right-1 px-1 py-0.2 rounded-md bg-stone-900/95 border border-amber-400 text-[7.5px] font-black text-amber-300 tracking-wider">OS</span>
+                        </div>
+
+                        <!-- بيانات الهوية البارزة -->
+                        <div class="flex-1 min-w-0 text-right">
+                            <div class="flex items-center justify-between gap-1">
+                                <span class="font-display font-black text-xs sm:text-sm text-stone-100 group-hover:text-amber-200 transition">هوية التطبيق لنظام التشغيل</span>
+                                <span class="px-1.5 py-0.2 rounded text-[8px] font-black bg-amber-400/20 text-amber-300 border border-amber-400/40 shrink-0">معتمد PWA</span>
+                            </div>
+                            <p class="text-[9.5px] sm:text-[10px] text-stone-300/90 font-medium mt-0.5 leading-snug">تطبيق الويب الملكي المستقل لـ iOS و Android</p>
+                            
+                            <!-- مؤشر حالة النظام التفاعلي -->
+                            <div class="flex items-center gap-1.5 mt-2 text-[9px] font-bold text-amber-300/90">
+                                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                                <span class="drawer-app-status-text">تثبيت فوري شاشة كاملة بدون متصفح</span>
+                            </div>
                         </div>
                     </div>
-                    <div class="drawer-action-arrow">&gt;</div>
-                </button>
+
+                    <!-- الشريط السفلي للبطاقة -->
+                    <div class="relative z-1 mt-3 pt-2.5 border-t border-white/10 flex items-center justify-between text-[10px]">
+                        <span class="text-stone-400 font-medium text-[9px]">إصدار V3.2 • أمان موثق</span>
+                        <span class="text-amber-400 font-bold group-hover:translate-x-[-3px] transition flex items-center gap-1 text-[10px]">
+                            استعراض الهوية والتثبيت <span>←</span>
+                        </span>
+                    </div>
+                </div>
 
                 <!-- 4. ألوان الهوية -->
                 <button onclick="closeOptionsDrawer(); openThemeModal();" class="drawer-lux-card group w-full" title="ألوان وهوية دار التطريز">
