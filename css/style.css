@@ -3033,5 +3033,78 @@ input[type=number].item-modal-price-input {
     box-shadow: 0 4px 12px -2px rgba(124, 29, 60, 0.12);
 }
 
+/* ==========================================================================
+   تحسينات التجاوب الشامل لكافة أحجام الشاشات (Phones, Tablets & iPads)
+   ========================================================================== */
+
+/* 1. هواتف الجوال الصغيرة (iPhone SE, Galaxy A, الشاشات أقل من 385px) */
+@media (max-width: 385px) {
+    .floating-luxury-dock {
+        padding-left: 8px !important;
+        padding-right: 8px !important;
+        height: 3.6rem !important;
+    }
+    .floating-luxury-dock .theme-logo-img,
+    .floating-luxury-dock img {
+        width: 34px !important;
+        height: 34px !important;
+    }
+    .floating-luxury-dock h1 {
+        font-size: 0.92rem !important;
+        letter-spacing: 0.02em !important;
+    }
+    .floating-luxury-dock p {
+        display: none !important;
+    }
+    #header-currency-btn {
+        padding: 5px 7px !important;
+    }
+    #header-cart-btn, #options-toggle-btn {
+        padding: 7px !important;
+    }
+    .currency-btn-code {
+        font-size: 10px !important;
+    }
+    /* بطاقات المعرض على الشاشات فائقة الصغر */
+    #carpets-grid {
+        gap: 0.45rem !important;
+    }
+}
+
+/* 2. هواتف الجوال الكبيرة (iPhone Pro Max, Galaxy Ultra, 386px - 480px) */
+@media (min-width: 386px) and (max-width: 480px) {
+    .floating-luxury-dock {
+        padding-left: 12px !important;
+        padding-right: 12px !important;
+    }
+}
+
+/* 3. أجهزة التابلت والآيباد (iPad Mini, iPad 10.2, iPad Pro: 768px - 1024px) */
+@media (min-width: 768px) and (max-width: 1024px) {
+    #product-modal .lux-modal-box {
+        max-height: 88vh !important;
+    }
+    #product-modal .lux-modal-box > div.flex-col.md\:grid {
+        grid-template-columns: 1.05fr 0.95fr !important;
+    }
+    #options-drawer .drawer-inner {
+        max-width: 420px !important;
+    }
+    #cart-modal .lux-modal-box {
+        max-width: 520px !important;
+    }
+    /* تناسق بطاقات السجاد في الآيباد */
+    .carpet-card {
+        transition: transform 0.25s ease, box-shadow 0.25s ease !important;
+    }
+}
+
+/* سلاسة السكرول والتمرير باللمس على جميع شاشات اللمس والآيباد */
+.touch-scroll-smooth {
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+}
+
+
 
 

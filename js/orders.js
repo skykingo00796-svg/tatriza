@@ -13,6 +13,15 @@ import {
     initFirebaseServices
 } from './firebase-admin.js';
 
+import { 
+    generateOrderAuthHash, 
+    verifyOrderAuthHash, 
+    generateRoyalOrderSealSVG, 
+    generateOrderQRCodeSVG, 
+    getOrderVerificationUrl, 
+    buildWhatsAppCertificateClientMessage 
+} from './authenticity.js';
+
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 // ==========================================
@@ -556,18 +565,26 @@ function createOrderCardHtml(order) {
                     <span>✅ تم استلام المبلغ وأرشفة الطلب</span>
                     ${confirmedDate ? `<span class="text-[11px] text-emerald-600 font-medium font-mono">(${confirmedDate})</span>` : ''}
                 </div>
-                <div class="flex items-center gap-2 flex-wrap">
-                    <button type="button" onclick="printOrderReceipt('${orderId}')" class="bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold text-xs h-9 px-3 rounded-xl border border-stone-300 transition flex items-center gap-1 cursor-pointer active:scale-95" title="طباعة فاتورة / ملخص الطلب">
+                <div class="flex items-center gap-1.5 flex-wrap">
+                    <button type="button" onclick="printOrderReceipt('${orderId}')" class="bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold text-xs h-9 px-2.5 sm:px-3 rounded-xl border border-stone-300 transition flex items-center gap-1 cursor-pointer active:scale-95" title="طباعة فاتورة / ملخص الطلب">
                         <span>🖨️</span>
-                        <span>طباعة إيصال</span>
+                        <span>إيصال</span>
                     </button>
-                    <button type="button" onclick="revertOrderAction('${orderId}')" class="bg-amber-50 hover:bg-amber-100 text-amber-900 font-bold text-xs h-9 px-3 rounded-xl border border-amber-300 transition flex items-center gap-1 cursor-pointer active:scale-95" title="إعادة الطلب إلى قائمة الطلبات المعلقة وتصحيح الحسابات">
+                    <button type="button" onclick="openOrderCertificate('${orderId}')" class="bg-amber-50 hover:bg-amber-100 text-amber-900 font-bold text-xs h-9 px-2.5 sm:px-3 rounded-xl border border-amber-300 transition flex items-center gap-1 cursor-pointer active:scale-95" title="معاينة شهادة الأصالة الملكية الموثقة">
+                        <span>⚜️</span>
+                        <span>شهادة أصالة</span>
+                    </button>
+                    <button type="button" onclick="sendCertificateWhatsApp('${orderId}')" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-bold text-xs h-9 px-2.5 sm:px-3 rounded-xl border border-emerald-300 transition flex items-center gap-1 cursor-pointer active:scale-95" title="إرسال رابط الشهادة الموثقة للعميل عبر الواتساب">
+                        <span>📲</span>
+                        <span>إرسال الشهادة</span>
+                    </button>
+                    <button type="button" onclick="revertOrderAction('${orderId}')" class="bg-stone-50 hover:bg-stone-100 text-stone-700 font-bold text-xs h-9 px-2.5 sm:px-3 rounded-xl border border-stone-200 transition flex items-center gap-1 cursor-pointer active:scale-95" title="إعادة الطلب إلى قائمة الطلبات المعلقة">
                         <span>↩️</span>
-                        <span>إعادة للانتظار</span>
+                        <span>استرجاع</span>
                     </button>
-                    <button type="button" onclick="cancelOrderAction('${orderId}')" class="bg-rose-50 hover:bg-rose-100 text-rose-800 font-bold text-xs h-9 px-3 rounded-xl border border-rose-300 transition flex items-center gap-1 cursor-pointer active:scale-95" title="إلغاء الطلب وحذفه نهائياً وخصم قيمته من المحصلة المالية">
+                    <button type="button" onclick="cancelOrderAction('${orderId}')" class="bg-rose-50 hover:bg-rose-100 text-rose-800 font-bold text-xs h-9 px-2.5 sm:px-3 rounded-xl border border-rose-300 transition flex items-center gap-1 cursor-pointer active:scale-95" title="إلغاء الطلب وحذفه نهائياً">
                         <span>❌</span>
-                        <span>إلغاء وحذف</span>
+                        <span>حذف</span>
                     </button>
                 </div>
             </div>
@@ -1103,6 +1120,11 @@ window.printOrderReceipt = function(orderId, mode = 'luxury') {
 
     const origin = window.location.origin;
     const logoUrl = origin + '/images/logo.jpg';
+    const authHash = generateOrderAuthHash(order);
+    const verifyUrl = getOrderVerificationUrl(orderId, authHash, origin);
+    const sealSvg = generateRoyalOrderSealSVG(order, authHash, { width: 95, height: 95 });
+    const qrSvg = generateOrderQRCodeSVG(verifyUrl, 78);
+
     const items = Array.isArray(order.items) ? order.items : [];
     const customerName = escapeHtml(order.customerName || 'عميل دار التطريز الكريم');
     const customerPhone = escapeHtml(order.customerPhone || 'مسجل لدى المتجر');
@@ -1775,21 +1797,34 @@ window.printOrderReceipt = function(orderId, mode = 'luxury') {
                         </div>
                     </div>
 
-                    <!-- 6. التذييل الملكي وختم دار التطريز الرسمي -->
-                    <div class="footer-row">
-                        <div class="footer-greetings">
+                    <!-- 6. التذييل الملكي وختم دار التطريز الرقمي ورمز QR للتحقق السحابي المانع للتزوير -->
+                    <div class="footer-row" style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding-top: 10px; border-top: 1.5px solid #ebd9c0;">
+                        <div class="footer-greetings" style="flex: 1; min-width: 170px;">
                             <strong>شكراً لاقتنائكم من دار التطريز TATRIZA 🏛️✨</strong>
-                            <span>نسعد بخدمتكم دائماً • مسقط، سلطنة عُمان • تواصل: 96879899119+</span>
-                        </div>
-                        <div class="official-seal-wrap">
-                            <div class="royal-round-seal">
-                                <span class="seal-star-icon">★ ★ ★</span>
-                                <span class="seal-text">دار التطريز<br>معتمد</span>
-                                <span class="seal-eng-text">TATRIZA</span>
+                            <span>مسقط، سلطنة عُمان • تواصل وتوثيق: 96895939388+</span>
+                            <div style="margin-top: 4px; font-family: 'Outfit', monospace; font-size: 8px; color: #7c1d3c; font-weight: bold; background: #faf5ee; padding: 2px 6px; border-radius: 6px; display: inline-block; border: 1px dashed #e2c982;">
+                                كود التوثيق الأمني: ${authHash}
                             </div>
-                            <div class="signature-box">
-                                <div class="signature-title">اعتماد الإدارة</div>
-                                <div class="signature-name">دار التطريز</div>
+                        </div>
+
+                        <div class="official-seal-wrap" style="display: flex; align-items: center; gap: 10px;">
+                            <!-- الختم الملكي الرقمي المشفر المخصص لهذه الطلبية -->
+                            <div class="seal-svg-holder">
+                                ${sealSvg}
+                            </div>
+
+                            <!-- رمز QR Code للتحقق السحابي الفوري -->
+                            <div style="background: #ffffff; padding: 4px; border-radius: 8px; border: 1px solid #d5cec5; text-align: center; box-shadow: 0 2px 6px rgba(0,0,0,0.04);">
+                                <div style="width: 72px; height: 72px; display: flex; align-items: center; justify-content: center;">
+                                    ${qrSvg}
+                                </div>
+                                <span style="display: block; font-size: 6.5px; font-weight: 800; color: #57534e; margin-top: 1px;">امسح للتحقق ✓</span>
+                            </div>
+
+                            <div class="signature-box" style="text-align: center; min-width: 75px; border-top: 1px solid #d5cec5; padding-top: 3px;">
+                                <div class="signature-title" style="font-size: 7.5px; color: #78716c; font-weight: bold;">اعتماد الإدارة</div>
+                                <div class="signature-name" style="font-family: 'Alexandria', sans-serif; font-size: 8.5px; font-weight: 900; color: #7c1d3c;">دار التطريز</div>
+                                <span style="font-size: 6.5px; color: #065f46; font-weight: bold; display: block;">رسمي معتمد</span>
                             </div>
                         </div>
                     </div>
@@ -1799,6 +1834,25 @@ window.printOrderReceipt = function(orderId, mode = 'luxury') {
         </html>
     `);
     printWindow.document.close();
+};
+
+// فتح شهادة الأصالة الملكية الموثقة في نافذة مستقلة
+window.openOrderCertificate = function(orderId) {
+    const order = allOrders.find(o => (o.orderId || o.id) === orderId);
+    if (!order) return;
+    const authHash = generateOrderAuthHash(order);
+    const url = getOrderVerificationUrl(orderId, authHash);
+    window.open(url, '_blank');
+};
+
+// إرسال رابط شهادة الأصالة للعميل عبر الواتساب بنقرة واحدة
+window.sendCertificateWhatsApp = function(orderId) {
+    const order = allOrders.find(o => (o.orderId || o.id) === orderId);
+    if (!order) return;
+    const authHash = generateOrderAuthHash(order);
+    const msg = buildWhatsAppCertificateClientMessage(order, authHash);
+    const clientPhone = order.customerPhone ? order.customerPhone.replace(/\D/g, '') : "96895939388";
+    window.open(`https://wa.me/${clientPhone}?text=${encodeURIComponent(msg)}`, '_blank');
 };
 
 // 5. تصدير الأرشيف كملف CSV

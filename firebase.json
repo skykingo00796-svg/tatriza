@@ -36,6 +36,14 @@
       {
         "source": "/screen/orders",
         "destination": "/screen/orders.html"
+      },
+      {
+        "source": "/verify",
+        "destination": "/verify.html"
+      },
+      {
+        "source": "/screen/verify",
+        "destination": "/screen/verify.html"
       }
     ]
   }
