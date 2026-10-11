@@ -1,5 +1,5 @@
 import { getVideoFromIndexedDB, recordCustomerOrder } from './firebase-public.js';
-import { getCurrentCurrency, convertFromOMR, OMR_OFFICIAL_SVG } from './currency.js';
+import { getCurrentCurrency, convertFromOMR, OMR_OFFICIAL_SVG, getOfficialCurrencySvg } from './currency.js';
 // ==========================================
 // ملف إدارة النوافذ، السلة، والمنتجات (modals.js)
 // ==========================================
@@ -414,7 +414,8 @@ export function openModal(carpetId, allCarpets) {
     document.getElementById('modal-price').innerText = displayPrice;
     const modalCurrencyLabel = document.getElementById('modal-currency-label');
     if (modalCurrencyLabel) {
-        modalCurrencyLabel.innerHTML = cur.code === 'OMR' ? `ريال عماني ${OMR_OFFICIAL_SVG}` : cur.name;
+        const svg = getOfficialCurrencySvg(cur.code);
+        modalCurrencyLabel.innerHTML = svg ? `${cur.name} ${svg}` : cur.name;
     }
 
     const modalAvailabilityText = document.getElementById('modal-availability-text');
@@ -1058,7 +1059,8 @@ export function updateCartDisplay() {
     }
     const cartTotalCurrEl = document.getElementById('cart-total-currency');
     if (cartTotalCurrEl) {
-        cartTotalCurrEl.innerHTML = cur.code === 'OMR' ? `ر.ع ${OMR_OFFICIAL_SVG}` : cur.symbolText;
+        const svg = getOfficialCurrencySvg(cur.code);
+        cartTotalCurrEl.innerHTML = svg ? `${cur.symbolText} ${svg}` : cur.symbolText;
     }
 }
 

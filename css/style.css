@@ -3008,19 +3008,40 @@ input[type=number].item-modal-price-input {
 }
 
 /* ==========================================================================
-   تنسيقات محول العملات وشعار الريال العماني المعتمد (CBO Official Currency Symbol)
+   تنسيقات محول العملات والشعارات الرسمية المعتمدة (عُمان CBO، السعودية SAMA، الإمارات CBUAE)
    ========================================================================== */
-.omr-official-symbol {
+.currency-official-symbol,
+.omr-official-symbol,
+.sar-official-symbol,
+.aed-official-symbol {
     display: inline-block;
     vertical-align: -0.12em;
     height: 0.9em;
     width: auto;
-    max-width: 1.85em;
     transition: transform 0.2s ease, filter 0.2s ease;
 }
 
-.currency-option-card:hover .omr-official-symbol {
-    transform: scale(1.08);
+.omr-official-symbol {
+    max-width: 1.85em;
+}
+
+.sar-official-symbol {
+    vertical-align: -0.16em;
+    height: 0.96em;
+    max-width: 1.2em;
+}
+
+.aed-official-symbol {
+    vertical-align: -0.1em;
+    height: 0.88em;
+    max-width: 1.25em;
+}
+
+.currency-option-card:hover .currency-official-symbol,
+.currency-option-card:hover .omr-official-symbol,
+.currency-option-card:hover .sar-official-symbol,
+.currency-option-card:hover .aed-official-symbol {
+    transform: scale(1.1);
 }
 
 #header-currency-btn {
