@@ -610,39 +610,50 @@ function createOrderCardHtml(order) {
                     </div>
                 </div>
 
-                <div class="flex items-center gap-1.5 flex-wrap">
-                    <button type="button" onclick="openOrderStageModal('${orderId}')" class="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-bold text-xs h-9 px-2.5 sm:px-3 rounded-xl shadow-xs transition flex items-center gap-1 cursor-pointer active:scale-95" title="تحديث مرحلة الحياكة أو الشحن وإشعار العميل">
-                        <span>🚚</span>
-                        <span>مرحلة التتبع</span>
-                    </button>
-                    <button type="button" onclick="sendStageWhatsApp('${orderId}')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs h-9 px-2.5 sm:px-3 rounded-xl shadow-xs transition flex items-center gap-1 cursor-pointer active:scale-95" title="إرسال تحديث المرحلة الحالية للعميل عبر الواتساب بنقرة واحدة">
-                        <span>💬</span>
-                        <span>واتساب التتبع</span>
-                    </button>
-                    <button type="button" onclick="printOrderReceipt('${orderId}')" class="bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold text-xs h-9 px-2.5 sm:px-3 rounded-xl border border-stone-300 transition flex items-center gap-1 cursor-pointer active:scale-95" title="طباعة فاتورة / ملخص الطلب">
-                        <span>🖨️</span>
-                        <span>إيصال</span>
-                    </button>
-                    <button type="button" onclick="openOrderCertificate('${orderId}')" class="bg-amber-50 hover:bg-amber-100 text-amber-900 font-bold text-xs h-9 px-2.5 sm:px-3 rounded-xl border border-amber-300 transition flex items-center gap-1 cursor-pointer active:scale-95" title="معاينة شهادة الأصالة الملكية الموثقة">
-                        <span>⚜️</span>
-                        <span>شهادة أصالة</span>
-                    </button>
-                    <button type="button" onclick="sendCertificateWhatsApp('${orderId}')" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-bold text-xs h-9 px-2.5 sm:px-3 rounded-xl border border-emerald-300 transition flex items-center gap-1 cursor-pointer active:scale-95" title="إرسال رابط الشهادة الموثقة للعميل عبر الواتساب">
-                        <span>📲</span>
-                        <span>إرسال الشهادة</span>
-                    </button>
-                    <button type="button" onclick="sendPaymentReceiptWhatsApp('${orderId}')" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-bold text-xs h-9 px-2.5 sm:px-3 rounded-xl border border-emerald-300 transition flex items-center gap-1 cursor-pointer active:scale-95" title="إرسال تأكيد استلام الدفعة للعميل عبر الواتساب">
-                        <span>💰</span>
-                        <span>إيصال الدفع</span>
-                    </button>
-                    <button type="button" onclick="revertOrderAction('${orderId}')" class="bg-stone-50 hover:bg-stone-100 text-stone-700 font-bold text-xs h-9 px-2.5 sm:px-3 rounded-xl border border-stone-200 transition flex items-center gap-1 cursor-pointer active:scale-95" title="إعادة الطلب إلى قائمة الطلبات المعلقة">
-                        <span>↩️</span>
-                        <span>استرجاع</span>
-                    </button>
-                    <button type="button" onclick="cancelOrderAction('${orderId}')" class="bg-rose-50 hover:bg-rose-100 text-rose-800 font-bold text-xs h-9 px-2.5 sm:px-3 rounded-xl border border-rose-300 transition flex items-center gap-1 cursor-pointer active:scale-95" title="إلغاء الطلب وحذفه نهائياً">
-                        <span>❌</span>
-                        <span>حذف</span>
-                    </button>
+                <div class="space-y-2">
+                    <!-- الصف الأول: التتبع والتواصل (زرين عريضين) -->
+                    <div class="grid grid-cols-2 gap-1.5 sm:gap-2">
+                        <button type="button" onclick="openOrderStageModal('${orderId}')" class="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-bold text-xs h-9 sm:h-10 px-2 rounded-xl shadow-xs transition flex items-center justify-center gap-1 cursor-pointer active:scale-95" title="تحديث مرحلة الحياكة أو الشحن وإشعار العميل">
+                            <span>🚚</span>
+                            <span class="truncate">مرحلة التتبع</span>
+                        </button>
+                        <button type="button" onclick="sendStageWhatsApp('${orderId}')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs h-9 sm:h-10 px-2 rounded-xl shadow-xs transition flex items-center justify-center gap-1 cursor-pointer active:scale-95" title="إرسال تحديث المرحلة الحالية للعميل عبر الواتساب بنقرة واحدة">
+                            <span>💬</span>
+                            <span class="truncate">واتساب التتبع</span>
+                        </button>
+                    </div>
+
+                    <!-- الصف الثاني: الوثائق والشهادات (أربعة أزرار شبكية) -->
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-1.5 sm:gap-2">
+                        <button type="button" onclick="printOrderReceipt('${orderId}')" class="bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold text-xs h-9 px-2 rounded-xl border border-stone-300 transition flex items-center justify-center gap-1 cursor-pointer active:scale-95" title="طباعة فاتورة / ملخص الطلب">
+                            <span>🖨️</span>
+                            <span class="truncate">إيصال</span>
+                        </button>
+                        <button type="button" onclick="openOrderCertificate('${orderId}')" class="bg-amber-50 hover:bg-amber-100 text-amber-900 font-bold text-xs h-9 px-2 rounded-xl border border-amber-300 transition flex items-center justify-center gap-1 cursor-pointer active:scale-95" title="معاينة شهادة الأصالة الملكية الموثقة">
+                            <span>⚜️</span>
+                            <span class="truncate">الشهادة</span>
+                        </button>
+                        <button type="button" onclick="sendCertificateWhatsApp('${orderId}')" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-bold text-xs h-9 px-2 rounded-xl border border-emerald-300 transition flex items-center justify-center gap-1 cursor-pointer active:scale-95" title="إرسال رابط الشهادة الموثقة للعميل عبر الواتساب">
+                            <span>📲</span>
+                            <span class="truncate">واتساب الشهادة</span>
+                        </button>
+                        <button type="button" onclick="sendPaymentReceiptWhatsApp('${orderId}')" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-bold text-xs h-9 px-2 rounded-xl border border-emerald-300 transition flex items-center justify-center gap-1 cursor-pointer active:scale-95" title="إرسال تأكيد استلام الدفعة للعميل عبر الواتساب">
+                            <span>💰</span>
+                            <span class="truncate">إشعار الدفع</span>
+                        </button>
+                    </div>
+
+                    <!-- الصف الثالث: إدارة الطلب (استرجاع وحذف) -->
+                    <div class="grid grid-cols-2 gap-1.5 sm:gap-2 pt-1 border-t border-stone-100">
+                        <button type="button" onclick="revertOrderAction('${orderId}')" class="bg-stone-50 hover:bg-stone-100 text-stone-700 font-bold text-xs h-8 sm:h-9 px-2 rounded-xl border border-stone-200 transition flex items-center justify-center gap-1 cursor-pointer active:scale-95" title="إعادة الطلب إلى قائمة الطلبات المعلقة">
+                            <span>↩️</span>
+                            <span class="truncate">استرجاع للمعلق</span>
+                        </button>
+                        <button type="button" onclick="cancelOrderAction('${orderId}')" class="bg-rose-50 hover:bg-rose-100 text-rose-800 font-bold text-xs h-8 sm:h-9 px-2 rounded-xl border border-rose-300 transition flex items-center justify-center gap-1 cursor-pointer active:scale-95" title="إلغاء الطلب وحذفه نهائياً">
+                            <span>❌</span>
+                            <span class="truncate">حذف نهائي</span>
+                        </button>
+                    </div>
                 </div>
             </div>
         `;
@@ -2233,7 +2244,7 @@ window.switchOrdersTab = function(tabName) {
     const btnArchive = document.getElementById('tab-btn-archive');
     const btnAnalytics = document.getElementById('tab-btn-analytics');
 
-    const inactiveClass = 'orders-tab-inactive flex-1 sm:flex-initial py-2.5 px-4 sm:px-6 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 bg-white hover:bg-stone-100 text-stone-700 border border-stone-200 transition cursor-pointer';
+    const inactiveClass = 'orders-tab-inactive w-full py-2 sm:py-2.5 px-1 sm:px-3 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-1 sm:gap-1.5 bg-transparent text-stone-600 hover:text-stone-900 transition-all cursor-pointer';
 
     if (btnPending) btnPending.className = inactiveClass;
     if (btnArchive) btnArchive.className = inactiveClass;
@@ -2241,15 +2252,15 @@ window.switchOrdersTab = function(tabName) {
 
     if (tabName === 'pending') {
         if (btnPending) {
-            btnPending.className = 'orders-tab-active flex-1 sm:flex-initial py-2.5 px-4 sm:px-6 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 bg-stone-900 text-white shadow-sm transition cursor-pointer';
+            btnPending.className = 'orders-tab-active w-full py-2 sm:py-2.5 px-1 sm:px-3 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-1 sm:gap-1.5 bg-stone-900 text-white shadow-xs transition-all cursor-pointer';
         }
     } else if (tabName === 'archive') {
         if (btnArchive) {
-            btnArchive.className = 'orders-tab-active flex-1 sm:flex-initial py-2.5 px-4 sm:px-6 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 bg-emerald-700 text-white shadow-sm transition cursor-pointer';
+            btnArchive.className = 'orders-tab-active w-full py-2 sm:py-2.5 px-1 sm:px-3 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-1 sm:gap-1.5 bg-emerald-800 text-white shadow-xs transition-all cursor-pointer';
         }
     } else if (tabName === 'analytics') {
         if (btnAnalytics) {
-            btnAnalytics.className = 'orders-tab-active flex-1 sm:flex-initial py-2.5 px-4 sm:px-6 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 bg-brand text-white shadow-sm transition cursor-pointer';
+            btnAnalytics.className = 'orders-tab-active w-full py-2 sm:py-2.5 px-1 sm:px-3 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-1 sm:gap-1.5 bg-brand text-white shadow-xs transition-all cursor-pointer';
         }
     }
 
@@ -2424,20 +2435,20 @@ function renderAnalyticsDashboard() {
         const heightPct = Math.max(12, Math.round((m.revenue / maxMonthRev) * 100));
         const revFormatted = isRevenueHidden ? '••••' : `${m.revenue.toLocaleString('ar-OM')} ر.ع.`;
         return `
-            <div class="flex-1 flex flex-col items-center justify-end h-44 sm:h-52 group relative">
+            <div class="flex-1 min-w-[52px] max-w-[80px] flex flex-col items-center justify-end h-40 sm:h-52 group relative shrink-0">
                 <div class="absolute -top-10 opacity-0 group-hover:opacity-100 transition-all pointer-events-none bg-stone-900 text-white text-[10px] font-mono py-1 px-2.5 rounded-lg whitespace-nowrap z-20 shadow-lg">
                     ${m.label}: ${revFormatted} (${m.count} طلب)
                 </div>
                 
-                <span class="text-[10px] font-mono font-bold text-stone-700 mb-1.5 opacity-80 group-hover:opacity-100 truncate max-w-full">
+                <span class="text-[9px] sm:text-[10px] font-mono font-bold text-stone-700 mb-1 opacity-80 group-hover:opacity-100 truncate max-w-full">
                     ${revFormatted}
                 </span>
 
-                <div class="w-full max-w-[44px] bg-stone-100 rounded-t-xl overflow-hidden flex items-end h-28 sm:h-36 border border-stone-200 group-hover:border-amber-400 transition">
+                <div class="w-full max-w-[38px] sm:max-w-[44px] bg-stone-100 rounded-t-xl overflow-hidden flex items-end h-24 sm:h-36 border border-stone-200 group-hover:border-amber-400 transition">
                     <div style="height: ${heightPct}%" class="w-full bg-gradient-to-t from-[#7c1d3c] via-[#a02c52] to-[#c59b27] rounded-t-lg transition-all duration-500 shadow-sm"></div>
                 </div>
 
-                <span class="text-[9.5px] sm:text-xs font-bold text-stone-600 mt-2 truncate max-w-full text-center">
+                <span class="text-[9px] sm:text-xs font-bold text-stone-600 mt-1.5 truncate max-w-full text-center">
                     ${m.label}
                 </span>
             </div>
@@ -2448,16 +2459,16 @@ function renderAnalyticsDashboard() {
     const stagesHtml = ORDER_STAGES_ARRAY.map(st => {
         const cnt = stageCounts[st.id] || 0;
         return `
-            <div class="p-3 bg-white rounded-2xl border border-stone-200/90 shadow-2xs flex items-center justify-between">
-                <div class="flex items-center gap-2.5">
-                    <span class="text-xl shrink-0">${st.icon}</span>
-                    <div>
-                        <div class="font-display font-bold text-xs text-stone-900">${st.title}</div>
-                        <div class="text-[10px] text-stone-500">${st.desc}</div>
+            <div class="p-2.5 sm:p-3 bg-white rounded-2xl border border-stone-200/90 shadow-2xs flex items-center justify-between gap-2">
+                <div class="flex items-center gap-2 min-w-0">
+                    <span class="text-lg sm:text-xl shrink-0">${st.icon}</span>
+                    <div class="min-w-0">
+                        <div class="font-display font-bold text-xs text-stone-900 truncate">${st.title}</div>
+                        <div class="text-[9.5px] text-stone-500 truncate">${st.desc}</div>
                     </div>
                 </div>
-                <div class="text-right">
-                    <span class="font-mono font-black text-sm text-stone-900 px-2.5 py-1 rounded-lg bg-stone-100 border border-stone-200">${cnt}</span>
+                <div class="text-right shrink-0">
+                    <span class="font-mono font-black text-xs sm:text-sm text-stone-900 px-2 sm:px-2.5 py-1 rounded-lg bg-stone-100 border border-stone-200">${cnt}</span>
                 </div>
             </div>
         `;
@@ -2468,13 +2479,13 @@ function renderAnalyticsDashboard() {
         const pct = Math.round((p.count / maxProductCount) * 100);
         const pRev = isRevenueHidden ? '••••' : `${p.revenue.toLocaleString('ar-OM')} ر.ع.`;
         return `
-            <div class="p-3.5 bg-white rounded-2xl border border-stone-200/90 shadow-2xs space-y-2">
-                <div class="flex items-center justify-between gap-3">
-                    <div class="flex items-center gap-3 min-w-0">
-                        <img src="${escapeHtml(p.image)}" alt="${escapeHtml(p.title)}" class="w-11 h-11 rounded-xl object-cover border border-stone-200 shrink-0" onerror="this.src='images/logo.jpg'">
+            <div class="p-3 sm:p-3.5 bg-white rounded-2xl border border-stone-200/90 shadow-2xs space-y-2">
+                <div class="flex items-center justify-between gap-2.5">
+                    <div class="flex items-center gap-2.5 min-w-0">
+                        <img src="${escapeHtml(p.image)}" alt="${escapeHtml(p.title)}" class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl object-cover border border-stone-200 shrink-0" onerror="this.src='images/logo.jpg'">
                         <div class="min-w-0">
                             <h4 class="font-display font-bold text-xs text-stone-900 truncate">${escapeHtml(p.title)}</h4>
-                            <p class="text-[10px] text-stone-500 font-medium">${p.count} طلبات • ${pRev}</p>
+                            <p class="text-[9.5px] text-stone-500 font-medium truncate">${p.count} طلبات • ${pRev}</p>
                         </div>
                     </div>
                     <span class="font-mono text-xs font-black text-brand bg-rose-50 px-2 py-0.5 rounded-lg border border-rose-200 shrink-0">${p.count} طلب</span>
@@ -2488,117 +2499,119 @@ function renderAnalyticsDashboard() {
 
     // تجميع لوحة التحليلات
     container.innerHTML = `
-        <div class="space-y-6">
+        <div class="space-y-4 sm:space-y-6">
             
             <!-- ترويسة لوحة التحليلات والإجراءات المباشرة -->
-            <div class="bg-gradient-to-r from-[#2a0814] via-[#451021] to-[#7c1d3c] text-white p-5 sm:p-6 rounded-3xl shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+            <div class="bg-gradient-to-r from-[#2a0814] via-[#451021] to-[#7c1d3c] text-white p-4 sm:p-6 rounded-2xl sm:rounded-3xl shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-3.5 sm:gap-4">
                 <div class="space-y-1">
                     <div class="flex items-center gap-2">
-                        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-400 text-stone-950 font-mono">REPORTS v2.0</span>
-                        <span class="text-xs text-amber-200/90 font-medium">نظام التتبع والذكاء المالي</span>
+                        <span class="px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-bold bg-amber-400 text-stone-950 font-mono">REPORTS v2.0</span>
+                        <span class="text-[11px] sm:text-xs text-amber-200/90 font-medium">نظام التتبع والذكاء المالي</span>
                     </div>
-                    <h2 class="font-display font-black text-lg sm:text-2xl text-white">المركز التحليلي المالي والتشغيلي</h2>
+                    <h2 class="font-display font-black text-base sm:text-2xl text-white">المركز التحليلي المالي والتشغيلي</h2>
                     <p class="text-xs sm:text-sm text-stone-200/80 max-w-xl">
                         تقارير متزامنة لحظياً لمراقبة التدفقات النقدية، متوسط السلة، ومراحل تصنيع السجاد الملكي.
                     </p>
                 </div>
 
-                <div class="flex flex-wrap items-center gap-2.5 w-full md:w-auto">
-                    <button type="button" onclick="window.printExecutiveReport()" class="flex-1 md:flex-initial bg-amber-400 hover:bg-amber-300 text-stone-950 font-bold text-xs h-10 px-4 rounded-xl shadow-md transition flex items-center justify-center gap-2 cursor-pointer active:scale-95">
+                <div class="flex items-center gap-2 w-full md:w-auto">
+                    <button type="button" onclick="window.printExecutiveReport()" class="flex-1 md:flex-initial bg-amber-400 hover:bg-amber-300 text-stone-950 font-bold text-xs h-9 sm:h-10 px-3 sm:px-4 rounded-xl shadow-md transition flex items-center justify-center gap-1.5 cursor-pointer active:scale-95">
                         <span>🖨️</span>
-                        <span>طباعة تقرير الإدارة</span>
+                        <span>طباعة تقرير</span>
                     </button>
-                    <button type="button" onclick="window.exportOrdersCsv()" class="flex-1 md:flex-initial bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold text-xs h-10 px-4 rounded-xl transition flex items-center justify-center gap-2 cursor-pointer active:scale-95">
+                    <button type="button" onclick="window.exportOrdersCsv()" class="flex-1 md:flex-initial bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold text-xs h-9 sm:h-10 px-3 sm:px-4 rounded-xl transition flex items-center justify-center gap-1.5 cursor-pointer active:scale-95">
                         <span>📥</span>
-                        <span>تصدير Excel/CSV</span>
+                        <span>تصدير CSV</span>
                     </button>
                 </div>
             </div>
 
             <!-- شبكة مؤشرات الأداء المتقدمة (KPI Cards) -->
-            <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4">
                 
                 <!-- AOV متوسط قيمة الطلب -->
-                <div class="p-4 sm:p-5 rounded-2xl sm:rounded-3xl bg-white border border-stone-200/90 shadow-2xs text-right space-y-1">
-                    <div class="flex items-center justify-between mb-2">
-                        <span class="w-8 h-8 rounded-xl bg-amber-50 text-amber-900 flex items-center justify-center text-sm font-bold">💎</span>
-                        <span class="text-[9.5px] font-mono text-stone-400">AOV</span>
+                <div class="p-3 sm:p-5 rounded-2xl sm:rounded-3xl bg-white border border-stone-200/90 shadow-2xs text-right space-y-1">
+                    <div class="flex items-center justify-between mb-1.5">
+                        <span class="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-amber-50 text-amber-900 flex items-center justify-center text-xs sm:text-sm font-bold">💎</span>
+                        <span class="text-[9px] font-mono text-stone-400">AOV</span>
                     </div>
-                    <div class="text-[11px] text-stone-500 font-bold">متوسط قيمة الطلب</div>
-                    <div class="font-display font-black text-xl sm:text-2xl text-stone-900 font-mono">${displayAOV}</div>
-                    <div class="text-[10px] text-stone-400 font-medium">معدل الدخل لكل طلبية معتمدة</div>
+                    <div class="text-[10px] sm:text-[11px] text-stone-500 font-bold truncate">متوسط قيمة الطلب</div>
+                    <div class="font-display font-black text-lg sm:text-2xl text-stone-900 font-mono">${displayAOV}</div>
+                    <div class="text-[9.5px] text-stone-400 font-medium truncate">لكل طلبية معتمدة</div>
                 </div>
 
                 <!-- Conversion Rate معدل الاعتماد والتأكيد -->
-                <div class="p-4 sm:p-5 rounded-2xl sm:rounded-3xl bg-white border border-stone-200/90 shadow-2xs text-right space-y-1">
-                    <div class="flex items-center justify-between mb-2">
-                        <span class="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-900 flex items-center justify-center text-sm font-bold">🎯</span>
-                        <span class="text-[9.5px] font-mono text-stone-400">RATE</span>
+                <div class="p-3 sm:p-5 rounded-2xl sm:rounded-3xl bg-white border border-stone-200/90 shadow-2xs text-right space-y-1">
+                    <div class="flex items-center justify-between mb-1.5">
+                        <span class="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-emerald-50 text-emerald-900 flex items-center justify-center text-xs sm:text-sm font-bold">🎯</span>
+                        <span class="text-[9px] font-mono text-stone-400">RATE</span>
                     </div>
-                    <div class="text-[11px] text-stone-500 font-bold">معدل اعتماد المبيعات</div>
-                    <div class="font-display font-black text-xl sm:text-2xl text-emerald-700 font-mono">${conversionRate}%</div>
-                    <div class="text-[10px] text-stone-400 font-medium">${confirmedOrders.length} من أصل ${totalOrders} طلب مؤكد</div>
+                    <div class="text-[10px] sm:text-[11px] text-stone-500 font-bold truncate">معدل الاعتماد</div>
+                    <div class="font-display font-black text-lg sm:text-2xl text-emerald-700 font-mono">${conversionRate}%</div>
+                    <div class="text-[9.5px] text-stone-400 font-medium truncate">${confirmedOrders.length} من أصل ${totalOrders}</div>
                 </div>
 
                 <!-- Basket Size كثافة السلة -->
-                <div class="p-4 sm:p-5 rounded-2xl sm:rounded-3xl bg-white border border-stone-200/90 shadow-2xs text-right space-y-1">
-                    <div class="flex items-center justify-between mb-2">
-                        <span class="w-8 h-8 rounded-xl bg-purple-50 text-purple-900 flex items-center justify-center text-sm font-bold">🛍️</span>
-                        <span class="text-[9.5px] font-mono text-stone-400">ITEMS</span>
+                <div class="p-3 sm:p-5 rounded-2xl sm:rounded-3xl bg-white border border-stone-200/90 shadow-2xs text-right space-y-1">
+                    <div class="flex items-center justify-between mb-1.5">
+                        <span class="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-purple-50 text-purple-900 flex items-center justify-center text-xs sm:text-sm font-bold">🛍️</span>
+                        <span class="text-[9px] font-mono text-stone-400">ITEMS</span>
                     </div>
-                    <div class="text-[11px] text-stone-500 font-bold">متوسط القطع بالطلبية</div>
-                    <div class="font-display font-black text-xl sm:text-2xl text-stone-900 font-mono">${avgItemsPerOrder}</div>
-                    <div class="text-[10px] text-stone-400 font-medium">إجمالي ${totalSoldItems} قطعة مباعة</div>
+                    <div class="text-[10px] sm:text-[11px] text-stone-500 font-bold truncate">متوسط القطع</div>
+                    <div class="font-display font-black text-lg sm:text-2xl text-stone-900 font-mono">${avgItemsPerOrder}</div>
+                    <div class="text-[9.5px] text-stone-400 font-medium truncate">إجمالي ${totalSoldItems} قطعة</div>
                 </div>
 
                 <!-- Active Pipeline التحف قيد التصنيع والتسليم -->
-                <div class="p-4 sm:p-5 rounded-2xl sm:rounded-3xl bg-white border border-stone-200/90 shadow-2xs text-right space-y-1">
-                    <div class="flex items-center justify-between mb-2">
-                        <span class="w-8 h-8 rounded-xl bg-blue-50 text-blue-900 flex items-center justify-center text-sm font-bold">🧵</span>
-                        <span class="text-[9.5px] font-mono text-stone-400">ACTIVE</span>
+                <div class="p-3 sm:p-5 rounded-2xl sm:rounded-3xl bg-white border border-stone-200/90 shadow-2xs text-right space-y-1">
+                    <div class="flex items-center justify-between mb-1.5">
+                        <span class="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-blue-50 text-blue-900 flex items-center justify-center text-xs sm:text-sm font-bold">🧵</span>
+                        <span class="text-[9px] font-mono text-stone-400">ACTIVE</span>
                     </div>
-                    <div class="text-[11px] text-stone-500 font-bold">الطلبات قيد المعالجة</div>
-                    <div class="font-display font-black text-xl sm:text-2xl text-brand font-mono">${pendingOrders.length}</div>
-                    <div class="text-[10px] text-stone-400 font-medium">في مراحل الحياكة أو الشحن</div>
+                    <div class="text-[10px] sm:text-[11px] text-stone-500 font-bold truncate">قيد المعالجة</div>
+                    <div class="font-display font-black text-lg sm:text-2xl text-brand font-mono">${pendingOrders.length}</div>
+                    <div class="text-[9.5px] text-stone-400 font-medium truncate">حياكة وشحن</div>
                 </div>
 
             </div>
 
             <!-- المخطط البياني الشهري ومسار التتبع -->
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
                 
                 <!-- المخطط البياني للمبيعات (عمودين من 3) -->
-                <div class="lg:col-span-2 bg-white p-5 sm:p-6 rounded-3xl border border-stone-200/90 shadow-sm space-y-4">
+                <div class="lg:col-span-2 bg-white p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-stone-200/90 shadow-sm space-y-4">
                     <div class="flex items-center justify-between pb-3 border-b border-stone-100">
-                        <div class="flex items-center gap-2.5">
-                            <span class="w-8 h-8 rounded-xl bg-amber-50 text-amber-900 flex items-center justify-center text-sm">📈</span>
+                        <div class="flex items-center gap-2 sm:gap-2.5">
+                            <span class="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-amber-50 text-amber-900 flex items-center justify-center text-xs sm:text-sm">📈</span>
                             <div>
-                                <h3 class="font-display font-bold text-sm sm:text-base text-stone-900">مسار الإيرادات الشهرية</h3>
-                                <p class="text-[11px] text-stone-500">حجم التحصيل المالي لكل فترة زمنية</p>
+                                <h3 class="font-display font-bold text-xs sm:text-base text-stone-900">مسار الإيرادات الشهرية</h3>
+                                <p class="text-[10px] sm:text-[11px] text-stone-500">حجم التحصيل المالي لكل فترة زمنية</p>
                             </div>
                         </div>
-                        <span class="text-xs font-mono font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-xl">
+                        <span class="text-[11px] sm:text-xs font-mono font-bold text-emerald-700 bg-emerald-50 px-2 sm:px-2.5 py-1 rounded-xl">
                             ${displayRev}
                         </span>
                     </div>
 
-                    <!-- حاوية الأعمدة البيانية -->
-                    <div class="flex items-end justify-around gap-2 pt-4 px-2">
-                        ${chartBarsHtml}
+                    <!-- حاوية الأعمدة البيانية مع حماية التمرير الأفقي للجوال -->
+                    <div class="w-full overflow-x-auto no-scrollbar pb-1">
+                        <div class="flex items-end justify-around gap-2 pt-3 px-1 min-w-[280px]">
+                            ${chartBarsHtml}
+                        </div>
                     </div>
                 </div>
 
                 <!-- مسار التتبع ومراحل الحياكة والتسليم (عمود 1 من 3) -->
-                <div class="bg-white p-5 sm:p-6 rounded-3xl border border-stone-200/90 shadow-sm space-y-4">
-                    <div class="flex items-center gap-2.5 pb-3 border-b border-stone-100">
-                        <span class="w-8 h-8 rounded-xl bg-blue-50 text-blue-900 flex items-center justify-center text-sm">🚚</span>
+                <div class="bg-white p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-stone-200/90 shadow-sm space-y-3 sm:space-y-4">
+                    <div class="flex items-center gap-2 sm:gap-2.5 pb-2.5 sm:pb-3 border-b border-stone-100">
+                        <span class="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-blue-50 text-blue-900 flex items-center justify-center text-xs sm:text-sm">🚚</span>
                         <div>
-                            <h3 class="font-display font-bold text-sm sm:text-base text-stone-900">حالة خط الحياكة والتسليم</h3>
-                            <p class="text-[11px] text-stone-500">توزيع جميع الطلبيات حسب المرحلة</p>
+                            <h3 class="font-display font-bold text-xs sm:text-base text-stone-900">حالة خط الحياكة والتسليم</h3>
+                            <p class="text-[10px] sm:text-[11px] text-stone-500">توزيع الطلبيات حسب المرحلة</p>
                         </div>
                     </div>
 
-                    <div class="space-y-2.5">
+                    <div class="space-y-2">
                         ${stagesHtml}
                     </div>
                 </div>
@@ -2606,16 +2619,16 @@ function renderAnalyticsDashboard() {
             </div>
 
             <!-- قائمة القطع الأكثر طلباً -->
-            <div class="bg-white p-5 sm:p-6 rounded-3xl border border-stone-200/90 shadow-sm space-y-4">
-                <div class="flex items-center justify-between pb-3 border-b border-stone-100">
-                    <div class="flex items-center gap-2.5">
-                        <span class="w-8 h-8 rounded-xl bg-rose-50 text-rose-900 flex items-center justify-center text-sm">🏆</span>
+            <div class="bg-white p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-stone-200/90 shadow-sm space-y-3 sm:space-y-4">
+                <div class="flex items-center justify-between pb-2.5 sm:pb-3 border-b border-stone-100">
+                    <div class="flex items-center gap-2 sm:gap-2.5">
+                        <span class="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-rose-50 text-rose-900 flex items-center justify-center text-xs sm:text-sm">🏆</span>
                         <div>
-                            <h3 class="font-display font-bold text-sm sm:text-base text-stone-900">القطع الفنية الأكثر طلباً وإقبالاً</h3>
-                            <p class="text-[11px] text-stone-500">ترتيب التحف الأكثر مبيعاً في دار التطريز</p>
+                            <h3 class="font-display font-bold text-xs sm:text-base text-stone-900">القطع الفنية الأكثر طلباً وإقبالاً</h3>
+                            <p class="text-[10px] sm:text-[11px] text-stone-500">ترتيب التحف الأكثر مبيعاً في دار التطريز</p>
                         </div>
                     </div>
-                    <span class="text-xs text-stone-500 font-bold">أعلى القطع طلباً</span>
+                    <span class="text-[10px] sm:text-xs text-stone-500 font-bold">أعلى القطع طلباً</span>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">

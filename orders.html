@@ -159,49 +159,49 @@
     <!-- ========================================== -->
     <!-- الشاشة المستقلة لإدارة الطلبات والمهام (Dashboard) -->
     <!-- ========================================== -->
-    <div id="orders-dashboard" class="hidden min-h-screen flex-col w-full">
+    <div id="orders-dashboard" class="hidden min-h-screen flex-col w-full max-w-full overflow-x-hidden">
         
         <!-- الشريط العلوي الفاخر (Header) -->
-        <header class="sticky top-2 sm:top-3.5 z-40 w-full px-3 sm:px-6 md:px-12 pointer-events-none transition-all duration-300">
-            <div class="floating-luxury-dock pointer-events-auto rounded-2xl sm:rounded-3xl w-full px-4 sm:px-6 md:px-8 h-16 sm:h-20 flex justify-between items-center transition-all duration-300 bg-white/95 border border-stone-300/80 shadow-md">
+        <header class="sticky top-2 sm:top-3.5 z-40 w-full px-2.5 sm:px-6 md:px-12 pointer-events-none transition-all duration-300">
+            <div class="floating-luxury-dock pointer-events-auto rounded-2xl sm:rounded-3xl w-full px-3 sm:px-6 md:px-8 h-auto min-h-[58px] sm:h-20 py-2 sm:py-0 flex justify-between items-center transition-all duration-300 bg-white/95 border border-stone-300/80 shadow-md">
                 
                 <!-- اللوجو والعنوان -->
-                <div class="flex items-center gap-3">
-                    <a href="index.html" title="الرئيسية">
-                        <img src="images/logo.jpg" alt="Tatriza Logo" class="theme-logo-img w-10 h-10 md:w-12 md:h-12 rounded-2xl object-cover shadow-sm border border-stone-200 shrink-0">
+                <div class="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
+                    <a href="index.html" title="الرئيسية" class="shrink-0">
+                        <img src="images/logo.jpg" alt="Tatriza Logo" class="theme-logo-img w-9 h-9 sm:w-11 sm:h-11 md:w-12 md:h-12 rounded-xl sm:rounded-2xl object-cover shadow-sm border border-stone-200 shrink-0">
                     </a>
-                    <div>
-                        <div class="flex items-center gap-2">
-                            <h1 class="font-bold text-base sm:text-lg md:text-xl text-stone-900 tracking-wider">TATRIZA</h1>
-                            <span class="text-[9.5px] sm:text-[10px] font-bold px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-900 border border-emerald-300/60 shadow-2xs">إدارة الطلبات والمبيعات</span>
+                    <div class="min-w-0 flex-1">
+                        <div class="flex items-center gap-1.5 sm:gap-2">
+                            <h1 class="font-bold text-sm sm:text-lg md:text-xl text-stone-900 tracking-wider">TATRIZA</h1>
+                            <span class="text-[9px] sm:text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-emerald-100 text-emerald-900 border border-emerald-300/60 shadow-2xs whitespace-nowrap">الطلبات والمبيعات</span>
                         </div>
-                        <div class="flex items-center gap-2">
-                            <p class="text-[10px] md:text-xs font-semibold text-brand">قائمة المهام والطلبات الموجهة عبر واتساب</p>
-                            <span id="live-sync-indicator" class="text-[9px] px-2 py-0.2 rounded-full bg-emerald-50 text-emerald-700 font-bold border border-emerald-200 hidden sm:inline-flex items-center gap-1">
+                        <div class="flex items-center gap-1.5 text-[9.5px] sm:text-xs text-brand font-semibold">
+                            <p class="truncate">إدارة المهام والطلبات الموجهة</p>
+                            <span id="live-sync-indicator" class="text-[8.5px] px-1.5 py-0.2 rounded-full bg-emerald-50 text-emerald-700 font-bold border border-emerald-200 hidden md:inline-flex items-center gap-1 shrink-0">
                                 <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                                <span>تحديث حي فوري</span>
+                                <span>تحديث حي</span>
                             </span>
                         </div>
                     </div>
                 </div>
 
                 <!-- أزرار التنقل السريع وخيارات المسؤول -->
-                <div class="flex items-center gap-2 sm:gap-2.5 shrink-0">
+                <div class="flex items-center gap-1 sm:gap-2.5 shrink-0">
                     <!-- رابط بوابة كتالوج المعرض -->
-                    <a href="portal.html" class="bg-white hover:bg-stone-100 text-stone-800 border border-stone-300/90 font-bold text-xs h-9 sm:h-10 px-3 rounded-xl transition flex items-center gap-1.5 shadow-2xs" title="العودة لإدارة معروضات السجاد">
-                        <span>🏛️</span>
+                    <a href="portal.html" class="bg-white hover:bg-stone-100 text-stone-800 border border-stone-300/90 font-bold text-xs h-8 sm:h-10 px-2 sm:px-3 rounded-xl transition flex items-center gap-1 shadow-2xs" title="العودة لإدارة معروضات السجاد">
+                        <span class="text-xs sm:text-sm">🏛️</span>
                         <span class="hidden md:inline">كتالوج المعرض</span>
                     </a>
 
                     <!-- رابط استوديو التصاميم -->
-                    <a href="portal.html#studio" class="bg-gradient-to-r from-amber-50 to-orange-50 hover:from-amber-100 hover:to-orange-100 text-amber-950 border border-amber-300/80 font-bold text-xs h-9 sm:h-10 px-3 rounded-xl transition flex items-center gap-1.5 shadow-2xs" title="استوديو السوشيال ميديا">
-                        <span>🎨</span>
+                    <a href="portal.html#studio" class="bg-gradient-to-r from-amber-50 to-orange-50 hover:from-amber-100 hover:to-orange-100 text-amber-950 border border-amber-300/80 font-bold text-xs h-8 sm:h-10 px-2 sm:px-3 rounded-xl transition flex items-center gap-1 shadow-2xs" title="استوديو السوشيال ميديا">
+                        <span class="text-xs sm:text-sm">🎨</span>
                         <span class="hidden lg:inline">الاستوديو</span>
                     </a>
 
                     <!-- زر تسجيل الخروج -->
-                    <button type="button" onclick="window.handleOrdersLogout()" class="bg-rose-50 hover:bg-rose-100 active:scale-95 text-rose-800 border border-rose-200 font-bold text-xs h-9 sm:h-10 px-3 rounded-xl transition-all flex items-center gap-1.5 cursor-pointer shadow-2xs" title="تسجيل الخروج">
-                        <span>🚪</span>
+                    <button type="button" onclick="window.handleOrdersLogout()" class="bg-rose-50 hover:bg-rose-100 active:scale-95 text-rose-800 border border-rose-200 font-bold text-xs h-8 sm:h-10 px-2 sm:px-3 rounded-xl transition-all flex items-center gap-1 cursor-pointer shadow-2xs" title="تسجيل الخروج">
+                        <span class="text-xs sm:text-sm">🚪</span>
                         <span class="hidden sm:inline">خروج</span>
                     </button>
                 </div>
@@ -209,127 +209,133 @@
         </header>
 
         <!-- المحتوى الرئيسي للوحة الطلبات -->
-        <main class="flex-1 w-full px-3 sm:px-6 md:px-12 py-6 sm:py-8 space-y-6">
+        <main class="flex-1 w-full max-w-full overflow-x-hidden px-2.5 sm:px-6 md:px-12 py-4 sm:py-8 space-y-4 sm:space-y-6">
             
             <!-- 1. بطاقات المؤشرات والإحصائيات الفورية (Live KPI Cards) -->
-            <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4.5">
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4.5">
                 
                 <!-- 1. الطلبات المعلقة الجديدة (كهرمان ملكي) -->
-                <div class="portal-stat-card group relative p-4 sm:p-5 rounded-2xl sm:rounded-3xl bg-white/95 border border-stone-200/90 hover:border-amber-300/80 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col items-center justify-center text-center select-none">
-                    <div class="w-12 h-12 rounded-2xl bg-amber-50 border border-amber-200 text-amber-800 flex items-center justify-center mb-2 shadow-2xs">
-                        <span class="text-xl">🟡</span>
+                <div class="portal-stat-card group relative p-3 sm:p-5 rounded-2xl sm:rounded-3xl bg-white/95 border border-stone-200/90 hover:border-amber-300/80 shadow-xs hover:shadow-md transition-all duration-300 flex flex-col items-center justify-center text-center select-none">
+                    <div class="w-9 h-9 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-amber-50 border border-amber-200 text-amber-800 flex items-center justify-center mb-1.5 sm:mb-2 shadow-2xs text-base sm:text-xl">
+                        🟡
                     </div>
-                    <span class="text-[11px] sm:text-xs text-stone-500 font-bold block mb-1">طلبات قيد الانتظار (جديدة)</span>
-                    <span id="stat-pending-orders" class="font-display font-black text-2xl sm:text-3xl text-amber-950 font-mono">0</span>
+                    <span class="text-[10px] sm:text-xs text-stone-500 font-bold block mb-0.5 sm:mb-1 truncate max-w-full">طلبات قيد الانتظار</span>
+                    <span id="stat-pending-orders" class="font-display font-black text-xl sm:text-3xl text-amber-950 font-mono">0</span>
                 </div>
 
                 <!-- 2. الطلبات المؤكدة والمدفوعة (زمرد ملكي) -->
-                <div class="portal-stat-card group relative p-4 sm:p-5 rounded-2xl sm:rounded-3xl bg-white/95 border border-stone-200/90 hover:border-emerald-300/80 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col items-center justify-center text-center select-none">
-                    <div class="w-12 h-12 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 flex items-center justify-center mb-2 shadow-2xs">
-                        <span class="text-xl">🟢</span>
+                <div class="portal-stat-card group relative p-3 sm:p-5 rounded-2xl sm:rounded-3xl bg-white/95 border border-stone-200/90 hover:border-emerald-300/80 shadow-xs hover:shadow-md transition-all duration-300 flex flex-col items-center justify-center text-center select-none">
+                    <div class="w-9 h-9 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 flex items-center justify-center mb-1.5 sm:mb-2 shadow-2xs text-base sm:text-xl">
+                        🟢
                     </div>
-                    <span class="text-[11px] sm:text-xs text-stone-500 font-bold block mb-1">طلبات مؤكدة (في الأرشيف)</span>
-                    <span id="stat-confirmed-orders" class="font-display font-black text-2xl sm:text-3xl text-emerald-700 font-mono">0</span>
+                    <span class="text-[10px] sm:text-xs text-stone-500 font-bold block mb-0.5 sm:mb-1 truncate max-w-full">طلبات مؤكدة</span>
+                    <span id="stat-confirmed-orders" class="font-display font-black text-xl sm:text-3xl text-emerald-700 font-mono">0</span>
                 </div>
 
                 <!-- 3. إجمالي المبالغ المحصلة (ذهب ملكي عتيق مع وضع الخصوصية والتشفير) -->
-                <div class="portal-stat-card group relative p-4 sm:p-5 rounded-2xl sm:rounded-3xl bg-white/95 border border-stone-200/90 hover:border-[#c59b27]/80 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col items-center justify-center text-center select-none">
+                <div class="portal-stat-card group relative p-3 sm:p-5 rounded-2xl sm:rounded-3xl bg-white/95 border border-stone-200/90 hover:border-[#c59b27]/80 shadow-xs hover:shadow-md transition-all duration-300 flex flex-col items-center justify-center text-center select-none">
                     <!-- زر العين لإظهار / إخفاء المبلغ لحماية الخصوصية -->
-                    <button type="button" id="toggle-revenue-btn" onclick="window.toggleRevenuePrivacy()" class="absolute top-2.5 sm:top-3 left-2.5 sm:left-3 w-8 h-8 rounded-xl bg-amber-50 hover:bg-amber-100 text-[#977017] border border-[#e8d7a7] flex items-center justify-center transition-all cursor-pointer shadow-2xs hover:scale-105 active:scale-95 z-10" title="إظهار / إخفاء المبلغ (وضع الخصوصية)">
-                        <span id="toggle-revenue-icon" class="text-sm select-none pointer-events-none">👁️</span>
+                    <button type="button" id="toggle-revenue-btn" onclick="window.toggleRevenuePrivacy()" class="absolute top-2 left-2 w-7 h-7 sm:w-8 sm:h-8 rounded-lg sm:rounded-xl bg-amber-50 hover:bg-amber-100 text-[#977017] border border-[#e8d7a7] flex items-center justify-center transition-all cursor-pointer shadow-2xs hover:scale-105 active:scale-95 z-10" title="إظهار / إخفاء المبلغ (وضع الخصوصية)">
+                        <span id="toggle-revenue-icon" class="text-xs select-none pointer-events-none">👁️</span>
                     </button>
 
-                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#fdf8ee] to-[#f7eed4] border border-[#e8d7a7] text-[#977017] flex items-center justify-center mb-2 shadow-2xs">
-                        <span class="text-xl">💰</span>
+                    <div class="w-9 h-9 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-gradient-to-br from-[#fdf8ee] to-[#f7eed4] border border-[#e8d7a7] text-[#977017] flex items-center justify-center mb-1.5 sm:mb-2 shadow-2xs text-base sm:text-xl">
+                        💰
                     </div>
-                    <span class="text-[11px] sm:text-xs text-stone-500 font-bold block mb-1">إجمالي المبالغ المحصلة</span>
-                    <span id="stat-total-revenue" class="font-display font-black text-xl sm:text-2xl text-stone-900 font-mono tracking-wider">••••••</span>
+                    <span class="text-[10px] sm:text-xs text-stone-500 font-bold block mb-0.5 sm:mb-1 truncate max-w-full">المبالغ المحصلة</span>
+                    <span id="stat-total-revenue" class="font-display font-black text-lg sm:text-2xl text-stone-900 font-mono tracking-wider">••••••</span>
                 </div>
 
                 <!-- 4. إجمالي القطع المباعة (عنابي دار التطريز) -->
-                <div class="portal-stat-card group relative p-4 sm:p-5 rounded-2xl sm:rounded-3xl bg-white/95 border border-stone-200/90 hover:border-[#7c1d3c]/40 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col items-center justify-center text-center select-none">
-                    <div class="w-12 h-12 rounded-2xl bg-[#faf2f5] border border-[#e2bec7] text-[#7c1d3c] flex items-center justify-center mb-2 shadow-2xs">
-                        <span class="text-xl">📦</span>
+                <div class="portal-stat-card group relative p-3 sm:p-5 rounded-2xl sm:rounded-3xl bg-white/95 border border-stone-200/90 hover:border-[#7c1d3c]/40 shadow-xs hover:shadow-md transition-all duration-300 flex flex-col items-center justify-center text-center select-none">
+                    <div class="w-9 h-9 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-[#faf2f5] border border-[#e2bec7] text-[#7c1d3c] flex items-center justify-center mb-1.5 sm:mb-2 shadow-2xs text-base sm:text-xl">
+                        📦
                     </div>
-                    <span class="text-[11px] sm:text-xs text-stone-500 font-bold block mb-1">إجمالي القطع المباعة</span>
-                    <span id="stat-items-sold" class="font-display font-black text-2xl sm:text-3xl text-[#7c1d3c] font-mono">0</span>
+                    <span class="text-[10px] sm:text-xs text-stone-500 font-bold block mb-0.5 sm:mb-1 truncate max-w-full">إجمالي القطع المباعة</span>
+                    <span id="stat-items-sold" class="font-display font-black text-xl sm:text-3xl text-[#7c1d3c] font-mono">0</span>
                 </div>
             </div>
 
-            <!-- 2. شريط التبويبات وأدوات البحث والفلترة -->
-            <div class="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3.5 bg-white/90 p-3 sm:p-4 rounded-2xl sm:rounded-3xl border border-stone-200 shadow-sm">
+            <!-- 2. شريط التبويبات وأدوات البحث والفلترة بتصميم متجاوب 100% بدون أي تجاوز أفقي -->
+            <div class="flex flex-col gap-3 bg-white/90 p-2.5 sm:p-4 rounded-2xl sm:rounded-3xl border border-stone-200 shadow-sm">
                 
-                <!-- أزرار التبديل بين التبويبات الرئيسية (Pending vs Archive) -->
-                <div class="flex items-center gap-2 shrink-0">
+                <!-- أزرار التبديل بنظام الكبسولة المقسمة المتناسقة مع أي شاشة هاتف (Segmented Tabs) -->
+                <div class="w-full bg-stone-100/95 p-1 rounded-2xl border border-stone-200/80 grid grid-cols-3 gap-1">
                     <!-- تبويب الطلبات المعلقة -->
-                    <button type="button" id="tab-btn-pending" onclick="window.switchOrdersTab('pending')" class="flex-1 sm:flex-initial py-2.5 px-4 sm:px-6 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 bg-stone-900 text-white shadow-sm transition cursor-pointer">
-                        <span>📋 قائمة الطلبات الواردة</span>
-                        <span id="badge-tab-pending" class="px-2 py-0.5 rounded-full text-[11px] font-bold bg-stone-200 text-stone-600">0</span>
+                    <button type="button" id="tab-btn-pending" onclick="window.switchOrdersTab('pending')" class="w-full py-2 sm:py-2.5 px-1 sm:px-3 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-1 sm:gap-1.5 bg-stone-900 text-white shadow-xs transition-all cursor-pointer">
+                        <span>📋</span>
+                        <span class="truncate">الطلبات</span>
+                        <span id="badge-tab-pending" class="px-1.5 py-0.2 rounded-full text-[10px] sm:text-[11px] font-bold bg-stone-200 text-stone-700 font-mono">0</span>
                     </button>
 
                     <!-- تبويب الأرشيف -->
-                    <button type="button" id="tab-btn-archive" onclick="window.switchOrdersTab('archive')" class="flex-1 sm:flex-initial py-2.5 px-4 sm:px-6 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 bg-white hover:bg-stone-100 text-stone-700 border border-stone-200 transition cursor-pointer">
-                        <span>🗄️ الأرشيف والمبيعات المؤكدة</span>
-                        <span id="badge-tab-archive" class="px-2 py-0.5 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800">0</span>
+                    <button type="button" id="tab-btn-archive" onclick="window.switchOrdersTab('archive')" class="w-full py-2 sm:py-2.5 px-1 sm:px-3 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-1 sm:gap-1.5 bg-transparent text-stone-600 hover:text-stone-900 transition-all cursor-pointer">
+                        <span>🗄️</span>
+                        <span class="truncate">الأرشيف</span>
+                        <span id="badge-tab-archive" class="px-1.5 py-0.2 rounded-full text-[10px] sm:text-[11px] font-bold bg-emerald-100 text-emerald-800 font-mono">0</span>
                     </button>
 
                     <!-- تبويب الإحصائيات والتقارير الذكية -->
-                    <button type="button" id="tab-btn-analytics" onclick="window.switchOrdersTab('analytics')" class="flex-1 sm:flex-initial py-2.5 px-4 sm:px-6 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 bg-white hover:bg-stone-100 text-stone-700 border border-stone-200 transition cursor-pointer">
-                        <span>📊 إحصائيات وتقارير ذكية</span>
-                        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-900 border border-amber-300/60">تحليلات</span>
+                    <button type="button" id="tab-btn-analytics" onclick="window.switchOrdersTab('analytics')" class="w-full py-2 sm:py-2.5 px-1 sm:px-3 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-1 sm:gap-1.5 bg-transparent text-stone-600 hover:text-stone-900 transition-all cursor-pointer">
+                        <span>📊</span>
+                        <span class="truncate">الإحصائيات</span>
+                        <span class="hidden md:inline-block px-1.5 py-0.2 rounded-full text-[9px] font-bold bg-amber-100 text-amber-900">تحليلات</span>
                     </button>
                 </div>
 
-                <!-- أدوات الفرز والبحث الداخلي -->
-                <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 flex-1 lg:max-w-xl lg:justify-end">
+                <!-- أدوات الفرز والبحث الداخلي مرتبة عمودياً في الجوال وأفقياً في الشاشات الكبيرة -->
+                <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 pt-1 sm:pt-2 border-t border-stone-100">
                     <!-- حقل البحث -->
                     <div class="relative flex-1">
-                        <input type="text" oninput="window.handleOrdersSearch(this.value)" placeholder="ابحث برقم الطلب، اسم العميل، القطعة..." class="w-full h-10 sm:h-11 bg-white border border-stone-300 rounded-xl pr-3.5 pl-9 text-xs sm:text-sm text-stone-900 outline-none focus:border-brand shadow-2xs transition">
-                        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-stone-400 text-xs pointer-events-none">🔍</span>
+                        <input type="text" oninput="window.handleOrdersSearch(this.value)" placeholder="ابحث برقم الطلب، اسم العميل، القطعة..." class="w-full h-10 sm:h-11 bg-white border border-stone-300 rounded-xl pr-3.5 pl-8 text-xs sm:text-sm text-stone-900 outline-none focus:border-brand shadow-2xs transition">
+                        <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-stone-400 text-xs pointer-events-none">🔍</span>
                     </div>
 
-                    <!-- فلترة التاريخ مع سهم متناسق ومتباعد عن الإطار -->
-                    <div class="relative w-full sm:w-44 shrink-0">
-                        <select onchange="window.handleOrdersDateFilter(this.value)" class="appearance-none w-full h-10 sm:h-11 bg-white border border-stone-300 rounded-xl pr-3.5 pl-10 text-xs text-stone-800 outline-none focus:border-brand cursor-pointer shadow-2xs transition">
-                            <option value="all">جميع الفترات</option>
-                            <option value="today">طلبات اليوم</option>
-                            <option value="week">آخر 7 أيام</option>
-                            <option value="month">هذا الشهر</option>
-                        </select>
-                        <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-stone-400">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/>
-                            </svg>
+                    <!-- شريط فلترة التاريخ وزر التصدير مدمجين معاً في الجوال -->
+                    <div class="flex items-center gap-2">
+                        <!-- فلترة التاريخ -->
+                        <div class="relative flex-1 sm:w-44 shrink-0">
+                            <select onchange="window.handleOrdersDateFilter(this.value)" class="appearance-none w-full h-10 sm:h-11 bg-white border border-stone-300 rounded-xl pr-3 pl-8 text-xs text-stone-800 outline-none focus:border-brand cursor-pointer shadow-2xs transition">
+                                <option value="all">جميع الفترات</option>
+                                <option value="today">طلبات اليوم</option>
+                                <option value="week">آخر 7 أيام</option>
+                                <option value="month">هذا الشهر</option>
+                            </select>
+                            <div class="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none text-stone-400">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/>
+                                </svg>
+                            </div>
                         </div>
-                    </div>
 
-                    <!-- زر تصدير التقرير (يظهر دائماً) -->
-                    <button type="button" onclick="window.exportOrdersCsv()" class="bg-stone-100 hover:bg-stone-200 text-stone-800 border border-stone-300 font-bold text-xs h-10 sm:h-11 px-3.5 rounded-xl transition flex items-center justify-center gap-1.5 cursor-pointer shrink-0" title="تصدير بيانات الأرشيف كملف Excel / CSV">
-                        <span>📥</span>
-                        <span class="whitespace-nowrap">تصدير CSV</span>
-                    </button>
+                        <!-- زر تصدير التقرير -->
+                        <button type="button" onclick="window.exportOrdersCsv()" class="bg-stone-100 hover:bg-stone-200 text-stone-800 border border-stone-300 font-bold text-xs h-10 sm:h-11 px-3 sm:px-3.5 rounded-xl transition flex items-center justify-center gap-1.5 cursor-pointer shrink-0" title="تصدير بيانات الأرشيف كملف Excel / CSV">
+                            <span>📥</span>
+                            <span class="whitespace-nowrap">تصدير CSV</span>
+                        </button>
+                    </div>
                 </div>
             </div>
 
             <!-- شريط معلومات إحصائية سريعة للأرشيف (يظهر عند فتح تبويب الأرشيف) -->
-            <div id="archive-summary-bar" class="hidden bg-gradient-to-r from-emerald-900 to-stone-900 text-white p-4 sm:p-5 rounded-2xl sm:rounded-3xl shadow-md flex flex-wrap items-center justify-between gap-3">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-2xl bg-emerald-500/20 text-emerald-300 flex items-center justify-center text-xl border border-emerald-500/40">
+            <div id="archive-summary-bar" class="hidden bg-gradient-to-r from-emerald-900 to-stone-900 text-white p-3.5 sm:p-5 rounded-2xl sm:rounded-3xl shadow-md flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+                <div class="flex items-center gap-2.5 sm:gap-3">
+                    <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-emerald-500/20 text-emerald-300 flex items-center justify-center text-lg sm:text-xl border border-emerald-500/40 shrink-0">
                         📊
                     </div>
-                    <div>
-                        <h3 class="font-bold text-sm sm:text-base">ملخص الأرشيف المالي للطلبات المعتمدة</h3>
-                        <p class="text-xs text-emerald-200/80">إحصاء دقيق للطلبات التي تم تأكيد دفعها واستلام مبالغها</p>
+                    <div class="min-w-0">
+                        <h3 class="font-bold text-xs sm:text-base truncate">ملخص الأرشيف المالي للطلبات المعتمدة</h3>
+                        <p class="text-[10.5px] sm:text-xs text-emerald-200/80 truncate">إحصاء دقيق للطلبات التي تم تأكيد دفعها واستلام مبالغها</p>
                     </div>
                 </div>
-                <div class="flex items-center gap-4 text-xs sm:text-sm font-mono">
-                    <div class="bg-black/30 px-3.5 py-1.5 rounded-xl border border-white/10">
-                        <span class="text-stone-300">عدد الطلبات:</span>
-                        <span id="archive-filtered-count" class="font-bold text-emerald-400 mr-1.5">0</span>
+                <div class="grid grid-cols-2 gap-2 text-xs sm:text-sm font-mono w-full sm:w-auto">
+                    <div class="bg-black/30 px-3 py-1.5 rounded-xl border border-white/10 text-center flex items-center justify-center gap-1.5">
+                        <span class="text-stone-300 text-[11px] sm:text-xs">الطلبات:</span>
+                        <span id="archive-filtered-count" class="font-bold text-emerald-400">0</span>
                     </div>
-                    <div class="bg-black/30 px-3.5 py-1.5 rounded-xl border border-white/10">
-                        <span class="text-stone-300">مجموع المبالغ:</span>
-                        <span id="archive-filtered-revenue" class="font-bold text-amber-300 mr-1.5">0 ر.ع.</span>
+                    <div class="bg-black/30 px-3 py-1.5 rounded-xl border border-white/10 text-center flex items-center justify-center gap-1.5">
+                        <span class="text-stone-300 text-[11px] sm:text-xs">المجموع:</span>
+                        <span id="archive-filtered-revenue" class="font-bold text-amber-300">0 ر.ع.</span>
                     </div>
                 </div>
             </div>
@@ -449,7 +455,7 @@
     </div>
 
     <!-- ربط محرك تشغيل وإدارة الطلبات السحابية ومحرك PWA -->
-    <script type="module" src="js/pwa.js"></script>
-    <script type="module" src="js/orders.js"></script>
+    <script type="module" src="js/pwa.js?v=3.8"></script>
+    <script type="module" src="js/orders.js?v=3.8"></script>
 </body>
 </html>
