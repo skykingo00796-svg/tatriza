@@ -562,8 +562,14 @@
                         </div>
                     </div>
 
-                    <!-- اليسار: أزرار التصدير وحفظ المسودة واضحة وبارزة وملفتة -->
+                    <!-- اليسار: أزرار التصدير وحفظ المسودة وحفظ النمط واضحة وبارزة وملفتة -->
                     <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
+                        <!-- زر حفظ النمط / القالب التنسيقي المخصص لاستخدامه مع صور ومنشورات أخرى -->
+                        <button type="button" onclick="promptSaveCurrentStylePreset()" class="flex items-center justify-center gap-1.5 h-10 sm:h-10.5 md:h-11 w-10 sm:w-auto px-0 sm:px-3 md:px-4 rounded-xl sm:rounded-2xl bg-amber-500/15 hover:bg-amber-500/25 text-amber-950 border border-amber-400/80 text-xs md:text-sm font-black transition shadow-2xs active:scale-95 cursor-pointer shrink-0" title="حفظ قياسات وتنسيق هذا النمط كقالب مخصص لإعادة استخدامه فوراً مع أي صورة أخرى" aria-label="حفظ النمط كقالب">
+                            <span class="text-base sm:text-lg">⭐</span>
+                            <span class="hidden md:inline lg:hidden">حفظ النمط</span>
+                            <span class="hidden lg:inline">حفظ النمط كقالب</span>
+                        </button>
                         <button type="button" onclick="saveStudioDraft()" class="flex items-center justify-center gap-1.5 h-10 sm:h-10.5 md:h-11 w-10 sm:w-auto px-0 sm:px-3 md:px-4 rounded-xl sm:rounded-2xl bg-white hover:bg-amber-50 text-amber-950 border border-amber-300/90 text-xs md:text-sm font-bold transition shadow-sm active:scale-95 cursor-pointer shrink-0" title="حفظ التصميم كمسودة" aria-label="حفظ كمسودة">
                             <span class="text-base sm:text-lg">💾</span>
                             <span class="hidden md:inline lg:hidden">مسودة</span>
@@ -777,6 +783,28 @@
                                     <span class="text-[9.5px] text-stone-600 leading-tight block mt-0.5">سجادة 3D، بطاقة مواصفات وسعر وواتساب</span>
                                 </div>
                             </button>
+                        </div>
+
+                        <!-- شريط إدارة الأنماط والقوالب المحفوظة (Saved Presets Hub) -->
+                        <div class="pt-3 border-t border-amber-300/60 space-y-2.5">
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-xs font-black text-amber-950 flex items-center gap-1.5">
+                                        <span>⭐</span>
+                                        <span>أنماطي وقوالبي المحفوظة:</span>
+                                    </span>
+                                    <span id="studio-saved-presets-count" class="text-[10px] font-black px-2 py-0.5 rounded-full bg-white text-amber-950 border border-amber-300 shadow-2xs">0 قوالب</span>
+                                </div>
+                                <button type="button" onclick="promptSaveCurrentStylePreset()" class="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-amber-600 via-amber-500 to-amber-600 hover:from-amber-700 hover:to-amber-700 text-white text-xs font-black shadow-xs active:scale-95 transition cursor-pointer border border-amber-300/40 shrink-0">
+                                    <span>💾</span>
+                                    <span>حفظ التعديلات والقياسات كقالب مخصص</span>
+                                </button>
+                            </div>
+
+                            <!-- فلاتر الأنماط وقائمة الكروت -->
+                            <div id="studio-saved-presets-container" class="space-y-2">
+                                <!-- يتم بناؤها وتحديثها ديناميكياً بواسطة renderStudioStylePresetsUI() -->
+                            </div>
                         </div>
                     </div>
 
@@ -1204,7 +1232,22 @@
                     <!-- ========================================================= -->
                     <div id="studio-controls-story" class="space-y-3.5">
                         
-                        <!-- 2. ألوان الشادو الدائري الناعم (Soft Circular Vignette) -->
+                        <!-- شريط القوالب السريعة للستوري والريلز مع زر الحفظ المباشر -->
+                        <div class="bg-gradient-to-r from-rose-500/10 via-amber-500/10 to-rose-500/10 p-3 sm:p-3.5 rounded-2xl border border-rose-300/70 shadow-2xs space-y-2">
+                            <div class="flex items-center justify-between gap-2">
+                                <div class="flex items-center gap-1.5 min-w-0">
+                                    <span class="text-base shrink-0">📱</span>
+                                    <span class="text-xs font-black text-stone-900 truncate">قوالب وقياسات الستوري والريلز المحفوظة:</span>
+                                </div>
+                                <button type="button" onclick="promptSaveCurrentStylePreset('story_vignette')" class="shrink-0 px-2.5 py-1 rounded-xl bg-amber-900 hover:bg-stone-950 text-amber-200 text-[11px] font-black transition flex items-center gap-1 shadow-2xs cursor-pointer active:scale-95 border border-amber-400/50" title="حفظ جميع قياسات وظلال الستوري كقالب جديد">
+                                    <span>💾</span>
+                                    <span>حفظ نمط الستوري</span>
+                                </button>
+                            </div>
+                            <div id="studio-story-quick-presets" class="flex items-center gap-1.5 overflow-x-auto py-0.5 no-scrollbar">
+                                <!-- تملأ ديناميكياً برمجياً -->
+                            </div>
+                        </div>
                         <div class="bg-white p-3.5 sm:p-4 rounded-2xl border border-stone-200/90 shadow-2xs space-y-3">
                             <div class="flex items-center justify-between">
                                 <span class="text-xs sm:text-sm font-black text-stone-900 flex items-center gap-1.5">
@@ -1888,7 +1931,22 @@
                     <!-- ========================================================= -->
                     <div id="studio-controls-minimal" class="hidden space-y-3.5">
                         
-                        <!-- 1. التحكم بموضع وإزاحة الشعار العلوي (يمين / وسط / يسار) -->
+                        <!-- شريط القوالب السريعة للعرض النقي مع زر الحفظ المباشر -->
+                        <div class="bg-gradient-to-r from-stone-100 via-amber-500/10 to-stone-100 p-3 sm:p-3.5 rounded-2xl border border-stone-300 shadow-2xs space-y-2">
+                            <div class="flex items-center justify-between gap-2">
+                                <div class="flex items-center gap-1.5 min-w-0">
+                                    <span class="text-base shrink-0">✨</span>
+                                    <span class="text-xs font-black text-stone-900 truncate">قوالب وتنسيقات العرض النقي المحفوظة:</span>
+                                </div>
+                                <button type="button" onclick="promptSaveCurrentStylePreset('minimal_showcase')" class="shrink-0 px-2.5 py-1 rounded-xl bg-stone-900 hover:bg-black text-white text-[11px] font-black transition flex items-center gap-1 shadow-2xs cursor-pointer active:scale-95 border border-stone-700" title="حفظ جميع قياسات وتأطير العرض النقي كقالب جديد">
+                                    <span>💾</span>
+                                    <span>حفظ قالب العرض النقي</span>
+                                </button>
+                            </div>
+                            <div id="studio-minimal-quick-presets" class="flex items-center gap-1.5 overflow-x-auto py-0.5 no-scrollbar">
+                                <!-- تملأ ديناميكياً برمجياً -->
+                            </div>
+                        </div>
                         <div class="bg-white p-3.5 sm:p-4 rounded-2xl border border-stone-200/90 shadow-2xs space-y-3">
                             <div class="flex items-center justify-between">
                                 <span class="text-xs sm:text-sm font-black text-stone-900 flex items-center gap-1.5">
@@ -2133,7 +2191,22 @@
                     <!-- ========================================================= -->
                     <div id="studio-controls-card" class="hidden space-y-3.5">
                         
-                        <!-- 1. الثيمات والخلفيات الفاخرة المتاحة للكارت والهالة الملكية -->
+                        <!-- شريط القوالب السريعة للكارت الملكي مع زر الحفظ المباشر -->
+                        <div class="bg-gradient-to-r from-amber-500/10 via-rose-500/10 to-amber-500/10 p-3 sm:p-3.5 rounded-2xl border border-amber-300 shadow-2xs space-y-2">
+                            <div class="flex items-center justify-between gap-2">
+                                <div class="flex items-center gap-1.5 min-w-0">
+                                    <span class="text-base shrink-0">🏷️</span>
+                                    <span class="text-xs font-black text-stone-900 truncate">قوالب وتنسيقات الكارت الملكي المحفوظة:</span>
+                                </div>
+                                <button type="button" onclick="promptSaveCurrentStylePreset('card')" class="shrink-0 px-2.5 py-1 rounded-xl bg-amber-900 hover:bg-stone-950 text-amber-200 text-[11px] font-black transition flex items-center gap-1 shadow-2xs cursor-pointer active:scale-95 border border-amber-400/50" title="حفظ جميع قياسات وهندسة الكارت الملكي كقالب جديد">
+                                    <span>💾</span>
+                                    <span>حفظ نمط الكارت</span>
+                                </button>
+                            </div>
+                            <div id="studio-card-quick-presets" class="flex items-center gap-1.5 overflow-x-auto py-0.5 no-scrollbar">
+                                <!-- تملأ ديناميكياً برمجياً -->
+                            </div>
+                        </div>
                         <div data-studio-category="theme" class="bg-white p-3.5 sm:p-4 rounded-2xl border border-stone-200/90 shadow-2xs space-y-3">
                             <div class="flex items-center justify-between">
                                 <span class="text-xs sm:text-sm font-black text-stone-900 flex items-center gap-1.5">
@@ -2663,6 +2736,22 @@
                             <!-- قائمة المسودات المحفوظة -->
                         </div>
                     </div> <!-- نهاية studio-drafts -->
+
+                    <!-- 6. قسم القوالب التنسيقية المحفوظة (Saved Style Presets) -->
+                    <div data-studio-category="common" class="bg-gradient-to-r from-amber-500/5 via-rose-500/5 to-amber-500/5 p-3.5 sm:p-4 rounded-2xl border border-amber-300/80 space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-amber-950 flex items-center gap-1.5">
+                                <span>⭐</span>
+                                <span>أنماطي وقوالبي التنسيقية المحفوظة:</span>
+                            </span>
+                            <button type="button" onclick="promptSaveCurrentStylePreset()" class="text-xs text-brand font-bold hover:underline cursor-pointer">
+                                ＋ حفظ النمط الحالي
+                            </button>
+                        </div>
+                        <div id="studio-presets-full-list" class="space-y-1.5 max-h-44 overflow-y-auto no-scrollbar">
+                            <!-- قائمة القوالب المحفوظة كاملة -->
+                        </div>
+                    </div> <!-- نهاية studio-presets-full-list -->
                     </div> <!-- نهاية studio-controls-body -->
 
                 </div> <!-- نهاية studio-controls-col -->
@@ -2686,6 +2775,71 @@
         </div>
     </div>
     <!-- نهاية شاشة استوديو التصاميم المستقلة -->
+
+    <!-- ========================================== -->
+    <!-- نافذة حفظ النمط والتعديلات كقالب مخصص للاستوديو -->
+    <!-- ========================================== -->
+    <div id="studio-save-preset-modal" class="hidden fixed inset-0 z-50 modal-glass-backdrop flex items-center justify-center p-3 sm:p-4" dir="rtl">
+        <div class="lux-modal-box w-full max-w-lg rounded-2xl sm:rounded-3xl p-5 sm:p-6 space-y-4 shadow-2xl relative max-h-[92vh] overflow-y-auto bg-white/98 border border-stone-200">
+            <!-- زر الإغلاق -->
+            <button type="button" onclick="closeStudioSavePresetModal()" class="absolute top-4 left-4 bg-stone-100 hover:bg-stone-200 text-stone-600 hover:text-stone-900 w-8 h-8 rounded-full flex items-center justify-center transition text-sm font-bold cursor-pointer" title="إغلاق">
+                ✕
+            </button>
+            
+            <!-- ترويسة المودال -->
+            <div class="flex items-center gap-3">
+                <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-amber-500/20 via-rose-500/20 to-amber-500/30 text-amber-950 flex items-center justify-center text-2xl shadow-xs border border-amber-300/80 shrink-0">
+                    ✨
+                </div>
+                <div class="min-w-0">
+                    <h3 class="font-display font-black text-stone-900 text-base sm:text-lg">حفظ التعديلات والقياسات كقالب مخصص</h3>
+                    <p class="text-xs text-stone-500 font-medium">لتطبيق نفس القياسات والظلال والزووم على أي صورة أخرى بنقرة واحدة</p>
+                </div>
+            </div>
+
+            <!-- ملخص الإعدادات التي سيتم حفظها -->
+            <div class="p-3.5 rounded-2xl bg-amber-50/70 border border-amber-200/80 space-y-2">
+                <div class="flex items-center justify-between text-xs font-bold text-amber-950">
+                    <span class="flex items-center gap-1.5">
+                        <span>📐</span>
+                        <span id="studio-preset-modal-layout-title">النمط المستهدف: ستوري وريلز كامل الشاشة</span>
+                    </span>
+                    <span id="studio-preset-modal-ratio-badge" class="px-2 py-0.5 rounded-full bg-white text-amber-900 border border-amber-300 text-[10px] font-black">9:16</span>
+                </div>
+                
+                <div id="studio-preset-modal-specs-summary" class="grid grid-cols-2 gap-2 text-[11px] text-stone-600 pt-1">
+                    <!-- يتم تعبئتها ديناميكياً -->
+                </div>
+            </div>
+
+            <!-- حقل اسم القالب -->
+            <div class="space-y-2">
+                <label for="studio-preset-name-input" class="block text-xs font-bold text-stone-800">
+                    اسم القالب المخصص:
+                </label>
+                <input type="text" id="studio-preset-name-input" placeholder="مثال: ريلز عنابي متناسق، أو كارت مربع 1:1" class="w-full h-11 px-3.5 rounded-xl border border-stone-300 text-xs sm:text-sm font-bold text-stone-900 outline-none focus:border-brand focus:ring-2 focus:ring-amber-400/20 shadow-2xs">
+                
+                <!-- اقتراحات سريعة لأسماء القوالب -->
+                <div class="space-y-1">
+                    <span class="text-[10px] font-bold text-stone-400 block">اقتراحات سريعة للاسم (انقر للاختيار):</span>
+                    <div id="studio-preset-name-chips" class="flex flex-wrap gap-1.5">
+                        <!-- تعبأ ديناميكياً حسب النمط -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- أزرار الإجراء -->
+            <div class="pt-3 border-t border-stone-200/80 flex items-center justify-end gap-2">
+                <button type="button" onclick="closeStudioSavePresetModal()" class="px-4 py-2.5 rounded-xl text-stone-600 hover:bg-stone-100 text-xs font-bold transition cursor-pointer">
+                    إلغاء
+                </button>
+                <button type="button" onclick="submitSaveStudioPreset()" class="btn-liquid-metal text-white font-black text-xs px-5 py-2.5 rounded-xl shadow-md active:scale-95 transition flex items-center gap-1.5 cursor-pointer border border-amber-300/50">
+                    <span>💾</span>
+                    <span>حفظ القالب واعتماده</span>
+                </button>
+            </div>
+        </div>
+    </div>
 
     <!-- نافذة إدارة وتخصيص التصنيفات الملكية (إضافة وحذف التصنيفات للأدمن) -->
     <div id="add-category-modal" class="hidden fixed inset-0 z-50 modal-glass-backdrop flex items-center justify-center p-3 sm:p-4">

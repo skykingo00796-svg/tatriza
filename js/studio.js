@@ -1538,6 +1538,7 @@ export function initStudioScreen(preselectedCarpetId = '', customCarpets = null)
     syncStudioControlsFromState();
     updateStudioPreview();
     renderStudioDraftsList();
+    renderStudioStylePresetsUI();
     setupStageDragAndDropFile();
 
     // ضبط التبويب النشط على الجوال (معاينة إذا كان لمنتج وتعديل إذا كان تصميم حر)
@@ -4270,6 +4271,733 @@ function renderStudioDraftsList() {
 }
 
 // ==========================================
+// نظام حفظ واسترجاع الأنماط والقوالب التنسيقية المعتمدة والمخصصة
+// (Studio Style Presets System)
+// يتيح حفظ القياسات، التكبير (Zoom)، الظلال، الهوامش والخطوط دون مساس بالصور المحملة
+// ==========================================
+let currentPresetsFilter = 'all';
+let currentPromptLayout = null;
+
+export function getBuiltinStudioPresets() {
+    return [
+        {
+            id: 'builtin_story_royal',
+            name: 'ريلز عنابي ملوكي فاخر',
+            layoutMode: 'story_vignette',
+            ratio: '9:16',
+            isBuiltin: true,
+            desc: 'زووم 110% • شادو عنابي متناسق • عبارة وتوقيع بيضاوي فاخر',
+            mediaZoom: 110,
+            mediaPanX: 0,
+            mediaPanY: 0,
+            vignetteTheme: 'site-burgundy',
+            vignetteOpacity: 95,
+            vignetteOffsetY: 0,
+            vignetteSpread: 100,
+            vignetteSharpness: 40,
+            showTopVignette: true,
+            showBottomVignette: true,
+            showStoryPhrase: true,
+            storyPhrase: '- 🌟 عمل مُتقن -',
+            storyPhraseSize: 'md',
+            storyPhraseFont: 'el-messiri',
+            storyPhraseOffsetY: 68,
+            storyPhraseAlign: 'center',
+            showStoryHandle: true,
+            storyHandle: '@TATRIZA_22',
+            storyHandleStyle: 'pill',
+            storyHandleFont: 'mono',
+            storyHandleOffsetY: 25,
+            storyHandleAlign: 'center',
+            showLogo: true,
+            logoVariant: 'transparent-burgundy',
+            logoSize: 'medium',
+            logoOpacity: 100,
+            postBgColor: '#121214'
+        },
+        {
+            id: 'builtin_story_emerald',
+            name: 'ستوري زمرد ظفار الهادئ',
+            layoutMode: 'story_vignette',
+            ratio: '9:16',
+            isBuiltin: true,
+            desc: 'زووم 100% • شادو زمردي ملكي • خط أميري ناعم وتوقيع كلاسيكي',
+            mediaZoom: 100,
+            mediaPanX: 0,
+            mediaPanY: 0,
+            vignetteTheme: 'site-emerald',
+            vignetteOpacity: 85,
+            vignetteOffsetY: 0,
+            vignetteSpread: 110,
+            vignetteSharpness: 30,
+            showTopVignette: true,
+            showBottomVignette: true,
+            showStoryPhrase: true,
+            storyPhrase: '🍃 أصالة الحياكة العُمانية',
+            storyPhraseSize: 'md',
+            storyPhraseFont: 'amiri',
+            storyPhraseOffsetY: 72,
+            storyPhraseAlign: 'center',
+            showStoryHandle: true,
+            storyHandle: '@TATRIZA_22',
+            storyHandleStyle: 'plain',
+            storyHandleFont: 'mono',
+            storyHandleOffsetY: 25,
+            storyHandleAlign: 'center',
+            showLogo: true,
+            logoVariant: 'transparent-emerald',
+            logoSize: 'medium',
+            logoOpacity: 100,
+            postBgColor: '#0f1712'
+        },
+        {
+            id: 'builtin_story_cinema',
+            name: 'ريلز سينمائي بدون ظلال',
+            layoutMode: 'story_vignette',
+            ratio: '9:16',
+            isBuiltin: true,
+            desc: 'زووم 115% • بدون أي ظلال علوية أو سفلية • توقيع كبسولة عائم',
+            mediaZoom: 115,
+            mediaPanX: 0,
+            mediaPanY: 0,
+            showTopVignette: false,
+            showBottomVignette: false,
+            showStoryPhrase: false,
+            showStoryHandle: true,
+            storyHandle: '@TATRIZA_22',
+            storyHandleStyle: 'pill',
+            storyHandleOffsetY: 35,
+            showLogo: true,
+            logoVariant: 'transparent-gold',
+            logoSize: 'small',
+            logoOpacity: 95,
+            postBgColor: '#000000'
+        },
+        {
+            id: 'builtin_minimal_pure',
+            name: 'عرض نقي أبيض كلاسيكي (1:1)',
+            layoutMode: 'minimal_showcase',
+            ratio: '1:1',
+            isBuiltin: true,
+            desc: 'مربع 1:1 • خلفية بيضاء نقية • إطار زوايا 18px مع ظل خفيف وشعار بالوسط',
+            mediaZoom: 100,
+            mediaPanX: 0,
+            mediaPanY: 0,
+            minimalLogoAlign: 'center',
+            minimalLogoOffsetY: 25,
+            minimalHandleAlign: 'center',
+            minimalHandleOffsetY: 25,
+            minimalHandleColor: '#6b7280',
+            minimalHandleStyle: 'plain',
+            postBgColor: '#ffffff',
+            imageFitMode: 'contain',
+            imageFramePadding: 6,
+            imageCornerRadius: 18,
+            imageElevationShadow: true,
+            showLogo: true,
+            logoVariant: 'transparent-burgundy',
+            logoSize: 'small'
+        },
+        {
+            id: 'builtin_minimal_frameless',
+            name: 'مينيمال كامل الإطار (4:5)',
+            layoutMode: 'minimal_showcase',
+            ratio: '4:5',
+            isBuiltin: true,
+            desc: 'أبعاد 4:5 • ملء كامل بدون هوامش • شعار وتوقيع ذهبي بالأطراف',
+            mediaZoom: 100,
+            mediaPanX: 0,
+            mediaPanY: 0,
+            minimalLogoAlign: 'right',
+            minimalLogoOffsetPercent: 6,
+            minimalLogoOffsetY: 25,
+            minimalHandleAlign: 'left',
+            minimalHandleOffsetPercent: -6,
+            minimalHandleOffsetY: 25,
+            minimalHandleColor: '#c59b27',
+            minimalHandleStyle: 'pill',
+            postBgColor: '#fdfbf7',
+            imageFitMode: 'cover',
+            imageFramePadding: 0,
+            imageCornerRadius: 0,
+            imageElevationShadow: false,
+            showLogo: true,
+            logoVariant: 'transparent-gold',
+            logoSize: 'small'
+        },
+        {
+            id: 'builtin_card_royal',
+            name: 'كارت ملكي أسفل متوهج (4:5)',
+            layoutMode: 'card',
+            ratio: '4:5',
+            isBuiltin: true,
+            desc: 'أبعاد 4:5 • كارت زجاجي سفلي • حدود ذهبية متوهجة وهالة إضاءة 3D',
+            mediaZoom: 100,
+            mediaPanX: 0,
+            mediaPanY: 0,
+            carpetScale: 88,
+            carpetShadow: true,
+            carpetTilt: false,
+            cardPosition: 'bottom',
+            cardAlign: 'right',
+            cardWidthPercent: 92,
+            cardRadius: 'rounded',
+            cardOffsetY: 16,
+            cardGlassOpacity: 80,
+            cardGlassBlur: 16,
+            cardBorderStyle: 'gold-glow',
+            cardSpotlight: true,
+            theme: 'royal-burgundy',
+            showPrice: true,
+            showDimensions: true,
+            showMaterial: true,
+            showSticker: true,
+            showWhatsApp: true
+        },
+        {
+            id: 'builtin_card_dock',
+            name: 'دوك كارت عائم (1:1)',
+            layoutMode: 'card',
+            ratio: '1:1',
+            isBuiltin: true,
+            desc: 'مربع 1:1 • بطاقة عائمة دائرية الزوايا • أسود وذهب فاخر',
+            mediaZoom: 100,
+            mediaPanX: 0,
+            mediaPanY: 0,
+            carpetScale: 80,
+            carpetShadow: true,
+            carpetTilt: false,
+            cardPosition: 'dock',
+            cardAlign: 'center',
+            cardWidthPercent: 88,
+            cardRadius: 'pill',
+            cardOffsetY: 18,
+            cardGlassOpacity: 90,
+            cardGlassBlur: 20,
+            cardBorderStyle: 'solid-accent',
+            cardSpotlight: true,
+            theme: 'obsidian-gold',
+            showPrice: true,
+            showDimensions: true,
+            showMaterial: true,
+            showSticker: true,
+            showWhatsApp: true
+        }
+    ];
+}
+
+export function getCustomStudioPresets() {
+    try {
+        const raw = localStorage.getItem('tatr_studio_style_presets');
+        return raw ? JSON.parse(raw) : [];
+    } catch (e) {
+        return [];
+    }
+}
+
+export function getAllStudioStylePresets() {
+    return [...getCustomStudioPresets(), ...getBuiltinStudioPresets()];
+}
+
+export function saveCurrentStudioStylePreset(presetName, targetLayout = null) {
+    try {
+        const layout = targetLayout || studioState.layoutMode;
+        let name = (presetName || '').trim();
+        if (!name) {
+            if (layout === 'story_vignette') name = `ستوري مخصص (${studioState.ratio}) - زووم ${studioState.mediaZoom}%`;
+            else if (layout === 'minimal_showcase') name = `عرض نقي مخصص (${studioState.ratio})`;
+            else name = `كارت ملكي مخصص (${studioState.ratio})`;
+        }
+
+        const newPreset = {
+            id: 'preset_' + Date.now(),
+            name: name,
+            layoutMode: layout,
+            ratio: studioState.ratio,
+            timestamp: Date.now(),
+            dateFormatted: new Date().toLocaleDateString('ar-OM', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }),
+            isCustom: true,
+            
+            // الحركة والتكبير
+            mediaZoom: studioState.mediaZoom,
+            mediaPanX: studioState.mediaPanX,
+            mediaPanY: studioState.mediaPanY,
+
+            // الشعار
+            showLogo: studioState.showLogo,
+            logoVariant: studioState.logoVariant,
+            logoCustomColor: studioState.logoCustomColor,
+            logoSize: studioState.logoSize,
+            logoOpacity: studioState.logoOpacity,
+
+            // إعدادات الستوري
+            storyPhrase: studioState.storyPhrase,
+            storyHandle: studioState.storyHandle,
+            vignetteTheme: studioState.vignetteTheme,
+            customVigTopColor: studioState.customVigTopColor,
+            customVigBotColor: studioState.customVigBotColor,
+            showTopVignette: studioState.showTopVignette,
+            showBottomVignette: studioState.showBottomVignette,
+            showStoryPhrase: studioState.showStoryPhrase,
+            showStoryHandle: studioState.showStoryHandle,
+            vignetteOpacity: studioState.vignetteOpacity,
+            vignetteOffsetY: studioState.vignetteOffsetY,
+            vignetteSpread: studioState.vignetteSpread,
+            vignetteSharpness: studioState.vignetteSharpness,
+            storyLogoAlign: studioState.storyLogoAlign,
+            storyLogoOffsetPercent: studioState.storyLogoOffsetPercent,
+            storyLogoOffsetY: studioState.storyLogoOffsetY,
+            storyPhraseAlign: studioState.storyPhraseAlign,
+            storyPhraseOffsetPercent: studioState.storyPhraseOffsetPercent,
+            storyPhraseOffsetY: studioState.storyPhraseOffsetY,
+            storyPhraseColor: studioState.storyPhraseColor,
+            storyPhraseSize: studioState.storyPhraseSize,
+            storyPhraseFont: studioState.storyPhraseFont,
+            storyPhraseCustomFont: studioState.storyPhraseCustomFont,
+            storyHandleAlign: studioState.storyHandleAlign,
+            storyHandleOffsetPercent: studioState.storyHandleOffsetPercent,
+            storyHandleOffsetY: studioState.storyHandleOffsetY,
+            storyHandleColor: studioState.storyHandleColor,
+            storyHandleFont: studioState.storyHandleFont,
+            storyHandleCustomFont: studioState.storyHandleCustomFont,
+            storyHandleStyle: studioState.storyHandleStyle,
+            storyFitMode: studioState.storyFitMode,
+            storyBgColor: studioState.storyBgColor,
+
+            // إعدادات القالب النقي
+            minimalLogoAlign: studioState.minimalLogoAlign,
+            minimalLogoOffsetPercent: studioState.minimalLogoOffsetPercent,
+            minimalLogoOffsetY: studioState.minimalLogoOffsetY,
+            minimalHandleAlign: studioState.minimalHandleAlign,
+            minimalHandleOffsetPercent: studioState.minimalHandleOffsetPercent,
+            minimalHandleOffsetY: studioState.minimalHandleOffsetY,
+            minimalHandleColor: studioState.minimalHandleColor,
+            minimalHandleStyle: studioState.minimalHandleStyle,
+            minimalFitMode: studioState.minimalFitMode,
+            minimalBgColor: studioState.minimalBgColor,
+
+            // تأطير وخلفية الكانفاس المشتركة
+            postBgColor: studioState.postBgColor,
+            postBgName: studioState.postBgName,
+            postBgCustomized: studioState.postBgCustomized,
+            imageFitMode: studioState.imageFitMode,
+            imageFramePadding: studioState.imageFramePadding,
+            imageCornerRadius: studioState.imageCornerRadius,
+            imageElevationShadow: studioState.imageElevationShadow,
+
+            // إعدادات الكارت الملكي
+            theme: studioState.theme,
+            carpetScale: studioState.carpetScale,
+            carpetShadow: studioState.carpetShadow,
+            carpetTilt: studioState.carpetTilt,
+            cardPosition: studioState.cardPosition,
+            cardAlign: studioState.cardAlign,
+            cardWidthPercent: studioState.cardWidthPercent,
+            cardPadding: studioState.cardPadding,
+            cardRadius: studioState.cardRadius,
+            cardOffsetY: studioState.cardOffsetY,
+            cardGlassOpacity: studioState.cardGlassOpacity,
+            cardGlassBlur: studioState.cardGlassBlur,
+            cardBorderStyle: studioState.cardBorderStyle,
+            cardTitleFont: studioState.cardTitleFont,
+            cardTitleSize: studioState.cardTitleSize,
+            cardTitleColor: studioState.cardTitleColor,
+            cardPriceSize: studioState.cardPriceSize,
+            cardPriceColor: studioState.cardPriceColor,
+            cardSpecsStyle: studioState.cardSpecsStyle,
+            cardSpotlight: studioState.cardSpotlight,
+            showPrice: studioState.showPrice,
+            showDimensions: studioState.showDimensions,
+            showMaterial: studioState.showMaterial,
+            showSticker: studioState.showSticker,
+            showWhatsApp: studioState.showWhatsApp,
+            sticker: studioState.sticker
+        };
+
+        const customs = getCustomStudioPresets();
+        customs.unshift(newPreset);
+        if (customs.length > 30) customs.pop();
+        localStorage.setItem('tatr_studio_style_presets', JSON.stringify(customs));
+
+        renderStudioStylePresetsUI();
+        showToast(`تم حفظ القالب «${name}» بنجاح! جاهز للتطبيق الفوري على أي صورة مستقبلاً.`, 'success', 'حفظ القالب المخصص');
+        return newPreset;
+    } catch (e) {
+        console.error('Error saving style preset:', e);
+        showToast('تعذر حفظ النمط محلياً.', 'error', 'خطأ');
+    }
+}
+
+export function applyStudioStylePreset(presetId) {
+    const presets = getAllStudioStylePresets();
+    const preset = presets.find(p => p.id === presetId);
+    if (!preset) {
+        showToast('لم يتم العثور على القالب المحدد.', 'error', 'تنبيه');
+        return;
+    }
+
+    // حفظ الصورة الحالية ومعلومات القطعة حتى لا تُفقد أو تُستبدل
+    const savedMedia = {
+        customImageSrc: studioState.customImageSrc,
+        videoSrc: studioState.videoSrc,
+        mediaType: studioState.mediaType,
+        selectedCarpetId: studioState.selectedCarpetId,
+        studioMode: studioState.studioMode,
+        title: studioState.title,
+        subtitle: studioState.subtitle,
+        dimensions: studioState.dimensions,
+        material: studioState.material,
+        price: studioState.price,
+        currency: studioState.currency,
+        whatsapp: studioState.whatsapp
+    };
+
+    // نسخ خصائص القالب التنسيقية فقط
+    const ignoreKeys = ['id', 'name', 'timestamp', 'dateFormatted', 'isCustom', 'isBuiltin', 'desc'];
+    Object.keys(preset).forEach(k => {
+        if (!ignoreKeys.includes(k) && preset[k] !== undefined) {
+            studioState[k] = preset[k];
+        }
+    });
+
+    // استعادة الوسائط المخصصة للمستخدم
+    Object.assign(studioState, savedMedia);
+
+    // مزامنة عناصر التحكم وإعادة العرض
+    syncStudioControlsFromState();
+    updateStudioPreview();
+    renderStudioStylePresetsUI();
+
+    showToast(`تم تطبيق قالب «${preset.name}»! تم ضبط القياسات والظلال بنجاح على تصميمك الحالي.`, 'success', 'تطبيق النمط المعتمد');
+}
+
+export function deleteStudioStylePreset(presetId) {
+    let customs = getCustomStudioPresets();
+    const target = customs.find(p => p.id === presetId);
+    if (!target) return;
+    customs = customs.filter(p => p.id !== presetId);
+    localStorage.setItem('tatr_studio_style_presets', JSON.stringify(customs));
+    renderStudioStylePresetsUI();
+    showToast(`تم حذف قالب «${target.name}».`, 'info', 'حذف النمط');
+}
+
+export function promptSaveCurrentStylePreset(targetLayout = null) {
+    currentPromptLayout = targetLayout || studioState.layoutMode;
+    const modal = document.getElementById('studio-save-preset-modal');
+    if (!modal) return;
+
+    const layoutTitles = {
+        story_vignette: 'ستوري وريلز كامل الشاشة',
+        minimal_showcase: 'قالب العرض النقي (بدون شادو)',
+        card: 'بوست الكارت الملكي'
+    };
+
+    const layoutTitleEl = document.getElementById('studio-preset-modal-layout-title');
+    const ratioBadgeEl = document.getElementById('studio-preset-modal-ratio-badge');
+    const specsSummaryEl = document.getElementById('studio-preset-modal-specs-summary');
+    const nameInput = document.getElementById('studio-preset-name-input');
+    const chipsContainer = document.getElementById('studio-preset-name-chips');
+
+    if (layoutTitleEl) layoutTitleEl.innerText = `النمط المستهدف: ${layoutTitles[currentPromptLayout] || 'تطريز'}`;
+    if (ratioBadgeEl) ratioBadgeEl.innerText = studioState.ratio || '9:16';
+
+    // تلخيص المواصفات بدقة للمستخدم
+    if (specsSummaryEl) {
+        let specsHtml = `
+            <div class="flex items-center gap-1">
+                <span>🔍 التكبير:</span>
+                <span class="font-bold text-stone-800">${studioState.mediaZoom || 100}%</span>
+            </div>
+            <div class="flex items-center gap-1">
+                <span>📐 الأبعاد:</span>
+                <span class="font-bold text-stone-800">${studioState.ratio}</span>
+            </div>
+        `;
+        if (currentPromptLayout === 'story_vignette') {
+            const vigName = studioState.vignetteTheme === 'site-burgundy' ? 'عنابي الموقع' : (studioState.vignetteTheme === 'site-emerald' ? 'زمردي' : (studioState.vignetteTheme || 'مخصص'));
+            specsHtml += `
+                <div class="flex items-center gap-1 truncate">
+                    <span>🎨 الشادو:</span>
+                    <span class="font-bold text-stone-800">${vigName} (${studioState.vignetteOpacity || 95}%)</span>
+                </div>
+                <div class="flex items-center gap-1 truncate">
+                    <span>🏷️ التوقيع:</span>
+                    <span class="font-bold text-stone-800">${studioState.storyHandleStyle === 'pill' ? 'كبسولة بيضاوية' : 'نص عادي'}</span>
+                </div>
+            `;
+        } else if (currentPromptLayout === 'minimal_showcase') {
+            specsHtml += `
+                <div class="flex items-center gap-1 truncate">
+                    <span>🖼️ التأطير:</span>
+                    <span class="font-bold text-stone-800">${studioState.imageFitMode === 'cover' ? 'ملء كامل' : 'مؤطر'} (زوايا ${studioState.imageCornerRadius || 0}px)</span>
+                </div>
+                <div class="flex items-center gap-1 truncate">
+                    <span>📍 اللوجو:</span>
+                    <span class="font-bold text-stone-800">${studioState.minimalLogoAlign === 'right' ? 'يمين' : (studioState.minimalLogoAlign === 'left' ? 'يسار' : 'منتصف')}</span>
+                </div>
+            `;
+        } else {
+            specsHtml += `
+                <div class="flex items-center gap-1 truncate">
+                    <span>👑 موضع الكارت:</span>
+                    <span class="font-bold text-stone-800">${studioState.cardPosition === 'dock' ? 'دوك عائم' : 'أسفل'} (${studioState.cardWidthPercent || 92}%)</span>
+                </div>
+                <div class="flex items-center gap-1 truncate">
+                    <span>✨ إطار الكارت:</span>
+                    <span class="font-bold text-stone-800">${studioState.cardBorderStyle === 'gold-glow' ? 'توهج ذهبي' : 'كلاسيكي'}</span>
+                </div>
+            `;
+        }
+        specsSummaryEl.innerHTML = specsHtml;
+    }
+
+    // اقتراحات الأسماء الذكية حسب النمط
+    const suggestions = {
+        story_vignette: [
+            `ريلز عنابي ملوكي (${studioState.ratio})`,
+            `ستوري زووم ${studioState.mediaZoom}%`,
+            'ريلز سينمائي هادئ',
+            'ستوري توقيع عائم فاخر',
+            'ريلز شادو ناعم 9:16'
+        ],
+        minimal_showcase: [
+            `عرض نقي مربع (${studioState.ratio})`,
+            `مينيمال تأطير زوايا ${studioState.imageCornerRadius || 16}px`,
+            'بوست نقي بدون شادو',
+            'عرض مستطيل 4:5 فاخر',
+            'مينيمال لوجو يمين'
+        ],
+        card: [
+            `كارت ملكي أسفل (${studioState.ratio})`,
+            `كارت مربع متوهج 1:1`,
+            'دوك كارت عائم فخم',
+            'كارت هالة إضاءة 3D',
+            'كارت ملكي عريض 92%'
+        ]
+    };
+
+    const chips = suggestions[currentPromptLayout] || suggestions.story_vignette;
+    if (nameInput) {
+        nameInput.value = chips[0] || '';
+    }
+
+    if (chipsContainer) {
+        chipsContainer.innerHTML = chips.map((c) => `
+            <button type="button" onclick="document.getElementById('studio-preset-name-input').value = '${c}'; document.getElementById('studio-preset-name-input').focus();" class="px-2.5 py-1 rounded-lg bg-stone-100 hover:bg-amber-100 text-stone-700 hover:text-amber-950 text-[11px] font-bold transition cursor-pointer border border-stone-200/90 active:scale-95">
+                ${c}
+            </button>
+        `).join('');
+    }
+
+    modal.classList.remove('hidden');
+    setTimeout(() => {
+        if (nameInput) {
+            nameInput.focus();
+            nameInput.select();
+        }
+    }, 100);
+}
+
+export function closeStudioSavePresetModal() {
+    const modal = document.getElementById('studio-save-preset-modal');
+    if (modal) modal.classList.add('hidden');
+}
+
+export function submitSaveStudioPreset() {
+    const nameInput = document.getElementById('studio-preset-name-input');
+    const name = nameInput ? nameInput.value : '';
+    saveCurrentStudioStylePreset(name, currentPromptLayout);
+    closeStudioSavePresetModal();
+}
+
+export function filterStudioPresetsUI(filterKey) {
+    currentPresetsFilter = filterKey;
+    renderStudioStylePresetsUI();
+}
+
+export function renderStudioStylePresetsUI(filter = null) {
+    if (filter) currentPresetsFilter = filter;
+    const container = document.getElementById('studio-saved-presets-container');
+    const countBadge = document.getElementById('studio-saved-presets-count');
+    const allPresets = getAllStudioStylePresets();
+    const customPresets = getCustomStudioPresets();
+
+    if (countBadge) {
+        countBadge.innerText = `${allPresets.length} قوالب (${customPresets.length} مخصص)`;
+    }
+
+    // تصفية حسب التبويب النشط
+    const filteredPresets = (currentPresetsFilter === 'all') 
+        ? allPresets 
+        : allPresets.filter(p => p.layoutMode === currentPresetsFilter);
+
+    // 1. تحديث الحاوية الرئيسية في قسم اختيار النمط
+    if (container) {
+        const counts = {
+            all: allPresets.length,
+            story_vignette: allPresets.filter(p => p.layoutMode === 'story_vignette').length,
+            minimal_showcase: allPresets.filter(p => p.layoutMode === 'minimal_showcase').length,
+            card: allPresets.filter(p => p.layoutMode === 'card').length
+        };
+
+        const filterTabsHtml = `
+            <div class="flex items-center gap-1 overflow-x-auto pb-1 no-scrollbar text-xs">
+                <button type="button" onclick="window.filterStudioPresetsUI('all')" class="px-2.5 py-1 rounded-lg font-bold transition cursor-pointer whitespace-nowrap ${currentPresetsFilter === 'all' ? 'bg-amber-600 text-white shadow-2xs' : 'bg-white text-stone-700 hover:bg-stone-100 border border-stone-200'}">
+                    الكل (${counts.all})
+                </button>
+                <button type="button" onclick="window.filterStudioPresetsUI('story_vignette')" class="px-2.5 py-1 rounded-lg font-bold transition cursor-pointer whitespace-nowrap ${currentPresetsFilter === 'story_vignette' ? 'bg-amber-600 text-white shadow-2xs' : 'bg-white text-stone-700 hover:bg-stone-100 border border-stone-200'}">
+                    📱 ستوري وريلز (${counts.story_vignette})
+                </button>
+                <button type="button" onclick="window.filterStudioPresetsUI('minimal_showcase')" class="px-2.5 py-1 rounded-lg font-bold transition cursor-pointer whitespace-nowrap ${currentPresetsFilter === 'minimal_showcase' ? 'bg-amber-600 text-white shadow-2xs' : 'bg-white text-stone-700 hover:bg-stone-100 border border-stone-200'}">
+                    ✨ عرض نقي (${counts.minimal_showcase})
+                </button>
+                <button type="button" onclick="window.filterStudioPresetsUI('card')" class="px-2.5 py-1 rounded-lg font-bold transition cursor-pointer whitespace-nowrap ${currentPresetsFilter === 'card' ? 'bg-amber-600 text-white shadow-2xs' : 'bg-white text-stone-700 hover:bg-stone-100 border border-stone-200'}">
+                    🏷️ كارت ملكي (${counts.card})
+                </button>
+            </div>
+        `;
+
+        if (filteredPresets.length === 0) {
+            container.innerHTML = `
+                ${filterTabsHtml}
+                <div class="text-center py-4 text-stone-400 text-xs bg-white/70 rounded-xl border border-stone-200/60">
+                    لا توجد قوالب محفوظة في هذا التصنيف بعد. يمكنك حفظ تعديلاتك الحالية بالنقر على الزر أعلاه!
+                </div>
+            `;
+        } else {
+            const cardsHtml = filteredPresets.map(p => {
+                const isStory = p.layoutMode === 'story_vignette';
+                const isMin = p.layoutMode === 'minimal_showcase';
+                const layoutIcon = isStory ? '📱' : (isMin ? '✨' : '🏷️');
+                const layoutName = isStory ? 'ستوري/ريلز' : (isMin ? 'عرض نقي' : 'كارت ملكي');
+                const badgeColor = isStory ? 'bg-rose-50 text-rose-800 border-rose-200' : (isMin ? 'bg-stone-100 text-stone-800 border-stone-200' : 'bg-amber-50 text-amber-900 border-amber-200');
+
+                let specSnippet = p.desc || '';
+                if (!specSnippet) {
+                    if (isStory) {
+                        specSnippet = `زووم ${p.mediaZoom || 100}% • شادو ${p.vignetteOpacity || 95}% • توقيع ${p.storyHandleStyle === 'pill' ? 'كبسولة' : 'عادي'}`;
+                    } else if (isMin) {
+                        specSnippet = `${p.imageFitMode === 'cover' ? 'ملء كامل' : 'مؤطر'} • زوايا ${p.imageCornerRadius || 0}px`;
+                    } else {
+                        specSnippet = `موضع ${p.cardPosition === 'dock' ? 'دوك' : 'أسفل'} • ${p.cardBorderStyle === 'gold-glow' ? 'توهج ذهبي' : 'كلاسيكي'}`;
+                    }
+                }
+
+                return `
+                    <div class="p-2.5 rounded-xl bg-white border border-stone-200/90 hover:border-amber-400 transition-all shadow-2xs space-y-2">
+                        <div class="flex items-center justify-between gap-1.5">
+                            <div class="flex items-center gap-1.5 min-w-0">
+                                <span class="text-[10px] px-2 py-0.5 rounded-md font-bold border ${badgeColor}">
+                                    ${layoutIcon} ${layoutName} • ${p.ratio || '9:16'}
+                                </span>
+                                <span class="text-[9.5px] px-1.5 py-0.5 rounded font-black ${p.isCustom ? 'bg-amber-100 text-amber-900 border border-amber-300' : 'bg-stone-100 text-stone-600'}">
+                                    ${p.isCustom ? 'قالبك المخصص 🌟' : 'معتمد 👑'}
+                                </span>
+                            </div>
+                            ${p.isCustom ? `
+                                <button type="button" onclick="window.deleteStudioStylePreset('${p.id}')" class="text-stone-400 hover:text-rose-600 p-1 rounded-lg transition text-xs shrink-0 cursor-pointer" title="حذف هذا القالب">
+                                    ✕
+                                </button>
+                            ` : ''}
+                        </div>
+                        <div class="min-w-0">
+                            <span class="font-extrabold text-xs text-stone-900 block truncate">${p.name}</span>
+                            <span class="text-[10.5px] text-stone-500 block truncate mt-0.5 font-medium">${specSnippet}</span>
+                        </div>
+                        <button type="button" onclick="window.applyStudioStylePreset('${p.id}')" class="w-full py-1.5 px-3 rounded-lg bg-amber-500/10 hover:bg-amber-600 text-amber-950 hover:text-white font-extrabold text-xs transition border border-amber-300/80 flex items-center justify-center gap-1.5 cursor-pointer active:scale-95 shadow-2xs">
+                            <span>⚡</span>
+                            <span>تطبيق النمط على تصميمي الحالي</span>
+                        </button>
+                    </div>
+                `;
+            }).join('');
+
+            container.innerHTML = `
+                ${filterTabsHtml}
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    ${cardsHtml}
+                </div>
+            `;
+        }
+    }
+
+    // 2. تحديث شريط القوالب السريعة في حاوية الستوري
+    const storyQuickContainer = document.getElementById('studio-story-quick-presets');
+    if (storyQuickContainer) {
+        const storyPresets = allPresets.filter(p => p.layoutMode === 'story_vignette');
+        storyQuickContainer.innerHTML = storyPresets.map(p => `
+            <button type="button" onclick="window.applyStudioStylePreset('${p.id}')" class="shrink-0 px-2.5 py-1 rounded-xl bg-white hover:bg-amber-50 text-stone-800 hover:text-amber-950 border border-stone-200/90 hover:border-amber-400 text-[11px] font-bold transition flex items-center gap-1.5 shadow-2xs cursor-pointer active:scale-95" title="${p.name}">
+                <span>${p.isCustom ? '⭐' : '👑'}</span>
+                <span class="truncate max-w-[130px]">${p.name}</span>
+            </button>
+        `).join('');
+    }
+
+    // 3. تحديث شريط القوالب السريعة في حاوية العرض النقي
+    const minimalQuickContainer = document.getElementById('studio-minimal-quick-presets');
+    if (minimalQuickContainer) {
+        const minPresets = allPresets.filter(p => p.layoutMode === 'minimal_showcase');
+        minimalQuickContainer.innerHTML = minPresets.map(p => `
+            <button type="button" onclick="window.applyStudioStylePreset('${p.id}')" class="shrink-0 px-2.5 py-1 rounded-xl bg-white hover:bg-amber-50 text-stone-800 hover:text-amber-950 border border-stone-200/90 hover:border-amber-400 text-[11px] font-bold transition flex items-center gap-1.5 shadow-2xs cursor-pointer active:scale-95" title="${p.name}">
+                <span>${p.isCustom ? '⭐' : '👑'}</span>
+                <span class="truncate max-w-[130px]">${p.name}</span>
+            </button>
+        `).join('');
+    }
+
+    // 4. تحديث شريط القوالب السريعة في حاوية الكارت الملكي
+    const cardQuickContainer = document.getElementById('studio-card-quick-presets');
+    if (cardQuickContainer) {
+        const cardPresets = allPresets.filter(p => p.layoutMode === 'card');
+        cardQuickContainer.innerHTML = cardPresets.map(p => `
+            <button type="button" onclick="window.applyStudioStylePreset('${p.id}')" class="shrink-0 px-2.5 py-1 rounded-xl bg-white hover:bg-amber-50 text-stone-800 hover:text-amber-950 border border-stone-200/90 hover:border-amber-400 text-[11px] font-bold transition flex items-center gap-1.5 shadow-2xs cursor-pointer active:scale-95" title="${p.name}">
+                <span>${p.isCustom ? '⭐' : '👑'}</span>
+                <span class="truncate max-w-[130px]">${p.name}</span>
+            </button>
+        `).join('');
+    }
+
+    // 5. تحديث القائمة الكاملة في قسم القوالب المحفوظة السفلي
+    const fullListContainer = document.getElementById('studio-presets-full-list');
+    if (fullListContainer) {
+        if (allPresets.length === 0) {
+            fullListContainer.innerHTML = `
+                <div class="text-center py-3 text-stone-400 text-xs">لا توجد قوالب محفوظة</div>
+            `;
+        } else {
+            fullListContainer.innerHTML = allPresets.map(p => {
+                const isStory = p.layoutMode === 'story_vignette';
+                const isMin = p.layoutMode === 'minimal_showcase';
+                const icon = isStory ? '📱' : (isMin ? '✨' : '🏷️');
+                const badge = isStory ? 'ستوري' : (isMin ? 'نقي' : 'كارت');
+
+                return `
+                    <div class="flex items-center justify-between gap-2 p-2 rounded-xl bg-white border border-stone-200/80 hover:border-amber-300 transition text-xs">
+                        <button type="button" onclick="window.applyStudioStylePreset('${p.id}')" class="flex items-center gap-2 text-right flex-1 min-w-0 cursor-pointer">
+                            <span class="text-base shrink-0">${icon}</span>
+                            <div class="truncate">
+                                <span class="font-bold text-stone-900 block truncate">${p.name}</span>
+                                <span class="text-[10px] text-stone-400 block">${badge} • ${p.ratio || '9:16'} • ${p.isCustom ? (p.dateFormatted || 'مخصص') : 'معتمد رسمي'}</span>
+                            </div>
+                        </button>
+                        <div class="flex items-center gap-1 shrink-0">
+                            <button type="button" onclick="window.applyStudioStylePreset('${p.id}')" class="px-2 py-1 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-900 font-bold text-[11px] transition cursor-pointer">
+                                تطبيق
+                            </button>
+                            ${p.isCustom ? `
+                                <button type="button" onclick="window.deleteStudioStylePreset('${p.id}')" class="text-stone-400 hover:text-rose-600 p-1 rounded-lg transition text-xs cursor-pointer" title="حذف القالب">
+                                    ✕
+                                </button>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+    }
+}
+
+// ==========================================
 // ربط الأحداث مع واجهة المستخدم
 // ==========================================
 export function initStudioEvents() {
@@ -5466,9 +6194,28 @@ export function initStudioEvents() {
     window.saveStudioDraft = saveStudioDraft;
     window.loadStudioDraft = loadStudioDraft;
     window.deleteStudioDraft = deleteStudioDraft;
+    window.promptSaveCurrentStylePreset = promptSaveCurrentStylePreset;
+    window.closeStudioSavePresetModal = closeStudioSavePresetModal;
+    window.submitSaveStudioPreset = submitSaveStudioPreset;
+    window.saveCurrentStudioStylePreset = saveCurrentStudioStylePreset;
+    window.applyStudioStylePreset = applyStudioStylePreset;
+    window.deleteStudioStylePreset = deleteStudioStylePreset;
+    window.filterStudioPresetsUI = filterStudioPresetsUI;
+    window.renderStudioStylePresetsUI = renderStudioStylePresetsUI;
     window.exportStudioHDImage = exportStudioHDImage;
     window.copyStudioCaption = copyStudioCaption;
     window.shareStudioToWhatsApp = shareStudioToWhatsApp;
+
+    // دعم مفتاح Enter في نافذة حفظ القالب
+    const presetNameInput = document.getElementById('studio-preset-name-input');
+    if (presetNameInput) {
+        presetNameInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                submitSaveStudioPreset();
+            }
+        });
+    }
 
     // مراقبة حجم الشاشة للتنقل السلس بين وضع الجوال والكمبيوتر
     window.addEventListener('resize', () => {
