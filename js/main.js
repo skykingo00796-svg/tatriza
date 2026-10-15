@@ -1293,14 +1293,18 @@ export function getPublicShowcaseSettings() {
         const stored = localStorage.getItem('tatr_showcase_settings');
         if (stored) {
             const parsed = JSON.parse(stored);
-            if (parsed && Array.isArray(parsed.marqueeItems) && parsed.marqueeItems.length > 0) {
+            if (parsed && parsed.version === 2 && Array.isArray(parsed.journeySteps) && parsed.journeySteps.length >= 7) {
                 return parsed;
             }
         }
     } catch (e) {
         console.warn("Could not parse showcase settings for public view:", e);
     }
-    return getDefaultShowcaseSettings();
+    const defaults = getDefaultShowcaseSettings();
+    try {
+        localStorage.setItem('tatr_showcase_settings', JSON.stringify(defaults));
+    } catch (e) {}
+    return defaults;
 }
 
 export function initDynamicShowcase() {
@@ -1350,12 +1354,150 @@ function renderDynamicMarquee(items) {
 }
 
 // ==========================================
-// 2. بناء وإدارة سينما وفيديوهات المشغل وترقيمها وانزلاق البطاقة بالكامل
+// دالة مساعدة لضبط مسارات الصور والوسائط للمجلد الجذري ومجلد screen
+// ==========================================
+function resolveAssetPath(path) {
+    if (!path) return '';
+    if (path.startsWith('http://') || path.startsWith('https://') || path.startsWith('data:') || path.startsWith('blob:') || path.startsWith('idb:')) return path;
+    const isScreenDir = window.location.pathname.includes('/screen/');
+    let clean = path.replace(/^\.\.\//, '').replace(/^\.\//, '');
+    return isScreenDir ? `../${clean}` : clean;
+}
+
+// ==========================================
+// 2. محرك سيناريو موشن جرافيك الحرفة التفاعلي والمشغل السينمائي
 // ==========================================
 let activeBlobUrl = null;
 let isCinemaTransitioning = false;
 let cinemaTouchStartX = 0;
 let cinemaTouchStartY = 0;
+
+let isMotionStoryPlaying = false;
+let motionStoryTimer = null;
+let motionAnimFrameId = null;
+let motionStoryStartTime = 0;
+const MOTION_SCENE_DURATION = 5500; // 5.5 ثوان لكل مشهد
+let isCinemaMuted = false;
+let craftAudioCtx = null;
+
+function playCraftChime(stepIndex = 0) {
+    if (isCinemaMuted) return;
+    try {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContextClass) return;
+        if (!craftAudioCtx) craftAudioCtx = new AudioContextClass();
+        if (craftAudioCtx.state === 'suspended') craftAudioCtx.resume();
+
+        const osc = craftAudioCtx.createOscillator();
+        const gain = craftAudioCtx.createGain();
+
+        // سلم نغمي فاخر متدرج مع خطوات الحرفة السبعة
+        const notes = [440, 493.88, 554.37, 659.25, 739.99, 880, 987.77];
+        const freq = notes[stepIndex % notes.length] || 520;
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, craftAudioCtx.currentTime);
+
+        gain.gain.setValueAtTime(0.001, craftAudioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.06, craftAudioCtx.currentTime + 0.04);
+        gain.gain.exponentialRampToValueAtTime(0.0001, craftAudioCtx.currentTime + 0.7);
+
+        osc.connect(gain);
+        gain.connect(craftAudioCtx.destination);
+
+        osc.start();
+        osc.stop(craftAudioCtx.currentTime + 0.75);
+    } catch (e) {
+        // تجاهل أي قيود أمنية على تشغيل الصوت التلقائي
+    }
+}
+
+function updateMotionUI(isPlaying) {
+    const playIcon = document.getElementById('cinema-play-icon');
+    const playText = document.getElementById('cinema-play-text');
+    const centerWrap = document.getElementById('cinema-video-center-btn-wrap');
+    const centerIcon = document.getElementById('cinema-video-center-icon');
+
+    if (isPlaying) {
+        if (playIcon) playIcon.innerText = '⏸';
+        if (playText) playText.innerText = 'إيقاف مؤقت';
+        if (centerWrap) {
+            centerWrap.classList.remove('opacity-100', 'pointer-events-auto');
+            centerWrap.classList.add('opacity-0', 'pointer-events-none');
+        }
+        if (centerIcon) centerIcon.innerText = '⏸';
+    } else {
+        if (playIcon) playIcon.innerText = '▶';
+        if (playText) playText.innerText = 'مشاهدة رحلة الحرفة';
+        if (centerWrap) {
+            centerWrap.classList.remove('opacity-0', 'pointer-events-none');
+            centerWrap.classList.add('opacity-100', 'pointer-events-auto');
+        }
+        if (centerIcon) centerIcon.innerText = '▶';
+    }
+}
+
+function stopMotionStoryProgress() {
+    if (motionStoryTimer) {
+        clearTimeout(motionStoryTimer);
+        motionStoryTimer = null;
+    }
+    if (motionAnimFrameId) {
+        cancelAnimationFrame(motionAnimFrameId);
+        motionAnimFrameId = null;
+    }
+}
+
+function setMotionProgressBar(percent) {
+    const bar = document.getElementById('cinema-story-progress-bar');
+    if (bar) {
+        bar.style.width = `${Math.min(100, Math.max(0, percent))}%`;
+    }
+}
+
+function startMotionStory() {
+    isMotionStoryPlaying = true;
+    updateMotionUI(true);
+    stopMotionStoryProgress();
+
+    motionStoryStartTime = performance.now();
+    playCraftChime(activeCinemaIndex);
+
+    const stageImg = document.getElementById('cinema-stage-img');
+    if (stageImg) {
+        stageImg.classList.add('scale-105');
+    }
+
+    const animateProgress = (now) => {
+        if (!isMotionStoryPlaying) return;
+        const elapsed = now - motionStoryStartTime;
+        const percent = (elapsed / MOTION_SCENE_DURATION) * 100;
+        setMotionProgressBar(percent);
+
+        if (elapsed < MOTION_SCENE_DURATION) {
+            motionAnimFrameId = requestAnimationFrame(animateProgress);
+        } else {
+            setMotionProgressBar(100);
+            if (currentCinemaVideos && currentCinemaVideos.length > 1) {
+                const nextIdx = (activeCinemaIndex + 1) % currentCinemaVideos.length;
+                navigateCinemaScene('next', nextIdx, true);
+            } else {
+                pauseMotionStory();
+            }
+        }
+    };
+    motionAnimFrameId = requestAnimationFrame(animateProgress);
+}
+
+function pauseMotionStory() {
+    isMotionStoryPlaying = false;
+    updateMotionUI(false);
+    stopMotionStoryProgress();
+    const stageImg = document.getElementById('cinema-stage-img');
+    if (stageImg) {
+        stageImg.classList.remove('scale-105');
+    }
+}
 
 function renderDynamicCinema(videos) {
     currentCinemaVideos = videos || [];
@@ -1379,11 +1521,9 @@ function checkAndUpdateVideoOrientation(videoEl) {
 
     if (w > 0 && h > 0) {
         if (h > w) {
-            // تصوير عمودي (Vertical / Portrait) - يظهر بحجمه الطبيعي الكامل دون أي قص أو تمديد
             screenBox.classList.add('is-vertical-cinema');
             screenBox.classList.remove('aspect-video');
         } else {
-            // تصوير أفقي اعتيادي (Landscape Widescreen 16:9)
             screenBox.classList.remove('is-vertical-cinema');
             screenBox.classList.add('aspect-video');
         }
@@ -1394,7 +1534,6 @@ function setCinemaVideoSource(targetUrl, posterUrl, autoPlay = false) {
     const videoEl = document.getElementById('atelier-cinema-video');
     if (!videoEl) return;
 
-    // تحرير ذاكرة روابط Blob السابقة لمنع تسريب الذاكرة
     if (activeBlobUrl && activeBlobUrl.startsWith('blob:') && activeBlobUrl !== targetUrl) {
         try { URL.revokeObjectURL(activeBlobUrl); } catch (e) {}
     }
@@ -1402,10 +1541,8 @@ function setCinemaVideoSource(targetUrl, posterUrl, autoPlay = false) {
         activeBlobUrl = targetUrl;
     }
 
-    // إيقاف أي تشغيل حالي فوراً قبل تغيير المصدر
     videoEl.pause();
 
-    // إزالة أي وسوم source فرعية قديمة قد تسبب تضارب أو تعليق في محرك HTML5
     while (videoEl.firstChild) {
         if (videoEl.firstChild.nodeName === 'SOURCE') {
             videoEl.removeChild(videoEl.firstChild);
@@ -1422,7 +1559,6 @@ function setCinemaVideoSource(targetUrl, posterUrl, autoPlay = false) {
         }
     }
 
-    // مراقبة أبعاد الفيديو فور تحميل البيانات الوصفية (Metadata) لتحديد ما إذا كان عمودياً أو أفقياً
     if (!videoEl._orientationBound) {
         videoEl._orientationBound = true;
         videoEl.addEventListener('loadedmetadata', () => {
@@ -1435,35 +1571,12 @@ function setCinemaVideoSource(targetUrl, posterUrl, autoPlay = false) {
         videoEl.load();
     }
 
-    // فحص فوري إن كانت الأبعاد متوفرة مسبقاً في الذاكرة المؤقتة
     if (videoEl.videoWidth && videoEl.videoHeight) {
         checkAndUpdateVideoOrientation(videoEl);
     }
 
-    const playIcon = document.getElementById('cinema-play-icon');
-    const playText = document.getElementById('cinema-play-text');
-    const centerWrap = document.getElementById('cinema-video-center-btn-wrap');
-    const centerIcon = document.getElementById('cinema-video-center-icon');
-
-    const updatePlayingUI = () => {
-        if (playIcon) playIcon.innerText = '⏸';
-        if (playText) playText.innerText = 'إيقاف مؤقت';
-        if (centerWrap) {
-            centerWrap.classList.remove('opacity-100', 'pointer-events-auto');
-            centerWrap.classList.add('opacity-0', 'pointer-events-none');
-        }
-        if (centerIcon) centerIcon.innerText = '⏸';
-    };
-
-    const updatePausedUI = () => {
-        if (playIcon) playIcon.innerText = '▶';
-        if (playText) playText.innerText = 'مشاهدة الحرفة';
-        if (centerWrap) {
-            centerWrap.classList.remove('opacity-0', 'pointer-events-none');
-            centerWrap.classList.add('opacity-100', 'pointer-events-auto');
-        }
-        if (centerIcon) centerIcon.innerText = '▶';
-    };
+    const updatePlayingUI = () => updateMotionUI(true);
+    const updatePausedUI = () => updateMotionUI(false);
 
     if (!videoEl._playPauseBound) {
         videoEl._playPauseBound = true;
@@ -1497,7 +1610,6 @@ function applyActiveCinemaContent(autoPlay = false) {
     const vid = currentCinemaVideos[activeCinemaIndex];
     if (!vid) return;
 
-    // إذا كان المقطع معرفاً مسبقاً بأنه عمودي أو أفقي نطبقه فوراً لتجنب أي وميض
     const screenBox = document.getElementById('cinema-screen-box');
     if (screenBox) {
         if (vid.isVertical === true) {
@@ -1521,39 +1633,66 @@ function applyActiveCinemaContent(autoPlay = false) {
     const pageIndicator = document.getElementById('cinema-video-page-indicator');
     const indicatorsContainer = document.getElementById('cinema-video-indicators');
 
-    if (liveBadge) liveBadge.innerText = vid.subtitle || 'حياكة يدوية • مشغل دار التطريز';
+    if (liveBadge) liveBadge.innerText = vid.subtitle || '🎬 سيناريو الحرفة التفاعلي • 7 مراحل';
     if (subtitleEl) subtitleEl.innerText = vid.subtitle || '✨ أصالة المشغل اليدوي';
-    if (titleEl) titleEl.innerText = vid.title || 'حكاية كل خيط تحفة.. وصبر يصنع الفخامة';
+    if (titleEl) titleEl.innerText = vid.title || 'من الخيط إلى التحفة الملكية.. رحلة حياكة السجاد بمسدس التطريز';
     if (quoteEl) quoteEl.innerText = vid.quote || '«كل سجادة تخرج من دار التطريز ليست مجرد غطاء للأرضية، بل لوحة فنية عريقة استغرقت مئات الساعات من الدقة والشغف لتمنح مساحتك روحاً دافئة ومتميزة لا تتكرر في أي مكان آخر.»';
-    if (captionEl) captionEl.innerText = vid.caption || 'توثيق حي لحركات الأنامل وشد الغرز اليدوية على الأنوال التقليدية';
+    if (captionEl) captionEl.innerText = vid.caption || 'توثيق حي لحركات الأنامل وتطريز السجاد بمسدس الحياكة اليدوي';
 
-    if (hoursEl && vid.stats) hoursEl.innerText = vid.stats.hours || '+500';
-    if (materialEl && vid.stats) materialEl.innerText = vid.stats.material || '100%';
-    if (knotsEl && vid.stats) knotsEl.innerText = vid.stats.knots || '120K';
+    if (hoursEl && vid.stats) hoursEl.innerText = vid.stats.hours || '+70 ساعة';
+    if (materialEl && vid.stats) materialEl.innerText = vid.stats.material || '100% صوف';
+    if (knotsEl && vid.stats) knotsEl.innerText = vid.stats.knots || '+80K غرزة';
 
-    // تحميل الفيديو والمصدر الصحيح دون أي وسوم source معارضة
-    const defaultFallbackVideo = "https://upload.wikimedia.org/wikipedia/commons/1/13/Weaving_Carpet_at_Lachen.webm";
-    const posterUrl = vid.posterUrl || '../images/craft_video_poster.jpg';
+    const visualStage = document.getElementById('cinema-visual-stage');
+    const stageImg = document.getElementById('cinema-stage-img');
+    const videoEl = document.getElementById('atelier-cinema-video');
+    const posterUrl = resolveAssetPath(vid.posterUrl || vid.imgUrl || 'images/step1_design.jpg');
 
     const ambientBackdrop = document.getElementById('cinema-ambient-backdrop');
     if (ambientBackdrop && posterUrl) {
         ambientBackdrop.src = posterUrl;
     }
 
-    if (vid.videoUrl && vid.videoUrl.startsWith('idb://video_')) {
-        getVideoFromIndexedDB(vid.videoUrl).then(blobUrl => {
-            if (blobUrl) {
-                setCinemaVideoSource(blobUrl, posterUrl, autoPlay);
-            } else {
-                setCinemaVideoSource(defaultFallbackVideo, posterUrl, autoPlay);
-            }
-        }).catch(() => {
-            setCinemaVideoSource(defaultFallbackVideo, posterUrl, autoPlay);
-        });
-    } else if (vid.videoUrl) {
-        setCinemaVideoSource(vid.videoUrl, posterUrl, autoPlay);
+    // التحقق مما إذا كان هناك فيديو حقيقي مرفوع من الأدمن
+    const hasActualVideo = vid.videoUrl && 
+                           vid.videoUrl.trim() !== '' && 
+                           !vid.videoUrl.includes('wikimedia');
+
+    if (hasActualVideo) {
+        if (visualStage) visualStage.classList.add('hidden');
+        if (videoEl) videoEl.classList.remove('hidden');
+
+        if (vid.videoUrl.startsWith('idb://video_')) {
+            getVideoFromIndexedDB(vid.videoUrl).then(blobUrl => {
+                if (blobUrl) {
+                    setCinemaVideoSource(blobUrl, posterUrl, autoPlay);
+                } else {
+                    setCinemaVideoSource(null, posterUrl, false);
+                }
+            }).catch(() => {
+                setCinemaVideoSource(null, posterUrl, false);
+            });
+        } else {
+            setCinemaVideoSource(vid.videoUrl, posterUrl, autoPlay);
+        }
     } else {
-        setCinemaVideoSource(defaultFallbackVideo, posterUrl, autoPlay);
+        if (videoEl) {
+            videoEl.pause();
+            videoEl.classList.add('hidden');
+        }
+        if (visualStage) visualStage.classList.remove('hidden');
+        if (stageImg) {
+            stageImg.classList.remove('scale-105');
+            stageImg.src = posterUrl;
+        }
+
+        setMotionProgressBar(0);
+
+        if (autoPlay || isMotionStoryPlaying) {
+            startMotionStory();
+        } else {
+            updateMotionUI(false);
+        }
     }
 
     // تحديث الترقيم والمؤشرات للزائر
@@ -1569,22 +1708,22 @@ function applyActiveCinemaContent(autoPlay = false) {
 }
 
 // دالة تحريك وانزلاق البطاقة بالكامل لليمين أو اليسار
-function navigateCinemaScene(direction, targetIdx, autoPlay = false) {
+function navigateCinemaScene(direction, targetIdx, autoPlay = null) {
     if (!currentCinemaVideos || currentCinemaVideos.length <= 1) return;
     if (isCinemaTransitioning) return;
     if (targetIdx === activeCinemaIndex) return;
 
+    const shouldAutoPlay = autoPlay !== null ? autoPlay : isMotionStoryPlaying;
     isCinemaTransitioning = true;
     const card = document.getElementById('cinema-scene-card');
 
     if (!card) {
         activeCinemaIndex = targetIdx;
-        applyActiveCinemaContent(autoPlay);
+        applyActiveCinemaContent(shouldAutoPlay);
         isCinemaTransitioning = false;
         return;
     }
 
-    // تحديد صنف الخروج والدخول بناءً على اتجاه التنقل
     const outClass = direction === 'next' ? 'cinema-slide-out-left' : 'cinema-slide-out-right';
     const inClass = direction === 'next' ? 'cinema-slide-in-right' : 'cinema-slide-in-left';
 
@@ -1592,19 +1731,15 @@ function navigateCinemaScene(direction, targetIdx, autoPlay = false) {
     card.classList.add(outClass);
 
     setTimeout(() => {
-        // تحديث الفهرس والمحتوى أثناء انتقال البطاقة خارج الإطار
         activeCinemaIndex = targetIdx;
-        applyActiveCinemaContent(autoPlay);
+        applyActiveCinemaContent(shouldAutoPlay);
 
-        // وضع البطاقة في موضع البداية للجهة المعاكسة فورياً بدون انتقال مرئي
         card.style.transition = 'none';
         card.classList.remove(outClass);
         card.classList.add(inClass);
 
-        // إجبار المتصفح على رسم الموضع المبدئي
         void card.offsetWidth;
 
-        // إعادة تفعيل الانتقال السلس والانزلاق إلى موضع الاستقرار
         card.style.transition = '';
         card.classList.remove(inClass);
         card.classList.add('cinema-slide-active');
@@ -1623,19 +1758,19 @@ function applyActiveCinemaVideo(autoPlay = false) {
 window.selectCinemaVideo = function(idx) {
     if (idx === activeCinemaIndex) return;
     const direction = idx > activeCinemaIndex ? 'next' : 'prev';
-    navigateCinemaScene(direction, idx, false);
+    navigateCinemaScene(direction, idx, isMotionStoryPlaying);
 };
 
 window.prevCinemaVideo = function() {
     if (!currentCinemaVideos || currentCinemaVideos.length <= 1) return;
     const prevIdx = (activeCinemaIndex - 1 + currentCinemaVideos.length) % currentCinemaVideos.length;
-    navigateCinemaScene('prev', prevIdx, false);
+    navigateCinemaScene('prev', prevIdx, isMotionStoryPlaying);
 };
 
 window.nextCinemaVideo = function() {
     if (!currentCinemaVideos || currentCinemaVideos.length <= 1) return;
     const nextIdx = (activeCinemaIndex + 1) % currentCinemaVideos.length;
-    navigateCinemaScene('next', nextIdx, false);
+    navigateCinemaScene('next', nextIdx, isMotionStoryPlaying);
 };
 
 // مستمعات السحب باللمس على الجوال (Touch Swipe Support)
@@ -1655,39 +1790,34 @@ function initCinemaSwipeGestures() {
         const deltaX = e.changedTouches[0].clientX - cinemaTouchStartX;
         const deltaY = e.changedTouches[0].clientY - cinemaTouchStartY;
 
-        // التحقق من أن السحب أفقي ومقصود (أكبر من 40 بكسل وأكبر من السحب الرأسي)
         if (Math.abs(deltaX) > 40 && Math.abs(deltaX) > Math.abs(deltaY) * 1.2) {
             if (deltaX < 0) {
-                // سحب لليسار: الانتقال للمشهد التالي
                 window.nextCinemaVideo();
             } else {
-                // سحب لليمين: الانتقال للمشهد السابق
                 window.prevCinemaVideo();
             }
         }
     }, { passive: true });
 }
 
-// 3. بناء كروت مراحل الحرفة ديناميكياً
+// 3. بناء كروت مراحل الحرفة ديناميكياً (7 مراحل متكاملة)
 function renderDynamicJourney(steps) {
     const grid = document.getElementById('dynamic-journey-grid');
     if (!grid || !steps || steps.length === 0) return;
 
-    // ضبط أعمدة الشبكة بحسب عدد الخطوات
-    const colsClass = steps.length <= 3 ? 'lg:grid-cols-3' : 'lg:grid-cols-4';
-    grid.className = `grid grid-cols-1 sm:grid-cols-2 ${colsClass} gap-4 sm:gap-5 md:gap-6`;
+    grid.className = `grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5 md:gap-6`;
 
     grid.innerHTML = steps.map(step => `
-        <div class="journey-step-card flex flex-col">
-            <div class="relative w-full aspect-4/3 overflow-hidden bg-stone-100">
-                <img src="${step.imgUrl || '../images/step1_sketch.jpg'}" alt="${step.title}" class="journey-step-img w-full h-full object-cover" loading="lazy">
-                <span class="absolute top-2.5 right-2.5 px-2.5 py-1 bg-black/60 backdrop-blur-md text-amber-300 font-number font-black text-xs rounded-lg border border-white/20 shadow-xs">
+        <div class="journey-step-card flex flex-col group">
+            <div class="relative w-full aspect-4/3 overflow-hidden bg-stone-100 rounded-t-xl sm:rounded-t-2xl">
+                <img src="${resolveAssetPath(step.imgUrl || 'images/step1_design.jpg')}" alt="${step.title}" class="journey-step-img w-full h-full object-cover transition-transform duration-700 group-hover:scale-108" loading="lazy">
+                <span class="absolute top-2.5 right-2.5 px-2.5 py-1 bg-black/70 backdrop-blur-md text-amber-300 font-number font-black text-xs rounded-lg border border-white/20 shadow-xs">
                     خطوة ${step.stepNum || '01'}
                 </span>
             </div>
-            <div class="p-4 sm:p-5 flex-1 flex flex-col justify-between gap-2">
+            <div class="p-4 sm:p-5 flex-1 flex flex-col justify-between gap-2.5 bg-white border border-t-0 border-stone-200/80 rounded-b-xl sm:rounded-b-2xl shadow-2xs group-hover:shadow-md transition-shadow duration-300">
                 <div>
-                    <h3 class="font-bold text-stone-900 text-sm sm:text-base mb-1">
+                    <h3 class="font-bold text-stone-900 text-sm sm:text-base mb-1.5 group-hover:text-amber-800 transition-colors">
                         ${step.title}
                     </h3>
                     <p class="text-stone-600 text-xs leading-relaxed">
@@ -1695,7 +1825,7 @@ function renderDynamicJourney(steps) {
                     </p>
                 </div>
                 ${step.tag ? `
-                <span class="text-[11px] font-bold text-brand flex items-center gap-1 mt-1">
+                <span class="text-[11px] font-bold text-amber-800 bg-amber-50/80 border border-amber-200/50 px-2 py-1 rounded-lg flex items-center gap-1 mt-1 w-fit">
                     <span>${step.tag}</span>
                 </span>
                 ` : ''}
@@ -1715,7 +1845,7 @@ function renderDynamicLookbook(items) {
         return `
             <div class="lookbook-card flex flex-col group">
                 <div class="relative w-full aspect-4/3 overflow-hidden bg-stone-100">
-                    <img src="${it.imgUrl || '../images/client_room1.jpg'}" alt="${it.carpetTitle}" class="w-full h-full object-cover group-hover:scale-105 transition duration-700" loading="lazy">
+                    <img src="${resolveAssetPath(it.imgUrl || 'images/client_room1.jpg')}" alt="${it.carpetTitle}" class="w-full h-full object-cover group-hover:scale-105 transition duration-700" loading="lazy">
                     <span class="absolute top-3 right-3 px-3 py-1 bg-black/65 backdrop-blur-md text-white font-bold text-xs rounded-full border border-white/20 shadow-md">
                         ${it.location || 'مسقط'}
                     </span>
@@ -1746,29 +1876,27 @@ function renderDynamicLookbook(items) {
 // ==========================================
 window.handleCinemaVideoEnded = function() {
     const video = document.getElementById('atelier-cinema-video');
-    const icon = document.getElementById('cinema-play-icon');
-    const text = document.getElementById('cinema-play-text');
-    const centerWrap = document.getElementById('cinema-video-center-btn-wrap');
-    const centerIcon = document.getElementById('cinema-video-center-icon');
     if (video) {
         video.pause();
         video.currentTime = 0;
     }
-    if (icon) icon.innerText = '▶';
-    if (text) text.innerText = 'إعادة المشاهدة';
-    if (centerWrap) {
-        centerWrap.classList.remove('opacity-0', 'pointer-events-none');
-        centerWrap.classList.add('opacity-100', 'pointer-events-auto');
-    }
-    if (centerIcon) centerIcon.innerText = '▶';
+    updateMotionUI(false);
 };
 
 window.toggleCinemaVideoPlay = function() {
+    const vid = currentCinemaVideos && currentCinemaVideos[activeCinemaIndex];
+    const hasActualVideo = vid && vid.videoUrl && vid.videoUrl.trim() !== '' && !vid.videoUrl.includes('wikimedia');
+
+    if (!hasActualVideo) {
+        if (isMotionStoryPlaying) {
+            pauseMotionStory();
+        } else {
+            startMotionStory();
+        }
+        return;
+    }
+
     const video = document.getElementById('atelier-cinema-video');
-    const icon = document.getElementById('cinema-play-icon');
-    const text = document.getElementById('cinema-play-text');
-    const centerWrap = document.getElementById('cinema-video-center-btn-wrap');
-    const centerIcon = document.getElementById('cinema-video-center-icon');
     if (!video) return;
 
     if (video.paused) {
@@ -1779,56 +1907,45 @@ window.toggleCinemaVideoPlay = function() {
             applyActiveCinemaContent(false);
         }
 
-        const onPlaying = () => {
-            if (icon) icon.innerText = '⏸';
-            if (text) text.innerText = 'إيقاف مؤقت';
-            if (centerWrap) {
-                centerWrap.classList.remove('opacity-100', 'pointer-events-auto');
-                centerWrap.classList.add('opacity-0', 'pointer-events-none');
-            }
-            if (centerIcon) centerIcon.innerText = '⏸';
-        };
+        const onPlaying = () => updateMotionUI(true);
 
         const playPromise = video.play();
         if (playPromise !== undefined) {
             playPromise.then(onPlaying).catch(() => {
-                // إذا رفض المتصفح الصوت، نكتمه ونشغل تلقائياً
                 video.muted = true;
                 video.play().then(onPlaying).catch(() => {});
             });
         }
     } else {
         video.pause();
-        if (icon) icon.innerText = '▶';
-        if (text) text.innerText = 'مشاهدة الحرفة';
-        if (centerWrap) {
-            centerWrap.classList.remove('opacity-0', 'pointer-events-none');
-            centerWrap.classList.add('opacity-100', 'pointer-events-auto');
-        }
-        if (centerIcon) centerIcon.innerText = '▶';
+        updateMotionUI(false);
     }
 };
 
 window.toggleCinemaVideoAudio = function() {
-    const video = document.getElementById('atelier-cinema-video');
+    isCinemaMuted = !isCinemaMuted;
     const icon = document.getElementById('cinema-audio-icon');
-    if (!video) return;
-
-    video.muted = !video.muted;
     if (icon) {
-        icon.innerText = video.muted ? '🔇' : '🔊';
+        icon.innerText = isCinemaMuted ? '🔇' : '🔊';
+    }
+    const video = document.getElementById('atelier-cinema-video');
+    if (video) {
+        video.muted = isCinemaMuted;
+    }
+    if (!isCinemaMuted) {
+        playCraftChime(activeCinemaIndex);
     }
 };
 
 window.toggleCinemaVideoFullscreen = function() {
-    const video = document.getElementById('atelier-cinema-video');
-    if (!video) return;
+    const box = document.getElementById('cinema-screen-box') || document.getElementById('atelier-cinema-video');
+    if (!box) return;
 
     if (!document.fullscreenElement) {
-        if (video.requestFullscreen) {
-            video.requestFullscreen();
-        } else if (video.webkitRequestFullscreen) {
-            video.webkitRequestFullscreen();
+        if (box.requestFullscreen) {
+            box.requestFullscreen();
+        } else if (box.webkitRequestFullscreen) {
+            box.webkitRequestFullscreen();
         }
     } else {
         if (document.exitFullscreen) {

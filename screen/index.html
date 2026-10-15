@@ -427,22 +427,33 @@
                     <div class="lg:col-span-7 xl:col-span-8 flex flex-col gap-3">
                         <div id="cinema-screen-box" class="relative cinema-screen-box aspect-video group">
                             <!-- خلفية بلورية مضيئة تعكس ألوان الفيديو وتملأ الجوانب للفيديوهات العمودية (Ambient Glow Mode) -->
+                            <!-- خلفية بلورية مضيئة تعكس ألوان الفيديو والمشاهد (Ambient Glow Mode) -->
                             <div id="cinema-ambient-wrap" class="absolute inset-0 overflow-hidden pointer-events-none opacity-40 transition-opacity duration-700">
-                                <img id="cinema-ambient-backdrop" src="../images/craft_video_poster.jpg" alt="" class="w-full h-full object-cover blur-2xl scale-125">
+                                <img id="cinema-ambient-backdrop" src="../images/step3_tufting.jpg" alt="" class="w-full h-full object-cover blur-2xl scale-125">
+                            </div>
+
+                            <!-- مسرح المشاهد البصرية التفاعلية لموشن جرافيك الحرفة -->
+                            <div id="cinema-visual-stage" class="absolute inset-0 z-10 overflow-hidden flex items-center justify-center">
+                                <img id="cinema-stage-img" src="../images/step1_design.jpg" alt="مشهد الحرفة" class="w-full h-full object-cover transition-all duration-700 ease-out">
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-black/30 pointer-events-none"></div>
                             </div>
 
                             <video 
                                 id="atelier-cinema-video"
-                                src="https://upload.wikimedia.org/wikipedia/commons/1/13/Weaving_Carpet_at_Lachen.webm"
                                 playsinline 
                                 muted 
-                                poster="../images/craft_video_poster.jpg" 
+                                poster="../images/step3_tufting.jpg" 
                                 preload="metadata"
                                 onclick="window.toggleCinemaVideoPlay()"
                                 onended="window.handleCinemaVideoEnded()"
-                                class="w-full h-full object-contain relative z-10 mx-auto transition-all duration-300 cursor-pointer">
+                                class="hidden w-full h-full object-contain relative z-15 mx-auto transition-all duration-300 cursor-pointer">
                                 متصفحك لا يدعم تشغيل الفيديو.
                             </video>
+
+                            <!-- شريط تقدم المشهد التفاعلي (Motion Progress) -->
+                            <div class="absolute top-0 inset-x-0 h-1 bg-white/20 z-30 overflow-hidden">
+                                <div id="cinema-story-progress-bar" class="h-full bg-gradient-to-r from-amber-500 to-amber-300 transition-all duration-300 w-0"></div>
+                            </div>
 
                             <!-- زر التشغيل الفاخر في منتصف الفيديو السينمائي متناغم مع لون الثيم -->
                             <div id="cinema-video-center-btn-wrap" class="absolute inset-0 z-20 flex items-center justify-center transition-all duration-300 opacity-100 pointer-events-auto">
@@ -451,23 +462,20 @@
                                     type="button" 
                                     onclick="window.toggleCinemaVideoPlay()" 
                                     class="luxury-play-center-btn w-16 h-16 sm:w-20 sm:h-20 rounded-full flex items-center justify-center text-2xl sm:text-3xl text-white cursor-pointer pointer-events-auto group/cinema-center"
-                                    title="بدء تشغيل الفيديو">
+                                    title="بدء تشغيل سيناريو الحرفة">
                                     <span id="cinema-video-center-icon" class="mr-[-3px] text-white group-hover/cinema-center:scale-110 transition-transform">▶</span>
                                 </button>
                             </div>
 
-                            <!-- طبقة التدرج الخافت -->
-                            <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/30 pointer-events-none"></div>
-
-                            <!-- شارة البث الحي من المشغل -->
+                            <!-- شارة البث الحي / السيناريو الحركي -->
                             <div class="absolute top-3 right-3 sm:top-4 sm:right-4 z-20 flex items-center gap-2">
                                 <span class="px-3 py-1 bg-black/60 backdrop-blur-md rounded-full text-amber-300 border border-amber-500/30 text-[11px] sm:text-xs font-bold flex items-center gap-1.5 shadow-md">
                                     <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                                    <span id="cinema-display-livebadge">حياكة يدوية • مشغل دار التطريز</span>
+                                    <span id="cinema-display-livebadge">🎬 سيناريو الحرفة التفاعلي • 7 مراحل</span>
                                 </span>
                             </div>
 
-                            <!-- أزرار التحكم بالفيديو في الأسفل -->
+                            <!-- أزرار التحكم في الأسفل -->
                             <div class="absolute bottom-3 inset-x-3 sm:bottom-4 sm:inset-x-4 z-20 flex items-center justify-between pointer-events-auto">
                                 <!-- زر التشغيل / الإيقاف المؤقت -->
                                 <button 
@@ -475,9 +483,9 @@
                                     type="button" 
                                     onclick="window.toggleCinemaVideoPlay()" 
                                     class="px-3.5 py-1.5 bg-black/70 hover:bg-black/90 text-white rounded-full backdrop-blur-md border border-white/25 text-xs sm:text-sm font-bold flex items-center gap-2 transition cursor-pointer hover:scale-105 shadow-md"
-                                    title="تشغيل / إيقاف الفيديو">
+                                    title="تشغيل / إيقاف العرض">
                                     <span id="cinema-play-icon">▶</span>
-                                    <span id="cinema-play-text">مشاهدة الحرفة</span>
+                                    <span id="cinema-play-text">مشاهدة رحلة الحرفة</span>
                                 </button>
 
                                 <!-- أزرار الصوت والتكبير -->
@@ -487,7 +495,7 @@
                                         type="button" 
                                         onclick="window.toggleCinemaVideoAudio()" 
                                         class="w-8 h-8 sm:w-9 sm:h-9 bg-black/70 hover:bg-black/90 text-white rounded-full backdrop-blur-md border border-white/25 flex items-center justify-center transition cursor-pointer hover:scale-105 shadow-md text-xs sm:text-sm" 
-                                        title="تشغيل / كتم الصوت">
+                                        title="تشغيل / كتم المؤثرات الصوتية">
                                         <span id="cinema-audio-icon">🔇</span>
                                     </button>
                                     <button 
@@ -501,19 +509,19 @@
                             </div>
                         </div>
 
-                        <!-- شريط التنقل والترقيم المريح بين فيديوهات المشغل -->
+                        <!-- شريط التنقل والترقيم المريح بين مشاهد الحرفة السبعة -->
                         <div id="cinema-video-nav" class="flex items-center justify-between px-3 py-2 rounded-xl bg-black/40 backdrop-blur-md border border-white/10 text-white text-xs">
-                            <button type="button" onclick="window.prevCinemaVideo()" class="px-3 py-1 rounded-lg bg-white/10 hover:bg-white/25 text-amber-200 text-xs font-bold transition flex items-center gap-1.5 cursor-pointer active:scale-95" title="المشهد السابق">
+                            <button type="button" onclick="window.prevCinemaVideo()" class="px-3 py-1 rounded-lg bg-white/10 hover:bg-white/25 text-amber-200 text-xs font-bold transition flex items-center gap-1.5 cursor-pointer active:scale-95" title="المرحلة السابقة">
                                 <span>▶</span>
                                 <span class="hidden sm:inline">السابق</span>
                             </button>
                             <div class="flex items-center gap-2">
-                                <span id="cinema-video-page-indicator" class="font-number font-black text-amber-300 text-xs sm:text-sm">فيديو 1 من 1</span>
+                                <span id="cinema-video-page-indicator" class="font-number font-black text-amber-300 text-xs sm:text-sm">مشهد 1 من 7</span>
                                 <div id="cinema-video-indicators" class="flex items-center gap-1.5">
                                     <!-- أزرار المؤشرات الدائرية التفاعلية -->
                                 </div>
                             </div>
-                            <button type="button" onclick="window.nextCinemaVideo()" class="px-3 py-1 rounded-lg bg-white/10 hover:bg-white/25 text-amber-200 text-xs font-bold transition flex items-center gap-1.5 cursor-pointer active:scale-95" title="المشهد التالي">
+                            <button type="button" onclick="window.nextCinemaVideo()" class="px-3 py-1 rounded-lg bg-white/10 hover:bg-white/25 text-amber-200 text-xs font-bold transition flex items-center gap-1.5 cursor-pointer active:scale-95" title="المرحلة التالية">
                                 <span class="hidden sm:inline">التالي</span>
                                 <span>◀</span>
                             </button>
@@ -523,9 +531,9 @@
                         <div class="flex items-center justify-between text-[11px] sm:text-xs text-stone-400 px-1">
                             <span class="flex items-center gap-1">
                                 <span class="text-amber-400">🧵</span>
-                                <span id="cinema-display-caption">توثيق حي لحركات الأنامل وشد الغرز اليدوية على الأنوال التقليدية</span>
+                                <span id="cinema-display-caption">توثيق حي لمراحل الحرفة: من شد الفريم ومسدس التطريز وحتى نحت الألياف والتغليف الملكي</span>
                             </span>
-                            <span class="text-stone-400 hidden sm:inline">جودة عالية HD</span>
+                            <span class="text-stone-400 hidden sm:inline">مشغل دار التطريز اليدوي</span>
                         </div>
                     </div>
 
@@ -533,33 +541,33 @@
                     <div class="lg:col-span-5 xl:col-span-4 flex flex-col gap-4">
                         <div>
                             <span id="cinema-display-subtitle" class="text-[11px] sm:text-xs font-black text-amber-400 tracking-wider uppercase bg-amber-950/60 border border-amber-500/30 px-2.5 py-1 rounded-full inline-block mb-2">
-                                ✨ أصالة المشغل اليدوي
+                                🎬 سيناريو الحرفة التفاعلي | المشغل اليدوي
                             </span>
                             <h2 id="cinema-display-title" class="font-royal-carpet text-xl sm:text-2xl md:text-3xl font-bold text-amber-100 leading-tight">
-                                حكاية كل خيط تحفة.. <br class="hidden sm:inline">وصبر يصنع الفخامة
+                                من الخيط إلى التحفة الملكية.. <br class="hidden sm:inline">رحلة حياكة السجاد بمسدس التطريز
                             </h2>
                         </div>
 
                         <!-- بطاقة الاقتباس الفاخرة -->
                         <div class="cinema-glass-card p-4 sm:p-5 relative">
                             <p id="cinema-display-quote" class="text-stone-200 text-xs sm:text-sm leading-relaxed font-medium">
-                                «كل سجادة تخرج من دار التطريز ليست مجرد غطاء للأرضية، بل لوحة فنية عريقة استغرقت مئات الساعات من الدقة والشغف لتمنح مساحتك روحاً دافئة ومتميزة لا تتكرر في أي مكان آخر.»
+                                «تبدأ كل قطعة باختبار الأبعاد وانتقاء أرقى خيوط الصوف، وتمر بالحياكة بمسدس التطريز على الفريم، إلى تثبيت الغراء ونحت التفاصيل الدقيقة بماكينة الحلاقة، لتصلك تحفة فنية مؤمنة ومغلفة تليق بقيمة منزلك.»
                             </p>
                         </div>
 
                         <!-- أرقام المشغل القياسية -->
                         <div class="grid grid-cols-3 gap-2 sm:gap-2.5 text-center">
                             <div class="cinema-glass-card p-2.5 sm:p-3 flex flex-col items-center justify-center">
-                                <span id="cinema-stat-hours" class="text-amber-400 font-number text-base sm:text-lg font-black">+500</span>
-                                <span class="text-stone-300 text-[10px] sm:text-[11px] font-bold">ساعة حياكة</span>
+                                <span id="cinema-stat-hours" class="text-amber-400 font-number text-base sm:text-lg font-black">+70</span>
+                                <span class="text-stone-300 text-[10px] sm:text-[11px] font-bold">ساعة إتقان</span>
                             </div>
                             <div class="cinema-glass-card p-2.5 sm:p-3 flex flex-col items-center justify-center">
                                 <span id="cinema-stat-material" class="text-amber-400 font-number text-base sm:text-lg font-black">100%</span>
-                                <span class="text-stone-300 text-[10px] sm:text-[11px] font-bold">صوف وحرير</span>
+                                <span class="text-stone-300 text-[10px] sm:text-[11px] font-bold">صوف طبيعي</span>
                             </div>
                             <div class="cinema-glass-card p-2.5 sm:p-3 flex flex-col items-center justify-center">
-                                <span id="cinema-stat-knots" class="text-amber-400 font-number text-base sm:text-lg font-black">120K</span>
-                                <span class="text-stone-300 text-[10px] sm:text-[11px] font-bold">عقدة متراصة</span>
+                                <span id="cinema-stat-knots" class="text-amber-400 font-number text-base sm:text-lg font-black">+80K</span>
+                                <span class="text-stone-300 text-[10px] sm:text-[11px] font-bold">غرزة بمسدس الحياكة</span>
                             </div>
                         </div>
 
@@ -580,7 +588,7 @@
         </section>
 
         <!-- ========================================== -->
-        <!-- 3. مسار «من الخيط إلى التحفة» (4 خطوات للإنتاج) -->
+        <!-- 3. مسار «من الخيط إلى التحفة» (7 خطوات للإنتاج) -->
         <!-- ========================================== -->
         <section class="my-12 sm:my-16" dir="rtl" aria-label="مراحل إنتاج السجاد اليدوي">
             <!-- رأس القسم -->
@@ -589,20 +597,20 @@
                     مراحل الحرفة الدقيقة
                 </span>
                 <h2 class="font-royal-carpet text-2xl sm:text-3xl md:text-4xl font-bold text-stone-900 leading-tight">
-                    من الخيط إلى التحفة.. كيف نبتكر سجادتك؟
+                    من الخيط إلى التحفة.. كيف نصنع سجادتك من الصفر؟
                 </h2>
                 <p class="text-xs sm:text-sm text-stone-600 mt-2 leading-relaxed">
-                    رحلة فنية ملهمة تمر بها كل قطعة بين أيدي خبرائنا منذ اللحظة الأولى للرسم وحتى وصولها معطرة ومغلفة إلى باب منزلك.
+                    رحلة صناعة يدوية دقيقة من الألف إلى الياء، بمسدس التطريز على الفريم القماشي مروراً بالنحت المجهري 3D وحتى التغليف الملكي المؤمن.
                 </p>
             </div>
 
-            <!-- شبكة الكروت الأربعة -->
-            <div id="dynamic-journey-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 md:gap-6">
+            <!-- شبكة الكروت السبعة المتجاوبة -->
+            <div id="dynamic-journey-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5 md:gap-6">
                 
                 <!-- الخطوة 1 -->
-                <div class="journey-step-card flex flex-col">
+                <div class="journey-step-card flex flex-col group">
                     <div class="relative w-full aspect-4/3 overflow-hidden bg-stone-100">
-                        <img src="../images/step1_sketch.jpg" alt="المرحلة الأولى: الرسم وتوليد المخطط" class="journey-step-img w-full h-full object-cover" loading="lazy">
+                        <img src="../images/step1_design.jpg" alt="المرحلة الأولى: تجهيز التصميم وألوان الصوف" class="journey-step-img w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy">
                         <span class="absolute top-2.5 right-2.5 px-2.5 py-1 bg-black/60 backdrop-blur-md text-amber-300 font-number font-black text-xs rounded-lg border border-white/20 shadow-xs inline-flex items-center justify-center leading-none text-center select-none pt-1.5 pb-1">
                             خطوة 01
                         </span>
@@ -610,22 +618,22 @@
                     <div class="p-4 sm:p-5 flex-1 flex flex-col justify-between gap-2">
                         <div>
                             <h3 class="font-bold text-stone-900 text-sm sm:text-base mb-1">
-                                الرسم والتخطيط الرقمي
+                                تجهيز التصميم وانتقاء ألوان الصوف
                             </h3>
                             <p class="text-stone-600 text-xs leading-relaxed">
-                                تحويل رؤيتك الخاصة أو الزخارف التراثية إلى مخطط خيوط دقيق يحدد درجات الألوان وتوزيع العُقد وسماكة الحياكة.
+                                تحويل رؤيتك وأبعاد القطعة المطلوبة إلى مخطط هندسي دقيق، مع انتقاء وتطابق ألوان الصوف الطبيعي الفاخر بعناية حسب طلبك تماماً.
                             </p>
                         </div>
                         <span class="text-[11px] font-bold text-brand flex items-center gap-1 mt-1">
-                            <span>📐 دقة هندسية ومطابقة تامة</span>
+                            <span>🎨 مطابقة الألوان ودقة الأبعاد</span>
                         </span>
                     </div>
                 </div>
 
                 <!-- الخطوة 2 -->
-                <div class="journey-step-card flex flex-col">
+                <div class="journey-step-card flex flex-col group">
                     <div class="relative w-full aspect-4/3 overflow-hidden bg-stone-100">
-                        <img src="../images/step2_materials.jpg" alt="المرحلة الثانية: انتقاء أجود الخامات الطبيعية" class="journey-step-img w-full h-full object-cover" loading="lazy">
+                        <img src="../images/step2_frame.jpg" alt="المرحلة الثانية: شد القماش ورسم المخطط على الفريم" class="journey-step-img w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy">
                         <span class="absolute top-2.5 right-2.5 px-2.5 py-1 bg-black/60 backdrop-blur-md text-amber-300 font-number font-black text-xs rounded-lg border border-white/20 shadow-xs inline-flex items-center justify-center leading-none text-center select-none pt-1.5 pb-1">
                             خطوة 02
                         </span>
@@ -633,22 +641,22 @@
                     <div class="p-4 sm:p-5 flex-1 flex flex-col justify-between gap-2">
                         <div>
                             <h3 class="font-bold text-stone-900 text-sm sm:text-base mb-1">
-                                انتقاء الخامات الطبيعية
+                                شد القماش ورسم المخطط على الفريم
                             </h3>
                             <p class="text-stone-600 text-xs leading-relaxed">
-                                غزل يدوي لأجود أنواع الصوف الطبيعي 100% وخيوط الحرير المختارة بعناية بأصباغ نباتية ثابتة لبريق يدوم لأجيال.
+                                تثبيت قماش التفتنج الأساسي وشده بإحكام على فريم خشبي متين، ثم رسم التصميم بالمليمتر لضمان انسيابية وتناسق كافة الخطوط والزخارف.
                             </p>
                         </div>
                         <span class="text-[11px] font-bold text-amber-700 flex items-center gap-1 mt-1">
-                            <span>🧶 صوف طبيعي وحرير نقي</span>
+                            <span>📐 شد مشدود ورسم مليمتر فائق الدقة</span>
                         </span>
                     </div>
                 </div>
 
                 <!-- الخطوة 3 -->
-                <div class="journey-step-card flex flex-col">
+                <div class="journey-step-card flex flex-col group">
                     <div class="relative w-full aspect-4/3 overflow-hidden bg-stone-100">
-                        <img src="../images/step3_weaving.jpg" alt="المرحلة الثالثة: الحياكة والتطريز اليدوي" class="journey-step-img w-full h-full object-cover" loading="lazy">
+                        <img src="../images/step3_tufting.jpg" alt="المرحلة الثالثة: تجهيز مسدس التطريز وبدء الحياكة" class="journey-step-img w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy">
                         <span class="absolute top-2.5 right-2.5 px-2.5 py-1 bg-black/60 backdrop-blur-md text-amber-300 font-number font-black text-xs rounded-lg border border-white/20 shadow-xs inline-flex items-center justify-center leading-none text-center select-none pt-1.5 pb-1">
                             خطوة 03
                         </span>
@@ -656,22 +664,22 @@
                     <div class="p-4 sm:p-5 flex-1 flex flex-col justify-between gap-2">
                         <div>
                             <h3 class="font-bold text-stone-900 text-sm sm:text-base mb-1">
-                                الحياكة والعقد اليدوي
+                                تجهيز مسدس التطريز وبدء الحياكة
                             </h3>
                             <p class="text-stone-600 text-xs leading-relaxed">
-                                شد الخيوط آلاف المرات بإبر الغزل اليدوي على أنوال مخصصة، لبناء طبقة صوفية كثيفة وثقيلة تمنح دفئاً وفخامة حقيقية.
+                                تجهيز مسدس التطريز الكهربائي والمقصات والملاقط المتخصصة، وضخ آلاف غرز الصوف المتراصة لصناعة كثافة مخملية سميكة وفائقة الدفء.
                             </p>
                         </div>
                         <span class="text-[11px] font-bold text-brand flex items-center gap-1 mt-1">
-                            <span>🪡 مئات الساعات من الصبر</span>
+                            <span>🔫 حياكة بمسدس التطريز وكثافة غرز فاخرة</span>
                         </span>
                     </div>
                 </div>
 
                 <!-- الخطوة 4 -->
-                <div class="journey-step-card flex flex-col">
+                <div class="journey-step-card flex flex-col group">
                     <div class="relative w-full aspect-4/3 overflow-hidden bg-stone-100">
-                        <img src="../images/step4_finishing.jpg" alt="المرحلة الرابعة: الصقل والتشطيب الملكي" class="journey-step-img w-full h-full object-cover" loading="lazy">
+                        <img src="../images/step4_glue.jpg" alt="المرحلة الرابعة: طلاء الغراء الخلفي لتثبيت الصوف" class="journey-step-img w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy">
                         <span class="absolute top-2.5 right-2.5 px-2.5 py-1 bg-black/60 backdrop-blur-md text-amber-300 font-number font-black text-xs rounded-lg border border-white/20 shadow-xs inline-flex items-center justify-center leading-none text-center select-none pt-1.5 pb-1">
                             خطوة 04
                         </span>
@@ -679,14 +687,83 @@
                     <div class="p-4 sm:p-5 flex-1 flex flex-col justify-between gap-2">
                         <div>
                             <h3 class="font-bold text-stone-900 text-sm sm:text-base mb-1">
-                                الصقل والتشطيب الملكي
+                                طلاء الغراء الخلفي لتثبيت الصوف
                             </h3>
                             <p class="text-stone-600 text-xs leading-relaxed">
-                                حلاقة دقيقة ونحت الحواف بالمقصات المنحنية لإبراز الأبعاد ثلاثية الأبعاد، وتثبيت المرايا والفحص النهائي لشهادة الأصالة.
+                                وضع طبقة متجانسة من غراء اللاتكس المقوى على الوجه الخلفي ليتغلغل في جذور الخيوط ويضمن تماسكاً حديدياً وثباتاً يدوم لعشرات السنين.
+                            </p>
+                        </div>
+                        <span class="text-[11px] font-bold text-amber-800 flex items-center gap-1 mt-1">
+                            <span>🛡️ تماسك حديدي ومتانة تدوم لأجيال</span>
+                        </span>
+                    </div>
+                </div>
+
+                <!-- الخطوة 5 -->
+                <div class="journey-step-card flex flex-col group">
+                    <div class="relative w-full aspect-4/3 overflow-hidden bg-stone-100">
+                        <img src="../images/step5_carving.jpg" alt="المرحلة الخامسة: النحت بماكينة حلاقة الصوف" class="journey-step-img w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy">
+                        <span class="absolute top-2.5 right-2.5 px-2.5 py-1 bg-black/60 backdrop-blur-md text-amber-300 font-number font-black text-xs rounded-lg border border-white/20 shadow-xs inline-flex items-center justify-center leading-none text-center select-none pt-1.5 pb-1">
+                            خطوة 05
+                        </span>
+                    </div>
+                    <div class="p-4 sm:p-5 flex-1 flex flex-col justify-between gap-2">
+                        <div>
+                            <h3 class="font-bold text-stone-900 text-sm sm:text-base mb-1">
+                                النحت بماكينة حلاقة الصوف (3D Carving)
+                            </h3>
+                            <p class="text-stone-600 text-xs leading-relaxed">
+                                أدق مراحل الحرفة؛ نستخدم ماكينات حلاقة وتشذيب الصوف المجهرية لفصل الألوان وحفر الحواف، مما يمنح السجادة عمقاً ثلاثي الأبعاد ساحراً.
                             </p>
                         </div>
                         <span class="text-[11px] font-bold text-emerald-700 flex items-center gap-1 mt-1">
-                            <span>✨ بروز ثلاثي الأبعاد وشهادة جودة</span>
+                            <span>✂️ صقل ثلاثي الأبعاد وبروز حواف فني</span>
+                        </span>
+                    </div>
+                </div>
+
+                <!-- الخطوة 6 -->
+                <div class="journey-step-card flex flex-col group">
+                    <div class="relative w-full aspect-4/3 overflow-hidden bg-stone-100">
+                        <img src="../images/step6_finishing.jpg" alt="المرحلة السادسة: تركيب القماش الخلفي والكنس العميق" class="journey-step-img w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy">
+                        <span class="absolute top-2.5 right-2.5 px-2.5 py-1 bg-black/60 backdrop-blur-md text-amber-300 font-number font-black text-xs rounded-lg border border-white/20 shadow-xs inline-flex items-center justify-center leading-none text-center select-none pt-1.5 pb-1">
+                            خطوة 06
+                        </span>
+                    </div>
+                    <div class="p-4 sm:p-5 flex-1 flex flex-col justify-between gap-2">
+                        <div>
+                            <h3 class="font-bold text-stone-900 text-sm sm:text-base mb-1">
+                                تركيب القماش الخلفي والكنس العميق
+                            </h3>
+                            <p class="text-stone-600 text-xs leading-relaxed">
+                                إلصاق البطانة الخلفية المانعة للانزلاق بأشرطة التثبيت المحبوكة، والقيام بالكنس والتمشيط الدقيق لإزالة الوبر وإبراز بريق الصوف الناعم.
+                            </p>
+                        </div>
+                        <span class="text-[11px] font-bold text-teal-800 flex items-center gap-1 mt-1">
+                            <span>🧹 بطانة فاخرة مانعة للانزلاق ونعومة مخملية</span>
+                        </span>
+                    </div>
+                </div>
+
+                <!-- الخطوة 7 -->
+                <div class="journey-step-card flex flex-col group">
+                    <div class="relative w-full aspect-4/3 overflow-hidden bg-stone-100">
+                        <img src="../images/step7_packaging.jpg" alt="المرحلة السابعة: التغليف الملكي والشحن المؤمّن" class="journey-step-img w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy">
+                        <span class="absolute top-2.5 right-2.5 px-2.5 py-1 bg-black/60 backdrop-blur-md text-amber-300 font-number font-black text-xs rounded-lg border border-white/20 shadow-xs inline-flex items-center justify-center leading-none text-center select-none pt-1.5 pb-1">
+                            خطوة 07
+                        </span>
+                    </div>
+                    <div class="p-4 sm:p-5 flex-1 flex flex-col justify-between gap-2">
+                        <div>
+                            <h3 class="font-bold text-stone-900 text-sm sm:text-base mb-1">
+                                التغليف الملكي والشحن المؤمّن
+                            </h3>
+                            <p class="text-stone-600 text-xs leading-relaxed">
+                                لف السجادة بأغلفة واقية عازلة مع شريط الحرير الذهبي وشهادة الأصالة، وتأمينها داخل صندوق شحن فاخر لتصلك بسلامة تامة ورونق ملكي.
+                            </p>
+                        </div>
+                        <span class="text-[11px] font-bold text-amber-700 flex items-center gap-1 mt-1">
+                            <span>📦 تغليف هدايا ملكي وشحن مؤمّن لباب بيتك</span>
                         </span>
                     </div>
                 </div>

@@ -1532,7 +1532,7 @@ export function getLocalShowcaseSettings() {
         const stored = localStorage.getItem('tatr_showcase_settings');
         if (stored) {
             const parsed = JSON.parse(stored);
-            if (parsed && Array.isArray(parsed.marqueeItems) && parsed.marqueeItems.length > 0) {
+            if (parsed && parsed.version === 2 && Array.isArray(parsed.journeySteps) && parsed.journeySteps.length >= 7) {
                 return parsed;
             }
         }
