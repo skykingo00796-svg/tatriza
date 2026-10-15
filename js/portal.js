@@ -75,7 +75,8 @@ import {
 import { 
     openTatrizaStudioModal, 
     closeTatrizaStudioModal, 
-    initStudioEvents 
+    initStudioEvents,
+    initStudioPresetsCloudSync
 } from './studio.js?v=3.0';
 
 import { getVideoFromIndexedDB } from './firebase-public.js';
@@ -243,8 +244,8 @@ window.getCategoryEnglishName = getCategoryEnglishName;
 // ==========================================
 // إدارة جلسة المسؤول وأمان وقت الخمول (Session Inactivity Timeout)
 // ==========================================
-const ADMIN_MAX_IDLE_TIME = 60 * 60 * 1000; // 60 دقيقة (ساعة واحدة) خمول كحد أقصى
-const ADMIN_MAX_TOTAL_TIME = 120 * 60 * 1000; // ساعتان كحد أقصى للجلسة المتواصلة
+const ADMIN_MAX_IDLE_TIME = 30 * 60 * 1000; // 30 دقيقة خمول كحد أقصى (تلقائي)
+const ADMIN_MAX_TOTAL_TIME = 12 * 60 * 60 * 1000; // 12 ساعة كحد أقصى للجلسة المتواصلة
 
 let lastActivityTimestamp = Date.now();
 let sessionCheckInterval = null;
@@ -257,7 +258,7 @@ export function recordAdminActivity() {
 }
 
 function initAdminActivityListeners() {
-    const events = ['mousemove', 'mousedown', 'keydown', 'touchstart', 'scroll'];
+    const events = ['mousemove', 'mousedown', 'pointerdown', 'keydown', 'touchstart', 'touchmove', 'scroll', 'click', 'wheel'];
     let throttleTimer = null;
     
     events.forEach(evt => {
@@ -281,7 +282,7 @@ function startAdminSessionWatcher() {
 
     sessionCheckInterval = setInterval(() => {
         checkAdminSessionExpiration();
-    }, 20000); // فحص دوري كل 20 ثانية
+    }, 15000); // فحص دوري دقيق كل 15 ثانية
 }
 
 function stopAdminSessionWatcher() {
@@ -309,14 +310,14 @@ function checkAdminSessionExpiration() {
     const totalElapsed = now - sessionStart;
 
     if (idleElapsed > ADMIN_MAX_IDLE_TIME) {
-        console.warn("Admin session expired due to inactivity (>60m)");
-        handleSessionTimeout("انتهت جلسة الإدارة بسبب عدم النشاط (ساعة واحدة). تم قفل البوابة وتسجيل الخروج تلقائياً لأمان المعرض.");
+        console.warn("[Portal] Admin session expired due to inactivity (>30m)");
+        handleSessionTimeout("انتهت جلسة الإدارة لعدم النشاط (30 دقيقة). تم قفل البوابة وتسجيل الخروج تلقائياً لأمان المعرض.");
         return true;
     }
 
     if (totalElapsed > ADMIN_MAX_TOTAL_TIME) {
-        console.warn("Admin session reached max duration (>2h)");
-        handleSessionTimeout("انتهت المدة القصوى لجلسة الإدارة (ساعتان). تم قفل البوابة وتسجيل الخروج تلقائياً لحماية حسابك.");
+        console.warn("[Portal] Admin session reached max duration (>12h)");
+        handleSessionTimeout("انتهت المدة القصوى لجلسة الإدارة (12 ساعة). تم قفل البوابة وتسجيل الخروج تلقائياً لحماية حسابك.");
         return true;
     }
 
@@ -325,6 +326,11 @@ function checkAdminSessionExpiration() {
 
 async function handleSessionTimeout(message) {
     stopAdminSessionWatcher();
+    localStorage.removeItem('tatr_admin_force_logout');
+    localStorage.removeItem('tatr_admin_logged_in');
+    localStorage.removeItem('tatr_admin_last_activity');
+    localStorage.removeItem('tatr_admin_email');
+    sessionStorage.removeItem('tatr_admin_session_start');
     try {
         await adminLogoutFromCloud();
     } catch(e) {}
@@ -334,7 +340,7 @@ async function handleSessionTimeout(message) {
     if (typeof closeLightbox === 'function') closeLightbox();
     if (typeof window.closeVideoLightbox === 'function') window.closeVideoLightbox();
 
-    updatePortalAuthUI(null);
+    await updatePortalAuthUI(null);
     showToast(message, "warning", "انتهاء صلاحية الجلسة", 6000);
 }
 
@@ -342,7 +348,7 @@ async function handleSessionTimeout(message) {
 // ==========================================
 // إدارة جلسة الأدمن وتحديث الواجهة
 // ==========================================
-function updatePortalAuthUI(user) {
+export async function updatePortalAuthUI(user) {
     currentPortalUser = user;
     const loginGate = document.getElementById('portal-login-gate');
     const dashboard = document.getElementById('portal-dashboard');
@@ -350,22 +356,39 @@ function updatePortalAuthUI(user) {
     const drawerEmailEl = document.getElementById('drawer-portal-user-email');
 
     if (user && user.uid) {
-        // فحص هل انتهت مدة الجلسة السابقة أثناء غياب المستخدم
+        // فحص هل انتهت مدة الجلسة السابقة أثناء غياب المستخدم أو طُلب خروج إجباري
         const now = Date.now();
         const storedLast = localStorage.getItem('tatr_admin_last_activity');
-        if (storedLast && (now - parseInt(storedLast, 10) > ADMIN_MAX_IDLE_TIME)) {
-            console.warn("Session expired while away");
+        const isLoggedIn = localStorage.getItem('tatr_admin_logged_in') === 'true';
+        const forceLogout = localStorage.getItem('tatr_admin_force_logout') === 'true';
+
+        let isExpired = forceLogout || !isLoggedIn;
+        if (!isExpired && storedLast) {
+            const diff = now - parseInt(storedLast, 10);
+            if (isNaN(diff) || diff > ADMIN_MAX_IDLE_TIME || diff < -60000) {
+                isExpired = true;
+            }
+        }
+
+        if (isExpired) {
+            console.warn("[Portal] Admin session expired while away or inactive. Executing strict cloud logout...");
             stopAdminSessionWatcher();
-            adminLogoutFromCloud().catch(() => {});
+            localStorage.removeItem('tatr_admin_force_logout');
             localStorage.removeItem('tatr_admin_logged_in');
             localStorage.removeItem('tatr_admin_last_activity');
             localStorage.removeItem('tatr_admin_email');
             sessionStorage.removeItem('tatr_admin_session_start');
+
+            try {
+                await adminLogoutFromCloud();
+            } catch(e) {}
+
             document.documentElement.classList.remove('admin-session-active');
             document.documentElement.classList.add('admin-session-anonymous');
             if (loginGate) loginGate.classList.remove('hidden');
             if (dashboard) dashboard.classList.add('hidden');
-            showToast("انتهت جلسة المسؤول السابقة لعدم النشاط. يرجى تسجيل الدخول مجدداً.", "info", "انتهت الجلسة", 5000);
+            if (drawerEmailEl) drawerEmailEl.innerText = 'admin';
+            showToast("انتهت جلسة تسجيل الدخول بسبب عدم النشاط (30 دقيقة). يرجى إدخال كلمة المرور مجدداً.", "warning", "انتهاء الجلسة", 6000);
             return;
         }
 
@@ -374,6 +397,7 @@ function updatePortalAuthUI(user) {
             localStorage.setItem('tatr_admin_logged_in', 'true');
             localStorage.setItem('tatr_admin_last_activity', now.toString());
             localStorage.setItem('tatr_admin_email', user.email || '');
+            localStorage.removeItem('tatr_admin_force_logout');
             if (!sessionStorage.getItem('tatr_admin_session_start')) {
                 sessionStorage.setItem('tatr_admin_session_start', now.toString());
             }
@@ -394,6 +418,7 @@ function updatePortalAuthUI(user) {
     } else {
         stopAdminSessionWatcher();
         try {
+            localStorage.removeItem('tatr_admin_force_logout');
             localStorage.removeItem('tatr_admin_logged_in');
             localStorage.removeItem('tatr_admin_last_activity');
             localStorage.removeItem('tatr_admin_email');
@@ -427,15 +452,17 @@ export async function executePortalLogin(e) {
     if (btnText) btnText.innerText = "جاري التحقق عبر سيرفرات جوجل المشفرة...";
 
     try {
-        const user = await adminLoginWithCloud(email, pass);
+        localStorage.removeItem('tatr_admin_force_logout');
         localStorage.setItem('tatr_admin_logged_in', 'true');
         localStorage.setItem('tatr_admin_last_activity', Date.now().toString());
+
+        const user = await adminLoginWithCloud(email, pass);
         localStorage.setItem('tatr_admin_email', user.email || email);
         sessionStorage.setItem('tatr_admin_session_start', Date.now().toString());
         document.documentElement.classList.add('admin-session-active');
         document.documentElement.classList.remove('admin-session-anonymous');
         showToast(`مرحباً بك! تم التحقق السحابي وتفعيل صلاحيات الإدارة (${user.email}).`, "success", "المسؤول المعتمد", 3000);
-        updatePortalAuthUI(user);
+        await updatePortalAuthUI(user);
     } catch (authErr) {
         console.warn("Portal login error:", authErr);
         let userMsg = "البريد الإلكتروني أو كلمة المرور غير مطابقة لحساب المسؤول المسجل في Firebase.";
@@ -465,6 +492,7 @@ window.executePortalLogin = executePortalLogin;
 export async function executePortalLogout() {
     stopAdminSessionWatcher();
     try {
+        localStorage.removeItem('tatr_admin_force_logout');
         localStorage.removeItem('tatr_admin_logged_in');
         localStorage.removeItem('tatr_admin_last_activity');
         localStorage.removeItem('tatr_admin_email');
@@ -488,7 +516,7 @@ export async function executePortalLogout() {
     }
     if (typeof closeOptionsDrawer === 'function') closeOptionsDrawer();
     showToast("تم تسجيل الخروج من لوحة الإدارة بنجاح.", "info", "تسجيل الخروج", 2000);
-    updatePortalAuthUI(null);
+    await updatePortalAuthUI(null);
 }
 window.executePortalLogout = executePortalLogout;
 
@@ -2719,19 +2747,29 @@ window.addEventListener('DOMContentLoaded', () => {
     initStudioEvents();
 
     // مراقبة حالة جلسة Firebase Auth
-    subscribeToAdminAuth((user) => {
-        updatePortalAuthUI(user);
-        // التوجيه الفوري حسب Hash في الرابط إذا كانت الجلسة نشطة
-        setTimeout(() => {
-            const h = window.location.hash;
-            if (h.startsWith('#studio')) {
-                const urlParams = new URLSearchParams(h.includes('?') ? h.split('?')[1] : '');
-                const id = urlParams.get('id') || '';
-                switchPortalScreen('studio', id);
-            } else if (h === '#banners') {
-                switchPortalScreen('banners');
+    subscribeToAdminAuth(async (user) => {
+        await updatePortalAuthUI(user);
+        // التوجيه الفوري حسب Hash في الرابط وتفعيل مزامنة القوالب سحابياً إذا كانت الجلسة نشطة
+        if (currentPortalUser) {
+            try {
+                if (typeof initStudioPresetsCloudSync === 'function') {
+                    initStudioPresetsCloudSync();
+                }
+            } catch (syncErr) {
+                console.warn('Studio presets sync init notice:', syncErr);
             }
-        }, 100);
+
+            setTimeout(() => {
+                const h = window.location.hash;
+                if (h.startsWith('#studio')) {
+                    const urlParams = new URLSearchParams(h.includes('?') ? h.split('?')[1] : '');
+                    const id = urlParams.get('id') || '';
+                    switchPortalScreen('studio', id);
+                } else if (h === '#banners') {
+                    switchPortalScreen('banners');
+                }
+            }, 100);
+        }
     });
 });
 

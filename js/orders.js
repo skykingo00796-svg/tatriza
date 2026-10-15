@@ -48,18 +48,74 @@ let previousPendingCount = null;
 let isLoggingOut = false;
 
 // ==========================================
-// التوثيق والحماية الفورية (Zero-Flicker Admin Auth)
+// التوثيق والحماية الفورية وإدارة وقت الخمول (Zero-Flicker Admin Auth & Inactivity Timeout)
 // ==========================================
+const ORDERS_MAX_IDLE_TIME = 30 * 60 * 1000; // 30 دقيقة خمول كحد أقصى (تلقائي)
+let ordersLastActivityTimestamp = Date.now();
+let ordersSessionWatcherInterval = null;
+
+function recordOrdersActivity() {
+    ordersLastActivityTimestamp = Date.now();
+    try {
+        localStorage.setItem('tatr_admin_last_activity', ordersLastActivityTimestamp.toString());
+    } catch(e) {}
+}
+
+function initOrdersActivityListeners() {
+    const events = ['mousemove', 'mousedown', 'pointerdown', 'keydown', 'touchstart', 'touchmove', 'scroll', 'click', 'wheel'];
+    let throttleTimer = null;
+    events.forEach(evt => {
+        window.addEventListener(evt, () => {
+            if (!throttleTimer) {
+                recordOrdersActivity();
+                throttleTimer = setTimeout(() => { throttleTimer = null; }, 10000); // تحديث كل 10 ثوان كحد أقصى
+            }
+        }, { passive: true });
+    });
+}
+
+function startOrdersSessionWatcher() {
+    if (ordersSessionWatcherInterval) clearInterval(ordersSessionWatcherInterval);
+    recordOrdersActivity();
+    ordersSessionWatcherInterval = setInterval(async () => {
+        const now = Date.now();
+        const storedLast = localStorage.getItem('tatr_admin_last_activity');
+        const lastAct = parseInt(storedLast || ordersLastActivityTimestamp.toString(), 10);
+        if (now - lastAct > ORDERS_MAX_IDLE_TIME) {
+            console.warn("[Orders] Inactivity timeout reached (>30m). Executing cloud logout...");
+            stopOrdersSessionWatcher();
+            await window.handleOrdersLogout();
+            showOrderToast('انتهت جلسة العمل لعدم النشاط (30 دقيقة). تم قفل اللوحة وتسجيل الخروج تلقائياً لأمان المتجر.', 'warning');
+        }
+    }, 15000);
+}
+
+function stopOrdersSessionWatcher() {
+    if (ordersSessionWatcherInterval) {
+        clearInterval(ordersSessionWatcherInterval);
+        ordersSessionWatcherInterval = null;
+    }
+}
+
 function checkLocalSession() {
     try {
         if (isLoggingOut) return false;
 
-        const maxIdle = 60 * 60 * 1000;
+        const maxIdle = ORDERS_MAX_IDLE_TIME;
         const now = Date.now();
         const lastAct = localStorage.getItem('tatr_admin_last_activity');
-        const isExpired = lastAct ? (now - parseInt(lastAct, 10) > maxIdle) : false;
-
         const isLoggedIn = localStorage.getItem('tatr_admin_logged_in') === 'true';
+        const forceLogout = localStorage.getItem('tatr_admin_force_logout') === 'true';
+
+        let isExpired = forceLogout || !isLoggedIn;
+        if (!isExpired && lastAct) {
+            const diff = now - parseInt(lastAct, 10);
+            if (isNaN(diff) || diff > maxIdle || diff < -60000) {
+                isExpired = true;
+            }
+        } else if (!lastAct && isLoggedIn) {
+            isExpired = true;
+        }
 
         if (isLoggedIn && !isExpired) {
             document.documentElement.classList.add('admin-session-active');
@@ -67,6 +123,9 @@ function checkLocalSession() {
             localStorage.setItem('tatr_admin_last_activity', now.toString());
             return true;
         } else {
+            if (isExpired || isLoggedIn) {
+                localStorage.setItem('tatr_admin_force_logout', 'true');
+            }
             localStorage.removeItem('tatr_admin_logged_in');
             localStorage.removeItem('tatr_admin_last_activity');
             localStorage.removeItem('tatr_admin_email');
@@ -86,15 +145,37 @@ function initAuthListener() {
     if (!app) return;
     const auth = getAuth(app);
 
-    onAuthStateChanged(auth, (user) => {
+    onAuthStateChanged(auth, async (user) => {
         if (isLoggingOut) return;
 
         if (user) {
+            const now = Date.now();
+            const storedLast = localStorage.getItem('tatr_admin_last_activity');
+            const isLoggedIn = localStorage.getItem('tatr_admin_logged_in') === 'true';
+            const forceLogout = localStorage.getItem('tatr_admin_force_logout') === 'true';
+
+            let isExpired = forceLogout || !isLoggedIn;
+            if (!isExpired && storedLast) {
+                const diff = now - parseInt(storedLast, 10);
+                if (isNaN(diff) || diff > ORDERS_MAX_IDLE_TIME || diff < -60000) {
+                    isExpired = true;
+                }
+            }
+
+            if (isExpired) {
+                console.warn("[Orders] Admin session expired while away. Executing cloud logout...");
+                stopOrdersSessionWatcher();
+                await window.handleOrdersLogout();
+                showOrderToast('انتهت جلسة المسؤول لعدم النشاط (30 دقيقة). يرجى إدخال كلمة المرور للمتابعة.', 'warning');
+                return;
+            }
+
             document.documentElement.classList.add('admin-session-active');
             document.documentElement.classList.remove('admin-session-anonymous');
             localStorage.setItem('tatr_admin_logged_in', 'true');
             localStorage.setItem('tatr_admin_email', user.email || 'admin');
             localStorage.setItem('tatr_admin_last_activity', Date.now().toString());
+            localStorage.removeItem('tatr_admin_force_logout');
 
             const userEmailEl = document.getElementById('admin-user-email');
             if (userEmailEl) userEmailEl.innerText = user.email || 'المسؤول المعتمد';
@@ -104,9 +185,10 @@ function initAuthListener() {
             if (gate) gate.style.setProperty('display', 'none', 'important');
             if (dash) dash.style.setProperty('display', 'flex', 'important');
 
+            startOrdersSessionWatcher();
             startOrdersRealtimeListener();
         } else {
-            // إذا لم يكن هناك مستخدم مسجل
+            stopOrdersSessionWatcher();
             const hasLocal = checkLocalSession();
             if (!hasLocal) {
                 document.documentElement.classList.add('admin-session-anonymous');
@@ -143,13 +225,15 @@ window.handleOrdersLogin = async function(e) {
     if (btnText) btnText.innerText = 'جاري التحقق والمصادقة...';
 
     try {
+        localStorage.removeItem('tatr_admin_force_logout');
+        localStorage.setItem('tatr_admin_logged_in', 'true');
+        localStorage.setItem('tatr_admin_email', email);
+        localStorage.setItem('tatr_admin_last_activity', Date.now().toString());
+
         await adminLoginWithCloud(email, password);
         isLoggingOut = false;
         document.documentElement.classList.add('admin-session-active');
         document.documentElement.classList.remove('admin-session-anonymous');
-        localStorage.setItem('tatr_admin_logged_in', 'true');
-        localStorage.setItem('tatr_admin_email', email);
-        localStorage.setItem('tatr_admin_last_activity', Date.now().toString());
 
         const gate = document.getElementById('orders-login-gate');
         const dash = document.getElementById('orders-dashboard');
@@ -159,6 +243,7 @@ window.handleOrdersLogin = async function(e) {
         const userEmailEl = document.getElementById('admin-user-email');
         if (userEmailEl) userEmailEl.innerText = email;
 
+        startOrdersSessionWatcher();
         startOrdersRealtimeListener();
     } catch(err) {
         if (btnText) btnText.innerText = 'تسجيل الدخول إلى لوحة الطلبات';
@@ -171,6 +256,7 @@ window.handleOrdersLogin = async function(e) {
 
 window.handleOrdersLogout = async function() {
     isLoggingOut = true;
+    stopOrdersSessionWatcher();
 
     // 1. إيقاف الاستماع الحي للطلبات وتفريغ الذاكرة فوراً
     if (unsubscribeOrders) {
@@ -181,6 +267,7 @@ window.handleOrdersLogout = async function() {
 
     // 2. إزالة وحذف كافة مفاتيح جلسة المسؤول والمصادقة من المتصفح
     try {
+        localStorage.removeItem('tatr_admin_force_logout');
         localStorage.removeItem('tatr_admin_logged_in');
         localStorage.removeItem('tatr_admin_last_activity');
         localStorage.removeItem('tatr_admin_email');
@@ -2768,6 +2855,7 @@ window.renderAnalyticsDashboard = renderAnalyticsDashboard;
 
 // تهيئة عند تحميل الصفحة
 document.addEventListener('DOMContentLoaded', () => {
+    initOrdersActivityListeners();
     checkLocalSession();
     initAuthListener();
 });

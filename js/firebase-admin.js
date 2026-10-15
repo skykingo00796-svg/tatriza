@@ -1031,3 +1031,103 @@ export async function updateOrderCustomerInfo(orderId, customerName, customerPho
     await updateDoc(orderRef, updatePayload);
     return { success: true, orderId };
 }
+
+// ==========================================
+// مزامنة قوالب وأنماط استوديو تطريز السحابية (Studio Presets Cloud Sync)
+// دار التطريز TATRIZA
+// ==========================================
+
+function sanitizeForFirestore(obj) {
+    if (obj === null || obj === undefined) return null;
+    if (typeof obj !== 'object') return obj;
+    if (Array.isArray(obj)) {
+        return obj.map(item => sanitizeForFirestore(item));
+    }
+    const clean = {};
+    for (const [key, value] of Object.entries(obj)) {
+        if (value !== undefined) {
+            clean[key] = (typeof value === 'object' && value !== null) 
+                ? sanitizeForFirestore(value) 
+                : value;
+        }
+    }
+    return clean;
+}
+
+export function subscribeToStudioPresets(onSuccess, onError) {
+    const { db, isReady } = initFirebaseServices();
+    if (!isReady || !db) {
+        if (onError) onError(new Error("Firebase is not configured yet."));
+        return () => {};
+    }
+
+    try {
+        const presetsCol = collection(db, "studio_presets");
+        return onSnapshot(presetsCol, (snapshot) => {
+            const presets = [];
+            snapshot.forEach((docSnap) => {
+                presets.push({
+                    id: docSnap.id,
+                    ...docSnap.data()
+                });
+            });
+            // ترتيب القوالب من الأحدث للأقدم
+            presets.sort((a, b) => (b.timestamp || b.createdAt || 0) - (a.timestamp || a.createdAt || 0));
+            // مزامنة الذاكرة المحلية كـ Cache سريع وفوري
+            try {
+                localStorage.setItem('tatr_studio_style_presets', JSON.stringify(presets));
+            } catch (e) {}
+            if (onSuccess) onSuccess(presets);
+        }, (err) => {
+            console.warn("Firestore presets snapshot error, trying fallback fetch:", err);
+            getDocs(presetsCol).then((fallbackSnap) => {
+                const presets = [];
+                fallbackSnap.forEach((docSnap) => {
+                    presets.push({ id: docSnap.id, ...docSnap.data() });
+                });
+                presets.sort((a, b) => (b.timestamp || b.createdAt || 0) - (a.timestamp || a.createdAt || 0));
+                try {
+                    localStorage.setItem('tatr_studio_style_presets', JSON.stringify(presets));
+                } catch (e) {}
+                if (onSuccess) onSuccess(presets);
+            }).catch((fallbackErr) => {
+                if (onError) onError(fallbackErr);
+            });
+        });
+    } catch (e) {
+        if (onError) onError(e);
+        return () => {};
+    }
+}
+
+export async function saveStudioPresetToCloud(presetObj) {
+    const { db, isReady } = initFirebaseServices();
+    if (!isReady || !db) return false;
+    try {
+        const presetId = presetObj.id || ('preset_' + Date.now());
+        const presetRef = doc(db, "studio_presets", presetId);
+        const cleanPayload = sanitizeForFirestore({
+            ...presetObj,
+            id: presetId,
+            updatedAt: Date.now()
+        });
+        await setDoc(presetRef, cleanPayload, { merge: true });
+        return true;
+    } catch (e) {
+        console.warn("Could not save studio preset to Firestore:", e);
+        return false;
+    }
+}
+
+export async function deleteStudioPresetFromCloud(presetId) {
+    const { db, isReady } = initFirebaseServices();
+    if (!isReady || !db) return false;
+    try {
+        const presetRef = doc(db, "studio_presets", presetId);
+        await deleteDoc(presetRef);
+        return true;
+    } catch (e) {
+        console.warn("Could not delete studio preset from Firestore:", e);
+        return false;
+    }
+}

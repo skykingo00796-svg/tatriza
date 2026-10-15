@@ -49,19 +49,31 @@
     <script>
         (function() {
             try {
-                var maxIdle = 60 * 60 * 1000;
+                var maxIdle = 30 * 60 * 1000; // 30 دقيقة خمول كحد أقصى (تلقائي)
                 var now = Date.now();
                 var lastAct = localStorage.getItem('tatr_admin_last_activity');
-                var isExpired = lastAct ? (now - parseInt(lastAct, 10) > maxIdle) : false;
-
-                // التحقق الشامل من كل العلامات الممكنة لجلسة الأدمن
                 var isLoggedIn = localStorage.getItem('tatr_admin_logged_in') === 'true';
+                var forceLogout = localStorage.getItem('tatr_admin_force_logout') === 'true';
+                var isExpired = forceLogout || false;
+
+                if (lastAct) {
+                    var diff = now - parseInt(lastAct, 10);
+                    if (isNaN(diff) || diff > maxIdle || diff < -60000) {
+                        isExpired = true;
+                    }
+                } else if (isLoggedIn) {
+                    // مسجل دخول لكن بدون توقيت نشاط محفوظ
+                    isExpired = true;
+                }
 
                 if (isLoggedIn && !isExpired) {
                     document.documentElement.classList.add('admin-session-active');
                     document.documentElement.classList.remove('admin-session-anonymous');
                     localStorage.setItem('tatr_admin_last_activity', now.toString());
                 } else {
+                    if (isExpired || isLoggedIn) {
+                        localStorage.setItem('tatr_admin_force_logout', 'true');
+                    }
                     localStorage.removeItem('tatr_admin_logged_in');
                     localStorage.removeItem('tatr_admin_last_activity');
                     localStorage.removeItem('tatr_admin_email');
@@ -908,7 +920,7 @@
                                     </div>
                                     <div class="flex items-center gap-1.5" dir="ltr">
                                         <span class="text-[10px] text-stone-400 font-bold shrink-0">◄ يسار</span>
-                                        <input type="range" id="studio-input-panx" min="-50" max="50" value="0" class="w-full accent-amber-600 cursor-pointer">
+                                        <input type="range" id="studio-input-panx" min="-80" max="80" value="0" class="w-full accent-amber-600 cursor-pointer">
                                         <span class="text-[10px] text-stone-400 font-bold shrink-0">يمين ►</span>
                                     </div>
                                 </div>
@@ -921,7 +933,7 @@
                                     </div>
                                     <div class="flex items-center gap-1.5" dir="ltr">
                                         <span class="text-[10px] text-stone-400 font-bold shrink-0">▲ أعلى</span>
-                                        <input type="range" id="studio-input-pany" min="-50" max="50" value="0" class="w-full accent-amber-600 cursor-pointer">
+                                        <input type="range" id="studio-input-pany" min="-80" max="80" value="0" class="w-full accent-amber-600 cursor-pointer">
                                         <span class="text-[10px] text-stone-400 font-bold shrink-0">أسفل ▼</span>
                                     </div>
                                 </div>
@@ -2792,8 +2804,8 @@
                     ✨
                 </div>
                 <div class="min-w-0">
-                    <h3 class="font-display font-black text-stone-900 text-base sm:text-lg">حفظ التعديلات والقياسات كقالب مخصص</h3>
-                    <p class="text-xs text-stone-500 font-medium">لتطبيق نفس القياسات والظلال والزووم على أي صورة أخرى بنقرة واحدة</p>
+                    <h3 class="font-display font-black text-stone-900 text-base sm:text-lg">حفظ التعديلات كقالب موحد سحابي ☁️</h3>
+                    <p class="text-xs text-stone-500 font-medium">يُحفظ في السحابة ليكون جاهزاً للاستخدام الفوري على جميع أجهزتك (الكمبيوتر والجوال)</p>
                 </div>
             </div>
 

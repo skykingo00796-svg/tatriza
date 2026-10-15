@@ -47,17 +47,31 @@
     <script>
         (function() {
             try {
-                var maxIdle = 60 * 60 * 1000;
+                var maxIdle = 30 * 60 * 1000; // 30 دقيقة خمول كحد أقصى (تلقائي)
                 var now = Date.now();
                 var lastAct = localStorage.getItem('tatr_admin_last_activity');
-                var isExpired = lastAct ? (now - parseInt(lastAct, 10) > maxIdle) : false;
                 var isLoggedIn = localStorage.getItem('tatr_admin_logged_in') === 'true';
+                var forceLogout = localStorage.getItem('tatr_admin_force_logout') === 'true';
+                var isExpired = forceLogout || false;
+
+                if (lastAct) {
+                    var diff = now - parseInt(lastAct, 10);
+                    if (isNaN(diff) || diff > maxIdle || diff < -60000) {
+                        isExpired = true;
+                    }
+                } else if (isLoggedIn) {
+                    // مسجل دخول لكن بدون توقيت نشاط محفوظ
+                    isExpired = true;
+                }
 
                 if (isLoggedIn && !isExpired) {
                     document.documentElement.classList.add('admin-session-active');
                     document.documentElement.classList.remove('admin-session-anonymous');
                     localStorage.setItem('tatr_admin_last_activity', now.toString());
                 } else {
+                    if (isExpired || isLoggedIn) {
+                        localStorage.setItem('tatr_admin_force_logout', 'true');
+                    }
                     localStorage.removeItem('tatr_admin_logged_in');
                     localStorage.removeItem('tatr_admin_last_activity');
                     localStorage.removeItem('tatr_admin_email');

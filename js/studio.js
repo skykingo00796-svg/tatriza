@@ -5,6 +5,11 @@
 // ==========================================================================
 
 import { showToast } from './modals.js';
+import { 
+    subscribeToStudioPresets, 
+    saveStudioPresetToCloud, 
+    deleteStudioPresetFromCloud 
+} from './firebase-admin.js';
 
 // ==========================================
 // الإعدادات والقوالب وثيمات التصميم
@@ -557,11 +562,19 @@ export function getTintedLogoCanvas(logoImg, color) {
     return oc;
 }
 
+export function getStageBaseDimensions() {
+    const ratio = STUDIO_RATIOS[studioState.ratio] || STUDIO_RATIOS['9:16'];
+    const baseW = 360;
+    const baseH = Math.round(baseW * (ratio.height / ratio.width));
+    return { baseW, baseH, ratio };
+}
+
 export function getMinimalLogoPreviewHtml() {
     if (!studioState.showLogo) return '';
+    const { baseW, baseH } = getStageBaseDimensions();
     const logoOption = STUDIO_LOGO_OPTIONS[studioState.logoVariant] || STUDIO_LOGO_OPTIONS['transparent-burgundy'];
     
-    // أبعاد دقيقة ومطلقة بالبكسل - ثابتة تماماً ومستقلة عن التحريك الأفقي
+    // أبعاد دقيقة بنسب مئوية موحدة متطابقة تماماً مع الكانفاس والتصدير
     const dimMap = {
         'small': 46,
         'medium': 64,
@@ -570,11 +583,12 @@ export function getMinimalLogoPreviewHtml() {
     const dim = dimMap[studioState.logoSize || 'small'] || 46;
     const opacity = (studioState.logoOpacity || 100) / 100;
     const topY = studioState.minimalLogoOffsetY || 25;
+    const topPercent = ((topY / baseH) * 100).toFixed(2);
     const offsetPercent = studioState.minimalLogoOffsetPercent || 0;
 
-    // تثبيت العرض والارتفاع بدقة مع max-width: none لمنع أي انضغاط عند أطراف الكانفاس
-    const boxStyle = `width: ${dim}px !important; height: ${dim}px !important; min-width: ${dim}px !important; max-width: none !important; min-height: ${dim}px !important; max-height: none !important; flex-shrink: 0;`;
-    const positionStyle = `top: ${topY}px; left: calc(50% + ${offsetPercent}%); transform: translateX(-50%); ${boxStyle}`;
+    const dimCqw = ((dim / baseW) * 100).toFixed(2);
+    const boxStyle = `width: ${dimCqw}cqw !important; height: ${dimCqw}cqw !important; min-width: ${dimCqw}cqw !important; max-width: none !important; min-height: ${dimCqw}cqw !important; max-height: none !important; flex-shrink: 0;`;
+    const positionStyle = `top: ${topPercent}%; left: calc(50% + ${offsetPercent}%); transform: translateX(-50%); ${boxStyle}`;
 
     if (studioState.logoVariant === 'custom') {
         const color = studioState.logoCustomColor || '#7c1d3c';
@@ -603,25 +617,28 @@ export function getMinimalLogoPreviewHtml() {
 
 export function getMinimalHandlePreviewHtml() {
     if (!studioState.showStoryHandle || !studioState.storyHandle) return '';
+    const { baseW, baseH } = getStageBaseDimensions();
     const bottomY = studioState.minimalHandleOffsetY || 25;
+    const bottomPercent = ((bottomY / baseH) * 100).toFixed(2);
     const color = studioState.minimalHandleColor || '#6b7280';
     const handleText = studioState.storyHandle.trim();
     const fontFamily = getStudioFontFamily(studioState.storyHandleFont || 'mono', studioState.storyHandleCustomFont);
+    const fontCqw = ((10.5 / baseW) * 100).toFixed(2);
 
     let positionStyle = '';
     if (studioState.minimalHandleAlign === 'right') {
-        positionStyle = `bottom: ${bottomY}px; right: 24px;`;
+        positionStyle = `bottom: ${bottomPercent}%; right: 6.5%;`;
     } else if (studioState.minimalHandleAlign === 'left') {
-        positionStyle = `bottom: ${bottomY}px; left: 24px;`;
+        positionStyle = `bottom: ${bottomPercent}%; left: 6.5%;`;
     } else {
         const offsetPercent = studioState.minimalHandleOffsetPercent || 0;
-        positionStyle = `bottom: ${bottomY}px; left: calc(50% + ${offsetPercent}%); transform: translateX(-50%);`;
+        positionStyle = `bottom: ${bottomPercent}%; left: calc(50% + ${offsetPercent}%); transform: translateX(-50%);`;
     }
 
     if (studioState.minimalHandleStyle === 'pill') {
         return `
             <div class="absolute z-20 pointer-events-none transition-all duration-150" style="${positionStyle}">
-                <div class="px-3.5 py-1 rounded-full bg-white/85 backdrop-blur-xs border border-stone-200/60 shadow-2xs font-bold text-[10px] sm:text-[11px] tracking-[0.25em] select-none text-center" style="font-family: ${fontFamily}; color: ${color};">
+                <div class="px-3.5 py-1 rounded-full bg-white/85 backdrop-blur-xs border border-stone-200/60 shadow-2xs font-bold tracking-[0.25em] select-none text-center" style="font-size: ${fontCqw}cqw; font-family: ${fontFamily}; color: ${color};">
                     ${handleText}
                 </div>
             </div>
@@ -630,7 +647,7 @@ export function getMinimalHandlePreviewHtml() {
 
     return `
         <div class="absolute z-20 pointer-events-none transition-all duration-150" style="${positionStyle}">
-            <div class="font-bold text-[11px] sm:text-[12px] tracking-[0.25em] select-none drop-shadow-2xs text-center" style="font-family: ${fontFamily}; color: ${color}; text-shadow: 0 1px 2px rgba(255,255,255,0.7);">
+            <div class="font-bold tracking-[0.25em] select-none drop-shadow-2xs text-center" style="font-size: ${fontCqw}cqw; font-family: ${fontFamily}; color: ${color}; text-shadow: 0 1px 2px rgba(255,255,255,0.7);">
                 ${handleText}
             </div>
         </div>
@@ -639,9 +656,10 @@ export function getMinimalHandlePreviewHtml() {
 
 export function getStoryLogoPreviewHtml() {
     if (!studioState.showLogo) return '';
+    const { baseW, baseH } = getStageBaseDimensions();
     const logoOption = STUDIO_LOGO_OPTIONS[studioState.logoVariant] || STUDIO_LOGO_OPTIONS['transparent-burgundy'];
     
-    // أبعاد دقيقة ومطلقة بالبكسل - ثابتة تماماً ومستقلة عن التحريك الأفقي
+    // أبعاد دقيقة بنسب مئوية موحدة متطابقة تماماً مع الكانفاس والتصدير
     const dimMap = {
         'small': 52,
         'medium': 74,
@@ -650,11 +668,12 @@ export function getStoryLogoPreviewHtml() {
     const dim = dimMap[studioState.logoSize || 'medium'] || 74;
     const opacity = (studioState.logoOpacity || 100) / 100;
     const topY = studioState.storyLogoOffsetY || 25;
+    const topPercent = ((topY / baseH) * 100).toFixed(2);
     const offsetPercent = studioState.storyLogoOffsetPercent || 0;
 
-    // تثبيت العرض والارتفاع بدقة مع max-width: none لمنع أي انضغاط عند أطراف الكانفاس
-    const boxStyle = `width: ${dim}px !important; height: ${dim}px !important; min-width: ${dim}px !important; max-width: none !important; min-height: ${dim}px !important; max-height: none !important; flex-shrink: 0;`;
-    const positionStyle = `top: ${topY}px; left: calc(50% + ${offsetPercent}%); transform: translateX(-50%); ${boxStyle}`;
+    const dimCqw = ((dim / baseW) * 100).toFixed(2);
+    const boxStyle = `width: ${dimCqw}cqw !important; height: ${dimCqw}cqw !important; min-width: ${dimCqw}cqw !important; max-width: none !important; min-height: ${dimCqw}cqw !important; max-height: none !important; flex-shrink: 0;`;
+    const positionStyle = `top: ${topPercent}%; left: calc(50% + ${offsetPercent}%); transform: translateX(-50%); ${boxStyle}`;
 
     if (studioState.logoVariant === 'custom') {
         const color = studioState.logoCustomColor || '#fef08a';
@@ -683,36 +702,39 @@ export function getStoryLogoPreviewHtml() {
 
 export function getStoryPhrasePreviewHtml(vig) {
     if (!studioState.showStoryPhrase || !studioState.storyPhrase) return '';
+    const { baseW, baseH } = getStageBaseDimensions();
     const bottomY = studioState.storyPhraseOffsetY || 68;
+    const bottomPercent = ((bottomY / baseH) * 100).toFixed(2);
     const phraseColor = (studioState.storyPhraseColor && studioState.storyPhraseColor !== 'default') 
         ? studioState.storyPhraseColor 
         : (vig.phraseColor || '#ffffff');
     const sizeMap = {
-        'sm': 'text-sm sm:text-base',
-        'md': 'text-base sm:text-lg',
-        'lg': 'text-lg sm:text-xl',
-        'xl': 'text-xl sm:text-2xl'
+        'sm': 13.5,
+        'md': 17,
+        'lg': 21.5,
+        'xl': 26
     };
-    const sizeClass = sizeMap[studioState.storyPhraseSize || 'md'] || 'text-base sm:text-lg';
+    const baseFontSize = sizeMap[studioState.storyPhraseSize || 'md'] || 17;
+    const fontCqw = ((baseFontSize / baseW) * 100).toFixed(2);
     const fontFamily = getStudioFontFamily(studioState.storyPhraseFont || 'el-messiri', studioState.storyPhraseCustomFont);
 
     let positionStyle = '';
     let alignClass = 'text-center';
     if (studioState.storyPhraseAlign === 'right') {
-        positionStyle = `bottom: ${bottomY}px; right: 20px;`;
+        positionStyle = `bottom: ${bottomPercent}%; right: 5.5%;`;
         alignClass = 'text-right';
     } else if (studioState.storyPhraseAlign === 'left') {
-        positionStyle = `bottom: ${bottomY}px; left: 20px;`;
+        positionStyle = `bottom: ${bottomPercent}%; left: 5.5%;`;
         alignClass = 'text-left';
     } else {
         const offsetPercent = studioState.storyPhraseOffsetPercent || 0;
-        positionStyle = `bottom: ${bottomY}px; left: calc(50% + ${offsetPercent}%); transform: translateX(-50%);`;
+        positionStyle = `bottom: ${bottomPercent}%; left: calc(50% + ${offsetPercent}%); transform: translateX(-50%);`;
         alignClass = 'text-center';
     }
 
     return `
         <div class="absolute z-20 pointer-events-none transition-all duration-150 px-3 max-w-[88%] w-max" style="${positionStyle}">
-            <div class="font-bold ${sizeClass} tracking-wide select-none ${alignClass} drop-shadow-md" style="font-family: ${fontFamily}; color: ${phraseColor}; text-shadow: ${vig.phraseShadow};">
+            <div class="font-bold tracking-wide select-none ${alignClass} drop-shadow-md" style="font-size: ${fontCqw}cqw; font-family: ${fontFamily}; color: ${phraseColor}; text-shadow: ${vig.phraseShadow};">
                 ${studioState.storyPhrase}
             </div>
         </div>
@@ -721,31 +743,34 @@ export function getStoryPhrasePreviewHtml(vig) {
 
 export function getStoryHandlePreviewHtml(vig) {
     if (!studioState.showStoryHandle || !studioState.storyHandle) return '';
+    const { baseW, baseH } = getStageBaseDimensions();
     const bottomY = studioState.storyHandleOffsetY || 25;
+    const bottomPercent = ((bottomY / baseH) * 100).toFixed(2);
     const handleColor = (studioState.storyHandleColor && studioState.storyHandleColor !== 'default') 
         ? studioState.storyHandleColor 
         : (vig.handleColor || '#fde68a');
     const handleText = studioState.storyHandle.trim();
     const fontFamily = getStudioFontFamily(studioState.storyHandleFont || 'mono', studioState.storyHandleCustomFont);
+    const fontCqw = ((10.5 / baseW) * 100).toFixed(2);
 
     let positionStyle = '';
     let alignClass = 'text-center';
     if (studioState.storyHandleAlign === 'right') {
-        positionStyle = `bottom: ${bottomY}px; right: 20px;`;
+        positionStyle = `bottom: ${bottomPercent}%; right: 5.5%;`;
         alignClass = 'text-right';
     } else if (studioState.storyHandleAlign === 'left') {
-        positionStyle = `bottom: ${bottomY}px; left: 20px;`;
+        positionStyle = `bottom: ${bottomPercent}%; left: 5.5%;`;
         alignClass = 'text-left';
     } else {
         const offsetPercent = studioState.storyHandleOffsetPercent || 0;
-        positionStyle = `bottom: ${bottomY}px; left: calc(50% + ${offsetPercent}%); transform: translateX(-50%);`;
+        positionStyle = `bottom: ${bottomPercent}%; left: calc(50% + ${offsetPercent}%); transform: translateX(-50%);`;
         alignClass = 'text-center';
     }
 
     if (studioState.storyHandleStyle === 'pill') {
         return `
             <div class="absolute z-20 pointer-events-none transition-all duration-150" style="${positionStyle}">
-                <div class="px-3.5 py-1 rounded-full bg-black/45 backdrop-blur-md border border-white/20 shadow-lg font-bold text-[10px] sm:text-[11px] tracking-[0.25em] select-none text-center" style="font-family: ${fontFamily}; color: ${handleColor};">
+                <div class="px-3.5 py-1 rounded-full bg-black/45 backdrop-blur-md border border-white/20 shadow-lg font-bold tracking-[0.25em] select-none text-center" style="font-size: ${fontCqw}cqw; font-family: ${fontFamily}; color: ${handleColor};">
                     ${handleText}
                 </div>
             </div>
@@ -754,7 +779,7 @@ export function getStoryHandlePreviewHtml(vig) {
 
     return `
         <div class="absolute z-20 pointer-events-none transition-all duration-150" style="${positionStyle}">
-            <div class="font-bold text-[11px] sm:text-[12px] tracking-[0.28em] select-none ${alignClass} drop-shadow-sm" style="font-family: ${fontFamily}; color: ${handleColor}; text-shadow: 0 1px 3px rgba(0,0,0,0.8);">
+            <div class="font-bold tracking-[0.28em] select-none ${alignClass} drop-shadow-sm" style="font-size: ${fontCqw}cqw; font-family: ${fontFamily}; color: ${handleColor}; text-shadow: 0 1px 3px rgba(0,0,0,0.8);">
                 ${handleText}
             </div>
         </div>
@@ -1206,14 +1231,57 @@ export function switchStudioMobileTab(tab = 'edit', options = {}) {
 }
 window.switchStudioMobileTab = switchStudioMobileTab;
 
+// البحث عن القسم المستهدف الظاهر حالياً حسب النمط النشط لتفادي التداخل بين الأنماط
+function getVisibleStudioCategoryElement(category) {
+    if (!category) return null;
+    const selector = `[data-studio-category="${category}"]`;
+    let activeContainer = null;
+    if (studioState.layoutMode === 'card') {
+        activeContainer = document.getElementById('studio-controls-card');
+    } else if (studioState.layoutMode === 'minimal_showcase') {
+        activeContainer = document.getElementById('studio-controls-minimal');
+    } else {
+        activeContainer = document.getElementById('studio-controls-story');
+    }
+
+    if (activeContainer && !activeContainer.classList.contains('hidden')) {
+        const match = activeContainer.querySelector(selector);
+        if (match && match.offsetParent !== null) return match;
+    }
+
+    // fallback لأي عنصر ظاهر بهذه الفئة غير موجود داخل حاوية مخفية
+    const all = document.querySelectorAll(selector);
+    for (const el of all) {
+        if (el.offsetParent !== null && !el.closest('.hidden')) {
+            return el;
+        }
+    }
+    return null;
+}
+
+// تحريك شريط التبويبات أفقياً فقط دون التأثير نهائياً على سكرول الصفحة الرأسي
+function scrollJumpPillTrack(pill) {
+    if (!pill) return;
+    const track = pill.closest('.catalog-filter-track') || pill.parentElement;
+    if (track && track.scrollWidth > track.clientWidth) {
+        const pillLeft = pill.offsetLeft;
+        const pillWidth = pill.offsetWidth;
+        const trackWidth = track.clientWidth;
+        track.scrollTo({
+            left: Math.max(0, pillLeft - (trackWidth / 2) + (pillWidth / 2)),
+            behavior: 'smooth'
+        });
+    }
+}
+
 export function scrollStudioSection(category = 'theme') {
     // إذا كان المستخدم في وضع المعاينة، نحوله أولاً لوضع التعديل
     if (window.innerWidth < 1024 && studioState.mobileActiveTab === 'preview') {
         switchStudioMobileTab('edit', { source: 'jump' });
     }
 
-    // البحث عن القسم المستهدف
-    const targetEl = document.querySelector(`[data-studio-category="${category}"]`);
+    // البحث عن القسم المستهدف الظاهر حالياً
+    const targetEl = getVisibleStudioCategoryElement(category);
     if (targetEl) {
         const headerContainer = document.getElementById('studio-sticky-header-container');
         const offsetHeight = (headerContainer && headerContainer.offsetHeight > 0) ? headerContainer.offsetHeight : 150;
@@ -1229,18 +1297,18 @@ export function scrollStudioSection(category = 'theme') {
         }, 1200);
     }
 
-    // تحديث الشريحة النشطة في شريط القفز بنمط كارت الكاتلوج الفاخر الموحد
+    // تحديث الشريحة النشطة في شريط القفز دون استدعاء scrollIntoView المسبب لقفز الصفحة
     document.querySelectorAll('.studio-jump-pill').forEach(pill => {
         const isActive = (pill.getAttribute('data-jump') === category);
         pill.classList.toggle('active', isActive);
         if (isActive) {
-            pill.scrollIntoView({ behavior: 'smooth', inline: 'nearest', block: 'nearest' });
+            scrollJumpPillTrack(pill);
         }
     });
 }
 window.scrollStudioSection = scrollStudioSection;
 
-// مراقبة السكرول التلقائي لتحديث تبويبات أقسام الاستوديو تلقائياً
+// مراقبة السكرول التلقائي لتحديث تبويبات أقسام الاستوديو تلقائياً وبشكل آمن تماماً
 let studioScrollSpyBound = false;
 export function initStudioSectionObserver() {
     if (studioScrollSpyBound) return;
@@ -1258,7 +1326,7 @@ export function initStudioSectionObserver() {
 
         let activeCat = null;
         for (const cat of categories) {
-            const el = document.querySelector(`[data-studio-category="${cat}"]`);
+            const el = getVisibleStudioCategoryElement(cat);
             if (el) {
                 const top = el.getBoundingClientRect().top + window.pageYOffset;
                 if (scrollPosition >= top) {
@@ -1273,7 +1341,7 @@ export function initStudioSectionObserver() {
                 if (pill.classList.contains('active') !== isMatch) {
                     pill.classList.toggle('active', isMatch);
                     if (isMatch) {
-                        pill.scrollIntoView({ behavior: 'smooth', inline: 'nearest', block: 'nearest' });
+                        scrollJumpPillTrack(pill);
                     }
                 }
             });
@@ -1539,6 +1607,7 @@ export function initStudioScreen(preselectedCarpetId = '', customCarpets = null)
     updateStudioPreview();
     renderStudioDraftsList();
     renderStudioStylePresetsUI();
+    initStudioPresetsCloudSync();
     setupStageDragAndDropFile();
 
     // ضبط التبويب النشط على الجوال (معاينة إذا كان لمنتج وتعديل إذا كان تصميم حر)
@@ -2501,8 +2570,14 @@ export function updateStudioPreview() {
     const panY = studioState.mediaPanY || 0;
     const transformStyle = `translate3d(${panX}%, ${panY}%, 0) scale(${zoom})`;
 
-    // إعدادات حجم مسرح المعاينة المريح لشاشات الجوال وخلفية المنشور (في وضع المعاينة المستقل مساحة مريحة وكاملة)
-    const mobileStageClass = 'max-h-[66vh] lg:max-h-none';
+    // إعداد أبعاد المسرح بنسب رياضية دقيقة مطابقة تماماً للكانفاس والتصدير على كل الأجهزة
+    stage.style.aspectRatio = `${ratio.width} / ${ratio.height}`;
+    stage.style.width = '100%';
+    stage.style.maxWidth = `min(360px, calc(68vh * ${ratio.width} / ${ratio.height}))`;
+    stage.style.maxHeight = '68vh';
+    stage.style.height = 'auto';
+    stage.style.containerType = 'inline-size';
+
     const activeBgColor = studioState.postBgColor || '#ffffff';
 
     const isContain = studioState.imageFitMode === 'contain';
@@ -2518,7 +2593,7 @@ export function updateStudioPreview() {
         const vig = getActiveVignette();
         
         // تعيين نسبة الأبعاد للحاوية
-        stage.className = `relative w-full max-w-[340px] sm:max-w-[360px] ${mobileStageClass} mx-auto rounded-3xl overflow-hidden shadow-2xl transition-all duration-300 flex flex-col justify-between p-0 select-none ${ratio.aspectClass} cursor-grab active:cursor-grabbing`;
+        stage.className = `relative w-full mx-auto rounded-3xl overflow-hidden shadow-2xl transition-all duration-300 flex flex-col justify-between p-0 select-none cursor-grab active:cursor-grabbing`;
         stage.style.background = activeBgColor;
         stage.style.backgroundImage = 'none';
 
@@ -2591,7 +2666,7 @@ export function updateStudioPreview() {
         const minPadVal = isContain ? (studioState.imageFramePadding !== undefined ? studioState.imageFramePadding : 6) : 0;
         const minMediaStyle = `transform: ${transformStyle}; transform-origin: center center; padding: ${minPadVal}%; border-radius: ${radVal}px; filter: ${shadowFilter};`;
 
-        stage.className = `relative w-full max-w-[340px] sm:max-w-[360px] ${mobileStageClass} mx-auto rounded-3xl overflow-hidden shadow-2xl transition-all duration-300 flex flex-col justify-between p-0 select-none ${ratio.aspectClass} cursor-grab active:cursor-grabbing`;
+        stage.className = `relative w-full mx-auto rounded-3xl overflow-hidden shadow-2xl transition-all duration-300 flex flex-col justify-between p-0 select-none cursor-grab active:cursor-grabbing`;
         stage.style.background = activeBgColor;
         stage.style.backgroundImage = 'none';
 
@@ -2645,7 +2720,7 @@ export function updateStudioPreview() {
     // -------------------------------------------------------------
     const theme = STUDIO_THEMES[studioState.theme] || STUDIO_THEMES['royal-burgundy'];
 
-    stage.className = `relative w-full max-w-[360px] ${mobileStageClass} mx-auto rounded-3xl overflow-hidden shadow-2xl transition-all duration-300 flex flex-col justify-between select-none ${ratio.aspectClass} cursor-grab active:cursor-grabbing`;
+    stage.className = `relative w-full mx-auto rounded-3xl overflow-hidden shadow-2xl transition-all duration-300 flex flex-col justify-between select-none cursor-grab active:cursor-grabbing`;
 
     // تعيين الخلفية
     if (studioState.postBgCustomized && studioState.postBgColor) {
@@ -2951,8 +3026,8 @@ function setupStageDragAndZoom() {
         const deltaXPercent = (deltaX / rect.width) * 100;
         const deltaYPercent = (deltaY / rect.height) * 100;
 
-        studioState.mediaPanX = Math.round(Math.max(-50, Math.min(50, initialPanX + deltaXPercent)));
-        studioState.mediaPanY = Math.round(Math.max(-50, Math.min(50, initialPanY + deltaYPercent)));
+        studioState.mediaPanX = Math.round(Math.max(-80, Math.min(80, initialPanX + deltaXPercent)));
+        studioState.mediaPanY = Math.round(Math.max(-80, Math.min(80, initialPanY + deltaYPercent)));
 
         // تحديث حي فوري بدون إعادة بناء الـ DOM
         applyLiveTransformOnly();
@@ -3125,15 +3200,24 @@ async function exportRoyalCardHD(canvas, ctx) {
         const logoVariant = studioState.logoVariant || 'transparent-burgundy';
         const logoOpt = STUDIO_LOGO_OPTIONS[logoVariant] || STUDIO_LOGO_OPTIONS['transparent-burgundy'];
 
-        if (logoVariant === 'custom') {
-            const whiteLogo = await loadImageAsync('../images/logo_white.png');
-            const tinted = getTintedLogoCanvas(whiteLogo, studioState.logoCustomColor || '#fef08a');
-            ctx.drawImage(tinted, canvas.width - 150, 50, 95, 95);
-        } else if (logoVariant === 'original') {
-            await drawRoundedImage(ctx, '../images/logo.jpg', canvas.width - 150, 50, 95, 95, 22);
-        } else {
-            const img = await loadImageAsync(logoOpt.src);
-            ctx.drawImage(img, canvas.width - 150, 50, 95, 95);
+        try {
+            if (logoVariant === 'custom') {
+                const whiteLogo = await loadImageAsync('../images/logo_white.png');
+                if (whiteLogo) {
+                    const tinted = getTintedLogoCanvas(whiteLogo, studioState.logoCustomColor || '#fef08a');
+                    ctx.drawImage(tinted, canvas.width - 150, 50, 95, 95);
+                }
+            } else if (logoVariant === 'original') {
+                await drawRoundedImage(ctx, '../images/logo.jpg', canvas.width - 150, 50, 95, 95, 22);
+            } else {
+                const logoSrc = (logoOpt && logoOpt.src) ? logoOpt.src : '../images/logo_transparent.png';
+                const img = await loadImageAsync(logoSrc);
+                if (img) {
+                    ctx.drawImage(img, canvas.width - 150, 50, 95, 95);
+                }
+            }
+        } catch (logoErr) {
+            console.warn('Royal Card logo render warning:', logoErr);
         }
         ctx.restore();
 
@@ -3259,43 +3343,21 @@ async function exportRoyalCardHD(canvas, ctx) {
     }
 
     // 5. رسم السجادة مع الحفاظ على المساحة الآمنة وعدم التداخل
-    let carpetTopY = 175;
-    let carpetMaxH = 480;
-    if (isTop) {
-        carpetTopY = cardY + cardH + 30;
-        carpetMaxH = canvas.height - carpetTopY - 50;
-    } else {
-        carpetTopY = (studioState.showLogo ? 175 : 80);
-        carpetMaxH = cardY - carpetTopY - 30;
-    }
-    if (carpetMaxH < 200) carpetMaxH = 200;
+    const headerBottomY = (studioState.showLogo ? 175 : 80) * (canvas.height / 1080);
+    let carpetTopY = isTop ? (cardY + cardH + 25) : headerBottomY;
+    let carpetBottomY = isTop ? (canvas.height - 45) : (cardY - 25);
+    let carpetAvailH = Math.max(200, carpetBottomY - carpetTopY);
+    let carpetAvailW = canvas.width - (canvas.width * 0.08);
+    let carpetX = (canvas.width - carpetAvailW) / 2;
 
     const carpetSrc = studioState.customImageSrc || '../images/client_room1.jpg';
     const zoom = (studioState.mediaZoom || 100) / 100;
     const scale = ((studioState.carpetScale || 88) / 100) * zoom;
-    const maxImgW = (canvas.width - 120) * scale;
-    const maxImgH = carpetMaxH * scale;
+    const pad = studioState.imageFramePadding || 0;
+    const rad = studioState.imageCornerRadius || 16;
+    const shadow = studioState.carpetShadow !== false;
 
-    const panOffsetX = canvas.width * ((studioState.mediaPanX || 0) / 100);
-    const panOffsetY = canvas.height * ((studioState.mediaPanY || 0) / 100);
-
-    ctx.save();
-    if (studioState.carpetShadow) {
-        const cardVigOpacity = (studioState.vignetteOpacity !== undefined ? studioState.vignetteOpacity : 95) / 100;
-        const cardVigOffsetY = studioState.vignetteOffsetY || 0;
-        const cardVigSpread = (studioState.vignetteSpread || 100) / 100;
-        const cardVigSharpness = (studioState.vignetteSharpness !== undefined ? studioState.vignetteSharpness : 40) / 100;
-        const cardShadowY = Math.round(25 + cardVigOffsetY * 0.7);
-        const cardShadowBlur = Math.round((45 * cardVigSpread) * (1.2 - cardVigSharpness * 0.5));
-        const cardShadowAlpha = Math.min(0.95, 0.65 * (cardVigOpacity / 0.95));
-
-        ctx.shadowColor = `rgba(0, 0, 0, ${cardShadowAlpha})`;
-        ctx.shadowBlur = cardShadowBlur;
-        ctx.shadowOffsetY = cardShadowY;
-    }
-    const carpetDrawY = carpetTopY + ((carpetMaxH - maxImgH) / 2) + panOffsetY;
-    await drawContainedImage(ctx, carpetSrc, ((canvas.width - maxImgW) / 2) + panOffsetX, carpetDrawY, maxImgW, maxImgH);
-    ctx.restore();
+    await drawContainImageOnCanvas(ctx, carpetSrc, carpetX, carpetTopY, carpetAvailW, carpetAvailH, scale, studioState.mediaPanX || 0, studioState.mediaPanY || 0, pad, rad, shadow);
 
     // 6. رسم جسم الكارد الملكي الزجاجي مع الإطار والتوهج
     ctx.save();
@@ -3558,7 +3620,8 @@ async function exportStoryVignetteHD(canvas, ctx) {
     const stop1 = Math.max(0.12, 0.35 * (1 - vigSharpness * 0.45));
     const stop2 = Math.min(0.94, 0.70 + (1 - vigSharpness) * 0.15);
 
-    const canvasOffsetY = canvas.height * (vigOffsetY / 580);
+    const { baseW, baseH } = getStageBaseDimensions();
+    const canvasOffsetY = canvas.height * (vigOffsetY / baseH);
 
     // 2. رسم الشادو الدائري الناعم بالأعلى
     if (studioState.showTopVignette !== false) {
@@ -3596,22 +3659,23 @@ async function exportStoryVignetteHD(canvas, ctx) {
             const logoVariant = studioState.logoVariant || 'transparent-burgundy';
             const logoOpt = STUDIO_LOGO_OPTIONS[logoVariant] || STUDIO_LOGO_OPTIONS['transparent-burgundy'];
 
-            // تحجيم الشعار بدقة متناسبة مع الأبعاد
+            // تحجيم الشعار بدقة متناسبة مع أبعاد المسرح المرجعية
             const sizeMap = {
-                'small': 160,
-                'medium': 225,
-                'large': 295
+                'small': 52,
+                'medium': 74,
+                'large': 98
             };
-            const logoDim = sizeMap[studioState.logoSize || 'medium'] || 225;
+            const dim = sizeMap[studioState.logoSize || 'medium'] || 74;
+            const logoDim = Math.round(canvas.width * (dim / baseW));
             
             // حساب موضع X للشعار في HD مطابق تماماً للمعاينة الحية
             const offsetPercent = studioState.storyLogoOffsetPercent || 0;
             const logoCenterX = (canvas.width / 2) + (canvas.width * (offsetPercent / 100));
             const logoX = logoCenterX - (logoDim / 2);
 
-            // حساب موضع Y للشعار في HD (منسوب لارتفاع المعاينة)
-            const topYPercent = (studioState.storyLogoOffsetY || 25) / 580;
-            const logoY = canvas.height * topYPercent;
+            // حساب موضع Y للشعار في HD (منسوب لارتفاع المعاينة المرجعي بدقة متطابقة)
+            const topY = studioState.storyLogoOffsetY || 25;
+            const logoY = Math.round(canvas.height * (topY / baseH));
 
             if (logoVariant === 'custom') {
                 const whiteLogo = await loadImageAsync('../images/logo_white.png');
@@ -3634,20 +3698,21 @@ async function exportStoryVignetteHD(canvas, ctx) {
     if (studioState.showStoryPhrase && studioState.storyPhrase) {
         ctx.save();
         const phraseSizeMap = {
-            'sm': 38,
-            'md': 50,
-            'lg': 62,
-            'xl': 74
+            'sm': 13.5,
+            'md': 17,
+            'lg': 21.5,
+            'xl': 26
         };
-        const pSize = phraseSizeMap[studioState.storyPhraseSize || 'md'] || 50;
+        const baseFontSize = phraseSizeMap[studioState.storyPhraseSize || 'md'] || 17;
+        const pSize = Math.round(canvas.width * (baseFontSize / baseW));
         ctx.font = getStudioCanvasFont(studioState.storyPhraseFont || 'el-messiri', pSize, true, studioState.storyPhraseCustomFont);
 
         let phraseX = canvas.width / 2;
         if (studioState.storyPhraseAlign === 'right') {
-            phraseX = canvas.width - 80;
+            phraseX = canvas.width - Math.round(canvas.width * 0.055);
             ctx.textAlign = 'right';
         } else if (studioState.storyPhraseAlign === 'left') {
-            phraseX = 80;
+            phraseX = Math.round(canvas.width * 0.055);
             ctx.textAlign = 'left';
         } else {
             const offsetPercent = studioState.storyPhraseOffsetPercent || 0;
@@ -3661,11 +3726,11 @@ async function exportStoryVignetteHD(canvas, ctx) {
             : (vig.phraseColor || '#ffffff');
         ctx.fillStyle = pColor;
         ctx.shadowColor = 'rgba(0, 0, 0, 0.6)';
-        ctx.shadowBlur = 16;
-        ctx.shadowOffsetY = 4;
+        ctx.shadowBlur = Math.round(canvas.width * (16 / 1080));
+        ctx.shadowOffsetY = Math.round(canvas.height * (4 / 1920));
 
-        const phraseBottomPercent = (studioState.storyPhraseOffsetY || 68) / 580;
-        const phraseY = canvas.height - (canvas.height * phraseBottomPercent);
+        const phraseBottomPercent = (studioState.storyPhraseOffsetY || 68) / baseH;
+        const phraseY = canvas.height - Math.round(canvas.height * phraseBottomPercent);
 
         ctx.fillText(studioState.storyPhrase, phraseX, phraseY);
         ctx.restore();
@@ -3674,14 +3739,15 @@ async function exportStoryVignetteHD(canvas, ctx) {
     // 6. رسم توقيع حساب الإنستقرام
     if (studioState.showStoryHandle && studioState.storyHandle) {
         ctx.save();
-        ctx.font = getStudioCanvasFont(studioState.storyHandleFont || 'mono', 28, true, studioState.storyHandleCustomFont);
+        const handleFontSize = Math.round(canvas.width * (10.5 / baseW));
+        ctx.font = getStudioCanvasFont(studioState.storyHandleFont || 'mono', handleFontSize, true, studioState.storyHandleCustomFont);
         
         let handleX = canvas.width / 2;
         if (studioState.storyHandleAlign === 'right') {
-            handleX = canvas.width - 80;
+            handleX = canvas.width - Math.round(canvas.width * 0.055);
             ctx.textAlign = 'right';
         } else if (studioState.storyHandleAlign === 'left') {
-            handleX = 80;
+            handleX = Math.round(canvas.width * 0.055);
             ctx.textAlign = 'left';
         } else {
             const offsetPercent = studioState.storyHandleOffsetPercent || 0;
@@ -3694,14 +3760,14 @@ async function exportStoryVignetteHD(canvas, ctx) {
             ? studioState.storyHandleColor 
             : (vig.handleColor || '#fde68a');
 
-        const handleBottomPercent = (studioState.storyHandleOffsetY || 25) / 580;
-        const handleY = canvas.height - (canvas.height * handleBottomPercent);
+        const handleBottomPercent = (studioState.storyHandleOffsetY || 25) / baseH;
+        const handleY = canvas.height - Math.round(canvas.height * handleBottomPercent);
 
         if (studioState.storyHandleStyle === 'pill') {
             ctx.save();
             const textMetrics = ctx.measureText(studioState.storyHandle);
             const pillW = textMetrics.width + (studioState.storyHandle.length * 8) + 60;
-            const pillH = 54;
+            const pillH = Math.round(handleFontSize * 1.9);
             const pillX = handleX - (pillW / 2);
             const pillY = handleY - (pillH / 2);
             
@@ -3709,7 +3775,7 @@ async function exportStoryVignetteHD(canvas, ctx) {
             ctx.strokeStyle = 'rgba(255, 255, 255, 0.25)';
             ctx.lineWidth = 2;
             ctx.beginPath();
-            ctx.roundRect(pillX, pillY, pillW, pillH, 27);
+            ctx.roundRect(pillX, pillY, pillW, pillH, pillH / 2);
             ctx.fill();
             ctx.stroke();
             ctx.restore();
@@ -3725,8 +3791,9 @@ async function exportStoryVignetteHD(canvas, ctx) {
     }
 
     // تنزيل الصورة
-    downloadCanvasAsPNG(canvas, `TATRIZA-Story-1080x1920.png`);
-    showToast('تم تحميل ستوري إنستقرام فائق الدقة (1080×1920) بنجاح!', 'success', 'تطريز ستوديو');
+    const ratioStr = (studioState.ratio || '9:16').replace(':', 'x');
+    downloadCanvasAsPNG(canvas, `TATRIZA-Story-${ratioStr}.png`);
+    showToast(`تم تحميل تصميم ستوري بنجاح (${canvas.width}×${canvas.height})!`, 'success', 'تطريز ستوديو');
 }
 
 // دالة تصدير قالب العرض النقي والعلامة المائية عالي الدقة (Minimal Clean Showcase HD)
@@ -3753,6 +3820,8 @@ async function exportMinimalShowcaseHD(canvas, ctx) {
         await drawCoverImageOnCanvas(ctx, carpetSrc, 0, 0, canvas.width, canvas.height, zoom, panX, panY);
     }
 
+    const { baseW, baseH } = getStageBaseDimensions();
+
     // 3. رسم اللوجو العلوي المفرغ مع الموضع الأفقي المختار (يمين / وسط / يسار)
     if (studioState.showLogo) {
         try {
@@ -3762,19 +3831,20 @@ async function exportMinimalShowcaseHD(canvas, ctx) {
             const logoVariant = studioState.logoVariant || 'transparent-burgundy';
             const logoOpt = STUDIO_LOGO_OPTIONS[logoVariant] || STUDIO_LOGO_OPTIONS['transparent-burgundy'];
 
-            // حجم الشعار في النمط النقي (حجم صغير وأنيق)
+            // حجم الشعار في النمط النقي مطابق تماماً للمعاينة
             const sizesMap = {
-                'small': 120,
-                'medium': 175,
-                'large': 235
+                'small': 46,
+                'medium': 64,
+                'large': 86
             };
-            const logoDim = sizesMap[studioState.logoSize || 'small'] || 120;
+            const dim = sizesMap[studioState.logoSize || 'small'] || 46;
+            const logoDim = Math.round(canvas.width * (dim / baseW));
             
             // حساب موضع X للشعار مطابق تماماً للمعاينة الحية
             const offsetPercent = studioState.minimalLogoOffsetPercent || 0;
             const logoCenterX = (canvas.width / 2) + (canvas.width * (offsetPercent / 100));
             const logoX = logoCenterX - (logoDim / 2);
-            const logoY = Number(studioState.minimalLogoOffsetY || 25) * (canvas.height / 500);
+            const logoY = Math.round(canvas.height * ((studioState.minimalLogoOffsetY || 25) / baseH));
 
             if (logoVariant === 'custom') {
                 const whiteLogo = await loadImageAsync('../images/logo_white.png');
@@ -3798,21 +3868,21 @@ async function exportMinimalShowcaseHD(canvas, ctx) {
         ctx.save();
         const handleText = studioState.storyHandle.trim();
         const handleColor = studioState.minimalHandleColor || '#6b7280';
+        const handleFontSize = Math.round(canvas.width * (10.5 / baseW));
+        const handleFont = getStudioCanvasFont(studioState.storyHandleFont || 'mono', handleFontSize, true, studioState.storyHandleCustomFont);
+        const letterSpacing = (studioState.storyHandleFont === 'great-vibes') ? 2 : 8;
 
         // حساب موضع X لحساب الإنستقرام
         let handleCenterX = canvas.width / 2;
         if (studioState.minimalHandleAlign === 'right') {
-            handleCenterX = canvas.width - 240;
+            handleCenterX = canvas.width - Math.round(canvas.width * 0.065);
         } else if (studioState.minimalHandleAlign === 'left') {
-            handleCenterX = 240;
+            handleCenterX = Math.round(canvas.width * 0.065);
         } else {
             handleCenterX = (canvas.width / 2) + (canvas.width * ((studioState.minimalHandleOffsetPercent || 0) / 100));
         }
 
-        const handleY = canvas.height - (Number(studioState.minimalHandleOffsetY || 25) * (canvas.height / 500));
-
-        const handleFont = getStudioCanvasFont(studioState.storyHandleFont || 'mono', 28, true, studioState.storyHandleCustomFont);
-        const letterSpacing = (studioState.storyHandleFont === 'great-vibes') ? 2 : 8;
+        const handleY = canvas.height - Math.round(canvas.height * ((studioState.minimalHandleOffsetY || 25) / baseH));
 
         // نمط كبسولة زجاجية اختيارية أو نص مباشر نقي كالصورة
         if (studioState.minimalHandleStyle === 'pill') {
@@ -3820,8 +3890,8 @@ async function exportMinimalShowcaseHD(canvas, ctx) {
             const metrics = ctx.measureText(handleText);
             const textWidth = metrics.width + (handleText.length * letterSpacing);
             const pillW = textWidth + 60;
-            const pillH = 54;
-            drawRoundedRect(ctx, handleCenterX - (pillW / 2), handleY - (pillH / 2), pillW, pillH, 27);
+            const pillH = Math.round(handleFontSize * 1.9);
+            drawRoundedRect(ctx, handleCenterX - (pillW / 2), handleY - (pillH / 2), pillW, pillH, pillH / 2);
             ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
             ctx.fill();
             ctx.strokeStyle = 'rgba(0, 0, 0, 0.08)';
@@ -3844,13 +3914,76 @@ async function exportMinimalShowcaseHD(canvas, ctx) {
 }
 
 function downloadCanvasAsPNG(canvas, fileName) {
-    const dataUrl = canvas.toDataURL('image/png', 1.0);
-    const link = document.createElement('a');
-    link.download = fileName;
-    link.href = dataUrl;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    if (!canvas) {
+        showToast('خطأ: لا يوجد مسرح كانفاس لتصديره', 'error', 'خطأ في التصدير');
+        return;
+    }
+
+    const triggerLinkDownload = (url, isBlob = false) => {
+        try {
+            const link = document.createElement('a');
+            link.download = fileName;
+            link.href = url;
+            link.rel = 'noopener';
+            link.target = '_self';
+            link.style.display = 'none';
+            document.body.appendChild(link);
+
+            // تفعيل النقر البرمجي بطريقتين لضمان عملها على متصفحات سطح المكتب (Chrome / Edge / Safari / Firefox)
+            if (typeof link.click === 'function') {
+                link.click();
+            } else {
+                const evt = new MouseEvent('click', { bubbles: true, cancelable: true, view: window });
+                link.dispatchEvent(evt);
+            }
+
+            setTimeout(() => {
+                if (link.parentNode) link.parentNode.removeChild(link);
+                if (isBlob) {
+                    try { URL.revokeObjectURL(url); } catch (e) {}
+                }
+            }, 4000);
+            return true;
+        } catch (e) {
+            console.error('Trigger link download failed:', e);
+            return false;
+        }
+    };
+
+    const tryDataUrlFallback = () => {
+        try {
+            const dataUrl = canvas.toDataURL('image/png', 1.0);
+            const ok = triggerLinkDownload(dataUrl, false);
+            if (!ok) {
+                // فتح في تبويب جديد للحفظ اليدوي إذا تم حظر التنزيل التلقائي بالمتصفح
+                const win = window.open();
+                if (win) {
+                    win.document.write(`<title>${fileName}</title><img src="${dataUrl}" style="max-width:100%;height:auto;display:block;margin:auto;">`);
+                }
+            }
+        } catch (dataErr) {
+            console.error('Canvas export via dataURL failed:', dataErr);
+            showToast('تعذر تنزيل الصورة تلقائياً بسبب أمان المتصفح. يمكنك النقر بالزر الأيمن على المعاينة لحفظها.', 'error', 'تنبيه الحفظ');
+        }
+    };
+
+    try {
+        if (typeof canvas.toBlob === 'function') {
+            canvas.toBlob((blob) => {
+                if (blob) {
+                    const blobUrl = URL.createObjectURL(blob);
+                    triggerLinkDownload(blobUrl, true);
+                } else {
+                    tryDataUrlFallback();
+                }
+            }, 'image/png', 1.0);
+        } else {
+            tryDataUrlFallback();
+        }
+    } catch (blobErr) {
+        console.warn('canvas.toBlob error, using fallback:', blobErr);
+        tryDataUrlFallback();
+    }
 }
 
 // دالة تفريغ خلفية اللوجو البيج/البيضاء لجعلها شفافة بالكامل
@@ -3898,23 +4031,71 @@ function drawSpacedText(ctx, text, centerX, centerY, spacing) {
     }
 }
 
+// حل مسارات الصور بطريقة موحدة تضمن عملها على كافة البيئات (الصفحة الرئيسية والمجلدات الفرعية)
+function resolveImageSrc(src) {
+    if (!src) return '';
+    if (src.startsWith('data:') || src.startsWith('blob:') || src.startsWith('http://') || src.startsWith('https://')) {
+        return src;
+    }
+    const isSubDir = window.location.pathname.includes('/screen/');
+    if (!isSubDir && src.startsWith('../images/')) {
+        return src.replace(/^\.\.\//, '');
+    }
+    if (isSubDir && src.startsWith('images/')) {
+        return '../' + src;
+    }
+    return src;
+}
+
 function loadImageAsync(src) {
-    return new Promise((resolve, reject) => {
-        const img = new Image();
-        img.crossOrigin = 'anonymous';
-        img.src = src;
-        img.onload = () => resolve(img);
-        img.onerror = (e) => reject(e);
+    return new Promise((resolve) => {
+        if (!src) {
+            resolve(null);
+            return;
+        }
+
+        const resolvedSrc = resolveImageSrc(src);
+        const isRemote = resolvedSrc && (resolvedSrc.startsWith('http://') || resolvedSrc.startsWith('https://'));
+
+        const tryLoad = (useCors) => {
+            const img = new Image();
+            if (useCors && isRemote) {
+                img.crossOrigin = 'anonymous';
+            }
+            img.onload = () => resolve(img);
+            img.onerror = () => {
+                if (useCors && isRemote) {
+                    // إذا فشل طلب CORS للصور الخارجية، نعيد المحاولة بدون CORS لتفادي الفشل التام
+                    tryLoad(false);
+                } else if (resolvedSrc !== src) {
+                    // تجربة المسار الأصلي إذا كان المسار المعدل مختلفاً
+                    const fallbackImg = new Image();
+                    fallbackImg.onload = () => resolve(fallbackImg);
+                    fallbackImg.onerror = () => {
+                        console.warn('Image completely failed to load:', src);
+                        resolve(null);
+                    };
+                    fallbackImg.src = src;
+                } else {
+                    console.warn('Image completely failed to load:', src);
+                    resolve(null);
+                }
+            };
+            img.src = resolvedSrc;
+        };
+
+        tryLoad(isRemote);
     });
 }
 
 // رسم الصورة مع دعم التكبير والتحريك الأفقي والرأسي الدقيق
 function drawCoverImageOnCanvas(ctx, src, x, y, w, h, zoom = 1.0, panXPercent = 0, panYPercent = 0) {
     return new Promise((resolve) => {
-        const img = new Image();
-        img.crossOrigin = 'anonymous';
-        img.src = src;
-        img.onload = () => {
+        if (!src) { resolve(); return; }
+        const resolvedSrc = resolveImageSrc(src);
+        const isRemote = resolvedSrc && (resolvedSrc.startsWith('http://') || resolvedSrc.startsWith('https://'));
+
+        const renderImg = (img) => {
             ctx.save();
             ctx.beginPath();
             ctx.rect(x, y, w, h);
@@ -3945,41 +4126,61 @@ function drawCoverImageOnCanvas(ctx, src, x, y, w, h, zoom = 1.0, panXPercent = 
             ctx.restore();
             resolve();
         };
-        img.onerror = () => resolve();
+
+        const img = new Image();
+        if (isRemote) img.crossOrigin = 'anonymous';
+        img.onload = () => renderImg(img);
+        img.onerror = () => {
+            if (isRemote) {
+                const img2 = new Image();
+                img2.onload = () => renderImg(img2);
+                img2.onerror = () => resolve();
+                img2.src = resolvedSrc;
+            } else if (resolvedSrc !== src) {
+                const img3 = new Image();
+                img3.onload = () => renderImg(img3);
+                img3.onerror = () => resolve();
+                img3.src = src;
+            } else {
+                resolve();
+            }
+        };
+        img.src = resolvedSrc;
     });
 }
 
-// رسم الصورة في وضع الاحتواء (Contain) للحفاظ على الحواف النقية والخلفية وتأطير السجاد المربع
+// رسم الصورة في وضع الاحتواء (Contain) للحفاظ على الحواف النقية والخلفية وتأطير السجاد المربع - مطابقة 100% للمعاينة
 function drawContainImageOnCanvas(ctx, src, x, y, w, h, zoom = 1.0, panXPercent = 0, panYPercent = 0, paddingPercent = 0, cornerRadius = 0, hasShadow = false) {
     return new Promise((resolve) => {
-        const img = new Image();
-        img.crossOrigin = 'anonymous';
-        img.src = src;
-        img.onload = () => {
+        if (!src) { resolve(); return; }
+        const resolvedSrc = resolveImageSrc(src);
+        const isRemote = resolvedSrc && (resolvedSrc.startsWith('http://') || resolvedSrc.startsWith('https://'));
+
+        const renderImg = (img) => {
             ctx.save();
 
-            const padX = w * ((paddingPercent || 0) / 100);
-            const padY = h * ((paddingPercent || 0) / 100);
-            const availW = w - (padX * 2);
-            const availH = h - (padY * 2);
+            // في CSS الحشوة بالنسبة المئوية تكون موحدة بالنسبة لعرض العنصر
+            const pad = w * ((paddingPercent || 0) / 100);
+            const availW = Math.max(10, w - (pad * 2));
+            const availH = Math.max(10, h - (pad * 2));
 
             const imgRatio = img.width / img.height;
             const targetRatio = availW / availH;
             let baseW, baseH;
 
             if (imgRatio > targetRatio) {
-                baseW = availW * 0.94;
+                baseW = availW;
                 baseH = baseW / imgRatio;
             } else {
-                baseH = availH * 0.88;
+                baseH = availH;
                 baseW = baseH * imgRatio;
             }
 
             const finalW = baseW * zoom;
             const finalH = baseH * zoom;
 
-            const centerX = x + padX + (availW - finalW) / 2;
-            const centerY = y + padY + (availH - finalH) / 2;
+            const centerX = x + pad + (availW - finalW) / 2;
+            const centerY = y + pad + (availH - finalH) / 2;
 
             const offsetX = (w * (panXPercent / 100));
             const offsetY = (h * (panYPercent / 100));
@@ -3987,13 +4188,16 @@ function drawContainImageOnCanvas(ctx, src, x, y, w, h, zoom = 1.0, panXPercent 
             const drawX = centerX + offsetX;
             const drawY = centerY + offsetY;
 
+            // تحجيم زوايا الانحناء مع دقة الكانفاس مقارنة بمسرح المعاينة 360px
+            const scaledRadius = cornerRadius > 0 ? Math.round(cornerRadius * (w / 360)) : 0;
+
             if (hasShadow) {
                 ctx.save();
-                ctx.shadowColor = 'rgba(0, 0, 0, 0.45)';
-                ctx.shadowBlur = Math.round(w * 0.035);
-                ctx.shadowOffsetY = Math.round(h * 0.02);
-                if (cornerRadius > 0) {
-                    drawRoundedRect(ctx, drawX, drawY, finalW, finalH, cornerRadius);
+                ctx.shadowColor = 'rgba(0, 0, 0, 0.42)';
+                ctx.shadowBlur = Math.round(w * (35 / 360));
+                ctx.shadowOffsetY = Math.round(w * (15 / 360));
+                if (scaledRadius > 0) {
+                    drawRoundedRect(ctx, drawX, drawY, finalW, finalH, scaledRadius);
                     ctx.fillStyle = 'rgba(0,0,0,0.01)';
                     ctx.fill();
                 } else {
@@ -4003,9 +4207,9 @@ function drawContainImageOnCanvas(ctx, src, x, y, w, h, zoom = 1.0, panXPercent 
                 ctx.restore();
             }
 
-            if (cornerRadius > 0) {
+            if (scaledRadius > 0) {
                 ctx.save();
-                drawRoundedRect(ctx, drawX, drawY, finalW, finalH, cornerRadius);
+                drawRoundedRect(ctx, drawX, drawY, finalW, finalH, scaledRadius);
                 ctx.clip();
                 ctx.drawImage(img, drawX, drawY, finalW, finalH);
                 ctx.restore();
@@ -4016,7 +4220,26 @@ function drawContainImageOnCanvas(ctx, src, x, y, w, h, zoom = 1.0, panXPercent 
             ctx.restore();
             resolve();
         };
-        img.onerror = () => resolve();
+
+        const img = new Image();
+        if (isRemote) img.crossOrigin = 'anonymous';
+        img.onload = () => renderImg(img);
+        img.onerror = () => {
+            if (isRemote) {
+                const img2 = new Image();
+                img2.onload = () => renderImg(img2);
+                img2.onerror = () => resolve();
+                img2.src = resolvedSrc;
+            } else if (resolvedSrc !== src) {
+                const img3 = new Image();
+                img3.onload = () => renderImg(img3);
+                img3.onerror = () => resolve();
+                img3.src = src;
+            } else {
+                resolve();
+            }
+        };
+        img.src = resolvedSrc;
     });
 }
 
@@ -4037,10 +4260,11 @@ function drawRoundedRect(ctx, x, y, width, height, radius) {
 
 function drawRoundedImage(ctx, src, x, y, w, h, radius) {
     return new Promise((resolve) => {
-        const img = new Image();
-        img.crossOrigin = 'anonymous';
-        img.src = src;
-        img.onload = () => {
+        if (!src) { resolve(); return; }
+        const resolvedSrc = resolveImageSrc(src);
+        const isRemote = resolvedSrc && (resolvedSrc.startsWith('http://') || resolvedSrc.startsWith('https://'));
+
+        const renderImg = (img) => {
             ctx.save();
             drawRoundedRect(ctx, x, y, w, h, radius);
             ctx.clip();
@@ -4048,16 +4272,36 @@ function drawRoundedImage(ctx, src, x, y, w, h, radius) {
             ctx.restore();
             resolve();
         };
-        img.onerror = () => resolve();
+
+        const img = new Image();
+        if (isRemote) img.crossOrigin = 'anonymous';
+        img.onload = () => renderImg(img);
+        img.onerror = () => {
+            if (isRemote) {
+                const img2 = new Image();
+                img2.onload = () => renderImg(img2);
+                img2.onerror = () => resolve();
+                img2.src = resolvedSrc;
+            } else if (resolvedSrc !== src) {
+                const img3 = new Image();
+                img3.onload = () => renderImg(img3);
+                img3.onerror = () => resolve();
+                img3.src = src;
+            } else {
+                resolve();
+            }
+        };
+        img.src = resolvedSrc;
     });
 }
 
 function drawImageOnCanvas(ctx, src, x, y, w, h, cover = false) {
     return new Promise((resolve) => {
-        const img = new Image();
-        img.crossOrigin = 'anonymous';
-        img.src = src;
-        img.onload = () => {
+        if (!src) { resolve(); return; }
+        const resolvedSrc = resolveImageSrc(src);
+        const isRemote = resolvedSrc && (resolvedSrc.startsWith('http://') || resolvedSrc.startsWith('https://'));
+
+        const renderImg = (img) => {
             if (cover) {
                 const scale = Math.max(w / img.width, h / img.height);
                 const nw = img.width * scale;
@@ -4070,16 +4314,36 @@ function drawImageOnCanvas(ctx, src, x, y, w, h, cover = false) {
             }
             resolve();
         };
-        img.onerror = () => resolve();
+
+        const img = new Image();
+        if (isRemote) img.crossOrigin = 'anonymous';
+        img.onload = () => renderImg(img);
+        img.onerror = () => {
+            if (isRemote) {
+                const img2 = new Image();
+                img2.onload = () => renderImg(img2);
+                img2.onerror = () => resolve();
+                img2.src = resolvedSrc;
+            } else if (resolvedSrc !== src) {
+                const img3 = new Image();
+                img3.onload = () => renderImg(img3);
+                img3.onerror = () => resolve();
+                img3.src = src;
+            } else {
+                resolve();
+            }
+        };
+        img.src = resolvedSrc;
     });
 }
 
 function drawContainedImage(ctx, src, x, y, maxW, maxH) {
     return new Promise((resolve) => {
-        const img = new Image();
-        img.crossOrigin = 'anonymous';
-        img.src = src;
-        img.onload = () => {
+        if (!src) { resolve(); return; }
+        const resolvedSrc = resolveImageSrc(src);
+        const isRemote = resolvedSrc && (resolvedSrc.startsWith('http://') || resolvedSrc.startsWith('https://'));
+
+        const renderImg = (img) => {
             const scale = Math.min(maxW / img.width, maxH / img.height);
             const w = img.width * scale;
             const h = img.height * scale;
@@ -4093,7 +4357,26 @@ function drawContainedImage(ctx, src, x, y, maxW, maxH) {
             ctx.restore();
             resolve();
         };
-        img.onerror = () => resolve();
+
+        const img = new Image();
+        if (isRemote) img.crossOrigin = 'anonymous';
+        img.onload = () => renderImg(img);
+        img.onerror = () => {
+            if (isRemote) {
+                const img2 = new Image();
+                img2.onload = () => renderImg(img2);
+                img2.onerror = () => resolve();
+                img2.src = resolvedSrc;
+            } else if (resolvedSrc !== src) {
+                const img3 = new Image();
+                img3.onload = () => renderImg(img3);
+                img3.onerror = () => resolve();
+                img3.src = src;
+            } else {
+                resolve();
+            }
+        };
+        img.src = resolvedSrc;
     });
 }
 
@@ -4279,224 +4562,25 @@ let currentPresetsFilter = 'all';
 let currentPromptLayout = null;
 
 export function getBuiltinStudioPresets() {
-    return [
-        {
-            id: 'builtin_story_royal',
-            name: 'ريلز عنابي ملوكي فاخر',
-            layoutMode: 'story_vignette',
-            ratio: '9:16',
-            isBuiltin: true,
-            desc: 'زووم 110% • شادو عنابي متناسق • عبارة وتوقيع بيضاوي فاخر',
-            mediaZoom: 110,
-            mediaPanX: 0,
-            mediaPanY: 0,
-            vignetteTheme: 'site-burgundy',
-            vignetteOpacity: 95,
-            vignetteOffsetY: 0,
-            vignetteSpread: 100,
-            vignetteSharpness: 40,
-            showTopVignette: true,
-            showBottomVignette: true,
-            showStoryPhrase: true,
-            storyPhrase: '- 🌟 عمل مُتقن -',
-            storyPhraseSize: 'md',
-            storyPhraseFont: 'el-messiri',
-            storyPhraseOffsetY: 68,
-            storyPhraseAlign: 'center',
-            showStoryHandle: true,
-            storyHandle: '@TATRIZA_22',
-            storyHandleStyle: 'pill',
-            storyHandleFont: 'mono',
-            storyHandleOffsetY: 25,
-            storyHandleAlign: 'center',
-            showLogo: true,
-            logoVariant: 'transparent-burgundy',
-            logoSize: 'medium',
-            logoOpacity: 100,
-            postBgColor: '#121214'
-        },
-        {
-            id: 'builtin_story_emerald',
-            name: 'ستوري زمرد ظفار الهادئ',
-            layoutMode: 'story_vignette',
-            ratio: '9:16',
-            isBuiltin: true,
-            desc: 'زووم 100% • شادو زمردي ملكي • خط أميري ناعم وتوقيع كلاسيكي',
-            mediaZoom: 100,
-            mediaPanX: 0,
-            mediaPanY: 0,
-            vignetteTheme: 'site-emerald',
-            vignetteOpacity: 85,
-            vignetteOffsetY: 0,
-            vignetteSpread: 110,
-            vignetteSharpness: 30,
-            showTopVignette: true,
-            showBottomVignette: true,
-            showStoryPhrase: true,
-            storyPhrase: '🍃 أصالة الحياكة العُمانية',
-            storyPhraseSize: 'md',
-            storyPhraseFont: 'amiri',
-            storyPhraseOffsetY: 72,
-            storyPhraseAlign: 'center',
-            showStoryHandle: true,
-            storyHandle: '@TATRIZA_22',
-            storyHandleStyle: 'plain',
-            storyHandleFont: 'mono',
-            storyHandleOffsetY: 25,
-            storyHandleAlign: 'center',
-            showLogo: true,
-            logoVariant: 'transparent-emerald',
-            logoSize: 'medium',
-            logoOpacity: 100,
-            postBgColor: '#0f1712'
-        },
-        {
-            id: 'builtin_story_cinema',
-            name: 'ريلز سينمائي بدون ظلال',
-            layoutMode: 'story_vignette',
-            ratio: '9:16',
-            isBuiltin: true,
-            desc: 'زووم 115% • بدون أي ظلال علوية أو سفلية • توقيع كبسولة عائم',
-            mediaZoom: 115,
-            mediaPanX: 0,
-            mediaPanY: 0,
-            showTopVignette: false,
-            showBottomVignette: false,
-            showStoryPhrase: false,
-            showStoryHandle: true,
-            storyHandle: '@TATRIZA_22',
-            storyHandleStyle: 'pill',
-            storyHandleOffsetY: 35,
-            showLogo: true,
-            logoVariant: 'transparent-gold',
-            logoSize: 'small',
-            logoOpacity: 95,
-            postBgColor: '#000000'
-        },
-        {
-            id: 'builtin_minimal_pure',
-            name: 'عرض نقي أبيض كلاسيكي (1:1)',
-            layoutMode: 'minimal_showcase',
-            ratio: '1:1',
-            isBuiltin: true,
-            desc: 'مربع 1:1 • خلفية بيضاء نقية • إطار زوايا 18px مع ظل خفيف وشعار بالوسط',
-            mediaZoom: 100,
-            mediaPanX: 0,
-            mediaPanY: 0,
-            minimalLogoAlign: 'center',
-            minimalLogoOffsetY: 25,
-            minimalHandleAlign: 'center',
-            minimalHandleOffsetY: 25,
-            minimalHandleColor: '#6b7280',
-            minimalHandleStyle: 'plain',
-            postBgColor: '#ffffff',
-            imageFitMode: 'contain',
-            imageFramePadding: 6,
-            imageCornerRadius: 18,
-            imageElevationShadow: true,
-            showLogo: true,
-            logoVariant: 'transparent-burgundy',
-            logoSize: 'small'
-        },
-        {
-            id: 'builtin_minimal_frameless',
-            name: 'مينيمال كامل الإطار (4:5)',
-            layoutMode: 'minimal_showcase',
-            ratio: '4:5',
-            isBuiltin: true,
-            desc: 'أبعاد 4:5 • ملء كامل بدون هوامش • شعار وتوقيع ذهبي بالأطراف',
-            mediaZoom: 100,
-            mediaPanX: 0,
-            mediaPanY: 0,
-            minimalLogoAlign: 'right',
-            minimalLogoOffsetPercent: 6,
-            minimalLogoOffsetY: 25,
-            minimalHandleAlign: 'left',
-            minimalHandleOffsetPercent: -6,
-            minimalHandleOffsetY: 25,
-            minimalHandleColor: '#c59b27',
-            minimalHandleStyle: 'pill',
-            postBgColor: '#fdfbf7',
-            imageFitMode: 'cover',
-            imageFramePadding: 0,
-            imageCornerRadius: 0,
-            imageElevationShadow: false,
-            showLogo: true,
-            logoVariant: 'transparent-gold',
-            logoSize: 'small'
-        },
-        {
-            id: 'builtin_card_royal',
-            name: 'كارت ملكي أسفل متوهج (4:5)',
-            layoutMode: 'card',
-            ratio: '4:5',
-            isBuiltin: true,
-            desc: 'أبعاد 4:5 • كارت زجاجي سفلي • حدود ذهبية متوهجة وهالة إضاءة 3D',
-            mediaZoom: 100,
-            mediaPanX: 0,
-            mediaPanY: 0,
-            carpetScale: 88,
-            carpetShadow: true,
-            carpetTilt: false,
-            cardPosition: 'bottom',
-            cardAlign: 'right',
-            cardWidthPercent: 92,
-            cardRadius: 'rounded',
-            cardOffsetY: 16,
-            cardGlassOpacity: 80,
-            cardGlassBlur: 16,
-            cardBorderStyle: 'gold-glow',
-            cardSpotlight: true,
-            theme: 'royal-burgundy',
-            showPrice: true,
-            showDimensions: true,
-            showMaterial: true,
-            showSticker: true,
-            showWhatsApp: true
-        },
-        {
-            id: 'builtin_card_dock',
-            name: 'دوك كارت عائم (1:1)',
-            layoutMode: 'card',
-            ratio: '1:1',
-            isBuiltin: true,
-            desc: 'مربع 1:1 • بطاقة عائمة دائرية الزوايا • أسود وذهب فاخر',
-            mediaZoom: 100,
-            mediaPanX: 0,
-            mediaPanY: 0,
-            carpetScale: 80,
-            carpetShadow: true,
-            carpetTilt: false,
-            cardPosition: 'dock',
-            cardAlign: 'center',
-            cardWidthPercent: 88,
-            cardRadius: 'pill',
-            cardOffsetY: 18,
-            cardGlassOpacity: 90,
-            cardGlassBlur: 20,
-            cardBorderStyle: 'solid-accent',
-            cardSpotlight: true,
-            theme: 'obsidian-gold',
-            showPrice: true,
-            showDimensions: true,
-            showMaterial: true,
-            showSticker: true,
-            showWhatsApp: true
-        }
-    ];
+    // تم حذف القوالب الجاهزة الافتراضية بناءً على طلب الإدارة لاعتماد القوالب المخصصة المحفوظة فقط
+    return [];
 }
 
 export function getCustomStudioPresets() {
     try {
         const raw = localStorage.getItem('tatr_studio_style_presets');
-        return raw ? JSON.parse(raw) : [];
+        if (!raw) return [];
+        const parsed = JSON.parse(raw);
+        if (!Array.isArray(parsed)) return [];
+        // تصفية واستبعاد أي قوالب قديمة جاهزة لضمان نقاء قائمة قوالب المستخدم
+        return parsed.filter(p => !p.isBuiltin && !String(p.id).startsWith('builtin_'));
     } catch (e) {
         return [];
     }
 }
 
 export function getAllStudioStylePresets() {
-    return [...getCustomStudioPresets(), ...getBuiltinStudioPresets()];
+    return getCustomStudioPresets();
 }
 
 export function saveCurrentStudioStylePreset(presetName, targetLayout = null) {
@@ -4615,16 +4699,26 @@ export function saveCurrentStudioStylePreset(presetName, targetLayout = null) {
         };
 
         const customs = getCustomStudioPresets();
-        customs.unshift(newPreset);
-        if (customs.length > 30) customs.pop();
+        const existingIdx = customs.findIndex(p => p.id === newPreset.id);
+        if (existingIdx >= 0) customs[existingIdx] = newPreset;
+        else customs.unshift(newPreset);
+        if (customs.length > 50) customs.pop();
         localStorage.setItem('tatr_studio_style_presets', JSON.stringify(customs));
 
         renderStudioStylePresetsUI();
-        showToast(`تم حفظ القالب «${name}» بنجاح! جاهز للتطبيق الفوري على أي صورة مستقبلاً.`, 'success', 'حفظ القالب المخصص');
+        showToast(`تم حفظ القالب «${name}» بنجاح في السحابة وجهازك!`, 'success', 'حفظ القالب المخصص');
+
+        // المزامنة الفورية في سحابة Firebase Cloud Firestore ليكون متاحاً على كل الأجهزة
+        saveStudioPresetToCloud(newPreset).then((ok) => {
+            if (ok) console.log('✅ Preset synced to Firebase Cloud:', newPreset.id);
+        }).catch((err) => {
+            console.warn('⚠️ Cloud preset sync notice:', err);
+        });
+
         return newPreset;
     } catch (e) {
         console.error('Error saving style preset:', e);
-        showToast('تعذر حفظ النمط محلياً.', 'error', 'خطأ');
+        showToast('تعذر حفظ النمط.', 'error', 'خطأ');
     }
 }
 
@@ -4679,7 +4773,30 @@ export function deleteStudioStylePreset(presetId) {
     localStorage.setItem('tatr_studio_style_presets', JSON.stringify(customs));
     renderStudioStylePresetsUI();
     showToast(`تم حذف قالب «${target.name}».`, 'info', 'حذف النمط');
+
+    // حذف من سحابة Firebase
+    deleteStudioPresetFromCloud(presetId).then((ok) => {
+        if (ok) console.log('✅ Preset deleted from Firebase Cloud:', presetId);
+    }).catch((err) => {
+        console.warn('⚠️ Cloud preset delete notice:', err);
+    });
 }
+
+// مراقبة ومزامنة القوالب سحابياً في الوقت الفعلي عبر Firestore
+let studioPresetsUnsub = null;
+export function initStudioPresetsCloudSync() {
+    if (studioPresetsUnsub) return;
+    try {
+        studioPresetsUnsub = subscribeToStudioPresets((presets) => {
+            renderStudioStylePresetsUI();
+        }, (err) => {
+            console.warn("Studio presets cloud sync notice (local cache active):", err);
+        });
+    } catch (e) {
+        console.warn("Could not initialize studio presets cloud sync:", e);
+    }
+}
+window.initStudioPresetsCloudSync = initStudioPresetsCloudSync;
 
 export function promptSaveCurrentStylePreset(targetLayout = null) {
     currentPromptLayout = targetLayout || studioState.layoutMode;
@@ -4823,7 +4940,7 @@ export function renderStudioStylePresetsUI(filter = null) {
     const customPresets = getCustomStudioPresets();
 
     if (countBadge) {
-        countBadge.innerText = `${allPresets.length} قوالب (${customPresets.length} مخصص)`;
+        countBadge.innerText = `${allPresets.length} قالب موحد محفوظ سحابياً ☁️`;
     }
 
     // تصفية حسب التبويب النشط
@@ -4860,8 +4977,10 @@ export function renderStudioStylePresetsUI(filter = null) {
         if (filteredPresets.length === 0) {
             container.innerHTML = `
                 ${filterTabsHtml}
-                <div class="text-center py-4 text-stone-400 text-xs bg-white/70 rounded-xl border border-stone-200/60">
-                    لا توجد قوالب محفوظة في هذا التصنيف بعد. يمكنك حفظ تعديلاتك الحالية بالنقر على الزر أعلاه!
+                <div class="text-center py-6 px-4 text-stone-500 text-xs bg-white/70 rounded-xl border border-stone-200/60 space-y-2">
+                    <div class="text-2xl">✨</div>
+                    <div class="font-bold text-stone-800">لا توجد قوالب محفوظة في هذا التصنيف بعد</div>
+                    <p class="text-[11px] text-stone-500 max-w-sm mx-auto">اضبط قياساتك، الزووم، الظلال أو مواصفات الكارت كما تفضل، ثم انقر على «💾 حفظ النمط الحالي» لإنشاء قالبك الخاص الموحد الذي سيتزامن فوراً مع السحابة ويتاح على كل أجهزتك.</p>
                 </div>
             `;
         } else {
@@ -4890,15 +5009,13 @@ export function renderStudioStylePresetsUI(filter = null) {
                                 <span class="text-[10px] px-2 py-0.5 rounded-md font-bold border ${badgeColor}">
                                     ${layoutIcon} ${layoutName} • ${p.ratio || '9:16'}
                                 </span>
-                                <span class="text-[9.5px] px-1.5 py-0.5 rounded font-black ${p.isCustom ? 'bg-amber-100 text-amber-900 border border-amber-300' : 'bg-stone-100 text-stone-600'}">
-                                    ${p.isCustom ? 'قالبك المخصص 🌟' : 'معتمد 👑'}
+                                <span class="text-[9.5px] px-1.5 py-0.5 rounded font-black bg-amber-100 text-amber-900 border border-amber-300">
+                                    قالبك الموحد ☁️
                                 </span>
                             </div>
-                            ${p.isCustom ? `
-                                <button type="button" onclick="window.deleteStudioStylePreset('${p.id}')" class="text-stone-400 hover:text-rose-600 p-1 rounded-lg transition text-xs shrink-0 cursor-pointer" title="حذف هذا القالب">
-                                    ✕
-                                </button>
-                            ` : ''}
+                            <button type="button" onclick="window.deleteStudioStylePreset('${p.id}')" class="text-stone-400 hover:text-rose-600 p-1 rounded-lg transition text-xs shrink-0 cursor-pointer" title="حذف هذا القالب">
+                                ✕
+                            </button>
                         </div>
                         <div class="min-w-0">
                             <span class="font-extrabold text-xs text-stone-900 block truncate">${p.name}</span>
@@ -4925,36 +5042,48 @@ export function renderStudioStylePresetsUI(filter = null) {
     const storyQuickContainer = document.getElementById('studio-story-quick-presets');
     if (storyQuickContainer) {
         const storyPresets = allPresets.filter(p => p.layoutMode === 'story_vignette');
-        storyQuickContainer.innerHTML = storyPresets.map(p => `
-            <button type="button" onclick="window.applyStudioStylePreset('${p.id}')" class="shrink-0 px-2.5 py-1 rounded-xl bg-white hover:bg-amber-50 text-stone-800 hover:text-amber-950 border border-stone-200/90 hover:border-amber-400 text-[11px] font-bold transition flex items-center gap-1.5 shadow-2xs cursor-pointer active:scale-95" title="${p.name}">
-                <span>${p.isCustom ? '⭐' : '👑'}</span>
-                <span class="truncate max-w-[130px]">${p.name}</span>
-            </button>
-        `).join('');
+        if (storyPresets.length === 0) {
+            storyQuickContainer.innerHTML = `<span class="text-[11px] text-stone-400 py-1 px-1">لا توجد قوالب ستوري محفوظة بعد. اضغط «💾 حفظ النمط الحالي» لإنشاء قالبك الموحد.</span>`;
+        } else {
+            storyQuickContainer.innerHTML = storyPresets.map(p => `
+                <button type="button" onclick="window.applyStudioStylePreset('${p.id}')" class="shrink-0 px-2.5 py-1 rounded-xl bg-white hover:bg-amber-50 text-stone-800 hover:text-amber-950 border border-stone-200/90 hover:border-amber-400 text-[11px] font-bold transition flex items-center gap-1.5 shadow-2xs cursor-pointer active:scale-95" title="${p.name}">
+                    <span>☁️</span>
+                    <span class="truncate max-w-[130px]">${p.name}</span>
+                </button>
+            `).join('');
+        }
     }
 
     // 3. تحديث شريط القوالب السريعة في حاوية العرض النقي
     const minimalQuickContainer = document.getElementById('studio-minimal-quick-presets');
     if (minimalQuickContainer) {
         const minPresets = allPresets.filter(p => p.layoutMode === 'minimal_showcase');
-        minimalQuickContainer.innerHTML = minPresets.map(p => `
-            <button type="button" onclick="window.applyStudioStylePreset('${p.id}')" class="shrink-0 px-2.5 py-1 rounded-xl bg-white hover:bg-amber-50 text-stone-800 hover:text-amber-950 border border-stone-200/90 hover:border-amber-400 text-[11px] font-bold transition flex items-center gap-1.5 shadow-2xs cursor-pointer active:scale-95" title="${p.name}">
-                <span>${p.isCustom ? '⭐' : '👑'}</span>
-                <span class="truncate max-w-[130px]">${p.name}</span>
-            </button>
-        `).join('');
+        if (minPresets.length === 0) {
+            minimalQuickContainer.innerHTML = `<span class="text-[11px] text-stone-400 py-1 px-1">لا توجد قوالب عرض نقي بعد. احفظ نمطك المعتمد ليظهر هنا تلقائياً.</span>`;
+        } else {
+            minimalQuickContainer.innerHTML = minPresets.map(p => `
+                <button type="button" onclick="window.applyStudioStylePreset('${p.id}')" class="shrink-0 px-2.5 py-1 rounded-xl bg-white hover:bg-amber-50 text-stone-800 hover:text-amber-950 border border-stone-200/90 hover:border-amber-400 text-[11px] font-bold transition flex items-center gap-1.5 shadow-2xs cursor-pointer active:scale-95" title="${p.name}">
+                    <span>☁️</span>
+                    <span class="truncate max-w-[130px]">${p.name}</span>
+                </button>
+            `).join('');
+        }
     }
 
     // 4. تحديث شريط القوالب السريعة في حاوية الكارت الملكي
     const cardQuickContainer = document.getElementById('studio-card-quick-presets');
     if (cardQuickContainer) {
         const cardPresets = allPresets.filter(p => p.layoutMode === 'card');
-        cardQuickContainer.innerHTML = cardPresets.map(p => `
-            <button type="button" onclick="window.applyStudioStylePreset('${p.id}')" class="shrink-0 px-2.5 py-1 rounded-xl bg-white hover:bg-amber-50 text-stone-800 hover:text-amber-950 border border-stone-200/90 hover:border-amber-400 text-[11px] font-bold transition flex items-center gap-1.5 shadow-2xs cursor-pointer active:scale-95" title="${p.name}">
-                <span>${p.isCustom ? '⭐' : '👑'}</span>
-                <span class="truncate max-w-[130px]">${p.name}</span>
-            </button>
-        `).join('');
+        if (cardPresets.length === 0) {
+            cardQuickContainer.innerHTML = `<span class="text-[11px] text-stone-400 py-1 px-1">لا توجد قوالب كارت محفوظة بعد. اضغط «💾 حفظ النمط الحالي» لإنشائه.</span>`;
+        } else {
+            cardQuickContainer.innerHTML = cardPresets.map(p => `
+                <button type="button" onclick="window.applyStudioStylePreset('${p.id}')" class="shrink-0 px-2.5 py-1 rounded-xl bg-white hover:bg-amber-50 text-stone-800 hover:text-amber-950 border border-stone-200/90 hover:border-amber-400 text-[11px] font-bold transition flex items-center gap-1.5 shadow-2xs cursor-pointer active:scale-95" title="${p.name}">
+                    <span>☁️</span>
+                    <span class="truncate max-w-[130px]">${p.name}</span>
+                </button>
+            `).join('');
+        }
     }
 
     // 5. تحديث القائمة الكاملة في قسم القوالب المحفوظة السفلي
@@ -4962,7 +5091,7 @@ export function renderStudioStylePresetsUI(filter = null) {
     if (fullListContainer) {
         if (allPresets.length === 0) {
             fullListContainer.innerHTML = `
-                <div class="text-center py-3 text-stone-400 text-xs">لا توجد قوالب محفوظة</div>
+                <div class="text-center py-4 text-stone-400 text-xs">لا توجد قوالب محفوظة بعد. احفظ إعداداتك كقالب لتظهر هنا وفي كل أجهزتك.</div>
             `;
         } else {
             fullListContainer.innerHTML = allPresets.map(p => {
@@ -4977,18 +5106,16 @@ export function renderStudioStylePresetsUI(filter = null) {
                             <span class="text-base shrink-0">${icon}</span>
                             <div class="truncate">
                                 <span class="font-bold text-stone-900 block truncate">${p.name}</span>
-                                <span class="text-[10px] text-stone-400 block">${badge} • ${p.ratio || '9:16'} • ${p.isCustom ? (p.dateFormatted || 'مخصص') : 'معتمد رسمي'}</span>
+                                <span class="text-[10px] text-stone-400 block">${badge} • ${p.ratio || '9:16'} • سحابي ☁️ (${p.dateFormatted || 'محفوظ'})</span>
                             </div>
                         </button>
                         <div class="flex items-center gap-1 shrink-0">
                             <button type="button" onclick="window.applyStudioStylePreset('${p.id}')" class="px-2 py-1 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-900 font-bold text-[11px] transition cursor-pointer">
                                 تطبيق
                             </button>
-                            ${p.isCustom ? `
-                                <button type="button" onclick="window.deleteStudioStylePreset('${p.id}')" class="text-stone-400 hover:text-rose-600 p-1 rounded-lg transition text-xs cursor-pointer" title="حذف القالب">
-                                    ✕
-                                </button>
-                            ` : ''}
+                            <button type="button" onclick="window.deleteStudioStylePreset('${p.id}')" class="text-stone-400 hover:text-rose-600 p-1 rounded-lg transition text-xs cursor-pointer" title="حذف القالب">
+                                ✕
+                            </button>
                         </div>
                     </div>
                 `;
