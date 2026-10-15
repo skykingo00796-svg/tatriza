@@ -1293,7 +1293,7 @@ export function getPublicShowcaseSettings() {
         const stored = localStorage.getItem('tatr_showcase_settings');
         if (stored) {
             const parsed = JSON.parse(stored);
-            if (parsed && parsed.version === 2 && Array.isArray(parsed.journeySteps) && parsed.journeySteps.length >= 7) {
+            if (parsed && parsed.version === 3 && Array.isArray(parsed.journeySteps) && parsed.journeySteps.length >= 7) {
                 return parsed;
             }
         }
@@ -1365,52 +1365,13 @@ function resolveAssetPath(path) {
 }
 
 // ==========================================
-// 2. محرك سيناريو موشن جرافيك الحرفة التفاعلي والمشغل السينمائي
+// 2. مشغل سينما الحرفة اليدوية والمشهد الوثائقي (Atelier Cinema Player)
 // ==========================================
 let activeBlobUrl = null;
 let isCinemaTransitioning = false;
 let cinemaTouchStartX = 0;
 let cinemaTouchStartY = 0;
-
-let isMotionStoryPlaying = false;
-let motionStoryTimer = null;
-let motionAnimFrameId = null;
-let motionStoryStartTime = 0;
-const MOTION_SCENE_DURATION = 5500; // 5.5 ثوان لكل مشهد
 let isCinemaMuted = false;
-let craftAudioCtx = null;
-
-function playCraftChime(stepIndex = 0) {
-    if (isCinemaMuted) return;
-    try {
-        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-        if (!AudioContextClass) return;
-        if (!craftAudioCtx) craftAudioCtx = new AudioContextClass();
-        if (craftAudioCtx.state === 'suspended') craftAudioCtx.resume();
-
-        const osc = craftAudioCtx.createOscillator();
-        const gain = craftAudioCtx.createGain();
-
-        // سلم نغمي فاخر متدرج مع خطوات الحرفة السبعة
-        const notes = [440, 493.88, 554.37, 659.25, 739.99, 880, 987.77];
-        const freq = notes[stepIndex % notes.length] || 520;
-
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(freq, craftAudioCtx.currentTime);
-
-        gain.gain.setValueAtTime(0.001, craftAudioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.06, craftAudioCtx.currentTime + 0.04);
-        gain.gain.exponentialRampToValueAtTime(0.0001, craftAudioCtx.currentTime + 0.7);
-
-        osc.connect(gain);
-        gain.connect(craftAudioCtx.destination);
-
-        osc.start();
-        osc.stop(craftAudioCtx.currentTime + 0.75);
-    } catch (e) {
-        // تجاهل أي قيود أمنية على تشغيل الصوت التلقائي
-    }
-}
 
 function updateMotionUI(isPlaying) {
     const playIcon = document.getElementById('cinema-play-icon');
@@ -1428,74 +1389,12 @@ function updateMotionUI(isPlaying) {
         if (centerIcon) centerIcon.innerText = '⏸';
     } else {
         if (playIcon) playIcon.innerText = '▶';
-        if (playText) playText.innerText = 'مشاهدة رحلة الحرفة';
+        if (playText) playText.innerText = 'مشاهدة الفيديو';
         if (centerWrap) {
             centerWrap.classList.remove('opacity-0', 'pointer-events-none');
             centerWrap.classList.add('opacity-100', 'pointer-events-auto');
         }
         if (centerIcon) centerIcon.innerText = '▶';
-    }
-}
-
-function stopMotionStoryProgress() {
-    if (motionStoryTimer) {
-        clearTimeout(motionStoryTimer);
-        motionStoryTimer = null;
-    }
-    if (motionAnimFrameId) {
-        cancelAnimationFrame(motionAnimFrameId);
-        motionAnimFrameId = null;
-    }
-}
-
-function setMotionProgressBar(percent) {
-    const bar = document.getElementById('cinema-story-progress-bar');
-    if (bar) {
-        bar.style.width = `${Math.min(100, Math.max(0, percent))}%`;
-    }
-}
-
-function startMotionStory() {
-    isMotionStoryPlaying = true;
-    updateMotionUI(true);
-    stopMotionStoryProgress();
-
-    motionStoryStartTime = performance.now();
-    playCraftChime(activeCinemaIndex);
-
-    const stageImg = document.getElementById('cinema-stage-img');
-    if (stageImg) {
-        stageImg.classList.add('scale-105');
-    }
-
-    const animateProgress = (now) => {
-        if (!isMotionStoryPlaying) return;
-        const elapsed = now - motionStoryStartTime;
-        const percent = (elapsed / MOTION_SCENE_DURATION) * 100;
-        setMotionProgressBar(percent);
-
-        if (elapsed < MOTION_SCENE_DURATION) {
-            motionAnimFrameId = requestAnimationFrame(animateProgress);
-        } else {
-            setMotionProgressBar(100);
-            if (currentCinemaVideos && currentCinemaVideos.length > 1) {
-                const nextIdx = (activeCinemaIndex + 1) % currentCinemaVideos.length;
-                navigateCinemaScene('next', nextIdx, true);
-            } else {
-                pauseMotionStory();
-            }
-        }
-    };
-    motionAnimFrameId = requestAnimationFrame(animateProgress);
-}
-
-function pauseMotionStory() {
-    isMotionStoryPlaying = false;
-    updateMotionUI(false);
-    stopMotionStoryProgress();
-    const stageImg = document.getElementById('cinema-stage-img');
-    if (stageImg) {
-        stageImg.classList.remove('scale-105');
     }
 }
 
@@ -1632,8 +1531,9 @@ function applyActiveCinemaContent(autoPlay = false) {
 
     const pageIndicator = document.getElementById('cinema-video-page-indicator');
     const indicatorsContainer = document.getElementById('cinema-video-indicators');
+    const videoNav = document.getElementById('cinema-video-nav');
 
-    if (liveBadge) liveBadge.innerText = vid.subtitle || '🎬 سيناريو الحرفة التفاعلي • 7 مراحل';
+    if (liveBadge) liveBadge.innerText = vid.subtitle || '🎬 وثائقي المشغل اليدوي • كواليس الصنعة';
     if (subtitleEl) subtitleEl.innerText = vid.subtitle || '✨ أصالة المشغل اليدوي';
     if (titleEl) titleEl.innerText = vid.title || 'من الخيط إلى التحفة الملكية.. رحلة حياكة السجاد بمسدس التطريز';
     if (quoteEl) quoteEl.innerText = vid.quote || '«كل سجادة تخرج من دار التطريز ليست مجرد غطاء للأرضية، بل لوحة فنية عريقة استغرقت مئات الساعات من الدقة والشغف لتمنح مساحتك روحاً دافئة ومتميزة لا تتكرر في أي مكان آخر.»';
@@ -1643,83 +1543,58 @@ function applyActiveCinemaContent(autoPlay = false) {
     if (materialEl && vid.stats) materialEl.innerText = vid.stats.material || '100% صوف';
     if (knotsEl && vid.stats) knotsEl.innerText = vid.stats.knots || '+80K غرزة';
 
-    const visualStage = document.getElementById('cinema-visual-stage');
-    const stageImg = document.getElementById('cinema-stage-img');
-    const videoEl = document.getElementById('atelier-cinema-video');
-    const posterUrl = resolveAssetPath(vid.posterUrl || vid.imgUrl || 'images/step1_design.jpg');
-
+    const posterUrl = resolveAssetPath(vid.posterUrl || 'images/step3_tufting.jpg');
     const ambientBackdrop = document.getElementById('cinema-ambient-backdrop');
     if (ambientBackdrop && posterUrl) {
         ambientBackdrop.src = posterUrl;
     }
 
-    // التحقق مما إذا كان هناك فيديو حقيقي مرفوع من الأدمن
-    const hasActualVideo = vid.videoUrl && 
-                           vid.videoUrl.trim() !== '' && 
-                           !vid.videoUrl.includes('wikimedia');
+    // إعداد وتشغيل الفيديو الحقيقي مباشرة وبدون استبداله بأي صور
+    const targetVideoUrl = resolveAssetPath(vid.videoUrl || '');
 
-    if (hasActualVideo) {
-        if (visualStage) visualStage.classList.add('hidden');
-        if (videoEl) videoEl.classList.remove('hidden');
-
-        if (vid.videoUrl.startsWith('idb://video_')) {
-            getVideoFromIndexedDB(vid.videoUrl).then(blobUrl => {
-                if (blobUrl) {
-                    setCinemaVideoSource(blobUrl, posterUrl, autoPlay);
-                } else {
-                    setCinemaVideoSource(null, posterUrl, false);
-                }
-            }).catch(() => {
-                setCinemaVideoSource(null, posterUrl, false);
-            });
-        } else {
-            setCinemaVideoSource(vid.videoUrl, posterUrl, autoPlay);
-        }
+    if (targetVideoUrl.startsWith('idb://video_')) {
+        getVideoFromIndexedDB(targetVideoUrl).then(blobUrl => {
+            setCinemaVideoSource(blobUrl || null, posterUrl, autoPlay);
+        }).catch(() => {
+            setCinemaVideoSource(null, posterUrl, false);
+        });
     } else {
-        if (videoEl) {
-            videoEl.pause();
-            videoEl.classList.add('hidden');
-        }
-        if (visualStage) visualStage.classList.remove('hidden');
-        if (stageImg) {
-            stageImg.classList.remove('scale-105');
-            stageImg.src = posterUrl;
-        }
+        setCinemaVideoSource(targetVideoUrl, posterUrl, autoPlay);
+    }
 
-        setMotionProgressBar(0);
-
-        if (autoPlay || isMotionStoryPlaying) {
-            startMotionStory();
+    // إظهار أو إخفاء شريط التنقل حسب عدد الفيديوهات (إن كان فيديو واحد يخفى تماماً)
+    if (videoNav) {
+        if (currentCinemaVideos.length > 1) {
+            videoNav.classList.remove('hidden');
         } else {
-            updateMotionUI(false);
+            videoNav.classList.add('hidden');
         }
     }
 
-    // تحديث الترقيم والمؤشرات للزائر
+    // تحديث الترقيم والمؤشرات للزائر إن وجد أكثر من فيديو
     if (pageIndicator) {
-        pageIndicator.innerText = `مشهد ${activeCinemaIndex + 1} من ${currentCinemaVideos.length}`;
+        pageIndicator.innerText = `فيديو ${activeCinemaIndex + 1} من ${currentCinemaVideos.length}`;
     }
 
     if (indicatorsContainer) {
         indicatorsContainer.innerHTML = currentCinemaVideos.map((_, idx) => `
-            <button type="button" onclick="window.selectCinemaVideo(${idx})" class="h-2 rounded-full transition-all duration-300 cursor-pointer ${idx === activeCinemaIndex ? 'w-6 bg-amber-400' : 'w-2 bg-white/40 hover:bg-white/70'}" title="الانتقال إلى المشهد ${idx + 1}"></button>
+            <button type="button" onclick="window.selectCinemaVideo(${idx})" class="h-2 rounded-full transition-all duration-300 cursor-pointer ${idx === activeCinemaIndex ? 'w-6 bg-amber-400' : 'w-2 bg-white/40 hover:bg-white/70'}" title="الانتقال إلى الفيديو ${idx + 1}"></button>
         `).join('');
     }
 }
 
 // دالة تحريك وانزلاق البطاقة بالكامل لليمين أو اليسار
-function navigateCinemaScene(direction, targetIdx, autoPlay = null) {
+function navigateCinemaScene(direction, targetIdx, autoPlay = false) {
     if (!currentCinemaVideos || currentCinemaVideos.length <= 1) return;
     if (isCinemaTransitioning) return;
     if (targetIdx === activeCinemaIndex) return;
 
-    const shouldAutoPlay = autoPlay !== null ? autoPlay : isMotionStoryPlaying;
     isCinemaTransitioning = true;
     const card = document.getElementById('cinema-scene-card');
 
     if (!card) {
         activeCinemaIndex = targetIdx;
-        applyActiveCinemaContent(shouldAutoPlay);
+        applyActiveCinemaContent(autoPlay);
         isCinemaTransitioning = false;
         return;
     }
@@ -1732,7 +1607,7 @@ function navigateCinemaScene(direction, targetIdx, autoPlay = null) {
 
     setTimeout(() => {
         activeCinemaIndex = targetIdx;
-        applyActiveCinemaContent(shouldAutoPlay);
+        applyActiveCinemaContent(autoPlay);
 
         card.style.transition = 'none';
         card.classList.remove(outClass);
@@ -1758,19 +1633,25 @@ function applyActiveCinemaVideo(autoPlay = false) {
 window.selectCinemaVideo = function(idx) {
     if (idx === activeCinemaIndex) return;
     const direction = idx > activeCinemaIndex ? 'next' : 'prev';
-    navigateCinemaScene(direction, idx, isMotionStoryPlaying);
+    const video = document.getElementById('atelier-cinema-video');
+    const isPlaying = video && !video.paused;
+    navigateCinemaScene(direction, idx, isPlaying);
 };
 
 window.prevCinemaVideo = function() {
     if (!currentCinemaVideos || currentCinemaVideos.length <= 1) return;
     const prevIdx = (activeCinemaIndex - 1 + currentCinemaVideos.length) % currentCinemaVideos.length;
-    navigateCinemaScene('prev', prevIdx, isMotionStoryPlaying);
+    const video = document.getElementById('atelier-cinema-video');
+    const isPlaying = video && !video.paused;
+    navigateCinemaScene('prev', prevIdx, isPlaying);
 };
 
 window.nextCinemaVideo = function() {
     if (!currentCinemaVideos || currentCinemaVideos.length <= 1) return;
     const nextIdx = (activeCinemaIndex + 1) % currentCinemaVideos.length;
-    navigateCinemaScene('next', nextIdx, isMotionStoryPlaying);
+    const video = document.getElementById('atelier-cinema-video');
+    const isPlaying = video && !video.paused;
+    navigateCinemaScene('next', nextIdx, isPlaying);
 };
 
 // مستمعات السحب باللمس على الجوال (Touch Swipe Support)
@@ -1884,18 +1765,6 @@ window.handleCinemaVideoEnded = function() {
 };
 
 window.toggleCinemaVideoPlay = function() {
-    const vid = currentCinemaVideos && currentCinemaVideos[activeCinemaIndex];
-    const hasActualVideo = vid && vid.videoUrl && vid.videoUrl.trim() !== '' && !vid.videoUrl.includes('wikimedia');
-
-    if (!hasActualVideo) {
-        if (isMotionStoryPlaying) {
-            pauseMotionStory();
-        } else {
-            startMotionStory();
-        }
-        return;
-    }
-
     const video = document.getElementById('atelier-cinema-video');
     if (!video) return;
 
@@ -1931,9 +1800,6 @@ window.toggleCinemaVideoAudio = function() {
     const video = document.getElementById('atelier-cinema-video');
     if (video) {
         video.muted = isCinemaMuted;
-    }
-    if (!isCinemaMuted) {
-        playCraftChime(activeCinemaIndex);
     }
 };
 
