@@ -3,25 +3,33 @@
 // دار التطريز TATRIZA - نظام التخزين المؤقت والتشغيل السريع
 // ==========================================
 
-const CACHE_NAME = 'tatriza-pwa-v3.8';
+const CACHE_NAME = 'tatriza-pwa-v5.0';
 
 const STATIC_ASSETS = [
     './',
     './index.html',
-    './css/style.css?v=3.6',
-    './js/main.js?v=3.5',
-    './js/modals.js?v=3.5',
-    './js/currency.js?v=3.5',
-    './js/pwa.js?v=3.5',
+    './css/style.css?v=5.0',
+    './js/main.js?v=5.0',
+    './js/modals.js?v=5.0',
+    './js/currency.js?v=5.0',
+    './js/pwa.js?v=5.0',
     './js/tracking.js',
     './js/authenticity.js',
     './js/qrcode.js',
+    './videos/tufting_craft.mp4',
     './manifest.json',
     './manifest-admin.json',
     './images/logo.jpg',
     './images/icon-192.png',
     './images/icon-512.png',
-    './images/icon-apple.png'
+    './images/icon-apple.png',
+    './images/step1_design.jpg',
+    './images/step2_frame.jpg',
+    './images/step3_tufting.jpg',
+    './images/step4_glue.jpg',
+    './images/step5_carving.jpg',
+    './images/step6_finishing.jpg',
+    './images/step7_packaging.jpg'
 ];
 
 // 1. تثبيت الـ Service Worker وحفظ الأصول الأساسية

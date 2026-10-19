@@ -1418,8 +1418,30 @@ function renderDynamicCinema(videos) {
     const activeIdx = currentCinemaVideos.findIndex(v => v.isActive);
     activeCinemaIndex = activeIdx >= 0 ? activeIdx : 0;
 
-    applyActiveCinemaContent(false);
+    applyActiveCinemaContent(true);
     initCinemaSwipeGestures();
+    initCinemaScrollAutoplay();
+}
+
+function initCinemaScrollAutoplay() {
+    const videoEl = document.getElementById('atelier-cinema-video');
+    if (!videoEl || videoEl._scrollAutoplayBound) return;
+    videoEl._scrollAutoplayBound = true;
+
+    if ('IntersectionObserver' in window) {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    if (videoEl.paused) {
+                        videoEl.muted = true;
+                        videoEl.play().then(() => updateMotionUI(true)).catch(() => {});
+                    }
+                }
+            });
+        }, { threshold: 0.2 });
+        const box = document.getElementById('cinema-screen-box') || videoEl;
+        observer.observe(box);
+    }
 }
 
 function checkAndUpdateVideoOrientation(videoEl) {
@@ -1479,6 +1501,7 @@ function setCinemaVideoSource(targetUrl, posterUrl, autoPlay = false) {
 
     if (targetUrl) {
         videoEl.src = targetUrl;
+        videoEl.loop = true;
         videoEl.load();
     }
 
@@ -1770,10 +1793,9 @@ function renderDynamicLookbook(items) {
 window.handleCinemaVideoEnded = function() {
     const video = document.getElementById('atelier-cinema-video');
     if (video) {
-        video.pause();
         video.currentTime = 0;
+        video.play().then(() => updateMotionUI(true)).catch(() => updateMotionUI(false));
     }
-    updateMotionUI(false);
 };
 
 window.toggleCinemaVideoPlay = function() {

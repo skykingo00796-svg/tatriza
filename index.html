@@ -59,7 +59,7 @@
     <!-- مكتبة التنسيقات Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- ملف الأنماط والتصميم العام (مع تعديل المسار للخروج من مجلد screen) -->
-    <link rel="stylesheet" href="css/style.css?v=3.6">
+    <link rel="stylesheet" href="css/style.css?v=5.0">
     <!-- محرك الثيم الفوري لمنع وميض الثيم الافتراضي نهائياً (Zero-Flicker Theme Engine) -->
     <script>
         (function() {
@@ -437,8 +437,10 @@
                                 src="videos/tufting_craft.mp4"
                                 playsinline 
                                 muted 
+                                autoplay 
+                                loop 
                                 poster="images/step3_tufting.jpg" 
-                                preload="metadata"
+                                preload="auto"
                                 onclick="window.toggleCinemaVideoPlay()"
                                 onended="window.handleCinemaVideoEnded()"
                                 class="w-full h-full object-contain relative z-15 mx-auto transition-all duration-300 cursor-pointer">
@@ -1472,8 +1474,8 @@
         </div>
     </footer>
 
-    <script type="module" src="js/main.js?v=3.5"></script>
-    <script type="module" src="js/pwa.js?v=3.5"></script>
+    <script type="module" src="js/main.js?v=5.0"></script>
+    <script type="module" src="js/pwa.js?v=5.0"></script>
 
 </body>
 </html>
