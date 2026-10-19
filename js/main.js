@@ -1293,7 +1293,7 @@ export function getPublicShowcaseSettings() {
         const stored = localStorage.getItem('tatr_showcase_settings');
         if (stored) {
             const parsed = JSON.parse(stored);
-            if (parsed && parsed.version === 4 && Array.isArray(parsed.journeySteps) && parsed.journeySteps.length >= 7) {
+            if (parsed && parsed.version === 5 && Array.isArray(parsed.journeySteps) && parsed.journeySteps.length >= 7) {
                 return parsed;
             }
         }
@@ -1316,6 +1316,18 @@ export function initDynamicShowcase() {
         try {
             subscribeToShowcaseSettings((cloudSettings) => {
                 if (cloudSettings && Array.isArray(cloudSettings.marqueeItems)) {
+                    // إذا كان التحديث السحابي يحمل إصداراً قديماً أو رابط الفيديو القديم غير المطابق لحرفة التفتنج
+                    if (!cloudSettings.version || cloudSettings.version < 5 || (Array.isArray(cloudSettings.cinemaVideos) && cloudSettings.cinemaVideos.some(v => v.videoUrl && (v.videoUrl.includes('Weaving_Carpet_at_Lachen') || v.videoUrl.includes('bYXWtk6T59k'))))) {
+                        cloudSettings.version = 5;
+                        if (Array.isArray(cloudSettings.cinemaVideos)) {
+                            cloudSettings.cinemaVideos.forEach(v => {
+                                if (!v.videoUrl || v.videoUrl.includes('Weaving_Carpet_at_Lachen') || v.videoUrl.includes('bYXWtk6T59k')) {
+                                    v.videoUrl = "videos/tufting_craft.mp4";
+                                    v.caption = "توثيق حي لحركات الأنامل وتفاصيل غرز السجاد بمسدس الحياكة ونحت تفاصيل الصوف ثلاثي الأبعاد";
+                                }
+                            });
+                        }
+                    }
                     try {
                         localStorage.setItem('tatr_showcase_settings', JSON.stringify(cloudSettings));
                     } catch (e) {}

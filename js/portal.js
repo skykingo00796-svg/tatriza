@@ -1532,7 +1532,7 @@ export function getLocalShowcaseSettings() {
         const stored = localStorage.getItem('tatr_showcase_settings');
         if (stored) {
             const parsed = JSON.parse(stored);
-            if (parsed && parsed.version === 4 && Array.isArray(parsed.journeySteps) && parsed.journeySteps.length >= 7) {
+            if (parsed && parsed.version === 5 && Array.isArray(parsed.journeySteps) && parsed.journeySteps.length >= 7) {
                 return parsed;
             }
         }
@@ -1614,6 +1614,17 @@ export function initShowcaseCMS() {
         try {
             subscribeToShowcaseSettings((cloudData) => {
                 if (cloudData && Array.isArray(cloudData.marqueeItems)) {
+                    if (!cloudData.version || cloudData.version < 5 || (Array.isArray(cloudData.cinemaVideos) && cloudData.cinemaVideos.some(v => v.videoUrl && (v.videoUrl.includes('Weaving_Carpet_at_Lachen') || v.videoUrl.includes('bYXWtk6T59k'))))) {
+                        cloudData.version = 5;
+                        if (Array.isArray(cloudData.cinemaVideos)) {
+                            cloudData.cinemaVideos.forEach(v => {
+                                if (!v.videoUrl || v.videoUrl.includes('Weaving_Carpet_at_Lachen') || v.videoUrl.includes('bYXWtk6T59k')) {
+                                    v.videoUrl = "videos/tufting_craft.mp4";
+                                    v.caption = "توثيق حي لحركات الأنامل وتفاصيل غرز السجاد بمسدس الحياكة ونحت تفاصيل الصوف ثلاثي الأبعاد";
+                                }
+                            });
+                        }
+                    }
                     showcaseState = cloudData;
                     saveLocalShowcaseSettings(cloudData);
                     renderShowcaseUI();

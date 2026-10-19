@@ -254,7 +254,7 @@ export function subscribeToCategorySettings(onSuccess) {
 // ==========================================
 export function getDefaultShowcaseSettings() {
     return {
-        version: 4,
+        version: 5,
         marqueeItems: [
             { id: "mq-1", icon: "⚜️", title: "حياكة يدوية 100%", desc: "صوف طبيعي وحرير خالص" },
             { id: "mq-2", icon: "🚚", title: "شحن وتوصيل مؤمن", desc: "لكافة محافظات سلطنة عُمان والخليج" },
@@ -269,9 +269,9 @@ export function getDefaultShowcaseSettings() {
                 title: "حكاية كل خيط تحفة.. وصبر يصنع الفخامة",
                 subtitle: "🎬 وثائقي المشغل اليدوي • كواليس الصنعة",
                 quote: "«كل سجادة تخرج من دار التطريز ليست مجرد غطاء للأرضية، بل لوحة فنية عريقة استغرقت مئات الساعات من الدقة والشغف لتمنح مساحتك روحاً دافئة ومتميزة لا تتكرر في أي مكان آخر.»",
-                videoUrl: "https://upload.wikimedia.org/wikipedia/commons/1/13/Weaving_Carpet_at_Lachen.webm",
+                videoUrl: "videos/tufting_craft.mp4",
                 posterUrl: "../images/step3_tufting.jpg",
-                caption: "توثيق حي لحركات الأنامل وتفاصيل غرز السجاد بمسدس الحياكة اليدوي",
+                caption: "توثيق حي لحركات الأنامل وتفاصيل غرز السجاد بمسدس الحياكة ونحت تفاصيل الصوف ثلاثي الأبعاد",
                 stats: { hours: "+70 ساعة", material: "100% صوف", knots: "+80K غرزة" },
                 isActive: true
             }
