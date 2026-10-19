@@ -1293,7 +1293,7 @@ export function getPublicShowcaseSettings() {
         const stored = localStorage.getItem('tatr_showcase_settings');
         if (stored) {
             const parsed = JSON.parse(stored);
-            if (parsed && parsed.version === 3 && Array.isArray(parsed.journeySteps) && parsed.journeySteps.length >= 7) {
+            if (parsed && parsed.version === 4 && Array.isArray(parsed.journeySteps) && parsed.journeySteps.length >= 7) {
                 return parsed;
             }
         }
