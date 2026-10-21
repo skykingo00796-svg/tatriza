@@ -1316,9 +1316,9 @@ export function initDynamicShowcase() {
         try {
             subscribeToShowcaseSettings((cloudSettings) => {
                 if (cloudSettings && Array.isArray(cloudSettings.marqueeItems)) {
-                    // إذا كان التحديث السحابي يحمل إصداراً قديماً أو رابط الفيديو القديم غير المطابق لحرفة التفتنج
-                    if (!cloudSettings.version || cloudSettings.version < 6 || (Array.isArray(cloudSettings.cinemaVideos) && cloudSettings.cinemaVideos.some(v => v.videoUrl && (v.videoUrl.includes('Weaving_Carpet_at_Lachen') || v.videoUrl.includes('bYXWtk6T59k'))))) {
+                    if (!cloudSettings.version || cloudSettings.version < 6 || (Array.isArray(cloudSettings.lookbookItems) && cloudSettings.lookbookItems.some(it => it.clientName && (it.clientName.includes('ريم') || it.clientName.includes('الحوسني')))) || (Array.isArray(cloudSettings.cinemaVideos) && cloudSettings.cinemaVideos.some(v => v.videoUrl && (v.videoUrl.includes('Weaving_Carpet_at_Lachen') || v.videoUrl.includes('bYXWtk6T59k'))))) {
                         cloudSettings.version = 6;
+                        cloudSettings.lookbookItems = getDefaultShowcaseSettings().lookbookItems;
                         if (Array.isArray(cloudSettings.cinemaVideos)) {
                             cloudSettings.cinemaVideos.forEach(v => {
                                 if (!v.videoUrl || v.videoUrl.includes('Weaving_Carpet_at_Lachen') || v.videoUrl.includes('bYXWtk6T59k')) {
@@ -1371,8 +1371,9 @@ function renderDynamicMarquee(items) {
 function resolveAssetPath(path) {
     if (!path) return '';
     if (path.startsWith('http://') || path.startsWith('https://') || path.startsWith('data:') || path.startsWith('blob:') || path.startsWith('idb:')) return path;
-    const isScreenDir = window.location.pathname.includes('/screen/');
+    const isScreenDir = window.location.pathname.includes('/screen');
     let clean = path.replace(/^\.\.\//, '').replace(/^\.\//, '');
+    if (clean.startsWith('/')) clean = clean.substring(1);
     return isScreenDir ? `../${clean}` : clean;
 }
 
@@ -1757,7 +1758,7 @@ function renderDynamicLookbook(items) {
 
         return `
             <div class="lookbook-card flex flex-col group bg-white rounded-2xl overflow-hidden shadow-xs hover:shadow-lg transition-all duration-500 border border-stone-200/70">
-                <div id="${sliderId}" class="lookbook-slider-container relative w-full aspect-4/3 overflow-hidden bg-stone-900 group/img select-none" data-slider-id="${sliderId}">
+                <div id="${sliderId}" class="lookbook-slider-container relative w-full aspect-[4/3] overflow-hidden bg-stone-900 group/img select-none" data-slider-id="${sliderId}">
                     <!-- حاوية الصور التفاعلية -->
                     <div class="lookbook-slides-wrapper absolute inset-0 w-full h-full">
                         ${resolvedImages.map((src, imgIdx) => `
@@ -1765,7 +1766,8 @@ function renderDynamicLookbook(items) {
                                  alt="${it.carpetTitle} - توثيق ${imgIdx + 1}" 
                                  class="lookbook-slide absolute inset-0 w-full h-full object-cover transition-all duration-700 ease-in-out ${imgIdx === 0 ? 'opacity-100 scale-100 z-1 pointer-events-auto' : 'opacity-0 scale-105 z-0 pointer-events-none'}" 
                                  loading="lazy"
-                                 data-slide-index="${imgIdx}">
+                                 data-slide-index="${imgIdx}"
+                                 onerror="if (!this.dataset.retried) { this.dataset.retried = '1'; this.src = (window.location.pathname.includes('/screen') ? '../' : '') + 'images/' + this.src.split('/images/').pop(); }">
                         `).join('')}
                     </div>
 

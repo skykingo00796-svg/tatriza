@@ -3316,6 +3316,56 @@ input[type=number].item-modal-price-input {
     scroll-behavior: smooth;
 }
 
+/* ==========================================================================
+   معرض صور منازل العملاء والتقليب التلقائي (Lookbook Slider)
+   ========================================================================== */
+.lookbook-slider-container {
+    position: relative !important;
+    width: 100% !important;
+    aspect-ratio: 4 / 3 !important;
+    min-height: 250px !important;
+    background-color: #1c1917 !important;
+    overflow: hidden !important;
+    display: block !important;
+}
+
+.lookbook-slider-container::before {
+    content: "";
+    display: block;
+    padding-top: 75%; /* نسبة 4:3 متوافقة مع كل المتصفحات والشاشات القديمة والحديثة */
+}
+
+@media (min-width: 640px) {
+    .lookbook-slider-container {
+        min-height: 290px !important;
+    }
+}
+
+@media (min-width: 1024px) {
+    .lookbook-slider-container {
+        min-height: 330px !important;
+    }
+}
+
+.lookbook-slides-wrapper {
+    position: absolute !important;
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    overflow: hidden !important;
+    display: block !important;
+}
+
+.lookbook-slide {
+    position: absolute !important;
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    display: block !important;
+    transition: opacity 0.7s ease-in-out, transform 0.7s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
 
 
 

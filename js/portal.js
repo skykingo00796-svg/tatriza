@@ -1614,8 +1614,9 @@ export function initShowcaseCMS() {
         try {
             subscribeToShowcaseSettings((cloudData) => {
                 if (cloudData && Array.isArray(cloudData.marqueeItems)) {
-                    if (!cloudData.version || cloudData.version < 6 || (Array.isArray(cloudData.cinemaVideos) && cloudData.cinemaVideos.some(v => v.videoUrl && (v.videoUrl.includes('Weaving_Carpet_at_Lachen') || v.videoUrl.includes('bYXWtk6T59k'))))) {
+                    if (!cloudData.version || cloudData.version < 6 || (Array.isArray(cloudData.lookbookItems) && cloudData.lookbookItems.some(it => it.clientName && (it.clientName.includes('ريم') || it.clientName.includes('الحوسني')))) || (Array.isArray(cloudData.cinemaVideos) && cloudData.cinemaVideos.some(v => v.videoUrl && (v.videoUrl.includes('Weaving_Carpet_at_Lachen') || v.videoUrl.includes('bYXWtk6T59k'))))) {
                         cloudData.version = 6;
+                        cloudData.lookbookItems = getDefaultShowcaseSettings().lookbookItems;
                         if (Array.isArray(cloudData.cinemaVideos)) {
                             cloudData.cinemaVideos.forEach(v => {
                                 if (!v.videoUrl || v.videoUrl.includes('Weaving_Carpet_at_Lachen') || v.videoUrl.includes('bYXWtk6T59k')) {
