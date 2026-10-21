@@ -1526,6 +1526,7 @@ let pendingCinemaVideoIsVertical = null;
 let pendingCinemaPosterFile = null;
 let pendingJourneyImgFile = null;
 let pendingLookbookImgFile = null;
+let pendingLookbookVideoFile = null;
 
 export function getLocalShowcaseSettings() {
     try {
@@ -2514,18 +2515,24 @@ function renderLookbookTab() {
     listEl.innerHTML = items.map(item => {
         const thumbImg = (Array.isArray(item.images) && item.images[0]) || item.imgUrl || '../images/client_wrist_rest_1.jpg';
         const imgCount = Array.isArray(item.images) && item.images.length > 0 ? item.images.length : 1;
+        const hasVideo = typeof item.videoUrl === 'string' && item.videoUrl.trim().length > 0;
         return `
         <div class="flex flex-col bg-white border border-stone-200 rounded-xl sm:rounded-2xl overflow-hidden shadow-2xs hover:shadow-xs transition">
-            <div class="relative w-full aspect-16/9 bg-stone-100 overflow-hidden">
+            <div class="relative w-full aspect-16/9 bg-stone-900 overflow-hidden group/thumb">
                 <img src="${thumbImg}" alt="${item.carpetTitle}" class="w-full h-full object-cover">
                 <span class="absolute top-1.5 right-1.5 px-2 py-0.5 bg-black/70 text-white text-[9.5px] font-bold rounded-full backdrop-blur-md">
                     ${item.location || 'مسقط'}
                 </span>
-                ${imgCount > 1 ? `
+                ${hasVideo ? `
+                    <span class="absolute top-1.5 left-1.5 px-2 py-0.5 bg-emerald-600/90 text-white text-[9.5px] font-bold rounded-full backdrop-blur-md flex items-center gap-1 shadow-xs">
+                        <span>🎬</span>
+                        <span>فيديو موثق</span>
+                    </span>
+                ` : (imgCount > 1 ? `
                     <span class="absolute top-1.5 left-1.5 px-1.5 py-0.5 bg-amber-500/90 text-white text-[9px] font-bold rounded-full backdrop-blur-md">
                         📸 ${imgCount} صور
                     </span>
-                ` : ''}
+                ` : '')}
                 <span class="absolute bottom-1.5 left-1.5 px-2 py-0.5 bg-amber-950/80 text-amber-200 text-[9.5px] font-bold rounded-full backdrop-blur-md truncate max-w-[130px]">
                     ${item.carpetTitle || 'سجادة ملكية'}
                 </span>
@@ -2573,6 +2580,105 @@ export function handleLookbookImgSelect(event) {
     showToast('تم تحديد صورة توثيق العميل بنجاح.', 'success', 'صورة التسليم');
 }
 
+export function handleLookbookVideoSelect(event) {
+    const file = event.target.files && event.target.files[0];
+    if (!file) return;
+
+    pendingLookbookVideoFile = file;
+    const previewBox = document.getElementById('lookbook-video-preview-box');
+    const previewVid = document.getElementById('lookbook-video-preview');
+    const statusText = document.getElementById('lookbook-video-status');
+    const clearBtn = document.getElementById('lookbook-video-clear-btn');
+    const urlInput = document.getElementById('lookbook-input-videourl');
+    const hiddenInput = document.getElementById('lookbook-input-video');
+
+    if (urlInput) urlInput.value = '';
+    if (hiddenInput) hiddenInput.value = '';
+
+    const blobUrl = URL.createObjectURL(file);
+    if (previewVid) {
+        previewVid.src = blobUrl;
+        try { previewVid.play().catch(() => {}); } catch(e) {}
+    }
+    if (previewBox) previewBox.classList.remove('hidden');
+    if (clearBtn) clearBtn.classList.remove('hidden');
+
+    const sizeMB = (file.size / (1024 * 1024)).toFixed(1);
+    if (statusText) {
+        statusText.innerText = `🎬 تم تحديد الفيديو: ${file.name} (${sizeMB} MB)`;
+        statusText.className = 'text-emerald-700 font-bold truncate';
+    }
+    showToast(`تم تحديد فيديو التوثيق (${sizeMB} MB). سيتم حفظه مع التوثيق.`, 'success', 'فيديو التوثيق');
+}
+
+export function handleLookbookVideoUrlChange(event) {
+    const url = (event.target.value || '').trim();
+    pendingLookbookVideoFile = null;
+    const fileInput = document.getElementById('lookbook-file-video');
+    if (fileInput) fileInput.value = '';
+
+    const previewBox = document.getElementById('lookbook-video-preview-box');
+    const previewVid = document.getElementById('lookbook-video-preview');
+    const statusText = document.getElementById('lookbook-video-status');
+    const clearBtn = document.getElementById('lookbook-video-clear-btn');
+    const hiddenInput = document.getElementById('lookbook-input-video');
+
+    if (hiddenInput) hiddenInput.value = url;
+
+    if (url) {
+        if (previewVid) {
+            previewVid.src = url;
+            try { previewVid.play().catch(() => {}); } catch(e) {}
+        }
+        if (previewBox) previewBox.classList.remove('hidden');
+        if (clearBtn) clearBtn.classList.remove('hidden');
+        if (statusText) {
+            statusText.innerText = '🔗 تم إدراج رابط فيديو مباشر';
+            statusText.className = 'text-emerald-700 font-bold truncate';
+        }
+    } else {
+        if (previewVid) {
+            try { previewVid.pause(); } catch(e) {}
+            previewVid.src = '';
+        }
+        if (previewBox) previewBox.classList.add('hidden');
+        if (clearBtn) clearBtn.classList.add('hidden');
+        if (statusText) {
+            statusText.innerText = 'لم يتم إرفاق فيديو (سيتم عرض الصور فقط)';
+            statusText.className = 'text-stone-500 truncate';
+        }
+    }
+}
+
+export function clearLookbookVideo() {
+    pendingLookbookVideoFile = null;
+    const fileInput = document.getElementById('lookbook-file-video');
+    if (fileInput) fileInput.value = '';
+
+    const urlInput = document.getElementById('lookbook-input-videourl');
+    if (urlInput) urlInput.value = '';
+
+    const hiddenInput = document.getElementById('lookbook-input-video');
+    if (hiddenInput) hiddenInput.value = '';
+
+    const previewBox = document.getElementById('lookbook-video-preview-box');
+    const previewVid = document.getElementById('lookbook-video-preview');
+    const statusText = document.getElementById('lookbook-video-status');
+    const clearBtn = document.getElementById('lookbook-video-clear-btn');
+
+    if (previewVid) {
+        try { previewVid.pause(); } catch(e) {}
+        previewVid.src = '';
+    }
+    if (previewBox) previewBox.classList.add('hidden');
+    if (clearBtn) clearBtn.classList.add('hidden');
+    if (statusText) {
+        statusText.innerText = 'لم يتم إرفاق فيديو (سيتم عرض الصور فقط)';
+        statusText.className = 'text-stone-500 truncate';
+    }
+    showToast('تمت إزالة الفيديو. سيتم عرض الصور فقط للعميل.', 'info', 'إلغاء الفيديو');
+}
+
 export async function handleLookbookFormSubmit(e) {
     e.preventDefault();
     const idInput = document.getElementById('lookbook-edit-id');
@@ -2583,6 +2689,8 @@ export async function handleLookbookFormSubmit(e) {
     const ratingInput = document.getElementById('lookbook-input-rating');
     const reviewInput = document.getElementById('lookbook-input-review');
     const imgInput = document.getElementById('lookbook-input-img');
+    const videoInput = document.getElementById('lookbook-input-video');
+    const videoUrlInput = document.getElementById('lookbook-input-videourl');
 
     const clientName = (clientInput.value || '').trim();
     const location = (locationInput.value || '').trim();
@@ -2590,7 +2698,8 @@ export async function handleLookbookFormSubmit(e) {
     const orderType = (orderTypeInput.value || 'طلب تفصيل خاص').trim();
     const rating = Number(ratingInput ? ratingInput.value : 5) || 5;
     const reviewText = (reviewInput.value || '').trim();
-    let imgUrl = (imgInput ? imgInput.value : '../images/client_room1.jpg').trim();
+    let imgUrl = (imgInput ? imgInput.value : '../images/client_wrist_rest_1.jpg').trim();
+    let videoUrl = (videoInput && videoInput.value ? videoInput.value : (videoUrlInput ? videoUrlInput.value : '')).trim();
 
     if (!clientName || !reviewText) {
         showToast('يرجى إدخال اسم العميل والتعليق.', 'warning', 'حقل مطلوب');
@@ -2601,23 +2710,52 @@ export async function handleLookbookFormSubmit(e) {
     const origBtnHtml = submitBtn ? submitBtn.innerHTML : '';
     if (submitBtn) {
         submitBtn.disabled = true;
-        submitBtn.innerHTML = '<span>⏳</span><span>جاري حفظ التوثيق...</span>';
+        submitBtn.innerHTML = '<span>⏳</span><span>جاري حفظ وتوثيق القطعة...</span>';
     }
 
     try {
+        const editId = idInput ? idInput.value : '';
+
+        // 1. رفع صورة التوثيق إن وُجد ملف جديد
         if (pendingLookbookImgFile) {
-            showToast('جاري معالجة صورة التسليم من جهازك...', 'info', 'صورة التوثيق');
+            showToast('جاري معالجة ورفع صورة التسليم...', 'info', 'صورة التوثيق');
             const savedImg = await uploadShowcaseImage(pendingLookbookImgFile, 'lookbook_clients');
             if (savedImg) imgUrl = savedImg;
         }
 
-        const editId = idInput ? idInput.value : '';
+        // 2. رفع فيديو التوثيق إن وُجد ملف فيديو جديد
+        if (pendingLookbookVideoFile) {
+            showToast('جاري رفع ومعالجة فيديو توثيق العميل...', 'info', 'فيديو التوثيق');
+            const savedVidUrl = await uploadCarpetVideo(
+                'lookbook_' + (editId || Date.now()),
+                pendingLookbookVideoFile,
+                (msg) => {
+                    if (submitBtn) submitBtn.innerHTML = `<span>⏳</span><span>${msg}</span>`;
+                }
+            );
+            if (savedVidUrl) {
+                videoUrl = savedVidUrl;
+            }
+        }
+
         let updatedLookbook = [...(showcaseState.lookbookItems || [])];
 
         if (editId) {
             updatedLookbook = updatedLookbook.map(it => {
                 if (it.id === editId) {
-                    return { ...it, clientName, location, carpetTitle, orderType, rating, reviewText, imgUrl };
+                    const existingImages = Array.isArray(it.images) && it.images.length > 0 ? it.images : [imgUrl];
+                    return {
+                        ...it,
+                        clientName,
+                        location,
+                        carpetTitle,
+                        orderType,
+                        rating,
+                        reviewText,
+                        imgUrl,
+                        images: existingImages,
+                        videoUrl: videoUrl || ''
+                    };
                 }
                 return it;
             });
@@ -2631,7 +2769,9 @@ export async function handleLookbookFormSubmit(e) {
                 orderType,
                 rating,
                 reviewText,
-                imgUrl
+                imgUrl,
+                images: [imgUrl],
+                videoUrl: videoUrl || ''
             };
             updatedLookbook.push(newItem);
             await syncShowcaseState({ ...showcaseState, lookbookItems: updatedLookbook }, `تم توثيق تسليم القطعة للعميل «${clientName}»`);
@@ -2654,6 +2794,7 @@ export function startLookbookEdit(id) {
     if (!item) return;
 
     pendingLookbookImgFile = null;
+    pendingLookbookVideoFile = null;
 
     const idInput = document.getElementById('lookbook-edit-id');
     const clientInput = document.getElementById('lookbook-input-client');
@@ -2669,6 +2810,14 @@ export function startLookbookEdit(id) {
     const submitText = document.getElementById('lookbook-submit-text');
     const cancelBtn = document.getElementById('lookbook-cancel-edit-btn');
 
+    // عناصر الفيديو
+    const videoInput = document.getElementById('lookbook-input-video');
+    const videoUrlInput = document.getElementById('lookbook-input-videourl');
+    const videoPreviewBox = document.getElementById('lookbook-video-preview-box');
+    const videoPreview = document.getElementById('lookbook-video-preview');
+    const videoStatus = document.getElementById('lookbook-video-status');
+    const videoClearBtn = document.getElementById('lookbook-video-clear-btn');
+
     if (idInput) idInput.value = item.id;
     if (clientInput) clientInput.value = item.clientName || '';
     if (locationInput) locationInput.value = item.location || '';
@@ -2680,6 +2829,34 @@ export function startLookbookEdit(id) {
     if (imgPreview && item.imgUrl) imgPreview.src = item.imgUrl;
     if (imgStatus) imgStatus.innerText = 'صورة التسليم الحالية';
 
+    // ضبط الفيديو
+    const hasVid = typeof item.videoUrl === 'string' && item.videoUrl.trim().length > 0;
+    if (videoInput) videoInput.value = item.videoUrl || '';
+    if (videoUrlInput) videoUrlInput.value = item.videoUrl || '';
+    if (hasVid) {
+        if (videoPreview) {
+            videoPreview.src = item.videoUrl;
+            try { videoPreview.play().catch(() => {}); } catch(e) {}
+        }
+        if (videoPreviewBox) videoPreviewBox.classList.remove('hidden');
+        if (videoClearBtn) videoClearBtn.classList.remove('hidden');
+        if (videoStatus) {
+            videoStatus.innerText = '🎬 فيديو توثيقي مضاف للعميل';
+            videoStatus.className = 'text-emerald-700 font-bold truncate';
+        }
+    } else {
+        if (videoPreview) {
+            try { videoPreview.pause(); } catch(e) {}
+            videoPreview.src = '';
+        }
+        if (videoPreviewBox) videoPreviewBox.classList.add('hidden');
+        if (videoClearBtn) videoClearBtn.classList.add('hidden');
+        if (videoStatus) {
+            videoStatus.innerText = 'لم يتم إرفاق فيديو (سيتم عرض الصور فقط)';
+            videoStatus.className = 'text-stone-500 truncate';
+        }
+    }
+
     if (formTitle) formTitle.innerText = `تعديل توثيق: «${item.clientName}»`;
     if (submitText) submitText.innerText = 'حفظ التعديل';
     if (cancelBtn) cancelBtn.classList.remove('hidden');
@@ -2690,6 +2867,8 @@ export function startLookbookEdit(id) {
 
 export function cancelLookbookEdit() {
     pendingLookbookImgFile = null;
+    pendingLookbookVideoFile = null;
+
     const fileInput = document.getElementById('lookbook-file-img');
     if (fileInput) fileInput.value = '';
 
@@ -2714,9 +2893,11 @@ export function cancelLookbookEdit() {
     if (orderTypeInput) orderTypeInput.value = 'طلب تفصيل خاص';
     if (ratingInput) ratingInput.value = '5';
     if (reviewInput) reviewInput.value = '';
-    if (imgInput) imgInput.value = '../images/client_room1.jpg';
-    if (imgPreview) imgPreview.src = '../images/client_room1.jpg';
+    if (imgInput) imgInput.value = 'images/client_wrist_rest_1.jpg';
+    if (imgPreview) imgPreview.src = 'images/client_wrist_rest_1.jpg';
     if (imgStatus) imgStatus.innerText = 'صورة توثيق تسليم القطعة الافتراضية';
+
+    clearLookbookVideo();
 
     if (formTitle) formTitle.innerText = 'توثيق قطعة جديدة تخرج من المتجر (مع الرأي والتقييم):';
     if (submitText) submitText.innerText = 'توثيق وحفظ القطعة';
@@ -2835,6 +3016,9 @@ window.clearCinemaVideoSelection = clearCinemaVideoSelection;
 window.handleCinemaPosterSelect = handleCinemaPosterSelect;
 window.handleJourneyImgSelect = handleJourneyImgSelect;
 window.handleLookbookImgSelect = handleLookbookImgSelect;
+window.handleLookbookVideoSelect = handleLookbookVideoSelect;
+window.handleLookbookVideoUrlChange = handleLookbookVideoUrlChange;
+window.clearLookbookVideo = clearLookbookVideo;
 
 window.handleMarqueeFormSubmit = handleMarqueeFormSubmit;
 window.startMarqueeEdit = startMarqueeEdit;

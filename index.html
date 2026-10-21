@@ -59,7 +59,7 @@
     <!-- مكتبة التنسيقات Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- ملف الأنماط والتصميم العام (مع تعديل المسار للخروج من مجلد screen) -->
-    <link rel="stylesheet" href="css/style.css?v=6.2">
+    <link rel="stylesheet" href="css/style.css?v=6.3">
     <!-- تنسيقات حرجة فورية لحاويات صور العملاء تضمن ظهور الصور بنسبة 4:3 قبل حتى تحميل ملفات CSS الخارجية -->
     <style id="lookbook-critical-css">
         .lookbook-slider-container {
@@ -90,6 +90,10 @@
             height: 100% !important;
             object-fit: cover !important;
             display: block !important;
+        }
+        video.lookbook-slide {
+            background-color: #0c0a09 !important;
+            cursor: pointer;
         }
     </style>
     <!-- محرك الثيم الفوري لمنع وميض الثيم الافتراضي نهائياً (Zero-Flicker Theme Engine) -->
@@ -1523,8 +1527,8 @@
         </div>
     </footer>
 
-    <script type="module" src="js/main.js?v=6.2"></script>
-    <script type="module" src="js/pwa.js?v=6.2"></script>
+    <script type="module" src="js/main.js?v=6.3"></script>
+    <script type="module" src="js/pwa.js?v=6.3"></script>
 
 </body>
 </html>

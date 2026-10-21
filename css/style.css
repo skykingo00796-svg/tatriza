@@ -3366,6 +3366,14 @@ input[type=number].item-modal-price-input {
     transition: opacity 0.7s ease-in-out, transform 0.7s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
+video.lookbook-slide {
+    background-color: #0c0a09 !important;
+    cursor: pointer;
+}
 
-
-
+.lookbook-sound-btn {
+    user-select: none;
+    -webkit-user-select: none;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
