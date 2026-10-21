@@ -1176,8 +1176,26 @@ export function sendCartToWhatsApp() {
 }
 
 // ==========================================
-// إدارة نافذة الطلب الخاص
+// إدارة نافذة الطلب الخاص واختيار المقاسات السريعة
 // ==========================================
+export function selectCustomSizePreset(length, width, btn) {
+    const lenInput = document.getElementById('cust-length');
+    const widthInput = document.getElementById('cust-width');
+    if (lenInput) lenInput.value = length ? `${length} سم` : '';
+    if (widthInput) widthInput.value = width ? `${width} سم` : '';
+    
+    document.querySelectorAll('.size-preset-chip').forEach(c => {
+        c.classList.remove('bg-brand', 'text-white', 'border-brand', 'shadow-xs', 'bg-amber-800', 'border-amber-800');
+        c.classList.add('bg-stone-50', 'text-stone-700', 'border-stone-200');
+    });
+    if (btn) {
+        btn.classList.remove('bg-stone-50', 'text-stone-700', 'border-stone-200', 'bg-amber-50', 'text-amber-950', 'border-amber-300');
+        btn.classList.add('bg-brand', 'text-white', 'border-brand', 'shadow-xs');
+    }
+    if (lenInput && !length) lenInput.focus();
+}
+window.selectCustomSizePreset = selectCustomSizePreset;
+
 export function openCustomOrderModal() {
     const modal = document.getElementById('custom-order-modal');
     if (modal) modal.classList.remove('hidden');
@@ -1190,10 +1208,27 @@ export function closeCustomOrderModal() {
 
 export function submitCustomOrder(event) {
     event.preventDefault();
-    const name = document.getElementById('cust-name').value;
-    const length = document.getElementById('cust-length').value;
-    const width = document.getElementById('cust-width').value;
-    const notes = document.getElementById('cust-notes').value;
+    const name = document.getElementById('cust-name').value.trim();
+    const length = document.getElementById('cust-length').value.trim();
+    const width = document.getElementById('cust-width').value.trim();
+    const notes = document.getElementById('cust-notes').value.trim();
+
+    // التحقق من أقصى مقاس للحياكة اليدوية (الحد الأقصى مترين في مترين / 200 سم)
+    const parseDim = (val) => {
+        const num = parseFloat(String(val).replace(/,/g, '.').replace(/[^\d.]/g, '')) || 0;
+        if (num > 0 && num <= 5 && String(val).includes('متر')) {
+            return num * 100;
+        }
+        return num;
+    };
+    
+    const lenVal = parseDim(length);
+    const widthVal = parseDim(width);
+    if (lenVal > 200 || widthVal > 200) {
+        alert('تنويه من دار التطريز 🏛️✨\nأقصى مقاس معتمد للحياكة اليدوية حالياً في مشغلنا هو 200 × 200 سم (مترين في مترين كحد أقصى).\n\nيُرجى تعديل المقاس ليتناسب مع أنوال الحياكة المتاحة.');
+        return;
+    }
+
     const orderId = 'TATR-' + Math.floor(100000 + Math.random() * 900000);
 
     // تسجيل الطلب سحابياً في فايربيس للمسؤول

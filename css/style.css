@@ -3404,3 +3404,57 @@ video.lookbook-slide {
     }
 }
 
+/* ==========================================================================
+   شرائح المقاسات الفاخرة للطلب المخصص (Custom Size Preset Chips)
+   ========================================================================== */
+.size-preset-chip {
+    transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+    user-select: none;
+    -webkit-user-select: none;
+}
+.size-preset-chip:hover {
+    border-color: #c59b27;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px -2px rgba(197, 155, 39, 0.2);
+}
+.size-preset-chip:active {
+    transform: scale(0.96);
+}
+
+/* ==========================================================================
+   تجربة النوافذ السفلية الفاخرة على شاشات الجوال (Mobile Bottom Sheet Modals)
+   ========================================================================== */
+@media (max-width: 640px) {
+    #custom-order-modal,
+    #cart-modal {
+        align-items: flex-end !important;
+        padding: 0 !important;
+    }
+    
+    #custom-order-modal .lux-modal-box,
+    #cart-modal .lux-modal-box {
+        width: 100vw !important;
+        max-width: 100vw !important;
+        border-bottom-left-radius: 0 !important;
+        border-bottom-right-radius: 0 !important;
+        border-top-left-radius: 1.75rem !important;
+        border-top-right-radius: 1.75rem !important;
+        max-height: 88vh !important;
+        margin: 0 !important;
+        box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.3) !important;
+        animation: mobileSheetSlideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+    }
+
+    @keyframes mobileSheetSlideUp {
+        from {
+            opacity: 0;
+            transform: translateY(100%);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+}
+
+

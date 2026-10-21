@@ -94,26 +94,26 @@
         }
     </style>
 </head>
-<body class="flex flex-col min-h-screen antialiased p-3 sm:p-5 md:p-8">
+<body class="flex flex-col min-h-screen antialiased p-3 sm:p-5 md:p-8 overflow-x-hidden">
 
     <!-- الشريط العلوي الفاخر والتنقل السريع -->
-    <header class="w-full max-w-4xl mx-auto mb-6 flex items-center justify-between gap-3 bg-white/90 backdrop-blur-md px-4 py-3 rounded-2xl border border-stone-200 shadow-xs">
-        <a href="index.html" class="flex items-center gap-2.5 group transition" title="العودة للمعرض الرئيسي">
-            <img src="images/logo.jpg" alt="Tatriza Logo" class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl object-cover border border-stone-200 shadow-2xs group-hover:scale-105 transition">
-            <div>
-                <span class="font-display font-black text-xs sm:text-sm text-stone-900 block leading-tight">دار التطريز TATRIZA</span>
-                <span class="text-[9.5px] sm:text-[10px] text-stone-500 font-medium">سلطنة عُمان • تتبع مراحل الحياكة والتسليم</span>
+    <header class="w-full max-w-4xl mx-auto mb-5 sm:mb-6 flex items-center justify-between gap-2 sm:gap-3 bg-white/90 backdrop-blur-md px-3 sm:px-4 py-2.5 sm:py-3 rounded-2xl border border-stone-200 shadow-xs">
+        <a href="index.html" class="flex items-center gap-2 group transition min-w-0" title="العودة للمعرض الرئيسي">
+            <img src="images/logo.jpg" alt="Tatriza Logo" class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl object-cover border border-stone-200 shadow-2xs group-hover:scale-105 transition shrink-0">
+            <div class="min-w-0">
+                <span class="font-display font-black text-xs sm:text-sm text-stone-900 block leading-tight truncate">دار التطريز TATRIZA</span>
+                <span class="text-[9px] sm:text-[10px] text-stone-500 font-medium truncate block">سلطنة عُمان • تتبع مراحل الحياكة</span>
             </div>
         </a>
 
-        <div class="flex items-center gap-2">
-            <a href="index.html" class="text-xs font-bold text-stone-700 hover:text-brand bg-stone-100 hover:bg-stone-200 px-3 py-1.5 rounded-xl border border-stone-200 transition flex items-center gap-1">
+        <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
+            <a href="index.html" class="text-xs font-bold text-stone-700 hover:text-brand bg-stone-100 hover:bg-stone-200 px-2.5 sm:px-3 py-1.5 rounded-xl border border-stone-200 transition flex items-center gap-1">
                 <span>🏛️</span>
                 <span class="hidden sm:inline">كتالوج المتجر</span>
             </a>
-            <a id="nav-verify-btn" href="verify.html" class="text-xs font-bold text-white bg-brand hover:bg-brand-dark px-3.5 py-1.5 rounded-xl shadow-xs transition flex items-center gap-1 cursor-pointer">
+            <a id="nav-verify-btn" href="verify.html" class="text-xs font-bold text-white bg-brand hover:bg-brand-dark px-2.5 sm:px-3.5 py-1.5 rounded-xl shadow-xs transition flex items-center gap-1 cursor-pointer">
                 <span>⚜️</span>
-                <span>شهادة الأصالة</span>
+                <span class="hidden sm:inline">شهادة الأصالة</span>
             </a>
         </div>
     </header>
@@ -178,6 +178,17 @@
                     <span>🧭</span>
                     <span>مسار رحلة حياكة وتحضير التحفة:</span>
                 </h3>
+
+                <!-- شريط الإنجاز الملكي المتوهج -->
+                <div class="mb-3.5 bg-stone-50 p-2.5 rounded-2xl border border-stone-200/80">
+                    <div class="flex items-center justify-between text-[11px] font-bold text-stone-700 mb-1.5">
+                        <span class="flex items-center gap-1"><span>✨</span><span>مستوى التقدم الكلي للطلب:</span></span>
+                        <span id="track-progress-pct" class="font-mono text-emerald-800 font-black">20%</span>
+                    </div>
+                    <div class="w-full bg-stone-200/80 rounded-full h-2.5 overflow-hidden p-0.5 border border-stone-200 shadow-2xs">
+                        <div id="track-progress-bar" class="h-full bg-gradient-to-r from-emerald-600 via-amber-500 to-[#7c1d3c] rounded-full transition-all duration-700 shadow-xs" style="width: 20%"></div>
+                    </div>
+                </div>
 
                 <!-- خط المراحل (متجاوب: أفقي في التابلت والشاشات الواسعة، ورأسي مرن في الجوال) -->
                 <div id="timeline-stepper" class="grid grid-cols-1 md:grid-cols-5 gap-3 md:gap-2 relative">
@@ -338,6 +349,11 @@
             if (!container) return;
 
             const currentIndex = currentStage.stepIndex;
+            const pct = Math.round((currentIndex / 5) * 100);
+            const bar = document.getElementById('track-progress-bar');
+            const pctText = document.getElementById('track-progress-pct');
+            if (bar) bar.style.width = `${pct}%`;
+            if (pctText) pctText.innerText = `${pct}% (${currentStage.shortTitle})`;
 
             container.innerHTML = ORDER_STAGES_ARRAY.map((st) => {
                 const isCompleted = st.stepIndex < currentIndex;

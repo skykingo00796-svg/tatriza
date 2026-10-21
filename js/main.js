@@ -14,7 +14,7 @@ import {
     addToCart, openCartModal, closeCartModal, removeFromCart, sendCartToWhatsApp, 
     updateCartDisplay,
     addCurrentModalToCart, inquireCurrentModalWhatsApp,
-    openCustomOrderModal, closeCustomOrderModal, submitCustomOrder, 
+    openCustomOrderModal, closeCustomOrderModal, submitCustomOrder, selectCustomSizePreset,
     openLightboxFromModal, openCurrentLogoLightbox, closeLightbox, handleLightboxScroll,
     openOptionsDrawer, closeOptionsDrawer
 } from './modals.js';
@@ -93,6 +93,7 @@ window.sendCartToWhatsApp = sendCartToWhatsApp;
 window.openCustomOrderModal = openCustomOrderModal;
 window.closeCustomOrderModal = closeCustomOrderModal;
 window.submitCustomOrder = submitCustomOrder;
+window.selectCustomSizePreset = selectCustomSizePreset;
 window.openThemeModal = openThemeModal;
 window.closeThemeModal = closeThemeModal;
 window.selectThemeOption = selectThemeOption;

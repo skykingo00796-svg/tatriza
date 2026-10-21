@@ -59,7 +59,7 @@
     <!-- مكتبة التنسيقات Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- ملف الأنماط والتصميم العام (مع تعديل المسار للخروج من مجلد screen) -->
-    <link rel="stylesheet" href="css/style.css?v=6.3">
+    <link rel="stylesheet" href="css/style.css?v=6.4">
     <!-- تنسيقات حرجة فورية لحاويات صور العملاء تضمن ظهور الصور بنسبة 4:3 قبل حتى تحميل ملفات CSS الخارجية -->
     <style id="lookbook-critical-css">
         .lookbook-slider-container {
@@ -1205,6 +1205,8 @@
     <!-- نافذة طلب تصميم خاص الفاخرة (VIP Atelier Request) -->
     <div id="custom-order-modal" class="hidden fixed inset-0 z-[140] modal-glass-backdrop flex items-center justify-center p-4">
         <div class="lux-modal-box w-full max-w-xl rounded-3xl p-6 md:p-8 relative text-right max-h-[90vh] overflow-y-auto" dir="rtl">
+            <!-- مقبض السحب للجوال (Mobile Drag Handle) -->
+            <div class="w-12 h-1.5 bg-stone-300/80 rounded-full mx-auto -mt-1 mb-3 sm:hidden"></div>
             <button onclick="closeCustomOrderModal()" class="absolute top-4 left-4 w-9 h-9 rounded-full bg-stone-100 hover:bg-stone-200 text-stone-500 hover:text-stone-900 transition flex items-center justify-center text-sm font-bold">✕</button>
             
             <div class="flex items-center gap-3 mb-4">
@@ -1224,6 +1226,31 @@
                         <input type="text" id="cust-name" required placeholder="أدخل اسمك الكريم..." class="w-full bg-stone-50 border border-stone-200 rounded-xl px-4 py-2.5 text-xs sm:text-sm focus:outline-none focus:border-brand focus:bg-white transition">
                     </div>
                     
+                    <!-- شرائح المقاسات السريعة المقترحة -->
+                    <div class="space-y-1.5">
+                        <div class="flex items-center justify-between">
+                            <label class="block text-xs font-bold text-stone-700">المقاسات المقترحة السريعة:</label>
+                            <span class="text-[9.5px] text-amber-900 font-bold bg-amber-50 px-2 py-0.5 rounded-lg border border-amber-200/90 shadow-2xs">الحد الأقصى: 200×200 سم</span>
+                        </div>
+                        <div class="flex flex-wrap gap-1.5" id="custom-size-presets">
+                            <button type="button" onclick="selectCustomSizePreset(80, 50, this)" class="size-preset-chip px-2.5 py-1 text-[11px] font-bold rounded-xl border border-stone-200 bg-stone-50 hover:bg-stone-100 text-stone-700 transition cursor-pointer active:scale-95 shadow-2xs">
+                                80 × 50 سم (مدخل/تحفة)
+                            </button>
+                            <button type="button" onclick="selectCustomSizePreset(120, 120, this)" class="size-preset-chip px-2.5 py-1 text-[11px] font-bold rounded-xl border border-stone-200 bg-stone-50 hover:bg-stone-100 text-stone-700 transition cursor-pointer active:scale-95 shadow-2xs">
+                                120 × 120 سم (مربع)
+                            </button>
+                            <button type="button" onclick="selectCustomSizePreset(150, 100, this)" class="size-preset-chip px-2.5 py-1 text-[11px] font-bold rounded-xl border border-stone-200 bg-stone-50 hover:bg-stone-100 text-stone-700 transition cursor-pointer active:scale-95 shadow-2xs">
+                                150 × 100 سم (جانبي)
+                            </button>
+                            <button type="button" onclick="selectCustomSizePreset(200, 200, this)" class="size-preset-chip px-2.5 py-1 text-[11px] font-black rounded-xl border border-amber-300 bg-amber-50 text-amber-950 hover:bg-amber-100 transition cursor-pointer active:scale-95 shadow-2xs">
+                                200 × 200 سم (الحد الأقصى 👑)
+                            </button>
+                            <button type="button" onclick="selectCustomSizePreset('', '', this)" class="size-preset-chip px-2.5 py-1 text-[11px] font-bold rounded-xl border border-stone-200 bg-stone-50 hover:bg-stone-100 text-stone-600 transition cursor-pointer active:scale-95 shadow-2xs">
+                                مقاس مخصص 📐
+                            </button>
+                        </div>
+                    </div>
+
                     <div class="grid grid-cols-2 gap-3">
                         <div>
                             <label class="block text-xs font-bold text-stone-700 mb-1">الطول المطلوب <span class="text-[10px] text-amber-800 font-bold">(الحد الأقصى 200 سم)</span></label>
@@ -1252,6 +1279,8 @@
     <!-- نافذة السلة المتكاملة الفاخرة (VIP Luxury Order Cart) -->
     <div id="cart-modal" class="hidden fixed inset-0 z-[140] modal-glass-backdrop flex items-center justify-center p-4">
         <div class="lux-modal-box w-full max-w-lg rounded-3xl p-6 md:p-8 relative text-right flex flex-col max-h-[88vh]" dir="rtl">
+            <!-- مقبض السحب للجوال (Mobile Drag Handle) -->
+            <div class="w-12 h-1.5 bg-stone-300/80 rounded-full mx-auto -mt-1 mb-3 sm:hidden shrink-0"></div>
             <button onclick="closeCartModal()" class="absolute top-4 left-4 w-9 h-9 rounded-full bg-stone-100 hover:bg-stone-200 text-stone-500 hover:text-stone-900 transition flex items-center justify-center text-sm font-bold">✕</button>
             
             <div class="flex items-center gap-3 mb-4 pb-3 border-b border-stone-200/80">
@@ -1527,8 +1556,25 @@
         </div>
     </footer>
 
-    <script type="module" src="js/main.js?v=6.3"></script>
-    <script type="module" src="js/pwa.js?v=6.3"></script>
+    <script>
+        window.selectCustomSizePreset = window.selectCustomSizePreset || function(length, width, btn) {
+            var lenInput = document.getElementById('cust-length');
+            var widthInput = document.getElementById('cust-width');
+            if (lenInput) lenInput.value = length ? (length + ' سم') : '';
+            if (widthInput) widthInput.value = width ? (width + ' سم') : '';
+            document.querySelectorAll('.size-preset-chip').forEach(function(c) {
+                c.classList.remove('bg-brand', 'text-white', 'border-brand', 'shadow-xs', 'bg-amber-800', 'border-amber-800');
+                c.classList.add('bg-stone-50', 'text-stone-700', 'border-stone-200');
+            });
+            if (btn) {
+                btn.classList.remove('bg-stone-50', 'text-stone-700', 'border-stone-200', 'bg-amber-50', 'text-amber-950', 'border-amber-300');
+                btn.classList.add('bg-brand', 'text-white', 'border-brand', 'shadow-xs');
+            }
+            if (lenInput && !length) lenInput.focus();
+        };
+    </script>
+    <script type="module" src="js/main.js?v=6.4"></script>
+    <script type="module" src="js/pwa.js?v=6.4"></script>
 
 </body>
 </html>
