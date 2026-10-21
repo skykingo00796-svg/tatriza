@@ -3377,3 +3377,30 @@ video.lookbook-slide {
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
 }
+
+/* ==========================================================================
+   قوائم ومراكز إجراءات الطلبات المنسدلة الذكية (Order Action Dropdown Hubs)
+   ========================================================================== */
+.order-dropdown-wrapper {
+    position: relative;
+}
+
+.order-action-dropdown-menu {
+    transform-origin: bottom center;
+    animation: orderDropdownPop 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    box-shadow: 0 16px 36px -4px rgba(124, 29, 60, 0.12), 0 6px 16px -2px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(0, 0, 0, 0.04);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+@keyframes orderDropdownPop {
+    from {
+        opacity: 0;
+        transform: translateY(6px) scale(0.96);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+

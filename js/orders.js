@@ -378,6 +378,13 @@ try {
 // ==========================================
 // وضع الخصوصية وتشفير المبلغ المحصل (Privacy Mode)
 // ==========================================
+// دالة موحدة لتنسيق الأرقام والأسعار بلغة رقمية موحدة في كل الشاشات
+// ==========================================
+export function formatOMR(amount) {
+    const num = Number(amount) || 0;
+    return num.toLocaleString('en-US');
+}
+
 window.toggleRevenuePrivacy = function() {
     isRevenueHidden = !isRevenueHidden;
     try {
@@ -399,7 +406,7 @@ function updateRevenueDisplay() {
             if (toggleIcon) toggleIcon.innerText = '👁️';
             if (toggleBtn) toggleBtn.title = 'انقر لإظهار المبلغ المحصل';
         } else {
-            elRevenue.innerText = totalRevenue.toLocaleString('ar-OM') + ' ر.ع.';
+            elRevenue.innerText = formatOMR(totalRevenue) + ' ر.ع.';
             if (toggleIcon) toggleIcon.innerText = '🙈';
             if (toggleBtn) toggleBtn.title = 'انقر لإخفاء وتشفير المبلغ (وضع الخصوصية)';
         }
@@ -413,7 +420,7 @@ function updateRevenueDisplay() {
         if (isRevenueHidden) {
             archiveRevEl.innerHTML = '<span class="tracking-widest font-mono text-amber-300/60 font-bold select-none">••••••</span>';
         } else {
-            archiveRevEl.innerText = archiveTotal.toLocaleString('ar-OM') + ' ر.ع.';
+            archiveRevEl.innerText = formatOMR(archiveTotal) + ' ر.ع.';
         }
     }
 }
@@ -552,7 +559,7 @@ function renderOrdersList() {
                 if (isRevenueHidden) {
                     archiveRevEl.innerHTML = '<span class="tracking-widest font-mono text-amber-300/60 font-bold select-none">••••••</span>';
                 } else {
-                    archiveRevEl.innerText = archiveTotal.toLocaleString('ar-OM') + ' ر.ع.';
+                    archiveRevEl.innerText = formatOMR(archiveTotal) + ' ر.ع.';
                 }
             }
             if (archiveCountEl) archiveCountEl.innerText = list.length;
@@ -583,6 +590,54 @@ function renderOrdersList() {
     container.innerHTML = list.map(order => createOrderCardHtml(order)).join('');
 }
 
+// ==========================================
+// التحكم في القوائم المنسدلة الذكية لبطاقات الطلبات (Action Dropdown Hubs)
+// ==========================================
+window.toggleOrderDropdown = function(menuId, event) {
+    if (event) {
+        event.stopPropagation();
+        event.preventDefault();
+    }
+    const menu = document.getElementById(menuId);
+    if (!menu) return;
+    
+    const isCurrentlyOpen = !menu.classList.contains('hidden');
+    window.closeAllOrderDropdowns();
+    
+    if (!isCurrentlyOpen) {
+        menu.classList.remove('hidden');
+    }
+};
+
+window.closeAllOrderDropdowns = function() {
+    document.querySelectorAll('.order-action-dropdown-menu').forEach(el => {
+        el.classList.add('hidden');
+    });
+};
+
+window.copyOrderTrackingLink = function(orderId) {
+    const url = getOrderTrackingUrl(orderId);
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(url).then(() => {
+            showOrderToast('📋 تم نسخ رابط تتبع الطلب بنجاح!', 'success');
+        }).catch(() => {
+            prompt('انسخ رابط التتبع أدناه:', url);
+        });
+    } else {
+        prompt('انسخ رابط التتبع أدناه:', url);
+    }
+    window.closeAllOrderDropdowns();
+};
+
+// إغلاق أي قائمة منسدلة تلقائياً عند النقر في أي مكان آخر بالصفحة
+if (typeof document !== 'undefined') {
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.order-dropdown-wrapper')) {
+            window.closeAllOrderDropdowns();
+        }
+    });
+}
+
 // توليد بطاقة HTML لكل طلب
 function createOrderCardHtml(order) {
     const isConfirmed = order.status === 'confirmed';
@@ -591,6 +646,8 @@ function createOrderCardHtml(order) {
     const totalPrice = Number(order.totalPrice) || 0;
     const orderDate = order.createdAtFormatted || formatTimestamp(order.createdAt);
     const storePhone = "96895939388";
+    const currentStage = getOrderStage(order);
+    const isDelivered = isConfirmed && (currentStage.id === 'delivered' || order.stage === 'delivered');
 
     // وسم نوع الطلب
     let typeBadge = '';
@@ -618,15 +675,15 @@ function createOrderCardHtml(order) {
             if (hasItemDiscount) {
                 priceDisplayHtml = `
                     <div class="flex flex-col items-end shrink-0 text-left">
-                        <span class="font-mono font-black text-xs sm:text-sm text-emerald-800">${itemPrice} ر.ع.</span>
+                        <span class="font-mono font-black text-xs sm:text-sm text-emerald-800">${formatOMR(itemPrice)} ر.ع.</span>
                         <div class="flex items-center gap-1">
-                            <span class="font-mono text-[10px] text-stone-400 line-through">${origPrice} ر.ع.</span>
-                            <span class="text-[9px] font-bold text-emerald-700 bg-emerald-100/80 px-1 py-0.2 rounded">خصم ${Math.round((origPrice - itemPrice) * 100) / 100} ر.ع.</span>
+                            <span class="font-mono text-[10px] text-stone-400 line-through">${formatOMR(origPrice)} ر.ع.</span>
+                            <span class="text-[9px] font-bold text-emerald-700 bg-emerald-100/80 px-1 py-0.2 rounded">خصم ${formatOMR(Math.round((origPrice - itemPrice) * 100) / 100)} ر.ع.</span>
                         </div>
                     </div>
                 `;
             } else {
-                priceDisplayHtml = `<span class="font-mono font-black text-xs sm:text-sm text-amber-950 shrink-0">${item.price ? `${item.price} ر.ع.` : 'بالاتفاق'}</span>`;
+                priceDisplayHtml = `<span class="font-mono font-black text-xs sm:text-sm text-amber-950 shrink-0">${item.price ? `${formatOMR(item.price)} ر.ع.` : 'بالاتفاق'}</span>`;
             }
 
             return `
@@ -658,7 +715,7 @@ function createOrderCardHtml(order) {
     // أزرار الإجراءات
     let actionsHtml = '';
     if (!isConfirmed) {
-        // الطلب معلق: زر التأكيد والدفع + زر الإلغاء والحذف
+        // الطلب معلق: زر التأكيد والدفع + زر الإلغاء والحذف + زر واتساب الترحيب
         actionsHtml = `
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-3 border-t border-stone-200">
                 <!-- الزر الأول: تأكيد الطلب ودفع المبلغ -->
@@ -681,100 +738,210 @@ function createOrderCardHtml(order) {
             </div>
         `;
     } else {
-        // الطلب في الأرشيف (مؤكد): إظهار تفاصيل الدفع وزر استعادة وزر طباعة والتتبع
+        // الطلب في الأرشيف (مؤكد):
+        // تنظيم الإجراءات إلى 3 قوائم منسدلة ذكية + زر أو بانر مرحلة التتبع
         const confirmedDate = order.confirmedAt ? formatTimestamp(order.confirmedAt) : '';
-        const currentStage = getOrderStage(order);
+
+        // إذا تم تسليم الطلب واكتمال الاقتناء، يختفي زر مرحلة التتبع تلقائياً ويحل محله بانر الإنجاز والتسليم النهائي
+        const trackingBlockHtml = isDelivered ? `
+            <div class="p-3 sm:p-3.5 rounded-2xl bg-gradient-to-r from-emerald-50 via-teal-50/70 to-emerald-50 border border-emerald-300/80 flex items-center justify-between gap-2.5 shadow-2xs">
+                <div class="flex items-center gap-2.5 min-w-0">
+                    <span class="w-8 h-8 rounded-xl bg-emerald-600 text-white flex items-center justify-center text-base shadow-xs shrink-0">🏛️</span>
+                    <div class="min-w-0">
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <span class="text-xs sm:text-sm font-black text-emerald-950">تم تسليم القطعة للعميل بنجاح</span>
+                            <span class="text-[9.5px] font-bold px-1.5 py-0.2 rounded bg-emerald-200 text-emerald-900 font-mono">مكتمل 100%</span>
+                        </div>
+                        <p class="text-[10.5px] text-emerald-700 font-medium truncate mt-0.5">الطلب محفوظ في الأرشيف للمعاينة والمراجعة فقط (تم قفل التتبع النهائي)</p>
+                    </div>
+                </div>
+                <span class="text-xs text-emerald-800 font-bold bg-white/80 border border-emerald-200 px-2.5 py-1 rounded-lg shrink-0">🔒 معتمد</span>
+            </div>
+        ` : `
+            <button type="button" onclick="openOrderStageModal('${orderId}')" class="w-full bg-gradient-to-r from-amber-500 via-amber-600 to-amber-700 hover:from-amber-600 hover:to-amber-800 text-white font-extrabold text-xs sm:text-sm h-10 px-3 rounded-xl shadow-sm hover:shadow transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-98" title="تحديث مرحلة الحياكة أو الشحن وإشعار العميل">
+                <span class="text-base">${currentStage.icon}</span>
+                <span>تحديث مرحلة التتبع (${currentStage.shortTitle})</span>
+                <span class="text-[10px] bg-black/20 px-1.5 py-0.5 rounded font-mono">مرحلة ${currentStage.stepIndex}/5</span>
+            </button>
+        `;
+
         actionsHtml = `
             <div class="flex flex-col gap-2.5 pt-3 border-t border-stone-200">
+                <!-- شريط حالة الأرشفة والمرحلة -->
                 <div class="flex flex-wrap items-center justify-between gap-2">
                     <div class="flex items-center gap-2 text-xs text-emerald-800 font-bold bg-emerald-50 px-3 py-1.5 rounded-xl border border-emerald-200">
                         <span>✅ تم استلام المبلغ وأرشفة الطلب</span>
                         ${confirmedDate ? `<span class="text-[11px] text-emerald-600 font-medium font-mono">(${confirmedDate})</span>` : ''}
                     </div>
-                    <div class="flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-xl border bg-amber-50 border-amber-300/80 text-amber-950">
+                    <div class="flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-xl border ${isDelivered ? 'bg-emerald-100/70 border-emerald-300 text-emerald-950' : 'bg-amber-50 border-amber-300/80 text-amber-950'}">
                         <span>${currentStage.icon}</span>
-                        <span>المرحلة: ${currentStage.shortTitle}</span>
+                        <span>${isDelivered ? 'مكتمل ومسلم' : `المرحلة: ${currentStage.shortTitle}`}</span>
                     </div>
                 </div>
 
-                <div class="space-y-2">
-                    <!-- الصف الأول: التتبع والتواصل (زرين عريضين) -->
-                    <div class="grid grid-cols-2 gap-1.5 sm:gap-2">
-                        <button type="button" onclick="openOrderStageModal('${orderId}')" class="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-bold text-xs h-9 sm:h-10 px-2 rounded-xl shadow-xs transition flex items-center justify-center gap-1 cursor-pointer active:scale-95" title="تحديث مرحلة الحياكة أو الشحن وإشعار العميل">
-                            <span>🚚</span>
-                            <span class="truncate">مرحلة التتبع</span>
+                <!-- مسار التتبع (يختفي زر التحديث تلقائياً ويتحول لبانر عند التسليم) -->
+                ${trackingBlockHtml}
+
+                <!-- مراكز الإجراءات المجمعة الذكية (3 قوائم فقط بدلاً من 8 أزرار مشتتة) -->
+                <div class="grid grid-cols-3 gap-2 relative">
+                    
+                    <!-- 1. مركز رسائل وتحديثات الواتساب -->
+                    <div class="relative order-dropdown-wrapper">
+                        <button type="button" onclick="toggleOrderDropdown('wa-menu-${orderId}', event)" class="w-full bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300/90 font-bold text-xs h-9 sm:h-10 px-2 rounded-xl transition flex items-center justify-center gap-1 cursor-pointer active:scale-95 shadow-2xs" title="إرسال رسائل وتحديثات بالواتساب للعميل">
+                            <span class="text-sm">💬</span>
+                            <span class="truncate">رسائل واتساب</span>
+                            <span class="text-[9px] opacity-70">▾</span>
                         </button>
-                        <button type="button" onclick="sendStageWhatsApp('${orderId}')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs h-9 sm:h-10 px-2 rounded-xl shadow-xs transition flex items-center justify-center gap-1 cursor-pointer active:scale-95" title="إرسال تحديث المرحلة الحالية للعميل عبر الواتساب بنقرة واحدة">
-                            <span>💬</span>
-                            <span class="truncate">واتساب التتبع</span>
-                        </button>
+                        
+                        <div id="wa-menu-${orderId}" class="order-action-dropdown-menu hidden absolute right-0 bottom-full mb-1.5 w-64 bg-white rounded-2xl shadow-2xl border border-stone-200 p-1.5 z-[70] space-y-1 text-right">
+                            <div class="px-2.5 py-1.5 border-b border-stone-100 text-[10.5px] font-bold text-stone-400">
+                                مراسلات الواتساب السريعة
+                            </div>
+                            <button type="button" onclick="sendStageWhatsApp('${orderId}'); closeAllOrderDropdowns();" class="w-full text-right px-2.5 py-2 text-xs font-bold text-stone-800 hover:bg-emerald-50 hover:text-emerald-900 rounded-xl transition flex items-center gap-2 cursor-pointer">
+                                <span class="text-base shrink-0">🚚</span>
+                                <div class="min-w-0 flex-1">
+                                    <span class="block truncate">إشعار مرحلة التتبع</span>
+                                    <span class="text-[9.5px] text-stone-400 font-normal block">إرسال رابط التتبع والمرحلة الحالية</span>
+                                </div>
+                            </button>
+                            <button type="button" onclick="sendCertificateWhatsApp('${orderId}'); closeAllOrderDropdowns();" class="w-full text-right px-2.5 py-2 text-xs font-bold text-stone-800 hover:bg-emerald-50 hover:text-emerald-900 rounded-xl transition flex items-center gap-2 cursor-pointer">
+                                <span class="text-base shrink-0">⚜️</span>
+                                <div class="min-w-0 flex-1">
+                                    <span class="block truncate">إرسال شهادة الأصالة</span>
+                                    <span class="text-[9.5px] text-stone-400 font-normal block">رابط وثيقة الملكية المعتمدة</span>
+                                </div>
+                            </button>
+                            <button type="button" onclick="sendPaymentReceiptWhatsApp('${orderId}'); closeAllOrderDropdowns();" class="w-full text-right px-2.5 py-2 text-xs font-bold text-stone-800 hover:bg-emerald-50 hover:text-emerald-900 rounded-xl transition flex items-center gap-2 cursor-pointer">
+                                <span class="text-base shrink-0">💰</span>
+                                <div class="min-w-0 flex-1">
+                                    <span class="block truncate">إشعار استلام الدفعة</span>
+                                    <span class="text-[9.5px] text-stone-400 font-normal block">تأكيد سداد المبلغ للعميل</span>
+                                </div>
+                            </button>
+                            <div class="border-t border-stone-100 my-1"></div>
+                            <a href="${waUrl}" target="_blank" rel="noopener noreferrer" onclick="closeAllOrderDropdowns();" class="w-full text-right px-2.5 py-2 text-xs font-bold text-emerald-700 hover:bg-emerald-50 rounded-xl transition flex items-center gap-2 cursor-pointer">
+                                <span class="text-base shrink-0">💬</span>
+                                <div class="min-w-0 flex-1">
+                                    <span class="block truncate">محادثة واتساب مباشرة</span>
+                                    <span class="text-[9.5px] text-stone-400 font-normal block">فتح المحادثة الفورية برقم العميل</span>
+                                </div>
+                            </a>
+                            <button type="button" onclick="copyOrderTrackingLink('${orderId}');" class="w-full text-right px-2.5 py-2 text-xs font-bold text-stone-700 hover:bg-stone-50 rounded-xl transition flex items-center gap-2 cursor-pointer">
+                                <span class="text-base shrink-0">📋</span>
+                                <div class="min-w-0 flex-1">
+                                    <span class="block truncate">نسخ رابط التتبع</span>
+                                    <span class="text-[9.5px] text-stone-400 font-normal block">نسخ الرابط لمشاركته مع العميل</span>
+                                </div>
+                            </button>
+                        </div>
                     </div>
 
-                    <!-- الصف الثاني: الوثائق والشهادات (أربعة أزرار شبكية) -->
-                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-1.5 sm:gap-2">
-                        <button type="button" onclick="printOrderReceipt('${orderId}')" class="bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold text-xs h-9 px-2 rounded-xl border border-stone-300 transition flex items-center justify-center gap-1 cursor-pointer active:scale-95" title="طباعة فاتورة / ملخص الطلب">
-                            <span>🖨️</span>
-                            <span class="truncate">إيصال</span>
+                    <!-- 2. مركز الوثائق والمعاينة -->
+                    <div class="relative order-dropdown-wrapper">
+                        <button type="button" onclick="toggleOrderDropdown('docs-menu-${orderId}', event)" class="w-full bg-amber-50 hover:bg-amber-100 text-amber-950 border border-amber-300/80 font-bold text-xs h-9 sm:h-10 px-2 rounded-xl transition flex items-center justify-center gap-1 cursor-pointer active:scale-95 shadow-2xs" title="معاينة الشهادة أو الإيصال أو صفحة التتبع">
+                            <span class="text-sm">📄</span>
+                            <span class="truncate">الوثائق والمعاينة</span>
+                            <span class="text-[9px] opacity-70">▾</span>
                         </button>
-                        <button type="button" onclick="openOrderCertificate('${orderId}')" class="bg-amber-50 hover:bg-amber-100 text-amber-900 font-bold text-xs h-9 px-2 rounded-xl border border-amber-300 transition flex items-center justify-center gap-1 cursor-pointer active:scale-95" title="معاينة شهادة الأصالة الملكية الموثقة">
-                            <span>⚜️</span>
-                            <span class="truncate">الشهادة</span>
-                        </button>
-                        <button type="button" onclick="sendCertificateWhatsApp('${orderId}')" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-bold text-xs h-9 px-2 rounded-xl border border-emerald-300 transition flex items-center justify-center gap-1 cursor-pointer active:scale-95" title="إرسال رابط الشهادة الموثقة للعميل عبر الواتساب">
-                            <span>📲</span>
-                            <span class="truncate">واتساب الشهادة</span>
-                        </button>
-                        <button type="button" onclick="sendPaymentReceiptWhatsApp('${orderId}')" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-bold text-xs h-9 px-2 rounded-xl border border-emerald-300 transition flex items-center justify-center gap-1 cursor-pointer active:scale-95" title="إرسال تأكيد استلام الدفعة للعميل عبر الواتساب">
-                            <span>💰</span>
-                            <span class="truncate">إشعار الدفع</span>
-                        </button>
+                        
+                        <div id="docs-menu-${orderId}" class="order-action-dropdown-menu hidden absolute right-1/2 translate-x-1/2 bottom-full mb-1.5 w-60 bg-white rounded-2xl shadow-2xl border border-stone-200 p-1.5 z-[70] space-y-1 text-right">
+                            <div class="px-2.5 py-1.5 border-b border-stone-100 text-[10.5px] font-bold text-stone-400">
+                                الوثائق والشهادات الرسمية
+                            </div>
+                            <button type="button" onclick="openOrderCertificate('${orderId}'); closeAllOrderDropdowns();" class="w-full text-right px-2.5 py-2 text-xs font-bold text-stone-800 hover:bg-amber-50 hover:text-amber-950 rounded-xl transition flex items-center gap-2 cursor-pointer">
+                                <span class="text-base shrink-0">⚜️</span>
+                                <div class="min-w-0 flex-1">
+                                    <span class="block truncate">شهادة الأصالة الملكية</span>
+                                    <span class="text-[9.5px] text-stone-400 font-normal block">معاينة وثيقة الملكية المعتمدة بالختم</span>
+                                </div>
+                            </button>
+                            <button type="button" onclick="printOrderReceipt('${orderId}'); closeAllOrderDropdowns();" class="w-full text-right px-2.5 py-2 text-xs font-bold text-stone-800 hover:bg-stone-100 rounded-xl transition flex items-center gap-2 cursor-pointer">
+                                <span class="text-base shrink-0">🖨️</span>
+                                <div class="min-w-0 flex-1">
+                                    <span class="block truncate">طباعة إيصال الطلب</span>
+                                    <span class="text-[9.5px] text-stone-400 font-normal block">فاتورة رسمية وملخص الحساب</span>
+                                </div>
+                            </button>
+                            <button type="button" onclick="window.open('${getOrderTrackingUrl(orderId)}', '_blank'); closeAllOrderDropdowns();" class="w-full text-right px-2.5 py-2 text-xs font-bold text-sky-800 hover:bg-sky-50 rounded-xl transition flex items-center gap-2 cursor-pointer">
+                                <span class="text-base shrink-0">🌐</span>
+                                <div class="min-w-0 flex-1">
+                                    <span class="block truncate">صفحة تتبع العميل</span>
+                                    <span class="text-[9.5px] text-stone-400 font-normal block">معاينة الشاشة الحية كما يراها العميل</span>
+                                </div>
+                            </button>
+                        </div>
                     </div>
 
-                    <!-- الصف الثالث: إدارة الطلب (استرجاع وحذف) -->
-                    <div class="grid grid-cols-2 gap-1.5 sm:gap-2 pt-1 border-t border-stone-100">
-                        <button type="button" onclick="revertOrderAction('${orderId}')" class="bg-stone-50 hover:bg-stone-100 text-stone-700 font-bold text-xs h-8 sm:h-9 px-2 rounded-xl border border-stone-200 transition flex items-center justify-center gap-1 cursor-pointer active:scale-95" title="إعادة الطلب إلى قائمة الطلبات المعلقة">
-                            <span>↩️</span>
-                            <span class="truncate">استرجاع للمعلق</span>
+                    <!-- 3. مركز خيارات الطلب -->
+                    <div class="relative order-dropdown-wrapper">
+                        <button type="button" onclick="toggleOrderDropdown('manage-menu-${orderId}', event)" class="w-full bg-stone-100 hover:bg-stone-200 text-stone-700 border border-stone-300 font-bold text-xs h-9 sm:h-10 px-2 rounded-xl transition flex items-center justify-center gap-1 cursor-pointer active:scale-95 shadow-2xs" title="إدارة الطلب: استرجاع أو حذف">
+                            <span class="text-sm">⚙️</span>
+                            <span class="truncate">خيارات الطلب</span>
+                            <span class="text-[9px] opacity-70">▾</span>
                         </button>
-                        <button type="button" onclick="cancelOrderAction('${orderId}')" class="bg-rose-50 hover:bg-rose-100 text-rose-800 font-bold text-xs h-8 sm:h-9 px-2 rounded-xl border border-rose-300 transition flex items-center justify-center gap-1 cursor-pointer active:scale-95" title="إلغاء الطلب وحذفه نهائياً">
-                            <span>❌</span>
-                            <span class="truncate">حذف نهائي</span>
-                        </button>
+                        
+                        <div id="manage-menu-${orderId}" class="order-action-dropdown-menu hidden absolute left-0 bottom-full mb-1.5 w-56 bg-white rounded-2xl shadow-2xl border border-stone-200 p-1.5 z-[70] space-y-1 text-right">
+                            <div class="px-2.5 py-1.5 border-b border-stone-100 text-[10.5px] font-bold text-stone-400">
+                                إدارة حالة الطلب
+                            </div>
+                            <button type="button" onclick="revertOrderAction('${orderId}'); closeAllOrderDropdowns();" class="w-full text-right px-2.5 py-2 text-xs font-bold text-stone-700 hover:bg-stone-100 rounded-xl transition flex items-center gap-2 cursor-pointer">
+                                <span class="text-base shrink-0">↩️</span>
+                                <div class="min-w-0 flex-1">
+                                    <span class="block truncate">استرجاع للمعلق</span>
+                                    <span class="text-[9.5px] text-stone-400 font-normal block">إعادة الطلب لقائمة قيد المراجعة</span>
+                                </div>
+                            </button>
+                            <button type="button" onclick="cancelOrderAction('${orderId}'); closeAllOrderDropdowns();" class="w-full text-right px-2.5 py-2 text-xs font-bold text-rose-700 hover:bg-rose-50 rounded-xl transition flex items-center gap-2 cursor-pointer">
+                                <span class="text-base shrink-0">🗑️</span>
+                                <div class="min-w-0 flex-1">
+                                    <span class="block truncate">حذف نهائي للطلب</span>
+                                    <span class="text-[9.5px] text-rose-400 font-normal block">إلغاء وحذف نهائي من الأرشيف</span>
+                                </div>
+                            </button>
+                        </div>
                     </div>
+
                 </div>
             </div>
         `;
     }
 
-    const cardCurrentStage = getOrderStage(order);
-
     return `
-        <div id="order-card-${orderId}" class="order-card bg-white/95 rounded-2xl sm:rounded-3xl p-4 sm:p-5 border ${isConfirmed ? 'border-emerald-300 shadow-sm' : 'border-stone-200/90 shadow-md hover:shadow-lg'} transition-all duration-300 space-y-4">
+        <div id="order-card-${orderId}" class="order-card bg-white/95 rounded-2xl sm:rounded-3xl p-4 sm:p-5 border ${isConfirmed ? (isDelivered ? 'border-emerald-400/80 shadow-sm' : 'border-emerald-300 shadow-sm') : 'border-stone-200/90 shadow-md hover:shadow-lg'} transition-all duration-300 space-y-4">
             
             <!-- رأس بطاقة الطلب -->
             <div class="flex flex-wrap items-center justify-between gap-2.5 pb-3 border-b border-stone-200/80">
                 <div class="flex items-center gap-2.5">
-                    <div class="w-10 h-10 rounded-2xl ${isConfirmed ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-900'} flex items-center justify-center font-bold text-base shadow-xs shrink-0">
-                        ${isConfirmed ? '✓' : '📦'}
+                    <div class="w-10 h-10 rounded-2xl ${isConfirmed ? (isDelivered ? 'bg-emerald-600 text-white' : 'bg-emerald-100 text-emerald-800') : 'bg-amber-100 text-amber-900'} flex items-center justify-center font-bold text-base shadow-xs shrink-0">
+                        ${isConfirmed ? (isDelivered ? '🏛️' : '✓') : '📦'}
                     </div>
                     <div>
                         <div class="flex items-center gap-2 flex-wrap">
                             <span class="font-mono font-black text-sm sm:text-base text-stone-900 tracking-wider">${orderId}</span>
                             ${typeBadge}
-                            <span class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-stone-100 text-stone-700 border border-stone-200 flex items-center gap-1 cursor-pointer hover:bg-stone-200 transition" onclick="openOrderStageModal('${orderId}')" title="انقر لتعديل مرحلة الحياكة أو مسار التتبع">
-                                <span>${cardCurrentStage.icon}</span>
-                                <span>${cardCurrentStage.shortTitle}</span>
-                            </span>
+                            ${isDelivered ? `
+                                <span class="text-[10px] font-black px-2.5 py-0.5 rounded-md bg-emerald-100 text-emerald-900 border border-emerald-300 flex items-center gap-1 cursor-default shadow-2xs" title="الطلب مستلم بنجاح ومؤرشف">
+                                    <span>🏛️</span>
+                                    <span>تم التسليم بنجاح</span>
+                                </span>
+                            ` : `
+                                <span class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-stone-100 text-stone-700 border border-stone-200 flex items-center gap-1 cursor-pointer hover:bg-stone-200 transition" onclick="openOrderStageModal('${orderId}')" title="انقر لتعديل مرحلة الحياكة أو مسار التتبع">
+                                    <span>${currentStage.icon}</span>
+                                    <span>${currentStage.shortTitle}</span>
+                                </span>
+                            `}
                         </div>
                         <span class="text-[11px] text-stone-500 font-medium block mt-0.5 font-mono">${orderDate}</span>
                     </div>
                 </div>
 
-                <!-- زر مباشر لفتح الواتساب مع العميل -->
-                <a href="${waUrl}" target="_blank" rel="noopener noreferrer" class="bg-[#25D366]/10 hover:bg-[#25D366]/20 text-[#128C7E] font-bold text-xs px-3 py-1.5 rounded-xl border border-[#25D366]/30 transition flex items-center gap-1.5 cursor-pointer shadow-2xs" title="فتح المحادثة بالواتساب لمطابقة الطلب">
-                    <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>
-                    <span>فتح بالواتساب</span>
-                </a>
+                <!-- زر محادثة الواتساب للطلبات المعلقة -->
+                ${!isConfirmed ? `
+                    <a href="${waUrl}" target="_blank" rel="noopener noreferrer" class="bg-[#25D366]/10 hover:bg-[#25D366]/20 text-[#128C7E] font-bold text-xs px-3 py-1.5 rounded-xl border border-[#25D366]/30 transition flex items-center gap-1.5 cursor-pointer shadow-2xs" title="فتح المحادثة بالواتساب مباشرة">
+                        <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>
+                        <span>فتح بالواتساب</span>
+                    </a>
+                ` : ''}
             </div>
 
             <!-- معلومات العميل والملاحظات -->
@@ -783,7 +950,7 @@ function createOrderCardHtml(order) {
                     <div class="min-w-0">
                         <span class="text-stone-400 font-bold block text-[10px]">العميل / مقدم الطلب:</span>
                         <span class="font-bold text-stone-900 block truncate">${escapeHtml(order.customerName || 'عميل المتجر')}</span>
-                        ${order.customerPhone ? `<span class="text-[10.5px] text-stone-500 font-mono block mt-0.5" dir="ltr">📞 ${escapeHtml(order.customerPhone)}</span>` : ''}
+                        ${order.customerPhone ? `<a href="${waUrl}" target="_blank" rel="noopener noreferrer" class="text-[10.5px] text-emerald-700 hover:text-emerald-900 font-mono inline-flex items-center gap-1 mt-0.5 hover:underline" dir="ltr" title="انقر للمحادثة بالواتساب">📞 ${escapeHtml(order.customerPhone)}</a>` : ''}
                     </div>
                     <button type="button" onclick="editCustomerInfoPrompt('${orderId}')" class="text-stone-500 hover:text-stone-900 bg-white hover:bg-stone-100 border border-stone-200 rounded-lg p-1.5 transition text-xs shrink-0 cursor-pointer shadow-2xs" title="تعديل اسم أو هاتف العميل">
                         ✏️
@@ -803,27 +970,27 @@ function createOrderCardHtml(order) {
                 </div>
             </div>
 
-            <!-- الإجمالي الكلي للمبلغ -->
+            <!-- الإجمالي الكلي للمبلغ بلغة رقمية موحدة -->
             <div class="flex items-center justify-between p-3 rounded-2xl bg-amber-50/60 border border-amber-200/70 shadow-2xs">
                 <div>
                     <span class="text-xs font-bold text-stone-600 block">المبلغ الإجمالي المعتمد:</span>
                     ${(order.originalTotalPrice && Number(order.originalTotalPrice) > totalPrice) ? `
                         <span class="text-[10px] font-black text-emerald-800 bg-emerald-100/90 border border-emerald-300 px-1.5 py-0.5 rounded mt-0.5 inline-block">
-                            🏷️ خصم خاص: ${Number(order.originalTotalPrice) - totalPrice} ر.ع.
+                            🏷️ خصم خاص: ${formatOMR(Number(order.originalTotalPrice) - totalPrice)} ر.ع.
                         </span>
                     ` : ''}
                 </div>
                 <div class="flex items-baseline gap-1.5">
                     ${(order.originalTotalPrice && Number(order.originalTotalPrice) > totalPrice) ? `
-                        <span class="font-mono text-xs text-stone-400 line-through">(${order.originalTotalPrice} ر.ع.)</span>
+                        <span class="font-mono text-xs text-stone-400 line-through">(${formatOMR(order.originalTotalPrice)} ر.ع.)</span>
                     ` : ''}
                     <span class="font-display font-black text-base sm:text-xl text-emerald-950 font-mono">
-                        ${totalPrice > 0 ? `${totalPrice.toLocaleString('ar-OM')} ر.ع.` : 'حسب التسعيرة الخاصة'}
+                        ${totalPrice > 0 ? `${formatOMR(totalPrice)} ر.ع.` : 'حسب التسعيرة الخاصة'}
                     </span>
                 </div>
             </div>
 
-            <!-- أزرار الإجراءات التفاعلية -->
+            <!-- أزرار الإجراءات التفاعلية المجمعة -->
             ${actionsHtml}
         </div>
     `;
@@ -1300,6 +1467,11 @@ window.openOrderStageModal = async function(orderId) {
     if (!order) return;
 
     const currentStage = getOrderStage(order);
+    if (currentStage.id === 'delivered' || order.stage === 'delivered') {
+        showOrderToast('🏛️ هذا الطلب تم تسليمه للعميل واكتمل اقتناؤه بنجاح ومحفوظ بالأرشيف (تم قفل التتبع).', 'info');
+        return;
+    }
+
     const clientName = escapeHtml(order.customerName || 'عميل المتجر');
     const existingTrackingNum = escapeHtml(order.trackingNumber || '');
     const existingCarrier = escapeHtml(order.carrierName || '');
@@ -1401,11 +1573,17 @@ window.openOrderStageModal = async function(orderId) {
         const carrierName = document.getElementById('stage-carrier-name').value.trim();
         const notes = document.getElementById('stage-custom-notes').value.trim();
 
+        if (selectedStage === 'delivered') {
+            const confirmDelivery = confirm('تأكيد التسليم النهائي:\nهل تم بالفعل تسليم القطعة للعميل واكتمال الاقتناء؟\n\nعند التأكيد، سيتم قفل التتبع واعتماد الطلب كمكتمل ومسلم بنجاح في الأرشيف.');
+            if (!confirmDelivery) return;
+        }
+
         try {
             await updateOrderStage(orderId, selectedStage, {
                 trackingNumber: trackingNum,
                 carrierName: carrierName,
-                notes: notes
+                notes: notes,
+                deliveredAt: selectedStage === 'delivered' ? Date.now() : (order.deliveredAt || null)
             });
 
             // تحديث الكائن محلياً
@@ -1414,8 +1592,11 @@ window.openOrderStageModal = async function(orderId) {
             order.carrierName = carrierName;
             order.stageNotes = notes;
             order.stageUpdatedAt = Date.now();
+            if (selectedStage === 'delivered') {
+                order.deliveredAt = Date.now();
+            }
 
-            showOrderToast(`✅ تم تحديث مرحلة الطلب #${orderId} بنجاح!`, 'success');
+            showOrderToast(selectedStage === 'delivered' ? `🏛️ تم تسليم واكتمال الطلب #${orderId} بنجاح وقفل التتبع!` : `✅ تم تحديث مرحلة الطلب #${orderId} بنجاح!`, 'success');
 
             if (sendWhatsApp) {
                 const msg = buildWhatsAppStatusUpdateMessage(order, selectedStage, {
@@ -2396,7 +2577,7 @@ function formatTimestamp(ts) {
     if (!ts) return '';
     try {
         const d = new Date(ts);
-        return d.toLocaleDateString('ar-OM', {
+        return d.toLocaleDateString('ar-OM-u-nu-latn', {
             year: 'numeric',
             month: 'short',
             day: 'numeric',
@@ -2514,13 +2695,13 @@ function renderAnalyticsDashboard() {
     const maxProductCount = Math.max(...topProducts.map(p => p.count), 1);
 
     // تجهيز قيم العرض للخصوصية
-    const displayRev = isRevenueHidden ? '••••••' : `${totalRevenue.toLocaleString('ar-OM')} ر.ع.`;
-    const displayAOV = isRevenueHidden ? '••••' : `${aov.toLocaleString('ar-OM')} ر.ع.`;
+    const displayRev = isRevenueHidden ? '••••••' : `${formatOMR(totalRevenue)} ر.ع.`;
+    const displayAOV = isRevenueHidden ? '••••' : `${formatOMR(aov)} ر.ع.`;
 
     // رسم أعمدة الرسم البياني المتجاوب
     const chartBarsHtml = monthList.map(m => {
         const heightPct = Math.max(12, Math.round((m.revenue / maxMonthRev) * 100));
-        const revFormatted = isRevenueHidden ? '••••' : `${m.revenue.toLocaleString('ar-OM')} ر.ع.`;
+        const revFormatted = isRevenueHidden ? '••••' : `${formatOMR(m.revenue)} ر.ع.`;
         return `
             <div class="flex-1 min-w-[52px] max-w-[80px] flex flex-col items-center justify-end h-40 sm:h-52 group relative shrink-0">
                 <div class="absolute -top-10 opacity-0 group-hover:opacity-100 transition-all pointer-events-none bg-stone-900 text-white text-[10px] font-mono py-1 px-2.5 rounded-lg whitespace-nowrap z-20 shadow-lg">
@@ -2564,7 +2745,7 @@ function renderAnalyticsDashboard() {
     // رسم بطاقات المنتجات الأكثر طلباً
     const topProductsHtml = topProducts.map(p => {
         const pct = Math.round((p.count / maxProductCount) * 100);
-        const pRev = isRevenueHidden ? '••••' : `${p.revenue.toLocaleString('ar-OM')} ر.ع.`;
+        const pRev = isRevenueHidden ? '••••' : `${formatOMR(p.revenue)} ر.ع.`;
         return `
             <div class="p-3 sm:p-3.5 bg-white rounded-2xl border border-stone-200/90 shadow-2xs space-y-2">
                 <div class="flex items-center justify-between gap-2.5">
@@ -2785,7 +2966,7 @@ window.printExecutiveReport = function() {
             <div class="kpi-grid">
                 <div class="kpi-card">
                     <div class="kpi-title">إجمالي المبيعات المحصلة</div>
-                    <div class="kpi-val" style="color: #7c1d3c;">${totalRevenue.toLocaleString('ar-OM')} ر.ع.</div>
+                    <div class="kpi-val" style="color: #7c1d3c;">${formatOMR(totalRevenue)} ر.ع.</div>
                 </div>
                 <div class="kpi-card">
                     <div class="kpi-title">الطلبات المؤكدة والمدفوعة</div>
@@ -2793,7 +2974,7 @@ window.printExecutiveReport = function() {
                 </div>
                 <div class="kpi-card">
                     <div class="kpi-title">متوسط قيمة الطلب (AOV)</div>
-                    <div class="kpi-val">${aov.toLocaleString('ar-OM')} ر.ع.</div>
+                    <div class="kpi-val">${formatOMR(aov)} ر.ع.</div>
                 </div>
                 <div class="kpi-card">
                     <div class="kpi-title">معدل تحويل الطلبات</div>
