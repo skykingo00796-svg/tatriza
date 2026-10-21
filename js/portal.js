@@ -1532,7 +1532,7 @@ export function getLocalShowcaseSettings() {
         const stored = localStorage.getItem('tatr_showcase_settings');
         if (stored) {
             const parsed = JSON.parse(stored);
-            if (parsed && parsed.version === 5 && Array.isArray(parsed.journeySteps) && parsed.journeySteps.length >= 7) {
+            if (parsed && parsed.version === 6 && Array.isArray(parsed.journeySteps) && parsed.journeySteps.length >= 7) {
                 return parsed;
             }
         }
@@ -1614,8 +1614,8 @@ export function initShowcaseCMS() {
         try {
             subscribeToShowcaseSettings((cloudData) => {
                 if (cloudData && Array.isArray(cloudData.marqueeItems)) {
-                    if (!cloudData.version || cloudData.version < 5 || (Array.isArray(cloudData.cinemaVideos) && cloudData.cinemaVideos.some(v => v.videoUrl && (v.videoUrl.includes('Weaving_Carpet_at_Lachen') || v.videoUrl.includes('bYXWtk6T59k'))))) {
-                        cloudData.version = 5;
+                    if (!cloudData.version || cloudData.version < 6 || (Array.isArray(cloudData.cinemaVideos) && cloudData.cinemaVideos.some(v => v.videoUrl && (v.videoUrl.includes('Weaving_Carpet_at_Lachen') || v.videoUrl.includes('bYXWtk6T59k'))))) {
+                        cloudData.version = 6;
                         if (Array.isArray(cloudData.cinemaVideos)) {
                             cloudData.cinemaVideos.forEach(v => {
                                 if (!v.videoUrl || v.videoUrl.includes('Weaving_Carpet_at_Lachen') || v.videoUrl.includes('bYXWtk6T59k')) {
@@ -2510,13 +2510,21 @@ function renderLookbookTab() {
         return;
     }
 
-    listEl.innerHTML = items.map(item => `
+    listEl.innerHTML = items.map(item => {
+        const thumbImg = (Array.isArray(item.images) && item.images[0]) || item.imgUrl || '../images/client_wrist_rest_1.jpg';
+        const imgCount = Array.isArray(item.images) && item.images.length > 0 ? item.images.length : 1;
+        return `
         <div class="flex flex-col bg-white border border-stone-200 rounded-xl sm:rounded-2xl overflow-hidden shadow-2xs hover:shadow-xs transition">
             <div class="relative w-full aspect-16/9 bg-stone-100 overflow-hidden">
-                <img src="${item.imgUrl || '../images/client_room1.jpg'}" alt="${item.carpetTitle}" class="w-full h-full object-cover">
+                <img src="${thumbImg}" alt="${item.carpetTitle}" class="w-full h-full object-cover">
                 <span class="absolute top-1.5 right-1.5 px-2 py-0.5 bg-black/70 text-white text-[9.5px] font-bold rounded-full backdrop-blur-md">
                     ${item.location || 'مسقط'}
                 </span>
+                ${imgCount > 1 ? `
+                    <span class="absolute top-1.5 left-1.5 px-1.5 py-0.5 bg-amber-500/90 text-white text-[9px] font-bold rounded-full backdrop-blur-md">
+                        📸 ${imgCount} صور
+                    </span>
+                ` : ''}
                 <span class="absolute bottom-1.5 left-1.5 px-2 py-0.5 bg-amber-950/80 text-amber-200 text-[9.5px] font-bold rounded-full backdrop-blur-md truncate max-w-[130px]">
                     ${item.carpetTitle || 'سجادة ملكية'}
                 </span>
@@ -2544,7 +2552,8 @@ function renderLookbookTab() {
                 </div>
             </div>
         </div>
-    `).join('');
+    `;
+    }).join('');
 }
 
 export function handleLookbookImgSelect(event) {

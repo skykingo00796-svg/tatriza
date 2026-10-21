@@ -771,7 +771,7 @@ export async function saveCategorySettingsToCloud(settingsObj) {
 // ==========================================
 export function getDefaultShowcaseSettings() {
     return {
-        version: 5,
+        version: 6,
         marqueeItems: [
             { id: "mq-1", icon: "⚜️", title: "حياكة يدوية 100%", desc: "صوف طبيعي وحرير خالص" },
             { id: "mq-2", icon: "🚚", title: "شحن وتوصيل مؤمن", desc: "لكافة محافظات سلطنة عُمان والخليج" },
@@ -854,23 +854,30 @@ export function getDefaultShowcaseSettings() {
         lookbookItems: [
             {
                 id: "look-1",
-                clientName: "م. ريم البلوشية",
-                location: "فيلا عصرية • مسقط",
-                carpetTitle: "سجاد مرايا جداري متموج",
+                clientName: "محمد العريمي",
+                location: "بوشر • مسقط",
+                carpetTitle: "سجادة راحة المعصم للكيبورد",
                 orderType: "طلب تفصيل خاص",
                 rating: 5,
-                reviewText: "القطعة تفوق كل التوقعات! ملمس الصوف المخملي مع تموجات الإطار وانعكاس المرآة جعل مدخل المنزل يبدو وكأنه متحف فني معاصر. حرفية متقنة ترفع الرأس.",
-                imgUrl: "../images/client_room1.jpg"
+                reviewText: "تفصيل متقن وفخم للغاية لمسند راحة المعصم للكيبورد بتصميم مخصص؛ كثافة خيوط الصوف ونعومتها وفرت راحة فائقة لمعصم اليد خلال ساعات العمل والألعاب الطويلة على السيت أب، والمظهر أضاف لمسة جمالية استثنائية لمكتبي.",
+                imgUrl: "../images/client_wrist_rest_1.jpg",
+                images: [
+                    "../images/client_wrist_rest_1.jpg",
+                    "../images/client_wrist_rest_2.jpg"
+                ]
             },
             {
                 id: "look-2",
-                clientName: "الشيخ أحمد الحوسني",
-                location: "مجلس ضيافة رسمي • صحار",
-                carpetTitle: "سجادة عجمية ملكية كبرى",
-                orderType: "عميل دار التطريز الدائم",
+                clientName: "أيمن العاصمي",
+                location: "الموالح • مسقط",
+                carpetTitle: "سجادة شعارات مخصصة",
+                orderType: "طلب تفصيل خاص",
                 rating: 5,
-                reviewText: "طلبنا سجادة بمقاس 4 × 3 متر لتتوسط المجلس الرئيسي، كثافة الصوف وثبات الألوان أضفت هيبة تاريخية ودفئاً استثنائياً للمكان. شكراً لاهتمامكم بأدق التفاصيل.",
-                imgUrl: "../images/client_room2.jpg"
+                reviewText: "طلبنا سجادة تجسيمية لشعارنا التجاري «كرم الطبيعة»، والنتيجة فاقت التوقعات بمراحل! دقة نحت الحروف العربية وبروزها الثلاثي الأبعاد مع تناسق اللون الأزرق الملكي عكست احترافية علامتنا وأبهرت عملاءنا.",
+                imgUrl: "../images/client_logo_karam.jpg",
+                images: [
+                    "../images/client_logo_karam.jpg"
+                ]
             }
         ]
     };

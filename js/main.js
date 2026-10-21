@@ -1293,7 +1293,7 @@ export function getPublicShowcaseSettings() {
         const stored = localStorage.getItem('tatr_showcase_settings');
         if (stored) {
             const parsed = JSON.parse(stored);
-            if (parsed && parsed.version === 5 && Array.isArray(parsed.journeySteps) && parsed.journeySteps.length >= 7) {
+            if (parsed && parsed.version === 6 && Array.isArray(parsed.journeySteps) && parsed.journeySteps.length >= 7) {
                 return parsed;
             }
         }
@@ -1317,8 +1317,8 @@ export function initDynamicShowcase() {
             subscribeToShowcaseSettings((cloudSettings) => {
                 if (cloudSettings && Array.isArray(cloudSettings.marqueeItems)) {
                     // إذا كان التحديث السحابي يحمل إصداراً قديماً أو رابط الفيديو القديم غير المطابق لحرفة التفتنج
-                    if (!cloudSettings.version || cloudSettings.version < 5 || (Array.isArray(cloudSettings.cinemaVideos) && cloudSettings.cinemaVideos.some(v => v.videoUrl && (v.videoUrl.includes('Weaving_Carpet_at_Lachen') || v.videoUrl.includes('bYXWtk6T59k'))))) {
-                        cloudSettings.version = 5;
+                    if (!cloudSettings.version || cloudSettings.version < 6 || (Array.isArray(cloudSettings.cinemaVideos) && cloudSettings.cinemaVideos.some(v => v.videoUrl && (v.videoUrl.includes('Weaving_Carpet_at_Lachen') || v.videoUrl.includes('bYXWtk6T59k'))))) {
+                        cloudSettings.version = 6;
                         if (Array.isArray(cloudSettings.cinemaVideos)) {
                             cloudSettings.cinemaVideos.forEach(v => {
                                 if (!v.videoUrl || v.videoUrl.includes('Weaving_Carpet_at_Lachen') || v.videoUrl.includes('bYXWtk6T59k')) {
@@ -1728,41 +1728,279 @@ function renderDynamicJourney(steps) {
     `).join('');
 }
 
-// 4. بناء كروت توثيق تسليم القطع وآراء العملاء ديناميكياً
+// 4. بناء كروت توثيق تسليم القطع وآراء العملاء مع معرض صور متحرك وتفاعلي
+let lookbookSliderInstances = [];
+
 function renderDynamicLookbook(items) {
     const grid = document.getElementById('dynamic-lookbook-grid');
     if (!grid || !items || items.length === 0) return;
 
-    grid.innerHTML = items.map(it => {
+    // تنظيف أي مؤقتات سلايدر سابقة لمنع تسريب الذاكرة
+    lookbookSliderInstances.forEach(inst => inst.destroy && inst.destroy());
+    lookbookSliderInstances = [];
+
+    grid.innerHTML = items.map((it, itemIdx) => {
         const ratingNum = Number(it.rating) || 5;
         const starsHtml = '★'.repeat(ratingNum);
+
+        // استخراج مصفوفة الصور أو الصورة الفردية
+        let rawImages = Array.isArray(it.images) && it.images.length > 0 
+            ? it.images 
+            : (it.imgUrl ? [it.imgUrl] : ['images/client_wrist_rest_1.jpg']);
+        
+        rawImages = rawImages.filter(img => typeof img === 'string' && img.trim().length > 0);
+        if (rawImages.length === 0) rawImages = ['images/client_wrist_rest_1.jpg'];
+
+        const resolvedImages = rawImages.map(img => resolveAssetPath(img));
+        const hasMultiple = resolvedImages.length > 1;
+        const sliderId = `lookbook-slider-${itemIdx}`;
+
         return `
-            <div class="lookbook-card flex flex-col group">
-                <div class="relative w-full aspect-4/3 overflow-hidden bg-stone-100">
-                    <img src="${resolveAssetPath(it.imgUrl || 'images/client_room1.jpg')}" alt="${it.carpetTitle}" class="w-full h-full object-cover group-hover:scale-105 transition duration-700" loading="lazy">
-                    <span class="absolute top-3 right-3 px-3 py-1 bg-black/65 backdrop-blur-md text-white font-bold text-xs rounded-full border border-white/20 shadow-md">
-                        ${it.location || 'مسقط'}
+            <div class="lookbook-card flex flex-col group bg-white rounded-2xl overflow-hidden shadow-xs hover:shadow-lg transition-all duration-500 border border-stone-200/70">
+                <div id="${sliderId}" class="lookbook-slider-container relative w-full aspect-4/3 overflow-hidden bg-stone-900 group/img select-none" data-slider-id="${sliderId}">
+                    <!-- حاوية الصور التفاعلية -->
+                    <div class="lookbook-slides-wrapper absolute inset-0 w-full h-full">
+                        ${resolvedImages.map((src, imgIdx) => `
+                            <img src="${src}" 
+                                 alt="${it.carpetTitle} - توثيق ${imgIdx + 1}" 
+                                 class="lookbook-slide absolute inset-0 w-full h-full object-cover transition-all duration-700 ease-in-out ${imgIdx === 0 ? 'opacity-100 scale-100 z-1 pointer-events-auto' : 'opacity-0 scale-105 z-0 pointer-events-none'}" 
+                                 loading="lazy"
+                                 data-slide-index="${imgIdx}">
+                        `).join('')}
+                    </div>
+
+                    <!-- بادج الموقع (أعلى اليمين) -->
+                    <span class="absolute top-3 right-3 px-3 py-1 bg-black/65 backdrop-blur-md text-white font-bold text-xs rounded-full border border-white/20 shadow-md z-10 pointer-events-none">
+                        📍 ${it.location || 'مسقط'}
                     </span>
-                    <span class="absolute bottom-3 left-3 px-3 py-1 bg-amber-950/70 backdrop-blur-md text-amber-200 font-bold text-xs rounded-full border border-amber-400/30">
+
+                    ${hasMultiple ? `
+                        <!-- عداد الصور (أعلى اليسار) -->
+                        <span class="lookbook-counter absolute top-3 left-3 px-2.5 py-1 bg-black/65 backdrop-blur-md text-amber-300 font-bold text-[11px] rounded-full border border-amber-400/30 flex items-center gap-1.5 z-10 shadow-md pointer-events-none font-number">
+                            <span>📸</span>
+                            <span class="lookbook-current-idx">1</span>/<span class="lookbook-total-count">${resolvedImages.length}</span>
+                        </span>
+
+                        <!-- أزرار التقليب يميناً ويساراً -->
+                        <!-- زر السابق (يمين) -->
+                        <button type="button" 
+                                class="lookbook-nav-btn lookbook-prev-btn absolute right-2.5 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-black/55 hover:bg-black/85 text-white backdrop-blur-md flex items-center justify-center transition-all duration-300 z-20 opacity-85 sm:opacity-0 sm:group-hover/img:opacity-100 shadow-md hover:scale-105 active:scale-95 cursor-pointer border border-white/20 focus:opacity-100"
+                                aria-label="الصورة السابقة">
+                            <svg class="w-4 h-4 transform rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7" />
+                            </svg>
+                        </button>
+
+                        <!-- زر التالي (يسار) -->
+                        <button type="button" 
+                                class="lookbook-nav-btn lookbook-next-btn absolute left-2.5 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-black/55 hover:bg-black/85 text-white backdrop-blur-md flex items-center justify-center transition-all duration-300 z-20 opacity-85 sm:opacity-0 sm:group-hover/img:opacity-100 shadow-md hover:scale-105 active:scale-95 cursor-pointer border border-white/20 focus:opacity-100"
+                                aria-label="الصورة التالية">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7" />
+                            </svg>
+                        </button>
+
+                        <!-- نقاط التنقل التفاعلية (أسفل اليمين) -->
+                        <div class="lookbook-dots-container absolute bottom-3 right-3 flex items-center gap-1.5 z-10 bg-black/50 backdrop-blur-md px-2.5 py-1 rounded-full border border-white/15">
+                            ${resolvedImages.map((_, dotIdx) => `
+                                <button type="button" 
+                                        class="lookbook-dot-btn h-2 rounded-full transition-all duration-300 ${dotIdx === 0 ? 'w-5 bg-amber-400' : 'w-2 bg-white/60 hover:bg-white'} cursor-pointer"
+                                        aria-label="الانتقال إلى صورة ${dotIdx + 1}"
+                                        data-target-slide="${dotIdx}"></button>
+                            `).join('')}
+                        </div>
+                    ` : ''}
+
+                    <!-- بادج اسم ونوع السجادة (أسفل اليسار) -->
+                    <span class="absolute bottom-3 left-3 px-3 py-1 bg-amber-950/75 backdrop-blur-md text-amber-200 font-bold text-xs rounded-full border border-amber-400/30 z-10 shadow-md pointer-events-none max-w-[65%] truncate">
                         ${it.carpetTitle || 'سجادة ملكية'}
                     </span>
                 </div>
+
+                <!-- تفاصيل التقييم ورأي العميل -->
                 <div class="p-5 sm:p-6 flex-1 flex flex-col justify-between gap-3 bg-[#fffbf7]">
                     <div class="flex items-center gap-1 text-amber-400 text-sm">
                         <span>${starsHtml}</span>
-                        <span class="text-xs font-bold text-stone-700 mr-2">تقييم معتمد ${ratingNum.toFixed(1)}</span>
+                        <span class="text-xs font-bold text-stone-700 mr-2 font-number">تقييم معتمد ${ratingNum.toFixed(1)}</span>
                     </div>
                     <p class="text-stone-700 text-xs sm:text-sm leading-relaxed italic font-medium">
                         "${it.reviewText}"
                     </p>
                     <div class="pt-3 border-t border-stone-200/70 flex items-center justify-between">
                         <span class="font-bold text-stone-900 text-xs sm:text-sm">${it.clientName}</span>
-                        <span class="text-[11px] text-stone-600">${it.orderType || 'طلب تفصيل خاص'}</span>
+                        <span class="text-[11px] text-amber-900 font-semibold bg-amber-100/70 border border-amber-200/60 px-2.5 py-0.5 rounded-full">${it.orderType || 'طلب تفصيل خاص'}</span>
                     </div>
                 </div>
             </div>
         `;
     }).join('');
+
+    // تفعيل المؤقت التلقائي 5 ثواني والتنقل باللمس والأزرار وتثبيت الصورة عند التمرير
+    setupLookbookSliders();
+}
+
+// دالة تفعيل حركة وانقلاب الصور كل 5 ثوانٍ مع التثبيت عند التحويم والتنقل اليدوي
+export function setupLookbookSliders() {
+    lookbookSliderInstances.forEach(inst => inst.destroy && inst.destroy());
+    lookbookSliderInstances = [];
+
+    const containers = document.querySelectorAll('.lookbook-slider-container');
+    containers.forEach(container => {
+        const slides = container.querySelectorAll('.lookbook-slide');
+        if (slides.length <= 1) return; // صور العملاء الفردية تظل ثابتة تماماً
+
+        const prevBtn = container.querySelector('.lookbook-prev-btn');
+        const nextBtn = container.querySelector('.lookbook-next-btn');
+        const dots = container.querySelectorAll('.lookbook-dot-btn');
+        const currentIdxEl = container.querySelector('.lookbook-current-idx');
+
+        let currentIndex = 0;
+        let timer = null;
+        let isHovered = false;
+
+        function showSlide(index) {
+            currentIndex = (index + slides.length) % slides.length;
+
+            slides.forEach((slide, i) => {
+                if (i === currentIndex) {
+                    slide.classList.remove('opacity-0', 'scale-105', 'z-0', 'pointer-events-none');
+                    slide.classList.add('opacity-100', 'scale-100', 'z-1', 'pointer-events-auto');
+                } else {
+                    slide.classList.remove('opacity-100', 'scale-100', 'z-1', 'pointer-events-auto');
+                    slide.classList.add('opacity-0', 'scale-105', 'z-0', 'pointer-events-none');
+                }
+            });
+
+            dots.forEach((dot, i) => {
+                if (i === currentIndex) {
+                    dot.className = 'lookbook-dot-btn h-2 rounded-full transition-all duration-300 w-5 bg-amber-400 cursor-pointer shadow-xs';
+                } else {
+                    dot.className = 'lookbook-dot-btn h-2 rounded-full transition-all duration-300 w-2 bg-white/60 hover:bg-white cursor-pointer';
+                }
+            });
+
+            if (currentIdxEl) {
+                currentIdxEl.innerText = currentIndex + 1;
+            }
+        }
+
+        function startTimer() {
+            stopTimer();
+            if (!isHovered && document.visibilityState === 'visible') {
+                // تقليب تلقائي كل 5 ثواني كما طُلب بدقة
+                timer = setInterval(() => {
+                    showSlide(currentIndex + 1);
+                }, 5000);
+            }
+        }
+
+        function stopTimer() {
+            if (timer) {
+                clearInterval(timer);
+                timer = null;
+            }
+        }
+
+        // عند قدوم مؤشر الماوس: تثبت الصورة ويتوقف التقليب
+        container.addEventListener('mouseenter', () => {
+            isHovered = true;
+            stopTimer();
+        });
+
+        // عند خروج المؤشر: يستأنف التقليب التلقائي كل 5 ثواني
+        container.addEventListener('mouseleave', () => {
+            isHovered = false;
+            startTimer();
+        });
+
+        // زر التقليب لليمين (السابق)
+        if (prevBtn) {
+            prevBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                showSlide(currentIndex - 1);
+                startTimer();
+            });
+        }
+
+        // زر التقليب لليسار (التالي)
+        if (nextBtn) {
+            nextBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                showSlide(currentIndex + 1);
+                startTimer();
+            });
+        }
+
+        // النقر على نقاط التنقل
+        dots.forEach((dot, i) => {
+            dot.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                showSlide(i);
+                startTimer();
+            });
+        });
+
+        // دعم السحب باللمس على الجوال والشاشات اللمسية
+        let touchStartX = 0;
+        let touchStartY = 0;
+        let touchStartTime = 0;
+
+        container.addEventListener('touchstart', (e) => {
+            if (e.touches && e.touches[0]) {
+                touchStartX = e.touches[0].clientX;
+                touchStartY = e.touches[0].clientY;
+                touchStartTime = Date.now();
+                stopTimer();
+            }
+        }, { passive: true });
+
+        container.addEventListener('touchend', (e) => {
+            if (e.changedTouches && e.changedTouches[0]) {
+                const diffX = e.changedTouches[0].clientX - touchStartX;
+                const diffY = e.changedTouches[0].clientY - touchStartY;
+                const timeDiff = Date.now() - touchStartTime;
+
+                if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 30 && timeDiff < 600) {
+                    if (diffX > 0) {
+                        showSlide(currentIndex - 1);
+                    } else {
+                        showSlide(currentIndex + 1);
+                    }
+                }
+                startTimer();
+            }
+        }, { passive: true });
+
+        // تشغيل المؤقت فوراً
+        startTimer();
+
+        lookbookSliderInstances.push({
+            container,
+            start: startTimer,
+            stop: stopTimer,
+            destroy() {
+                stopTimer();
+            }
+        });
+    });
+}
+
+// توقيف المؤقتات إذا كانت النافذة مخفية واستئنافها عند الرجوع للتبويب
+if (typeof document !== 'undefined') {
+    document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'hidden') {
+            lookbookSliderInstances.forEach(inst => inst.stop && inst.stop());
+        } else {
+            lookbookSliderInstances.forEach(inst => inst.start && inst.start());
+        }
+    });
+}
+
+if (typeof window !== 'undefined') {
+    window.setupLookbookSliders = setupLookbookSliders;
 }
 
 // ==========================================

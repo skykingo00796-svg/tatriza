@@ -3,16 +3,16 @@
 // دار التطريز TATRIZA - نظام التخزين المؤقت والتشغيل السريع
 // ==========================================
 
-const CACHE_NAME = 'tatriza-pwa-v5.0';
+const CACHE_NAME = 'tatriza-pwa-v6.0';
 
 const STATIC_ASSETS = [
     './',
     './index.html',
-    './css/style.css?v=5.0',
-    './js/main.js?v=5.0',
-    './js/modals.js?v=5.0',
-    './js/currency.js?v=5.0',
-    './js/pwa.js?v=5.0',
+    './css/style.css?v=6.0',
+    './js/main.js?v=6.0',
+    './js/modals.js?v=6.0',
+    './js/currency.js?v=6.0',
+    './js/pwa.js?v=6.0',
     './js/tracking.js',
     './js/authenticity.js',
     './js/qrcode.js',
@@ -29,7 +29,10 @@ const STATIC_ASSETS = [
     './images/step4_glue.jpg',
     './images/step5_carving.jpg',
     './images/step6_finishing.jpg',
-    './images/step7_packaging.jpg'
+    './images/step7_packaging.jpg',
+    './images/client_wrist_rest_1.jpg',
+    './images/client_wrist_rest_2.jpg',
+    './images/client_logo_karam.jpg'
 ];
 
 // 1. تثبيت الـ Service Worker وحفظ الأصول الأساسية
