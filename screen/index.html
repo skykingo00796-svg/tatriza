@@ -125,6 +125,47 @@
             } catch(e) {}
         })();
     </script>
+
+    <!-- مشغل النوافذ والشريط الجانبي الفوري بدون انتظار اكتمال الموديولات -->
+    <script>
+        window.openOptionsDrawer = function() {
+            var drawer = document.getElementById('options-drawer');
+            if (drawer) {
+                drawer.classList.remove('hidden');
+                void drawer.offsetWidth;
+                drawer.classList.add('drawer-active');
+                document.body.style.overflow = 'hidden';
+            }
+        };
+        window.closeOptionsDrawer = function() {
+            var drawer = document.getElementById('options-drawer');
+            if (drawer) {
+                drawer.classList.remove('drawer-active');
+                document.body.style.overflow = '';
+                setTimeout(function() {
+                    if (!drawer.classList.contains('drawer-active')) {
+                        drawer.classList.add('hidden');
+                    }
+                }, 350);
+            }
+        };
+        window.openCustomOrderModal = function() {
+            var modal = document.getElementById('custom-order-modal');
+            if (modal) modal.classList.remove('hidden');
+        };
+        window.closeCustomOrderModal = function() {
+            var modal = document.getElementById('custom-order-modal');
+            if (modal) modal.classList.add('hidden');
+        };
+        window.openCartModal = function() {
+            var modal = document.getElementById('cart-modal');
+            if (modal) modal.classList.remove('hidden');
+        };
+        window.closeCartModal = function() {
+            var modal = document.getElementById('cart-modal');
+            if (modal) modal.classList.add('hidden');
+        };
+    </script>
 </head>
 
 <body class="text-stone-800 font-interface" style="background-color: #d1c5b6;">   
