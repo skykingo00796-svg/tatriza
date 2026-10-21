@@ -59,7 +59,39 @@
     <!-- مكتبة التنسيقات Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- ملف الأنماط والتصميم العام (مع تعديل المسار للخروج من مجلد screen) -->
-    <link rel="stylesheet" href="css/style.css?v=6.1">
+    <link rel="stylesheet" href="css/style.css?v=6.2">
+    <!-- تنسيقات حرجة فورية لحاويات صور العملاء تضمن ظهور الصور بنسبة 4:3 قبل حتى تحميل ملفات CSS الخارجية -->
+    <style id="lookbook-critical-css">
+        .lookbook-slider-container {
+            position: relative !important;
+            width: 100% !important;
+            aspect-ratio: 4 / 3 !important;
+            min-height: 260px !important;
+            background-color: #1c1917 !important;
+            overflow: hidden !important;
+            display: block !important;
+        }
+        .lookbook-slider-container::before {
+            content: "" !important;
+            display: block !important;
+            padding-top: 75% !important;
+        }
+        .lookbook-slides-wrapper {
+            position: absolute !important;
+            inset: 0 !important;
+            width: 100% !important;
+            height: 100% !important;
+            display: block !important;
+        }
+        .lookbook-slide {
+            position: absolute !important;
+            inset: 0 !important;
+            width: 100% !important;
+            height: 100% !important;
+            object-fit: cover !important;
+            display: block !important;
+        }
+    </style>
     <!-- محرك الثيم الفوري لمنع وميض الثيم الافتراضي نهائياً (Zero-Flicker Theme Engine) -->
     <script>
         (function() {
@@ -784,7 +816,7 @@
                 
                 <!-- الكرت 1: سجادة راحة المعصم للكيبورد (محمد العريمي) - معرض متحرك لصورتين -->
                 <div class="lookbook-card flex flex-col group bg-white rounded-2xl overflow-hidden shadow-xs hover:shadow-lg transition-all duration-500 border border-stone-200/70">
-                    <div id="lookbook-slider-0" class="lookbook-slider-container relative w-full aspect-[4/3] overflow-hidden bg-stone-900 group/img select-none" data-slider-id="lookbook-slider-0">
+                    <div id="lookbook-slider-0" class="lookbook-slider-container relative w-full aspect-[4/3] overflow-hidden bg-stone-900 group/img select-none" style="aspect-ratio: 4 / 3; min-height: 260px;" data-slider-id="lookbook-slider-0">
                         <div class="lookbook-slides-wrapper absolute inset-0 w-full h-full">
                             <img src="images/client_wrist_rest_1.jpg" alt="سجادة راحة المعصم للكيبورد - توثيق 1" class="lookbook-slide absolute inset-0 w-full h-full object-cover transition-all duration-700 ease-in-out opacity-100 scale-100 z-1 pointer-events-auto" loading="lazy" data-slide-index="0">
                             <img src="images/client_wrist_rest_2.jpg" alt="سجادة راحة المعصم للكيبورد - توثيق 2" class="lookbook-slide absolute inset-0 w-full h-full object-cover transition-all duration-700 ease-in-out opacity-0 scale-105 z-0 pointer-events-none" loading="lazy" data-slide-index="1">
@@ -827,7 +859,7 @@
 
                 <!-- الكرت 2: سجادة شعارات مخصصة (أيمن العاصمي) - صورة فردية ثابتة -->
                 <div class="lookbook-card flex flex-col group bg-white rounded-2xl overflow-hidden shadow-xs hover:shadow-lg transition-all duration-500 border border-stone-200/70">
-                    <div id="lookbook-slider-1" class="lookbook-slider-container relative w-full aspect-[4/3] overflow-hidden bg-stone-900 group/img select-none" data-slider-id="lookbook-slider-1">
+                    <div id="lookbook-slider-1" class="lookbook-slider-container relative w-full aspect-[4/3] overflow-hidden bg-stone-900 group/img select-none" style="aspect-ratio: 4 / 3; min-height: 260px;" data-slider-id="lookbook-slider-1">
                         <div class="lookbook-slides-wrapper absolute inset-0 w-full h-full">
                             <img src="images/client_logo_karam.jpg" alt="سجادة شعارات مخصصة - كرم الطبيعة" class="lookbook-slide absolute inset-0 w-full h-full object-cover transition-all duration-700 ease-in-out opacity-100 scale-100 z-1 pointer-events-auto" loading="lazy" data-slide-index="0">
                         </div>

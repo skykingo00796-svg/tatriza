@@ -1758,7 +1758,7 @@ function renderDynamicLookbook(items) {
 
         return `
             <div class="lookbook-card flex flex-col group bg-white rounded-2xl overflow-hidden shadow-xs hover:shadow-lg transition-all duration-500 border border-stone-200/70">
-                <div id="${sliderId}" class="lookbook-slider-container relative w-full aspect-[4/3] overflow-hidden bg-stone-900 group/img select-none" data-slider-id="${sliderId}">
+                <div id="${sliderId}" class="lookbook-slider-container relative w-full aspect-[4/3] overflow-hidden bg-stone-900 group/img select-none" style="aspect-ratio: 4 / 3; min-height: 260px;" data-slider-id="${sliderId}">
                     <!-- حاوية الصور التفاعلية -->
                     <div class="lookbook-slides-wrapper absolute inset-0 w-full h-full">
                         ${resolvedImages.map((src, imgIdx) => `
